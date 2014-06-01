@@ -1,0 +1,69 @@
+#pragma once
+
+#include <string>
+
+namespace InputActions
+{
+    //enum ActionType
+    //{
+    //    eUnknownButtonType = -1,
+    //    ePOVUp = 0,
+    //    ePOVDown,
+    //    ePOVLeft,
+    //    ePOVRight,
+    //    eAButton,
+    //    eBButton,
+    //    eXButton,
+    //    eYButton,
+    //    eStartButton,
+    //    eBackButton,
+    //    eLBButton,
+    //    eRBButton,
+    //    eLeftThumbButton,
+    //    eRightThumbButton,
+    //    eLeftXAxis,
+    //    eLeftYAxis,
+    //    eRightXAxis,
+    //    eRightYAxis,
+    //    eZAxis,
+    //    eLeftTrigger,
+    //    eRightTrigger
+    //};
+
+    class ActionType
+    {
+    public:
+        ActionType() : m_actionType(0), m_actionTypeLngKey(0), m_actionTypeName("") {}
+        ActionType(const std::string& actionTypeName) : m_actionType(hashString(actionTypeName)), m_actionTypeLngKey(0), m_actionTypeName(actionTypeName) {}
+        ActionType(const std::string& actionTypeName, const std::string& lngActionName) : m_actionType(hashString(actionTypeName)), m_actionTypeLngKey(hashString(lngActionName.c_str())), m_actionTypeName(actionTypeName) {}
+
+        unsigned int getType() const { return m_actionType; }
+        unsigned int getLanguageString() const { return m_actionTypeLngKey; }
+#if defined( DEBUG ) || defined( _DEBUG )
+        const std::string& getNameString() const { return m_actionTypeName; }
+#endif
+        bool operator < ( const ActionType& rhs ) const { return m_actionType < rhs.m_actionType; }
+    private:
+        unsigned int m_actionType;
+        unsigned int m_actionTypeLngKey;
+        std::string m_actionTypeName;
+    };
+}
+
+template<class ValueType, class InputActionType>
+class InputAction
+{
+public:
+    InputAction() : m_action() {}
+    InputAction(const InputActionType action) : m_action(action) {}
+    ~InputAction() {}
+
+    const InputActionType getAction() const { return m_action; }
+    const ValueType getValue() const { return m_value; }
+    void setValue(const ValueType& value) { m_value = value; }
+private:
+    InputActionType m_action;
+    ValueType m_value;
+};
+
+typedef InputAction<float, InputActions::ActionType> StandardInputAction;

@@ -1,0 +1,63 @@
+#include "MeshGroup.h"
+#include "..\SpaceSim\BaseApplication.h"
+#include "..\SpaceSim\DeviceManager.h"
+#include "..\SpaceSim\GameResource.h"
+#include "..\SpaceSim\RenderInstance.h"
+#ifdef _DEBUG
+#include "..\SpaceSim\StringHelperFunctions.h"
+#endif
+
+//-------------------------------------------------------------------------
+// @brief 
+//-------------------------------------------------------------------------
+MeshGroup::~MeshGroup()
+{
+    if (m_renderInstance != nullptr)
+    {
+        delete m_renderInstance;
+        m_renderInstance = nullptr;
+    }
+}
+
+//-------------------------------------------------------------------------
+// @brief 
+//-------------------------------------------------------------------------
+void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name )
+{
+    if (m_renderInstanceDirty)
+    {  
+        if ( m_renderInstance != nullptr)
+        {
+            delete m_renderInstance;
+            m_renderInstance = nullptr;
+        }
+        m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
+#ifdef _DEBUG
+        m_renderInstance->m_name = std::wstring(name.size(), L' ');
+        std::copy(begin(name), end(name), begin(m_renderInstance->m_name));
+#else
+        UNUSEDPARAM(name);
+#endif
+        WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
+        wvpConstants.m_projection = Application::m_projection;
+        wvpConstants.m_view = Application::m_view;
+        wvpConstants.m_world = m_world * world; 
+        UNUSEDPARAM(resource);
+    }
+
+    renderInstance.emplace_back(m_renderInstance);
+
+    UNUSEDPARAM(elapsedTime);
+}
+
+//-------------------------------------------------------------------------
+// @brief 
+//-------------------------------------------------------------------------
+MeshGroup::MeshGroup( const MeshGroup& source )
+{
+    m_world = source.m_world;
+    m_geometryInstance = source.getGeometryInstance();
+    m_shaderInstance = source.getShaderInstance();
+    m_renderInstance = nullptr;
+    m_renderInstanceDirty = true;
+}

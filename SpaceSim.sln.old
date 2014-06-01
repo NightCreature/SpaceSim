@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpaceSim", "SpaceSim\SpaceSim.vcproj", "{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}"
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 2
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = SpaceSim\\SpaceSim.vcproj
+		SccLocalPath1 = .
+		SccProjectFilePathRelativizedFromConnection1 = SpaceSim\\
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Debug|Win32.ActiveCfg = Debug|Win32
+		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Debug|Win32.Build.0 = Debug|Win32
+		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Release|Win32.ActiveCfg = Release|Win32
+		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

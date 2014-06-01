@@ -1,0 +1,480 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}</ProjectGuid>
+    <RootNamespace>SpaceSim</RootNamespace>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Demo\SpaceSim\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Demo\SpaceSim\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</EmbedManifest>
+    <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EmbedManifest>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\include\;D:\SDK\Visual Leak Detector\2012\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\SDK\Visual Leak Detector\include;C:\SDK\tinyxml;$(WindowsSdkDir)\include;C:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\lib\x86;D:\SDK\Visual Leak Detector\2012\lib\Win32;D:\SDK\tinyxml\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\SDK\Assimp\lib\x64;C:\SDK\Visual Leak Detector\lib\Win64;C:\SDK\tinyxml\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\SDK\DirectXTK\Bin\Desktop_2012\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\SDK\Visual Leak Detector\include;C:\SDK\tinyxml;$(WindowsSdkDir)\include;C:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\SDK\Visual Leak Detector\lib;C:\SDK\tinyxml\Release;C:\SDK\DirectXTK\Bin\Desktop_2012\x64\Release;C:\SDK\Assimp\lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>C:\SDK\Demo\SpaceSim\bin\</OutDir>
+    <TargetName>$(ProjectName)_x64d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)_x64</TargetName>
+    <OutDir>C:\SDK\Demo\SpaceSim\bin\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <DisableSpecificWarnings>4324</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86\d3d11.lib;dxgi.lib;d3dx11.lib;d3dcompiler.lib;xinput.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;x64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <DisableSpecificWarnings>4324;4447</DisableSpecificWarnings>
+      <BrowseInformation>true</BrowseInformation>
+      <CompileAsWinRT>true</CompileAsWinRT>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalUsingDirectories>C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcpackages;C:\Program Files (x86)\Microsoft Visual Studio 11.0\Blend\WinMD</AdditionalUsingDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
+      <WindowsMetadataFile>$(OutDir)$(TargetName).winmd</WindowsMetadataFile>
+    </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86\d3d11.lib;d3dx11.lib;d3dcompiler.lib;dxgi.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;x64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <DisableSpecificWarnings>4324</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\GameEngine\MapLoader.cpp" />
+    <ClCompile Include="Allocator.cpp" />
+    <ClCompile Include="AssimpModelLoader.cpp" />
+    <ClCompile Include="BaseApplication.cpp" />
+    <ClCompile Include="..\GameEngine\bbox.cpp" />
+    <ClCompile Include="..\Shapes\box.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="..\GameEngine\color.cpp" />
+    <ClCompile Include="controller.cpp" />
+    <ClCompile Include="..\Shapes\core.cpp" />
+    <ClCompile Include="CubeMapRenderer.cpp" />
+    <ClCompile Include="DebugBox.cpp" />
+    <ClCompile Include="DeviceManager.cpp" />
+    <ClCompile Include="displaywindow.cpp" />
+    <ClCompile Include="..\Shapes\door.cpp" />
+    <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="..\Shapes\face.cpp" />
+    <ClCompile Include="..\Shapes\forcefield.cpp" />
+    <ClCompile Include="EffectCache.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameObjectManager.cpp" />
+    <ClCompile Include="GameResource.cpp" />
+    <ClCompile Include="GameWindow.cpp" />
+    <ClCompile Include="..\Shapes\gunturret.cpp" />
+    <ClCompile Include="GeometryCache.cpp" />
+    <ClCompile Include="IController.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="InfinitySphere.cpp" />
+    <ClCompile Include="InputState.cpp" />
+    <ClCompile Include="InputSystem.cpp" />
+    <ClCompile Include="..\Shapes\laser.cpp" />
+    <ClCompile Include="..\GameEngine\light.cpp" />
+    <ClCompile Include="KeyboardController.cpp" />
+    <ClCompile Include="LaserManager.cpp" />
+    <ClCompile Include="LightManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\GameEngine\material.cpp" />
+    <ClCompile Include="..\MatrixAndVectorMath\matrix33.cpp" />
+    <ClCompile Include="..\MatrixAndVectorMath\matrix44.cpp" />
+    <ClCompile Include="..\MatrixAndVectorMath\matrixmath.cpp" />
+    <ClCompile Include="..\Shapes\mesh.cpp" />
+    <ClCompile Include="..\GameEngine\modelmanager.cpp" />
+    <ClCompile Include="MeshGroup.cpp" />
+    <ClCompile Include="Messages.cpp" />
+    <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="OrientationAxis.cpp" />
+    <ClCompile Include="..\GameEngine\particle.cpp" />
+    <ClCompile Include="..\GameEngine\particleemitter.cpp" />
+    <ClCompile Include="..\GameEngine\particlesystemmanager.cpp" />
+    <ClCompile Include="..\Shapes\plane.cpp" />
+    <ClCompile Include="Paths.cpp" />
+    <ClCompile Include="playbackcontroller.cpp" />
+    <ClCompile Include="..\GameEngine\player.cpp" />
+    <ClCompile Include="Renderable.cpp" />
+    <ClCompile Include="RenderInstance.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="..\Shapes\rotatingblades.cpp" />
+    <ClCompile Include="..\GameEngine\scorchmark.cpp" />
+    <ClCompile Include="Resourceable.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="SettingsManager.cpp" />
+    <ClCompile Include="SettingsParser.cpp" />
+    <ClCompile Include="..\GameEngine\shadermanager.cpp" />
+    <ClCompile Include="..\Shapes\square.cpp" />
+    <ClCompile Include="..\Shapes\switch.cpp" />
+    <ClCompile Include="..\GameEngine\texture.cpp" />
+    <ClCompile Include="..\GameEngine\texturemanager.cpp" />
+    <ClCompile Include="ShaderCache.cpp" />
+    <ClCompile Include="ShaderPack.cpp" />
+    <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="..\MatrixAndVectorMath\vector2.cpp" />
+    <ClCompile Include="..\MatrixAndVectorMath\vector3.cpp" />
+    <ClCompile Include="..\MatrixAndVectorMath\vector4.cpp" />
+    <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="XController.cpp" />
+    <ClCompile Include="XMLModelLoader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\GameEngine\MapLoader.h" />
+    <ClInclude Include="AlignMacros.h" />
+    <ClInclude Include="Allocator.h" />
+    <ClInclude Include="applicationsetting.h" />
+    <ClInclude Include="AssimpModelLoader.h" />
+    <ClInclude Include="BaseApplication.h" />
+    <ClInclude Include="..\GameEngine\bbox.h" />
+    <ClInclude Include="..\Shapes\box.h" />
+    <ClInclude Include="Buffer.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="..\GameEngine\color.h" />
+    <ClInclude Include="controller.h" />
+    <ClInclude Include="ControllerDefines.h" />
+    <ClInclude Include="..\Shapes\core.h" />
+    <ClInclude Include="CubeMapRenderer.h" />
+    <ClInclude Include="D3DDebugHelperFunctions.h" />
+    <ClInclude Include="DebugBox.h" />
+    <ClInclude Include="DeviceManager.h" />
+    <ClInclude Include="displaywindow.h" />
+    <ClInclude Include="..\Shapes\door.h" />
+    <ClInclude Include="Effect.h" />
+    <ClInclude Include="..\Shapes\face.h" />
+    <ClInclude Include="..\Shapes\forcefield.h" />
+    <ClInclude Include="EffectCache.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="GameResource.h" />
+    <ClInclude Include="GameWindow.h" />
+    <ClInclude Include="..\Shapes\gunturret.h" />
+    <ClInclude Include="GeometryCache.h" />
+    <ClInclude Include="GeometryInstance.h" />
+    <ClInclude Include="IController.h" />
+    <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="InfinitySphere.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputAction.h" />
+    <ClInclude Include="InputState.h" />
+    <ClInclude Include="InputSystem.h" />
+    <ClInclude Include="..\GameEngine\interpolatecurveRGBA.h" />
+    <ClInclude Include="..\Shapes\laser.h" />
+    <ClInclude Include="..\GameEngine\light.h" />
+    <ClInclude Include="..\GameEngine\material.h" />
+    <ClInclude Include="..\MatrixAndVectorMath\matrix33.h" />
+    <ClInclude Include="..\MatrixAndVectorMath\matrix44.h" />
+    <ClInclude Include="..\MatrixAndVectorMath\matrixmath.h" />
+    <ClInclude Include="..\Shapes\mesh.h" />
+    <ClInclude Include="..\GameEngine\modelmanager.h" />
+    <ClInclude Include="KeyboardController.h" />
+    <ClInclude Include="LaserManager.h" />
+    <ClInclude Include="LightManager.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="MeshGroup.h" />
+    <ClInclude Include="Messages.h" />
+    <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="OrientationAxis.h" />
+    <ClInclude Include="..\GameEngine\particle.h" />
+    <ClInclude Include="..\GameEngine\particleemitter.h" />
+    <ClInclude Include="..\GameEngine\particlesystemmanager.h" />
+    <ClInclude Include="..\Shapes\plane.h" />
+    <ClInclude Include="Paths.h" />
+    <ClInclude Include="playbackcontroller.h" />
+    <ClInclude Include="..\GameEngine\player.h" />
+    <ClInclude Include="Renderable.h" />
+    <ClInclude Include="RenderInstance.h" />
+    <ClInclude Include="RenderSystem.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\Shapes\rotatingblades.h" />
+    <ClInclude Include="..\GameEngine\scorchmark.h" />
+    <ClInclude Include="Resourceable.h" />
+    <ClInclude Include="Settings.h" />
+    <ClInclude Include="SettingsManager.h" />
+    <ClInclude Include="SettingsParser.h" />
+    <ClInclude Include="..\GameEngine\shadermanager.h" />
+    <ClInclude Include="..\Shapes\Model.h" />
+    <ClInclude Include="..\Shapes\square.h" />
+    <ClInclude Include="ShaderCache.h" />
+    <ClInclude Include="ShaderInstance.h" />
+    <ClInclude Include="ShaderPack.h" />
+    <ClInclude Include="Shaders.h" />
+    <ClInclude Include="StringHelperFunctions.h" />
+    <ClInclude Include="..\Shapes\switch.h" />
+    <ClInclude Include="..\GameEngine\texture.h" />
+    <ClInclude Include="..\GameEngine\texturemanager.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="..\MatrixAndVectorMath\vector2.h" />
+    <ClInclude Include="..\MatrixAndVectorMath\vector3.h" />
+    <ClInclude Include="..\MatrixAndVectorMath\vector4.h" />
+    <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="TypeHelpers.h" />
+    <ClInclude Include="Types.h" />
+    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="XController.h" />
+    <ClInclude Include="XMLModelLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bin\DebugColorShader.fx" />
+    <None Include="..\bin\Maps\Entrance.dat">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\bin\Settings\Player.cfg" />
+    <None Include="..\bin\Shaders\Shaders\core_pixel_shader.ps" />
+    <None Include="..\bin\Shaders\Shaders\cube_mapping.ifx" />
+    <None Include="..\bin\Shaders\Shaders\normal_mapping.ifx" />
+    <None Include="..\bin\Shaders\Shaders\phong_lighting_shader.ifx" />
+    <None Include="..\bin\Shaders\Shaders\shared_data_types.ifx" />
+    <None Include="..\bin\Shaders\Shaders\simple_pixel_shader.ps" />
+    <None Include="..\bin\Shaders\Shaders\simple_shader.ifx" />
+    <None Include="..\bin\Shaders\Shaders\simple_vertex_shader.vs" />
+    <None Include="..\bin\Shaders\Shaders\uniforms.ifx" />
+    <None Include="..\bin\SimpleEffect2.fx" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="pointlight.psh" />
+    <None Include="pointlight.vsh" />
+    <None Include="..\bin\settings.cfg" />
+    <None Include="..\bin\SimpleEffect.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SpaceSim.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bin\Shaders\skydome.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bin\Shaders\Shaders\DebugColorShader.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\bin\Shaders\Shaders\DomainShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\bin\Shaders\Shaders\ForceFieldEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\bin\Shaders\Shaders\laser_shader.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\bin\Shaders\Shaders\particle_system.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\bin\Shaders\Shaders\SimpleEffect.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\bin\Shaders\Shaders\SimpleEffect2.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\bin\Shaders\Shaders\SimpleEffect3.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\bin\Shaders\Shaders\skydome.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\bin\Shaders\Shaders\test_shader.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\bin\FE\fe.xml">
+      <SubType>Designer</SubType>
+    </Xml>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

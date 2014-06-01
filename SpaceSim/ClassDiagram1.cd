@@ -1,0 +1,788 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Path" Collapsed="true">
+    <Position X="24.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAgAAAAAAAIQAIAABCIAAEJAAAAAABAIJIEACAA=</HashCode>
+      <FileName>main.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ApplicationSetting" Collapsed="true">
+    <Position X="26" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAEAAAAAAgIAAAABAAgAAAAAAAAABA=</HashCode>
+      <FileName>applicationsetting.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AssimpModelLoader" Collapsed="true">
+    <Position X="10.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAIAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AssimpModelLoader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Application" Collapsed="true">
+    <Position X="24.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBAgAiAAABAAAAAAACEBAAAAAABCABIIAKAAABAAAgA=</HashCode>
+      <FileName>BaseApplication.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Bbox" Collapsed="true">
+    <Position X="29.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBgAAAAQDAgEIAMAAIAAAQACAAABACAAIAAIEAiAQAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\bbox.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Box" Collapsed="true">
+    <Position X="3" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEQAAAEACAAKggAAAEAAAACAAYAABDgAAAAAAAEABA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\box.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Camera" Collapsed="true">
+    <Position X="33" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAEUiSCAAMAqQIBEAIQgIAAACGIQgAAQAAAEAAA=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CameraManager" Collapsed="true">
+    <Position X="34.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAIggAAAAAAAAAAAAAAAAAAAAAAAkAAA=</HashCode>
+      <FileName>CameraManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Color" Collapsed="true">
+    <Position X="24.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAFMAAAASIEAAAAAAAQAAAoIQABoAEADgA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\color.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Controller" Collapsed="true">
+    <Position X="11.75" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>4D8EIAAAAUIgAgAgBAAAQACAh3sAAAggAAAAwAAMAAo=</HashCode>
+      <FileName>controller.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Core" Collapsed="true">
+    <Position X="8.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAIBAgIIAIUAAAgAEgAAAAAAAgBAAgAAEAQAAEAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\core.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DeviceManager" Collapsed="true">
+    <Position X="26" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QIAAAAAAAAAAgAAACAAAAICAGAACAAQACAAACAAAAAE=</HashCode>
+      <FileName>DeviceManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Door" Collapsed="true">
+    <Position X="15" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAACAAAgAAYACgAAEAAAAAAAAAAAAgAAAAAAAEAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\door.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Effect" Collapsed="true">
+    <Position X="29.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAACAAAABQgAABAAIAAAAAgAAACAgAAgAAAAABABAAA=</HashCode>
+      <FileName>Effect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Face" Collapsed="true">
+    <Position X="9.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAEAAABAAAEAAAAhAAECBAAAASQERACACAAgwBAEQAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\face.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ForceField" Collapsed="true">
+    <Position X="3.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAQAAAAgEAEAAAAAAAAAAgBAAAAAAEAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\forcefield.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameObjectManager" Collapsed="true">
+    <Position X="31.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAEQBAAAAAAAAAIAEAACAQAAAAAAAAAQAA=</HashCode>
+      <FileName>GameObjectManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameWindow" Collapsed="true">
+    <Position X="33" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QcAkEAAEAgKAQBQAgAEBGAAYAAIAAAgAAEAAAAAUAAY=</HashCode>
+      <FileName>GameWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GunTurret" Collapsed="true">
+    <Position X="10.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAgAACCAAwAAEAAEACAAAAAKAIAAgAAQAQBBECCg=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\gunturret.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GeometryInstance" Collapsed="true">
+    <Position X="34.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAABAgAAAAAAAAAABIAAAAgAAAAAAA=</HashCode>
+      <FileName>GeometryInstance.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IController" Collapsed="true">
+    <Position X="6.5" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAIAAAAAAAgAQAAEAQAAAAAAQQAABAAAAAAAEAAA=</HashCode>
+      <FileName>IController.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IndexBuffer" Collapsed="true">
+    <Position X="24.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAgAAQgAAAAAABAAAAAEAABAAACAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>IndexBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Input" Collapsed="true">
+    <Position X="15.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAEBAAAAAAAAAAAAAAAAEAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Input.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DummyInput" Collapsed="true">
+    <Position X="15.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Input.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ButtonAction" Collapsed="true">
+    <Position X="31.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAQAAABAAAAAQAAAAAAABACAQAAAA=</HashCode>
+      <FileName>InputState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AxisAction" Collapsed="true">
+    <Position X="27.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQACAAQAYAAAAAAAQAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>InputState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputState" Collapsed="true">
+    <Position X="26" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAQAIEAgAAEAEAAAAgAABAACAAAAAA=</HashCode>
+      <FileName>InputState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputSystem" Collapsed="true">
+    <Position X="27.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAICEAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAEAAE=</HashCode>
+      <FileName>InputSystem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="interpolateCurveRGBA" Collapsed="true">
+    <Position X="29.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAIAAAAAABAAAAAAAACCAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\interpolatecurveRGBA.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Keyboard" Collapsed="true">
+    <Position X="12.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAgACAAEAAAAAhnsAAAAAAAAAAAAMAAo=</HashCode>
+      <FileName>keyboard.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Laser" Collapsed="true">
+    <Position X="12.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAMAgAACAAQACBgAEIAAAAAAoEAgCkAAFAAAAEAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\laser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Light" Collapsed="true">
+    <Position X="31.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIA0AMCBIgAGIIAgAggASAAIABICEgIAIEAgAoIQ=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\light.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Map" Collapsed="true">
+    <Position X="33" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QCAAAAAmABQABACAAAMAQSAMAcABAAAVQCBoIAAFEAk=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\map.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material" Collapsed="true">
+    <Position X="34.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEgQAwUAkAhMgAAAAMCQAAAEIgAICRSkAIAAEAAAAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\material.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Matrix33" Collapsed="true">
+    <Position X="24.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAoAAAAAAAAAAAAAAAAQAAYQEAgAAQCQAAAgBAAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\MatrixAndVectorMath\matrix33.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Matrix44" Collapsed="true">
+    <Position X="26" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAQIAABAAEAACAAAAQAAYQEAgAAACQAAAgBAAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\MatrixAndVectorMath\matrix44.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mesh" Collapsed="true">
+    <Position X="0.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CCAAAAEABBEBAABAAAMQAABABAEIAAAAAQABCEAEAAQ=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ModelManager" Collapsed="true">
+    <Position X="27.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAQAAABAIAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\modelmanager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Message" Collapsed="true">
+    <Position X="15.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAACAAAAAAAAQAAAAAAIAAAAAA=</HashCode>
+      <FileName>Messages.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ActivationMessage" Collapsed="true">
+    <Position X="15.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIEAAAAAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>Messages.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ModelLoader" Collapsed="true">
+    <Position X="11.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAIAAAAAQAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ModelLoader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MultiMesh" Collapsed="true">
+    <Position X="5.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAACAAAAUCAAAIAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>MultiMesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OrientationAxis" Collapsed="true">
+    <Position X="29.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAACAAAAMAAAAAAAAECAAAAAAAAEAAEIA=</HashCode>
+      <FileName>OrientationAxis.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Particle" Collapsed="true">
+    <Position X="31.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAhAIEAAAKAhDAhAgAUQAAAAAABECgQEAABgwAMAAAQ=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\particle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticleEmitter" Collapsed="true">
+    <Position X="33" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wQBBMBCDBDiAQAEAgiIUAAAGBEABCAIEAEAEEGEAKBA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\particleemitter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticleSystemManager" Collapsed="true">
+    <Position X="34.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAACBQQAYAIiEAAAAQAAAAAAAAIAwAADIABYEAACA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\particlesystemmanager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Plane" Collapsed="true">
+    <Position X="6" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABEAAAAAgAEUQAAAAgEAAAABABDEAiAwCAIAAAAEAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\plane.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlaybackController" Collapsed="true">
+    <Position X="10.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAEAAAAhnsAAAAAAAAAAAAMAAs=</HashCode>
+      <FileName>playbackcontroller.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="1.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>1AAAYFg2CSCAwIQIgCMIHAGiABKQANIpECwUAQZFGDg=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Renderable" Collapsed="true">
+    <Position X="5.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAIAQAAAEAACEBAAACAAQAAAAQAAAAQAAEAAA=</HashCode>
+      <FileName>Renderable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderInstance" Collapsed="true">
+    <Position X="26" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAKACAAAAAAAAAAAAAABAAAAAAAEAACABAAAA=</HashCode>
+      <FileName>RenderInstance.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderSystem" Collapsed="true">
+    <Position X="27.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>SAAAhgAAAAAiAFBJQAEAJAwIAQAAQgAIAAgiFIAGABA=</HashCode>
+      <FileName>RenderSystem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RotatingBlades" Collapsed="true">
+    <Position X="17.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAEAUAAAAAEAAAAAAAAAAEAgAAAgACAEAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\rotatingblades.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ScorchMark" Collapsed="true">
+    <Position X="19.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQCCAQAABgAEAAAAAAAAAAABgAABAAEAEAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\scorchmark.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ISettingBase" Collapsed="true">
+    <Position X="4" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIQIAAAAAAAAAAAAAAABAACAAABAAAAAAICAAAAA=</HashCode>
+      <FileName>Settings.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ISetting&lt;T&gt;" Collapsed="true">
+    <Position X="0.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAAIAAAAAAAAAAAAIAAAAAAAAAAAg=</HashCode>
+      <FileName>Settings.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DeserialisableSetting" Collapsed="true">
+    <Position X="5.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAQAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Settings.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderSetting" Collapsed="true">
+    <Position X="3" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAACAAAAAABgAAEAAAAIAAARAAAoEAACAAAAAAA=</HashCode>
+      <FileName>Settings.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MaterialSetting" Collapsed="true">
+    <Position X="5.25" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAABAAAAAAAAAAAAAAAAAAAAAABAAAgAAAAAEAAAAA=</HashCode>
+      <FileName>Settings.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VectorSetting" Collapsed="true">
+    <Position X="7.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAASAAAAAAAAAAAAIABEAAAAAAgAEAAAAAAAAA=</HashCode>
+      <FileName>Settings.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SettingsManager" Collapsed="true">
+    <Position X="29.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAQAAABAAAAgAAAAAAAAAAAAAAAAQAQAAAAAAAAAA=</HashCode>
+      <FileName>SettingsManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SettingsParser" Collapsed="true">
+    <Position X="31.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>4AoEAAgAAAAAAEAAAAAAAABAEAAAACAAAAAFAAAAACA=</HashCode>
+      <FileName>SettingsParser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShaderManager" Collapsed="true">
+    <Position X="34.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\shadermanager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model" Collapsed="true">
+    <Position X="12.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QQAAgAQAAAAACAAAAAkAAAAAAAQCAAEwAggAAAAEAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\Model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Square" Collapsed="true">
+    <Position X="7.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAGAAAAAAAAEAAAAAAAAEAAAAAAAgAAAEABA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\square.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShaderInstance" Collapsed="true">
+    <Position X="33" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAACBAAEAAAAAAAAAAAAAAAAAAQAAAAQAAEAAAAAAIA=</HashCode>
+      <FileName>ShaderInstance.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Switch" Collapsed="true">
+    <Position X="21.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAACAAQIAAAIEAABAAAQQAAAAgAAAAQIAEAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\switch.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Texture" Collapsed="true">
+    <Position X="26" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAgAAAAAAAAAAAAAAABAgAAAIAABgAAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextureManager" Collapsed="true">
+    <Position X="27.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UAAAAAAAAAAAAgAABICAAABAhAAAgQQgCIAAABAAAAg=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\texturemanager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ITimer" Collapsed="true">
+    <Position X="14.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAgAAAAgAAAABAAAAABAAAAAAAAAIAAAAAAEEAAI=</HashCode>
+      <FileName>Timer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PerformanceTimer" Collapsed="true">
+    <Position X="14.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAQAEAAAAAAAAAAAAAAAgQAAAAAAEQEAAA=</HashCode>
+      <FileName>Timer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector2" Collapsed="true">
+    <Position X="29.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAIAAAACRAQAAAGAJAQAAQQAAAAAgAQBgAAACIAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\MatrixAndVectorMath\vector2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector3" Collapsed="true">
+    <Position X="31.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAIAAAICQAQQAAGAfAQAEQQAAAIAgAQBgAQACIAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\MatrixAndVectorMath\vector3.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector4" Collapsed="true">
+    <Position X="33" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAECQAQAAAGAJAQBAQQCAAIAAAQhgAQACIAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\MatrixAndVectorMath\vector4.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VertexBuffer" Collapsed="true">
+    <Position X="34.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBAAICQAAAAQAEAAAAEAAAAAQgAAAAAAAAAAAACUEAA=</HashCode>
+      <FileName>VertexBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="XController" Collapsed="true">
+    <Position X="6.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BUAAIIAIAAQAABECAAEQQAAAAAAQAACAIBCAAAAEAiE=</HashCode>
+      <FileName>XController.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="XMLModelLoader" Collapsed="true">
+    <Position X="12.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAgAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>XMLModelLoader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameObject" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kBAAgAAAAAAAQAAAAAgAAAAAAAAAAJAgAAAEAAIECAA=</HashCode>
+      <FileName>GameObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLElement" Collapsed="true">
+    <Position X="5.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AJAAAAYCACACQAEIQhCIILSRAQQAAAoAEACgQAAAgEA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLNode" Collapsed="true">
+    <Position X="6.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ALAgAAaIAEAACgAAEEAAYQhUgBqAIAAgAIskAAhAhAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLDocument" Collapsed="true">
+    <Position X="7.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAggQYEASAQAQDgABAgCAAEAAAQhAEkhAAgFRtEBEA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLAttribute" Collapsed="true">
+    <Position X="24.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IhQAoAAAACBAABAEAAggAAQAABAAAEAgAAAgQAEQgAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLComment" Collapsed="true">
+    <Position X="10" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAQAAAAAAAAAAAAAAQACAAAAAAAAAAAgAAAAgAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLText" Collapsed="true">
+    <Position X="12.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAQAAEAAQAAAAEAAAAAAAABAAAAEAAAgAAEAgAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLDeclaration" Collapsed="true">
+    <Position X="1" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAQCAAAAAAAAAAAAAAAAAAAAAEAAAAIgAAAAgAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLUnknown" Collapsed="true">
+    <Position X="3.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKAAAAQAAEAAAAAAAAAAAAAAAAAAAAAAAAggAAAAgAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLPrinter" Collapsed="true">
+    <Position X="0.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAGIQAggBAAAAgUAAAAEBAIAABAEgAAQoAEBAAUsghI=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::StrPair" Collapsed="true">
+    <Position X="24.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAiAAAAAhAAQAAIAAQgIAAAQAAAAAQAAAAQAAAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::DynArray&lt;T, INIT&gt;" Collapsed="true">
+    <Position X="27.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgBAAAkAABAAIAAAASAAGAAAAAAgAQEAIACAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::MemPool" Collapsed="true">
+    <Position X="3.5" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAgAAEAAAAAAAAAAgAgAAAI=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::MemPoolT&lt;SIZE&gt;" Collapsed="true">
+    <Position X="3.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAQAAAAhAAAAAgAAFAAABAAYAEAAAgAEAo=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLVisitor" Collapsed="true">
+    <Position X="0.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAQAAAAACAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLUtil" Collapsed="true">
+    <Position X="29.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAkAMAAABAAAABAAKAAAAAgBIABggAAAAAAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLHandle" Collapsed="true">
+    <Position X="27.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgEBAAAEAACAAAAEAAIAAAAAiAAAAAAIcgAABABAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="tinyxml2::XMLConstHandle" Collapsed="true">
+    <Position X="26" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgEBAAAEAACAAAAEAAIAAAAAiAAAAAAIMgAABABAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="DeadZone" Collapsed="true">
+    <Position X="27.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEABAAQAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>ControllerDefines.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ControllerCheck" Collapsed="true">
+    <Position X="26" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAACAAAAAAAA=</HashCode>
+      <FileName>ControllerDefines.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="WVPBufferContent" Collapsed="true">
+    <Position X="34.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAACAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Effect.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="LightConstants" Collapsed="true">
+    <Position X="31.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAICAIAAAAIAAAAAAAAAIABACAAAAAAAAAAAQ=</HashCode>
+      <FileName>Effect.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MaterialContent" Collapsed="true">
+    <Position X="33" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAUAAAAAAAAAAEAAAAAAIAAAAACIAAAAAAAAAAA=</HashCode>
+      <FileName>Effect.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="AnalogControls" Collapsed="true">
+    <Position X="24.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAEAAAAQAAAAAAAAAAAAAAAAABACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>XController.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="tinyxml2::Entity" Collapsed="true">
+    <Position X="29.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAECAAAAAAAAAAAAA=</HashCode>
+      <FileName>tinyxml2.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="uint32" Collapsed="true">
+    <Position X="26" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Types.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="uint64" Collapsed="true">
+    <Position X="27.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Types.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="RenderInstanceTree" Collapsed="true">
+    <Position X="24.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Types.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="controllertype" Collapsed="true">
+    <Position X="26" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAEAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>controller.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ControllerType" Collapsed="true">
+    <Position X="27.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAIAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>ControllerDefines.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="meshdatatype" Collapsed="true">
+    <Position X="29.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAABAAAAAAAAAAAAAQAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\Shapes\mesh.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="State" Collapsed="true">
+    <Position X="31.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAQACAAAAAA=</HashCode>
+      <FileName>D:\SDK\Demo\SpaceSim\GameEngine\particle.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ControllerActions" Collapsed="true">
+    <Position X="24.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EShAACAgACABAgAAAAgAAAAAAAKAAAAAAAIAKEEAcEA=</HashCode>
+      <FileName>XController.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="tinyxml2::XMLError" Collapsed="true">
+    <Position X="34.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKABKCAAAEAEAgoAAACAAAAAAEQBAAAAIEEgAAAgAIA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="tinyxml2::Whitespace" Collapsed="true">
+    <Position X="33" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>tinyxml2.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
