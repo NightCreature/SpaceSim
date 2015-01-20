@@ -1,0 +1,22 @@
+<xml>
+  <InputAction input_action="fire">
+    <Button input="69"/>
+  </InputAction>
+
+  <InputAction input_action="move_forwards">
+    <Button input="87"/>
+  </InputAction>
+  <InputAction input_action="move_backwards">
+    <Button input="83"/>
+  </InputAction>
+  <InputAction input_action="move_left">
+    <Button input="65"/>
+  </InputAction>
+  <InputAction input_action="move_right">
+    <Button input="68"/>
+  </InputAction>
+
+  <InputAction input_action="exit_game" >
+    <Button input="27" />
+  </InputAction>
+</xml>

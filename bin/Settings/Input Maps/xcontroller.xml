@@ -1,0 +1,12 @@
+ <xml>
+	<Deadzone />
+	<InputAction type="Button" input_action="A" input="A"/>
+	<InputAction type="Button" input_action="B" input="B"/>
+	<InputAction type="Button" input_action="X" input="X"/>
+	<InputAction type="Button" input_action="Y" input="Y"/>
+
+	<InputAction type="Button" input_action="POV_UP" input="pov_up"/>
+	<InputAction type="Button" input_action="POV_DOWN" input="pov_down"/>
+	<InputAction type="Button" input_action="POV_LEFT" input="pov_left"/>
+	<InputAction type="Button" input_action="POV_RGIGHT" input="pov_right"/>
+ </xml>

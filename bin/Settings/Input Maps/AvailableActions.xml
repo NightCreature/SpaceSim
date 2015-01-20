@@ -1,0 +1,21 @@
+<xml>
+  <ActionName name="move_forwards" lng="lng_move_forward"/>
+  <ActionName name="move_backwards" lng="lng_move_forward"/>
+  <ActionName name="move_left" lng="lng_move_forward"/>
+  <ActionName name="move_right" lng="lng_move_forward"/>
+  <ActionName name="pitch_positive" lng="lng_pitch_positive"/>
+  <ActionName name="pitch_negative" lng="lng_pitch_negative"/>
+  <ActionName name="roll_positive" lng="lng_roll_positive"/>
+  <ActionName name="roll_negative" lng="lng_roll_negative"/>
+  <ActionName name="yaw_positive" lng="lng_yaw_positive"/>
+  <ActionName name="yaw_negative" lng="lng_yaw_negative"/>
+
+  <ActionName name="fire" lng="lng_fire"/>
+  <ActionName name="exit_game" lng="lng_exit_game"/>
+  <ActionName name="fe_up" lng="lng_fe_up"/>
+  <ActionName name="fe_down" lng="lng_fe_down"/>
+  <ActionName name="fe_left" lng="lng_fe_left"/>
+  <ActionName name="fe_right" lng="lng_fe_right"/>
+  <ActionName name="fe_accept" lng="lng_fe_accept"/>
+  <ActionName name="fe_cancel" lng="lng_cancel"/>
+</xml>
