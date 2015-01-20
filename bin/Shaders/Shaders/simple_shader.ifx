@@ -1,0 +1,42 @@
+//--------------------------------------------------------------------------------------
+// Vertex shader input structure
+//--------------------------------------------------------------------------------------
+float4x4 g_world;                 // World matrix for object
+float4x4 g_worldviewprojection;   // World * View * Projection matrix
+
+struct VS_SIMPLEIN
+{
+	float4 position : POSITION;
+};
+
+//--------------------------------------------------------------------------------------
+// Vertex shader output structure
+//--------------------------------------------------------------------------------------
+struct VS_SIMPLEOUT
+{
+    float4 Position       : POSITION;   // vertex position 
+    float4 WorldPostion   : TEXCOORD0;
+};
+
+struct PS_SIMPLEOUT
+{
+    float4 color : COLOR0;  // Pixel color    
+};
+
+VS_SIMPLEOUT SimpleNormalVS( VS_SIMPLEIN In)
+{
+    VS_OUTPUT Output;   
+    Output.Position = mul(In.position, g_worldviewprojection);  
+    Output.WorldPostion = mul(In.position, g_world);  
+    return Output;
+}
+
+//--------------------------------------------------------------------------------------
+// This shader outputs the pixel's color by modulating the texture's
+//       color with diffuse material color
+//--------------------------------------------------------------------------------------
+PS_SIMPLEOUT SimpleNormalPS( VS_SIMPLEOUT In) 
+{ 
+    PS_SIMPLEOUT Output = (PS_SIMPLEOUT)0;
+    return float4(1.0, 0.0, 0.0, 0.0);
+}

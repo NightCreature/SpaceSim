@@ -1,0 +1,81 @@
+//--------------------------------------------------------------------------------------
+// Constant Buffer Variables
+//--------------------------------------------------------------------------------------
+cbuffer MaterialConstants : register(b0)
+{
+    float4 ambient;
+    float4 diffuse;
+    float4 specular;
+    float4 emissive;
+    float shininess;
+};
+
+struct LightConstants
+{
+    float4 m_position;
+    float4 m_direction;
+    float4 m_diffuse;
+    float4 m_specular;
+    float4 m_attenuationFallOff;
+    float4 m_range;
+};
+
+cbuffer LightParamters: register(b1)
+{
+    //float3 eyePosition;
+    LightConstants m_lights[8];
+    float3 camera_position;
+}
+
+
+SamplerState SampleType
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+Texture2D<float4> shaderTextures : register(t0);
+TextureCube<float4> cubeTexture : register(t1);
+Texture2D<float4> backText : register(t2);
+
+//--------------------------------------------------------------------------------------
+struct PS_INPUT
+{
+    float4 Pos : SV_POSITION;
+    float3 Nor : NORMAL0;
+    float2 Tex : TEXCOORD0;
+    float3 WorldPos : TEXCOORD1;
+};
+
+//--------------------------------------------------------------------------------------
+// Pixel Shader
+//--------------------------------------------------------------------------------------
+float4 ps_main( PS_INPUT input) : SV_Target
+{
+    float3 vertexPos = input.WorldPos;
+    float4 color;
+    float4 texColor = shaderTextures.Sample(SampleType, input.Tex);
+	
+    float3 nnormal = normalize(input.Nor);
+    float3 nviewdirection = normalize(camera_position - vertexPos);
+
+    float4 cubeTextureColor = cubeTexture.Sample(SampleType,  refract(nnormal, nviewdirection, 0.99)) *0.75;
+    float4 relfectColor = cubeTexture.Sample(SampleType,  reflect(nnormal, nviewdirection));
+    color = float4(ambient.rgb, 1.0) * cubeTextureColor + float4(emissive.rgb, 0.0);
+    for (int counter = 0; counter < 3; ++counter)
+    {        
+        float3 lightDir = normalize(m_lights[counter].m_position.xyz - vertexPos);
+        float ndotl = dot(nnormal, -lightDir);
+        float3 reflection = normalize(((2.0 * nnormal) * ndotl) - lightDir);
+        float rdotv = pow(saturate(dot(reflection, nviewdirection)), shininess);
+        if (ndotl > 0.0)
+        {
+            color = color + (m_lights[counter].m_diffuse * ndotl * (cubeTextureColor * float4(diffuse.rgb, 1.0)));// + rdotv;
+        }
+    }
+    
+    //color.rgb = nnormal;
+    //color.a = texColor.a;
+    return saturate(color);
+}

@@ -1,0 +1,39 @@
+#ifndef NORMAL_MAPPING
+#define NORMAL_MAPPING
+//passing of the texture color is done so multi texturing can be done without having to write different version of the normal mapping and other functions
+//We expect everything to be in tangent space here
+
+//! remark this normal is in tangent space need to map it back for light operations
+float3 getNormalNormalMapping( sampler normalMap, float2 texCoords)
+{
+    return ((2.0 * tex2D(normalMap, texCoords).xyz) - 1.0);
+}
+
+//! remark channel is used to determine which channel contains the height data
+float2 getParallaxTexCoords(sampler heightMap, float2 texCoords, float3 viewDirection, float scale, float bias, int channel)
+{
+    float height;
+    if (channel == 0)
+        height = scale * tex2D(heightMap, texCoords).x - bias;
+    else if (channel == 1)
+        height = scale * tex2D(heightMap, texCoords).y - bias;
+    else if (channel == 2)
+        height = scale * tex2D(heightMap, texCoords).z - bias;
+    else if (channel == 3)
+        height = scale * tex2D(heightMap, texCoords).w - bias;
+
+    return (height * normalize(viewDirection).xy + texCoords);
+}
+
+float3 getWorldNormal(float3 normal, float3 tangent, float3x3 world, float3 normalTangentSpace)
+{
+	float3 Normal  = normalize(normalTangentSpace);
+	float3 Tangent = normalize(tangent);
+	float3 binormal = normalize( cross(Tangent, Normal) );
+
+	float3x3 matInverse = transpose( float3x3(Tangent, binormal, normalize(normal)));
+
+	return mul( mul( Normal, matInverse ),  world);
+}
+
+#endif

@@ -1,0 +1,24 @@
+#ifndef SHARED_DATA_TYPES
+#define SHARED_DATA_TYPES
+
+struct MaterialData
+{
+    float4 g_ambient;      // Material's ambient color
+    float4 g_diffuse;      // Material's diffuse color
+    float4 g_specular;
+    float4 g_emissive;
+    float g_specpower;
+};
+
+struct Light
+{
+    float3 m_ambient;
+    float3 m_diffuse;
+    float3 m_specular;
+    float3 m_position;
+    float3 m_direction;
+    float3 m_attenuation;
+    float4 m_conesFallOffRange;
+};
+
+#endif

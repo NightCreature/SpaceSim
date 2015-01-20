@@ -1,0 +1,10 @@
+#ifndef CUBE_MAPPING
+#define CUBE_MAPPING
+
+float4 reflectionCubeMapping(float3 normal, float3 viewDirection, samplerCUBE cubeMap)
+{
+    float3 reflectionVector = reflect(normalize(normal), normalize(-viewDirection));
+
+    return texCUBE(cubeMap, -reflectionVector);
+}
+#endif
