@@ -16,8 +16,11 @@
 
 #include "CubeMapRenderer.h"
 
+#include "ittnotify.h"
+
 class RenderInstance;
 
+std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Matrix44 Application::m_view;
 Matrix44 Application::m_projection;
 //-----------------------------------------------------------------------------
@@ -68,6 +71,7 @@ bool Application::initialise()
     m_renderSystem.initialise(m_gameResource);
     //m_inputSystem.createController(Gamepad);
     m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml");
+    m_inputDispatch = &InputSystem::SetRawInput;
     ShaderPack shaderPack(m_gameResource);
     shaderPack.loadShaderPack("shader_pack.xml");
     m_laserManager.initialise(m_gameResource);
@@ -103,7 +107,7 @@ void Application::mainGameLoop()
     {
         message.message = WM_NULL;
         bool gotMessage = ( PeekMessage(&message, 0, 0, 0, PM_NOREMOVE) != 0 );
-        if (gotMessage && message.message != WM_INPUT)
+        if (gotMessage)
         {
             PeekMessage(&message, 0, 0, 0, PM_REMOVE );
             TranslateMessage( &message );
@@ -111,6 +115,10 @@ void Application::mainGameLoop()
         }
         else
         {
+            __itt_domain *my_itt_frame = __itt_domain_create("Application::mainGameLoop");
+            my_itt_frame->flags = 1; //enable it
+            __itt_frame_begin_v3(my_itt_frame, NULL);
+
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();
@@ -139,6 +147,8 @@ void Application::mainGameLoop()
             //{
             //    PostQuitMessage(0);
             //}
+
+            __itt_frame_end_v3(my_itt_frame, NULL);
         }
     }
 }
@@ -151,6 +161,16 @@ LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wP
     if (message == WM_DESTROY)
     {
         PostQuitMessage(0);
+    }
+    else if (message == WM_INPUT)
+    {
+        char buffer[sizeof(RAWINPUT)] = {};
+        UINT size = sizeof(RAWINPUT);
+        GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, buffer, &size, sizeof(RAWINPUTHEADER));
+
+        // extract keyboard raw input data
+        RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(buffer);
+        m_inputDispatch(raw);
     }
 
     //If the window doesn't exist yet pass on all the messages to the default win32 message handler

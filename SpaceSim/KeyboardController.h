@@ -8,6 +8,8 @@
 #include "Windns.h"
 #include "StringHelperFunctions.h"
 
+#include <map>
+
 class KeyboardInputDevice : public IInputDevice
 {
 public:
@@ -15,7 +17,7 @@ public:
     ~KeyboardInputDevice(void);
 
     virtual void initialise(  );
-    virtual const InputState& update();
+    virtual const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput);
 
     virtual const bool isConnected() const { return true; }
     virtual void enableController();

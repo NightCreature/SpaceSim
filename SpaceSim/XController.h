@@ -56,7 +56,7 @@ public:
 
     void initialise();
 
-    const InputState& update();
+    const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput);
 
     const bool isConnected() const { return m_controllerActive && m_isControllerActive; }
 

@@ -17,6 +17,8 @@
 #include "ShaderCache.h"
 #include "Paths.h"
 
+#include <windows.h>
+
 //-----------------------------------------------------------------------------
 //! @brief   Base class for an application object
 //! @remark  Defines the wndProc used in the Window class it contains
@@ -25,7 +27,7 @@ class Application
 {
 public:
     Application();
-    virtual ~Application() 
+    ~Application() 
     {
         if (m_gameResource != nullptr)
         {
@@ -40,6 +42,7 @@ public:
     void mainGameLoop();
 
     static LRESULT CALLBACK messageHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+    static std::function<void(RAWINPUT*)> m_inputDispatch;
 
     const GameResource* getResource() const { return m_gameResource; }    
 private:

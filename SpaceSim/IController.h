@@ -19,7 +19,7 @@ public:
     virtual void initialise() = 0;
     virtual void deserialise(const tinyxml2::XMLElement* element, const InputSystem& inputSystem);
 
-    virtual const InputState& update() = 0;
+    virtual const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput) = 0;
     virtual const bool isConnected() const = 0;
     virtual void enableController() = 0;
     virtual void disableController() = 0;

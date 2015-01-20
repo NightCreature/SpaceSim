@@ -15,6 +15,7 @@ public:
     Input() {}
     ~Input() {}
 
+    //We should merge the input states here so that you can use both keyboard and a controller at the same time
     void setInput(unsigned int index, InputState* input)
     {
         if (index <= m_input.size())
@@ -23,7 +24,7 @@ public:
         }
         else
         {
-            m_input[index] = input;
+            m_input[index]->mergeInputState(*input);
         }
     }
 

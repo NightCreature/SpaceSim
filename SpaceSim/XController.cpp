@@ -89,8 +89,12 @@ void XInputDevice::initialise( )
 //!! @return
 //!! @remarks Need to implement setting the values in the InputState
 //!-----------------------------------------------------------------------------
-const InputState& XInputDevice::update()
+const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput)
 {
+    UNUSEDPARAM(keyboardInput);
+    UNUSEDPARAM(mouseInput);
+    UNUSEDPARAM(hidInput);
+
     DWORD gamepadActive = 0;    
     XINPUT_STATE newState;
     ZeroMemory( &newState, sizeof(XINPUT_STATE) );

@@ -54,8 +54,8 @@ template<class ValueType, class InputActionType>
 class InputAction
 {
 public:
-    InputAction() : m_action() {}
-    InputAction(const InputActionType action) : m_action(action) {}
+    InputAction() : m_action(), m_value(0) {}
+    InputAction(const InputActionType action) : m_action(action), m_value(0) {}
     ~InputAction() {}
 
     const InputActionType getAction() const { return m_action; }

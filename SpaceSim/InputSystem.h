@@ -5,6 +5,9 @@
 #include <map>
 #include <string>
 
+#include <deque>
+#include <windows.h>
+
 //-----------------------------------------------------------------------------
 //! @brief   Input System
 //! @remark
@@ -38,6 +41,11 @@ public:
     typedef std::map<IInputDevice*, InputState>::iterator ControllersAndStateIt;
     typedef std::pair<IInputDevice*, InputState> ControllerAndStatePair;
     typedef std::vector<InputActions::ActionType> AvailableActions;
+
+    static void SetRawInput(RAWINPUT* rawInput) 
+    {
+        m_rawInput.push_back(*rawInput); 
+    }
 protected:
 private:
     IInputDevice* createController(const ControllerType type);
@@ -45,4 +53,6 @@ private:
 
     ControllersAndState m_controllers;
     static AvailableActions m_availableActions;
+
+    static std::vector<RAWINPUT> m_rawInput;
 };

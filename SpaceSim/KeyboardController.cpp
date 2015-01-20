@@ -29,59 +29,72 @@ void KeyboardInputDevice::initialise()
     }
 }
 
-const InputState& KeyboardInputDevice::update()
+const InputState& KeyboardInputDevice::update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput)
 {
-    unsigned int inputStructureSize = 0;
-    //RAWINPUT rawInput;
-    if (GetRawInputBuffer(0, &inputStructureSize, sizeof(RAWINPUTHEADER)) != 0 )
-    {
-        MSG_TRACE_CHANNEL("KEYBOARD CONTROLLER ERROR:", "Failed to grab raw input header!");
-        return m_controllerState;
-    }
-    inputStructureSize *= 16;
-    PRAWINPUT rawInput = (PRAWINPUT)malloc(inputStructureSize);
-    if (rawInput == 0)
-    {
-        return m_controllerState;
-    }
+    UNUSEDPARAM(mouseInput);
+    UNUSEDPARAM(hidInput);
 
-    unsigned int sizeT = inputStructureSize;
-    unsigned int input = GetRawInputBuffer(rawInput, &sizeT, sizeof(RAWINPUTHEADER));
+    //unsigned int inputStructureSize = 0;
+    ////RAWINPUT rawInput;
+    //if (GetRawInputBuffer(0, &inputStructureSize, sizeof(RAWINPUTHEADER)) != 0 )
+    //{
+    //    MSG_TRACE_CHANNEL("KEYBOARD CONTROLLER ERROR:", "Failed to grab raw input header!");
+    //    return m_controllerState;
+    //}
+    //inputStructureSize *= 16;
+    //PRAWINPUT rawInput = (PRAWINPUT)malloc(inputStructureSize);
+    //if (rawInput == 0)
+    //{
+    //    return m_controllerState;
+    //}
 
-    if (input == 0)
+    //unsigned int sizeT = inputStructureSize;
+    //unsigned int input = GetRawInputBuffer(rawInput, &sizeT, sizeof(RAWINPUTHEADER));
+
+    //if (input == 0)
+    //{
+    //    free(rawInput);
+    //    resetInputValues();
+    //    return m_controllerState;
+    //}
+    //if (input == (unsigned int)(-1))
+    //{
+    //    MSG_TRACE_CHANNEL("KEYBOARD CONTROLLER ERROR:", "Failed to grab the input buffer with error: 0x%x", GetLastError());
+    //    free(rawInput);
+    //    //resetInputValues();
+    //    return m_controllerState;
+    //}
+    //
+    //PRAWINPUT prawInput = rawInput;
+    for(auto input : keyboardInput)
     {
-        free(rawInput);
-        //resetInputValues();
-        return m_controllerState;
-    }
-    if (input == (unsigned int)(-1))
-    {
-        MSG_TRACE_CHANNEL("KEYBOARD CONTROLLER ERROR:", "Failed to grab the input buffer with error: 0x%x", GetLastError());
-        free(rawInput);
-        //resetInputValues();
-        return m_controllerState;
-    }
-    
-    PRAWINPUT prawInput = rawInput;
-    for(size_t counter = 0; counter < input; ++counter)
-    {
-        if (prawInput->header.dwType == RIM_TYPEKEYBOARD)
+        printKeyState(&input);
+
+        input.data.keyboard = rawInputFixup(input.data.keyboard);
+        //printKeyState(prawInput);
+        PhysicalInputMapping::const_iterator it = m_physicalKeyToAction.find(input.data.keyboard.VKey);
+        if (it != m_physicalKeyToAction.end())
         {
-            prawInput->data.keyboard = rawInputFixup(prawInput->data.keyboard);
-            //printKeyState(prawInput);
-            PhysicalInputMapping::const_iterator it = m_physicalKeyToAction.find(prawInput->data.keyboard.VKey);
-            if (it != m_physicalKeyToAction.end())
+            
+            bool isUp = RI_KEY_BREAK & input.data.keyboard.Flags;
+            float value = 0.0f;
+            if (isUp)
             {
-                m_controllerState.setActionValue(it->second,  (float)(((KeyState)RI_KEY_MAKE & prawInput->data.keyboard.Flags)) == Pressed);
-                m_buttonState[prawInput->data.keyboard.VKey] = (KeyState)(RI_KEY_MAKE & prawInput->data.keyboard.Flags);
+                value = 0.0f;
             }
+            else
+            {
+                value = 1.0f;
+            }
+            m_controllerState.setActionValue(it->second, value);
+            m_buttonState[input.data.keyboard.VKey] = KeyState(value > 0.0f);
         }
-
-        DefRawInputProc(&prawInput, input, sizeof(RAWINPUTHEADER));
-        prawInput = NEXTRAWINPUTBLOCK(prawInput);
     }
 
-    free(rawInput);
+    //DefRawInputProc(&prawInput, input, sizeof(RAWINPUTHEADER));
+    //prawInput = NEXTRAWINPUTBLOCK(prawInput);
+
+    //free(rawInput);
     return m_controllerState;
 }
 
