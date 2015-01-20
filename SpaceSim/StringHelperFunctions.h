@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include <Windows.h>
+#include <Stringapiset.h>
 
 const unsigned int c_fnvHashOffset = 2166136261;
 const unsigned int c_fnvHashPrime = 16777619;
@@ -24,7 +25,7 @@ inline void debugOutput( const std::string& prefix, const char * format, ...)
         sprintf_s(debugOutputStr, 3072, "[TRACE] %s\n", buf );
     else
         sprintf_s(debugOutputStr, 3072, "[%s] %s\n", prefix.c_str(), buf );
-    OutputDebugStringA( debugOutputStr );
+    OutputDebugStringA( debugOutputStr ); //Should really call the log provider instead here
 }
 
 //#ifndef _DEBUG
@@ -52,6 +53,16 @@ inline unsigned int hashString(const std::string& sourceStr)
     }
 
     return returnHash;
+}
+
+//-------------------------------------------------------------------------
+// @brief Safe string copy
+//-------------------------------------------------------------------------
+template <size_t charCount>
+void stringCopy(char (&output)[charCount], const char* source)
+{
+    strncpy(output, source, charCount);
+    output[charCount -1] = 0;
 }
 
 ////-----------------------------------------------------------------------------
@@ -190,4 +201,28 @@ inline std::string extractPathFromFileName( const std::string &fileName )
     }
 
     return fileName.substr(0, counter + 1);
+}
+
+inline void convertToWideString(const std::string& str, std::wstring& out)
+{
+    wchar_t* buffer = &(out[0]);
+    int numberOfWideChars = MultiByteToWideChar(CP_UTF8, WC_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, 0);
+    if (numberOfWideChars > 0)
+    {
+        out.reserve(numberOfWideChars);
+        MultiByteToWideChar(CP_UTF8, WC_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, numberOfWideChars);
+    }
+
+}
+
+inline void convertToCString(const std::wstring& str, std::string& out)
+{
+    char* buffer = &(out[0]);
+    BOOL usedDefaultChar = FALSE;
+    int numberOfCChars = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, 0, nullptr, &usedDefaultChar);
+    if (numberOfCChars > 0)
+    {
+        out.reserve(numberOfCChars);
+        WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, numberOfCChars, nullptr, &usedDefaultChar);
+    }
 }
