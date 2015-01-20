@@ -1,0 +1,9 @@
+*.dll
+*.exe
+*.manifest
+*.pdb
+*.suo
+*.bsc
+*.ilk
+*.swo
+[Ll]ogs/
