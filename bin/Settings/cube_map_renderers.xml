@@ -1,0 +1,15 @@
+<xml>
+  <CubeRendererInitialiseData name="cube_player_forcefield" dynamic="true">
+    <Vector3 x="525" y="-75" z="175" />
+  </CubeRendererInitialiseData>
+  <CubeRendererInitialiseData name="cube_left_forcefield" dynamic="false">
+    <Vector3 x="525" y="-75" z="175" />
+  </CubeRendererInitialiseData>
+  <CubeRendererInitialiseData name="cube_right_forcefield" dynamic="false">
+    <Vector3 x="525" y="-75" z="175" />
+  </CubeRendererInitialiseData>
+    <CubeRendererInitialiseData name="cube_core_forcefield" dynamic="true">
+    <Vector3 x="525" y="-75" z="175" />
+  </CubeRendererInitialiseData>
+
+</xml>
