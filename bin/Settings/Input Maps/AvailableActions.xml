@@ -3,12 +3,12 @@
   <ActionName name="move_backwards" lng="lng_move_forward"/>
   <ActionName name="move_left" lng="lng_move_forward"/>
   <ActionName name="move_right" lng="lng_move_forward"/>
-  <ActionName name="pitch_positive" lng="lng_pitch_positive"/>
-  <ActionName name="pitch_negative" lng="lng_pitch_negative"/>
-  <ActionName name="roll_positive" lng="lng_roll_positive"/>
-  <ActionName name="roll_negative" lng="lng_roll_negative"/>
-  <ActionName name="yaw_positive" lng="lng_yaw_positive"/>
-  <ActionName name="yaw_negative" lng="lng_yaw_negative"/>
+  <ActionName name="move_pitch_up" lng="lng_pitch_positive"/>
+  <ActionName name="move_pitch_down" lng="lng_pitch_negative"/>
+  <ActionName name="move_roll_left" lng="lng_roll_positive"/>
+  <ActionName name="move_roll_right" lng="lng_roll_negative"/>
+  <ActionName name="move_yaw_left" lng="lng_yaw_positive"/>
+  <ActionName name="move_yaw_right" lng="lng_yaw_negative"/>
 
   <ActionName name="fire" lng="lng_fire"/>
   <ActionName name="exit_game" lng="lng_exit_game"/>

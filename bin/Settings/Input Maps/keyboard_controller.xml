@@ -1,8 +1,4 @@
 <xml>
-  <InputAction input_action="fire">
-    <Button input="69"/>
-  </InputAction>
-
   <InputAction input_action="move_forwards">
     <Button input="87"/>
   </InputAction>
@@ -14,6 +10,26 @@
   </InputAction>
   <InputAction input_action="move_right">
     <Button input="68"/>
+  </InputAction>
+
+<!--Yaw, Pitch and Roll controls-->
+  <InputAction input_action="move_yaw_left">
+    <Button input="90"/>
+  </InputAction>
+  <InputAction input_action="move_yaw_right">
+    <Button input="88"/>
+  </InputAction>
+  <InputAction input_action="move_pitch_up">
+    <Button input="82"/>
+  </InputAction>
+  <InputAction input_action="move_pitch_down">
+    <Button input="70"/>
+  </InputAction>
+  <InputAction input_action="move_roll_left">
+    <Button input="81"/>
+  </InputAction>
+  <InputAction input_action="move_roll_right">
+    <Button input="69"/>
   </InputAction>
 
   <InputAction input_action="exit_game" >
