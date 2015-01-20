@@ -252,6 +252,15 @@
     <ClCompile Include="GeometryCache.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StringOperations\StringTemplate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RKIntegrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="applicationsetting.h">
@@ -536,6 +545,15 @@
     <ClInclude Include="GeometryCache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringOperations\StringTemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RKIntegrator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\DebugColorShader.fx">
@@ -625,6 +643,9 @@
     </None>
     <None Include="..\bin\Shaders\Shaders\core_pixel_shader.ps">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="StringOperations\StringTemplate.inl">
+      <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
