@@ -40,7 +40,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -50,7 +50,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -81,13 +81,13 @@
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</EmbedManifest>
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EmbedManifest>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\include\;D:\SDK\Visual Leak Detector\2012\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\SDK\Visual Leak Detector\include;C:\SDK\tinyxml;$(WindowsSdkDir)\include;C:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files %28x86%29\Intel\VTune Amplifier XE 2011\include;C:\SDK\Visual Leak Detector\include;C:\SDK\tinyxml;$(WindowsSdkDir)\include;C:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\lib\x86;D:\SDK\Visual Leak Detector\2012\lib\Win32;D:\SDK\tinyxml\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\SDK\Assimp\lib\x64;C:\SDK\Visual Leak Detector\lib\Win64;C:\SDK\tinyxml\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\SDK\DirectXTK\Bin\Desktop_2012\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files %28x86%29\Intel\VTune Amplifier XE 2011\lib64;C:\SDK\Assimp\lib\x64;C:\SDK\Visual Leak Detector\lib\Win64;C:\SDK\tinyxml\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\SDK\DirectXTK\Bin\Desktop_2013\x64\Debug;$(LibraryPath)</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\SDK\Visual Leak Detector\include;C:\SDK\tinyxml;$(WindowsSdkDir)\include;C:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\SDK\Visual Leak Detector\include;C:\SDK\tinyxml;$(WindowsSdkDir)\include;C:\SDK\Assimp\include\;C:\Program Files %28x86%29\Intel\VTune Amplifier XE 2011\include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\SDK\Visual Leak Detector\lib;C:\SDK\tinyxml\Release;C:\SDK\DirectXTK\Bin\Desktop_2012\x64\Release;C:\SDK\Assimp\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\SDK\Visual Leak Detector\lib;C:\SDK\tinyxml\Release;C:\SDK\DirectXTK\Bin\Desktop_2012\x64\Release;C:\SDK\Assimp\lib\x64;C:\Program Files %28x86%29\Intel\VTune Amplifier XE 2011\lib64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>C:\SDK\Demo\SpaceSim\bin\</OutDir>
@@ -151,12 +151,12 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <DisableSpecificWarnings>4324;4447</DisableSpecificWarnings>
       <BrowseInformation>true</BrowseInformation>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
       <AdditionalUsingDirectories>C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcpackages;C:\Program Files (x86)\Microsoft Visual Studio 11.0\Blend\WinMD</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;libittnotify.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -214,7 +214,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;libittnotify.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -246,6 +246,7 @@
     <ClCompile Include="..\Shapes\face.cpp" />
     <ClCompile Include="..\Shapes\forcefield.cpp" />
     <ClCompile Include="EffectCache.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="GameResource.cpp" />
@@ -286,6 +287,7 @@
     <ClCompile Include="..\Shapes\rotatingblades.cpp" />
     <ClCompile Include="..\GameEngine\scorchmark.cpp" />
     <ClCompile Include="Resourceable.cpp" />
+    <ClCompile Include="RKIntegrator.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="SettingsManager.cpp" />
     <ClCompile Include="SettingsParser.cpp" />
@@ -297,6 +299,7 @@
     <ClCompile Include="ShaderCache.cpp" />
     <ClCompile Include="ShaderPack.cpp" />
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="StringOperations\StringTemplate.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="..\MatrixAndVectorMath\vector2.cpp" />
     <ClCompile Include="..\MatrixAndVectorMath\vector3.cpp" />
@@ -332,6 +335,7 @@
     <ClInclude Include="..\Shapes\face.h" />
     <ClInclude Include="..\Shapes\forcefield.h" />
     <ClInclude Include="EffectCache.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="GameResource.h" />
@@ -377,6 +381,7 @@
     <ClInclude Include="..\Shapes\rotatingblades.h" />
     <ClInclude Include="..\GameEngine\scorchmark.h" />
     <ClInclude Include="Resourceable.h" />
+    <ClInclude Include="RKIntegrator.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="SettingsManager.h" />
     <ClInclude Include="SettingsParser.h" />
@@ -391,6 +396,7 @@
     <ClInclude Include="..\Shapes\switch.h" />
     <ClInclude Include="..\GameEngine\texture.h" />
     <ClInclude Include="..\GameEngine\texturemanager.h" />
+    <ClInclude Include="StringOperations\StringTemplate.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="..\MatrixAndVectorMath\vector2.h" />
     <ClInclude Include="..\MatrixAndVectorMath\vector3.h" />
@@ -423,6 +429,7 @@
     <None Include="pointlight.vsh" />
     <None Include="..\bin\settings.cfg" />
     <None Include="..\bin\SimpleEffect.fx" />
+    <None Include="StringOperations\StringTemplate.inl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SpaceSim.rc" />
