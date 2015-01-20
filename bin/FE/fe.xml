@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <definition>
+    <Text>
+      <div class="#style">#actual_text</div>
+    </Text>
+
+    <Button id="#id">
+      <Text stlye="Button_Header" actual_text="lng_button_header" />
+      <a class="#link_class" href="#link" />
+    </Button>
+  </definition>
+
+  <style><!--Inline css  for style definintions-->
+    
+  </style>
+  
+  <body>
+
+    <Screen id="main_menu">
+      <Text style ="text" actual_text="lng_text_ref"/>
+      <Button id="test" style="default" lng_id="test_header" link="next" />
+      <Button id="test1" style="default" lng_id="test_header1" link="next1" />
+      <Button id="test2" style="default" lng_id="test_header2" link="next2" />
+    </Screen>
+
+  </body>
+</html>

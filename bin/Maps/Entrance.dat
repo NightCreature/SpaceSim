@@ -1,0 +1,1250 @@
+<xml>
+  <Light name="light_0" type="1" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="500">
+    <Vector3 x="525" y="-75" z="-100" />
+    <Vector3 x="0" y="0" z="-1" />
+    <Color r="1" g="1" b="1" a="1"/>
+    <Color r="1" g="1" b="0" a="1"/>
+  </Light>
+  <Light name="light_1" type="1" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="500">
+    <Vector3 x="525" y="-75" z="-150" />
+    <Vector3 x="0" y="0" z="-1" />
+    <Color r="1" g="1" b="1" a="1"/>
+    <Color r="1" g="1" b="0" a="1"/>
+  </Light>
+  <Light name="light_2" type="1" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="500">
+    <Vector3 x="525" y="-75" z="200" />
+    <Vector3 x="0" y="0" z="-1" />
+    <Color r="1" g="1" b="1" a="1"/>
+    <Color r="1" g="1" b="0" a="1"/>
+  </Light>
+  <Wall type="6">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="100" y="0" z="-350"/>
+    <Vector3 x="950" y="0" z="-350"/>
+    <Vector3 x="950" y="0" z="1500"/>
+    <Vector3 x="100" y="0" z="1500"/>
+  </Wall>
+  <Wall type="7">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="100" y="-700" z="-350"/>
+    <Vector3 x="950" y="-700" z="-350"/>
+    <Vector3 x="950" y="-700" z="1500"/>
+    <Vector3 x="100" y="-700" z="1500"/>
+  </Wall>
+  <Wall type="8">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="100" y="-700" z="-350"/>
+    <Vector3 x="100" y="-700" z="1500"/>
+    <Vector3 x="100" y="0" z="1500"/>
+    <Vector3 x="100" y="0" z="-350"/>
+  </Wall>
+  <Wall type="9">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="950" y="-700" z="-350"/>
+    <Vector3 x="950" y="-700" z="1500"/>
+    <Vector3 x="950" y="0" z="1500"/>
+    <Vector3 x="950" y="0" z="-350"/>
+  </Wall>
+  <Wall type="11">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="100" y="0" z="-350"/>
+    <Vector3 x="100" y="-50" z="-350"/>
+    <Vector3 x="950" y="-50" z="-350"/>
+    <Vector3 x="950" y="0" z="-350"/>
+  </Wall>
+  <Wall type="11">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="100" y="-100" z="-350"/>
+    <Vector3 x="100" y="-700" z="-350"/>
+    <Vector3 x="950" y="-700" z="-350"/>
+    <Vector3 x="950" y="-100" z="-350"/>
+  </Wall>
+  <Wall type="11">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="100" y="-50" z="-350"/>
+    <Vector3 x="100" y="-100" z="-350"/>
+    <Vector3 x="500" y="-100" z="-350"/>
+    <Vector3 x="500" y="-50" z="-350"/>
+  </Wall>
+  <Wall type="11">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="550" y="-50" z="-350"/>
+    <Vector3 x="550" y="-100" z="-350"/>
+    <Vector3 x="950" y="-100" z="-350"/>
+    <Vector3 x="950" y="-50" z="-350"/>
+  </Wall>
+  <Wall type="10">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="100" y="0" z="1500"/>
+    <Vector3 x="100" y="-550" z="1500"/>
+    <Vector3 x="950" y="-550" z="1500"/>
+    <Vector3 x="950" y="0" z="1500"/>
+  </Wall>
+  <Wall type="10">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="100" y="-600" z="1500"/>
+    <Vector3 x="100" y="-700" z="1500"/>
+    <Vector3 x="950" y="-700" z="1500"/>
+    <Vector3 x="950" y="-600" z="1500"/>
+  </Wall>
+  <Wall type="10">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="100" y="-550" z="1500"/>
+    <Vector3 x="100" y="-600" z="1500"/>
+    <Vector3 x="500" y="-600" z="1500"/>
+    <Vector3 x="500" y="-550" z="1500"/>
+  </Wall>
+  <Wall type="10">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\station.jpg"/>
+    </Material>
+    <Vector3 x="550" y="-550" z="1500"/>
+    <Vector3 x="550" y="-600" z="1500"/>
+    <Vector3 x="950" y="-600" z="1500"/>
+    <Vector3 x="950" y="-550" z="1500"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="500" y="-50" z="-350"/>
+    <Vector3 x="500" y="-50" z="150"/>
+    <Vector3 x="550" y="-50" z="150"/>
+    <Vector3 x="550" y="-50" z="-350"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="500" y="-100" z="-350"/>
+    <Vector3 x="500" y="-100" z="150"/>
+    <Vector3 x="550" y="-100" z="150"/>
+    <Vector3 x="550" y="-100" z="-350"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="500" y="-50" z="-350"/>
+    <Vector3 x="500" y="-50" z="150"/>
+    <Vector3 x="500" y="-100" z="150"/>
+    <Vector3 x="500" y="-100" z="-350"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="550" y="-50" z="-350"/>
+    <Vector3 x="550" y="-50" z="150"/>
+    <Vector3 x="550" y="-100" z="150"/>
+    <Vector3 x="550" y="-100" z="-350"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="200" y="-50" z="150"/>
+    <Vector3 x="200" y="-50" z="200"/>
+    <Vector3 x="850" y="-50" z="200"/>
+    <Vector3 x="850" y="-50" z="150"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="200" y="-100" z="150"/>
+    <Vector3 x="200" y="-100" z="200"/>
+    <Vector3 x="850" y="-100" z="200"/>
+    <Vector3 x="850" y="-100" z="150"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="200" y="-50" z="200"/>
+    <Vector3 x="200" y="-100" z="200"/>
+    <Vector3 x="850" y="-100" z="200"/>
+    <Vector3 x="850" y="-50" z="200"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="200" y="-50" z="200"/>
+    <Vector3 x="200" y="-100" z="200"/>
+    <Vector3 x="200" y="-100" z="150"/>
+    <Vector3 x="200" y="-50" z="150"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="850" y="-50" z="200"/>
+    <Vector3 x="850" y="-100" z="200"/>
+    <Vector3 x="850" y="-100" z="150"/>
+    <Vector3 x="850" y="-50" z="150"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="250" y="-50" z="150"/>
+    <Vector3 x="250" y="-100" z="150"/>
+    <Vector3 x="500" y="-100" z="150"/>
+    <Vector3 x="500" y="-50" z="150"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="550" y="-50" z="150"/>
+    <Vector3 x="550" y="-100" z="150"/>
+    <Vector3 x="800" y="-100" z="150"/>
+    <Vector3 x="800" y="-50" z="150"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="250" y="-50" z="150"/>
+    <Vector3 x="250" y="-50" z="100"/>
+    <Vector3 x="150" y="-50" z="100"/>
+    <Vector3 x="150" y="-50" z="150"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="250" y="-300" z="150"/>
+    <Vector3 x="250" y="-300" z="100"/>
+    <Vector3 x="150" y="-300" z="100"/>
+    <Vector3 x="150" y="-300" z="150"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="150" y="-50" z="100"/>
+    <Vector3 x="150" y="-50" z="150"/>
+    <Vector3 x="150" y="-300" z="150"/>
+    <Vector3 x="150" y="-300" z="100"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="250" y="-50" z="100"/>
+    <Vector3 x="250" y="-50" z="150"/>
+    <Vector3 x="250" y="-300" z="150"/>
+    <Vector3 x="250" y="-300" z="100"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="250" y="-50" z="100"/>
+    <Vector3 x="150" y="-50" z="100"/>
+    <Vector3 x="150" y="-300" z="100"/>
+    <Vector3 x="250" y="-300" z="100"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="250" y="-100" z="150"/>
+    <Vector3 x="150" y="-100" z="150"/>
+    <Vector3 x="150" y="-250" z="150"/>
+    <Vector3 x="250" y="-250" z="150"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="200" y="-50" z="150"/>
+    <Vector3 x="150" y="-50" z="150"/>
+    <Vector3 x="150" y="-100" z="150"/>
+    <Vector3 x="200" y="-100" z="150"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="250" y="-250" z="150"/>
+    <Vector3 x="250" y="-300" z="150"/>
+    <Vector3 x="200" y="-300" z="150"/>
+    <Vector3 x="200" y="-250" z="150"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="900" y="-50" z="150"/>
+    <Vector3 x="800" y="-50" z="150"/>
+    <Vector3 x="800" y="-50" z="100"/>
+    <Vector3 x="900" y="-50" z="100"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="900" y="-300" z="150"/>
+    <Vector3 x="800" y="-300" z="150"/>
+    <Vector3 x="800" y="-300" z="100"/>
+    <Vector3 x="900" y="-300" z="100"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="800" y="-50" z="100"/>
+    <Vector3 x="800" y="-50" z="150"/>
+    <Vector3 x="800" y="-300" z="150"/>
+    <Vector3 x="800" y="-300" z="100"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="900" y="-50" z="100"/>
+    <Vector3 x="900" y="-50" z="150"/>
+    <Vector3 x="900" y="-300" z="150"/>
+    <Vector3 x="900" y="-300" z="100"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="900" y="-50" z="100"/>
+    <Vector3 x="800" y="-50" z="100"/>
+    <Vector3 x="800" y="-300" z="100"/>
+    <Vector3 x="900" y="-300" z="100"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="900" y="-100" z="150"/>
+    <Vector3 x="800" y="-100" z="150"/>
+    <Vector3 x="800" y="-250" z="150"/>
+    <Vector3 x="900" y="-250" z="150"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="900" y="-50" z="150"/>
+    <Vector3 x="850" y="-50" z="150"/>
+    <Vector3 x="850" y="-100" z="150"/>
+    <Vector3 x="900" y="-100" z="150"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="850" y="-250" z="150"/>
+    <Vector3 x="850" y="-300" z="150"/>
+    <Vector3 x="800" y="-300" z="150"/>
+    <Vector3 x="800" y="-250" z="150"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="150" y="-250" z="150"/>
+    <Vector3 x="150" y="-250" z="650"/>
+    <Vector3 x="200" y="-250" z="650"/>
+    <Vector3 x="200" y="-250" z="150"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="150" y="-300" z="150"/>
+    <Vector3 x="150" y="-300" z="650"/>
+    <Vector3 x="200" y="-300" z="650"/>
+    <Vector3 x="200" y="-300" z="150"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="150" y="-250" z="150"/>
+    <Vector3 x="150" y="-300" z="150"/>
+    <Vector3 x="150" y="-300" z="650"/>
+    <Vector3 x="150" y="-250" z="650"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="200" y="-250" z="150"/>
+    <Vector3 x="200" y="-300" z="150"/>
+    <Vector3 x="200" y="-300" z="650"/>
+    <Vector3 x="200" y="-250" z="650"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="150" y="-250" z="650"/>
+    <Vector3 x="150" y="-250" z="700"/>
+    <Vector3 x="250" y="-250" z="700"/>
+    <Vector3 x="250" y="-250" z="650"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="150" y="-300" z="650"/>
+    <Vector3 x="150" y="-300" z="700"/>
+    <Vector3 x="250" y="-300" z="700"/>
+    <Vector3 x="250" y="-300" z="650"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="150" y="-250" z="700"/>
+    <Vector3 x="150" y="-300" z="700"/>
+    <Vector3 x="250" y="-300" z="700"/>
+    <Vector3 x="250" y="-250" z="700"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="150" y="-250" z="650"/>
+    <Vector3 x="150" y="-250" z="700"/>
+    <Vector3 x="150" y="-300" z="700"/>
+    <Vector3 x="150" y="-300" z="650"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="250" y="-250" z="650"/>
+    <Vector3 x="250" y="-250" z="700"/>
+    <Vector3 x="250" y="-300" z="700"/>
+    <Vector3 x="250" y="-300" z="650"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="850" y="-250" z="150"/>
+    <Vector3 x="850" y="-250" z="650"/>
+    <Vector3 x="900" y="-250" z="650"/>
+    <Vector3 x="900" y="-250" z="150"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="850" y="-300" z="150"/>
+    <Vector3 x="850" y="-300" z="650"/>
+    <Vector3 x="900" y="-300" z="650"/>
+    <Vector3 x="900" y="-300" z="150"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="850" y="-250" z="150"/>
+    <Vector3 x="850" y="-300" z="150"/>
+    <Vector3 x="850" y="-300" z="650"/>
+    <Vector3 x="850" y="-250" z="650"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="900" y="-250" z="150"/>
+    <Vector3 x="900" y="-300" z="150"/>
+    <Vector3 x="900" y="-300" z="650"/>
+    <Vector3 x="900" y="-250" z="650"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="800" y="-250" z="650"/>
+    <Vector3 x="800" y="-250" z="700"/>
+    <Vector3 x="900" y="-250" z="700"/>
+    <Vector3 x="900" y="-250" z="650"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="800" y="-300" z="650"/>
+    <Vector3 x="800" y="-300" z="700"/>
+    <Vector3 x="900" y="-300" z="700"/>
+    <Vector3 x="900" y="-300" z="650"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="800" y="-250" z="700"/>
+    <Vector3 x="800" y="-300" z="700"/>
+    <Vector3 x="900" y="-300" z="700"/>
+    <Vector3 x="900" y="-250" z="700"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="800" y="-250" z="650"/>
+    <Vector3 x="800" y="-250" z="700"/>
+    <Vector3 x="800" y="-300" z="700"/>
+    <Vector3 x="800" y="-300" z="650"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="900" y="-250" z="650"/>
+    <Vector3 x="900" y="-250" z="700"/>
+    <Vector3 x="900" y="-300" z="700"/>
+    <Vector3 x="900" y="-300" z="650"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="200" y="-250" z="350"/>
+    <Vector3 x="200" y="-250" z="650"/>
+    <Vector3 x="250" y="-250" z="650"/>
+    <Vector3 x="250" y="-250" z="350"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="200" y="-300" z="350"/>
+    <Vector3 x="200" y="-300" z="650"/>
+    <Vector3 x="250" y="-300" z="650"/>
+    <Vector3 x="250" y="-300" z="350"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="200" y="-250" z="350"/>
+    <Vector3 x="200" y="-250" z="650"/>
+    <Vector3 x="200" y="-300" z="650"/>
+    <Vector3 x="200" y="-300" z="350"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="250" y="-250" z="400"/>
+    <Vector3 x="250" y="-250" z="650"/>
+    <Vector3 x="250" y="-300" z="650"/>
+    <Vector3 x="250" y="-300" z="400"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="800" y="-250" z="350"/>
+    <Vector3 x="800" y="-250" z="650"/>
+    <Vector3 x="850" y="-250" z="650"/>
+    <Vector3 x="850" y="-250" z="350"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="800" y="-300" z="350"/>
+    <Vector3 x="800" y="-300" z="650"/>
+    <Vector3 x="850" y="-300" z="650"/>
+    <Vector3 x="850" y="-300" z="350"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="800" y="-250" z="400"/>
+    <Vector3 x="800" y="-250" z="650"/>
+    <Vector3 x="800" y="-300" z="650"/>
+    <Vector3 x="800" y="-300" z="400"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="850" y="-250" z="350"/>
+    <Vector3 x="850" y="-250" z="650"/>
+    <Vector3 x="850" y="-300" z="650"/>
+    <Vector3 x="850" y="-300" z="350"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="250" y="-250" z="350"/>
+    <Vector3 x="250" y="-250" z="400"/>
+    <Vector3 x="800" y="-250" z="400"/>
+    <Vector3 x="800" y="-250" z="350"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="250" y="-300" z="350"/>
+    <Vector3 x="250" y="-300" z="400"/>
+    <Vector3 x="800" y="-300" z="400"/>
+    <Vector3 x="800" y="-300" z="350"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="200" y="-250" z="350"/>
+    <Vector3 x="200" y="-300" z="350"/>
+    <Vector3 x="850" y="-300" z="350"/>
+    <Vector3 x="850" y="-250" z="350"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="250" y="-250" z="400"/>
+    <Vector3 x="250" y="-300" z="400"/>
+    <Vector3 x="500" y="-300" z="400"/>
+    <Vector3 x="500" y="-250" z="400"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="550" y="-250" z="400"/>
+    <Vector3 x="550" y="-300" z="400"/>
+    <Vector3 x="800" y="-300" z="400"/>
+    <Vector3 x="800" y="-250" z="400"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="550" y="-250" z="400"/>
+    <Vector3 x="500" y="-250" z="400"/>
+    <Vector3 x="500" y="-250" z="450"/>
+    <Vector3 x="550" y="-250" z="450"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="550" y="-500" z="400"/>
+    <Vector3 x="500" y="-500" z="400"/>
+    <Vector3 x="500" y="-500" z="450"/>
+    <Vector3 x="550" y="-500" z="450"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="500" y="-250" z="400"/>
+    <Vector3 x="500" y="-250" z="450"/>
+    <Vector3 x="500" y="-500" z="450"/>
+    <Vector3 x="500" y="-500" z="400"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="550" y="-250" z="400"/>
+    <Vector3 x="550" y="-250" z="450"/>
+    <Vector3 x="550" y="-500" z="450"/>
+    <Vector3 x="550" y="-500" z="400"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="550" y="-300" z="400"/>
+    <Vector3 x="550" y="-500" z="400"/>
+    <Vector3 x="500" y="-500" z="400"/>
+    <Vector3 x="500" y="-300" z="400"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="500" y="-250" z="450"/>
+    <Vector3 x="500" y="-450" z="450"/>
+    <Vector3 x="550" y="-450" z="450"/>
+    <Vector3 x="550" y="-250" z="450"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="300" y="-350" z="450"/>
+    <Vector3 x="300" y="-350" z="950"/>
+    <Vector3 x="750" y="-350" z="950"/>
+    <Vector3 x="750" y="-350" z="450"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="300" y="-650" z="450"/>
+    <Vector3 x="300" y="-650" z="950"/>
+    <Vector3 x="750" y="-650" z="950"/>
+    <Vector3 x="750" y="-650" z="450"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="300" y="-350" z="450"/>
+    <Vector3 x="300" y="-650" z="450"/>
+    <Vector3 x="300" y="-650" z="950"/>
+    <Vector3 x="300" y="-350" z="950"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="750" y="-350" z="450"/>
+    <Vector3 x="750" y="-650" z="450"/>
+    <Vector3 x="750" y="-650" z="950"/>
+    <Vector3 x="750" y="-350" z="950"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="300" y="-350" z="450"/>
+    <Vector3 x="300" y="-450" z="450"/>
+    <Vector3 x="750" y="-450" z="450"/>
+    <Vector3 x="750" y="-350" z="450"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="300" y="-450" z="450"/>
+    <Vector3 x="300" y="-500" z="450"/>
+    <Vector3 x="500" y="-500" z="450"/>
+    <Vector3 x="500" y="-450" z="450"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="300" y="-500" z="450"/>
+    <Vector3 x="300" y="-650" z="450"/>
+    <Vector3 x="750" y="-650" z="450"/>
+    <Vector3 x="750" y="-500" z="450"/>
+  </Wall>
+  <Wall type="5">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="550" y="-450" z="450"/>
+    <Vector3 x="550" y="-500" z="450"/>
+    <Vector3 x="750" y="-500" z="450"/>
+    <Vector3 x="750" y="-450" z="450"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="300" y="-350" z="950"/>
+    <Vector3 x="300" y="-550" z="950"/>
+    <Vector3 x="750" y="-550" z="950"/>
+    <Vector3 x="750" y="-350" z="950"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="300" y="-550" z="950"/>
+    <Vector3 x="300" y="-600" z="950"/>
+    <Vector3 x="500" y="-600" z="950"/>
+    <Vector3 x="500" y="-550" z="950"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="300" y="-600" z="950"/>
+    <Vector3 x="300" y="-650" z="950"/>
+    <Vector3 x="750" y="-650" z="950"/>
+    <Vector3 x="750" y="-600" z="950"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="550" y="-550" z="950"/>
+    <Vector3 x="550" y="-600" z="950"/>
+    <Vector3 x="750" y="-600" z="950"/>
+    <Vector3 x="750" y="-550" z="950"/>
+  </Wall>
+  <Wall type="4">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="500" y="-550" z="950"/>
+    <Vector3 x="500" y="-600" z="950"/>
+    <Vector3 x="550" y="-600" z="950"/>
+    <Vector3 x="550" y="-550" z="950"/>
+  </Wall>
+  <Wall type="0">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\ceiling.jpg"/>
+    </Material>
+    <Vector3 x="500" y="-550" z="950"/>
+    <Vector3 x="500" y="-550" z="1500"/>
+    <Vector3 x="550" y="-550" z="1500"/>
+    <Vector3 x="550" y="-550" z="950"/>
+  </Wall>
+  <Wall type="1">
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\floor.jpg"/>
+    </Material>
+    <Vector3 x="500" y="-600" z="950"/>
+    <Vector3 x="500" y="-600" z="1500"/>
+    <Vector3 x="550" y="-600" z="1500"/>
+    <Vector3 x="550" y="-600" z="950"/>
+  </Wall>
+  <Wall type="2">
+    <Material>
+      <Effect file_name="Shaders\Effects\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="500" y="-550" z="950"/>
+    <Vector3 x="500" y="-600" z="950"/>
+    <Vector3 x="500" y="-600" z="1500"/>
+    <Vector3 x="500" y="-550" z="1500"/>
+  </Wall>
+  <Wall type="3">
+    <Material>
+      <Effect file_name="Shaders\Effects\Effects\Simple_Effect.xml" />
+      <Texture file_name="Textures\scifiwall.dds"/>
+    </Material>
+    <Vector3 x="550" y="-550" z="950"/>
+    <Vector3 x="550" y="-600" z="950"/>
+    <Vector3 x="550" y="-600" z="1500"/>
+    <Vector3 x="550" y="-550" z="1500"/>
+  </Wall>
+  <ForceField name="left_force_field">
+    <Material>
+      <Color r="0.0" g="0.0" b="0.0" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="0" g="0.5" b="0.0" a="1"/>
+      <Shininess value="0"/>
+      <Texture type="12" file_name="Textures\forcefield.dds"/>
+      <Effect file_name="Shaders\Effects\Force_Field_Effect.xml" />
+    </Material>
+    <Vector3 x="300" y="-100" z="150"/>
+  </ForceField>
+  <ForceField name="right_force_field">
+    <Material>
+      <Color r="0.0" g="0.0" b="0.0" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="0" g="0.5" b="0.0" a="1"/>
+      <Shininess value="0"/>
+      <Texture type="12" file_name="Textures\forcefield.dds"/>
+      <Effect file_name="Shaders\Effects\Force_Field_Effect.xml" />
+    </Material>
+    <Vector3 x="750" y="-100" z="150"/>
+  </ForceField>
+  <Door name="left_door">
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="0" g="0" b="0.0" a="1"/>
+      <Shininess value="0"/>
+      <Texture type="13" file_name="Textures\door_test.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <AlphaBlend enabled="true" />
+    </Material>
+    <Vector3 x="200" y="-300" z="650"/>
+  </Door>
+  <Door name="right_door">
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="0" g="0" b="0.0" a="1"/>
+      <Shininess value="0"/>
+      <Texture type="13" file_name="Textures\door_test.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <AlphaBlend enabled="true" />
+    </Material>
+    <Vector3 x="850" y="-300" z="650"/>
+  </Door>
+  <RotatingBlades name="blades">
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="0" g="0" b="0.0" a="1"/>
+      <Shininess value="0"/>
+      <Texture type="14" file_name="Textures\blades.bmp"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Vector3 x="525" y="-300" z="375"/>
+  </RotatingBlades>
+  <Core name="core">
+    <Material name="CoreMaterialNormalGlow">
+      <Color r="0.25" g="0.25" b="0.25" a="1"/>
+      <Color r="0.25" g="1" b="0.25" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="0.25" g="1" b="0.25" a="1"/>
+      <Shininess value="0"/>
+      <Texture type="17" file_name="Textures\core_small.jpg"/>
+      <Effect file_name="Shaders\Effects\core_Effect.xml" />
+    </Material>
+    <Material name="CoreMaterialNormal">
+      <Color r="0.0" g="0.0" b="0.0" a="1"/>
+      <Color r="1" g="1.0" b="1.0" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="0" g="0.0" b="0.0" a="1"/>
+      <!--
+      <Color r="0.25" g="0.25" b="0.25" a="1"/>
+      <Color r="1" g="0.25" b="0.25" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="1" g="0.75" b="0.75" a="1"/>
+      -->
+      <Shininess value="0"/>
+      <Texture type="17" file_name="Textures\core_small.jpg"/>
+      <Effect file_name="Shaders\Effects\core_Effect.xml" />
+    </Material>
+    <!--="525" y="-500" z="700"-->
+    <Vector3 x="0" y="0" z="0"/>
+    <Vector3 x="35" y="40" z="40"/>
+  </Core>
+  <Switch name="switch_1" >
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Vector3 x="325" y="-75" z="199.9"/>
+    <Link link="left_force_field"/>
+  </Switch>
+  <Switch name="switch_2" >
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Vector3 x="725" y="-75" z="199.9"/>
+    <Link link="right_force_field"/>
+  </Switch>
+  <Switch name="switch_3" >
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Vector3 x="175" y="-275" z="699.9"/>
+    <Link link="left_door"/>
+  </Switch>
+  <Switch name="switch_4" >
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Vector3 x="875" y="-275" z="699.9"/>
+    <Link link="right_door"/>
+  </Switch>
+  <Switch name="switch_5" >
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Vector3 x="475" y="-275" z="399.9"/>
+    <Link link="blades"/>
+  </Switch>
+  <Switch name="switch_6" >
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Material>
+      <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+      <Color r="1" g="1" b="1" a="0.75"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="5" g="0" b="0" a="0.75"/>
+      <Shininess value="0"/>
+      <Texture type="15" file_name="Textures\switch.dds"/>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Vector3 x="575" y="-275" z="399.9"/>
+    <Link link="blades"/>
+  </Switch>
+  <GunTurret name="turret_1">
+    <Vector3 name="position" x="450" y="-100" z="175"/>
+    <Vector3 name="direction" x="0" y="0.0000000" z="1.0000000"/>
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Guns>Models\gun.3ds</Guns>
+  </GunTurret>
+  <GunTurret name="turret_7">
+    <Vector3 name="position"  x="650" y="-100" z="175"/>
+    <Vector3 name="direction" x="0" y="0.0000000" z="-1.0000000"/>
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Guns>Models\gun.3ds</Guns>
+  </GunTurret>
+  <GunTurret name="turret_2" >
+    <Vector3 name="position"  x="175" y="-300" z="525"/>
+    <Vector3 name="direction" x="-1" y="0.0000001" z="0"/>
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Guns>Models\gun.3ds</Guns>
+  </GunTurret>
+  <GunTurret name="turret_8">
+    <Vector3 name="position"  x="875" y="-300" z="525"/>
+    <Vector3 name="direction" x="-1" y="0.0000001" z="0"/>
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Guns>Models\gun.3ds</Guns>
+  </GunTurret>
+  <GunTurret name="turret_3" >
+    <Vector3 name="position"  x="225" y="-300" z="375"/>
+    <Vector3 name="direction" x="1" y="0.0000000" z="0"/>
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Guns>Models\gun.3ds</Guns>
+  </GunTurret>
+  <GunTurret name="turret_4" >
+    <Vector3 name="position" x="825" y="-300" z="375"/>
+    <Vector3 name="direction" x="1" y="0.000000" z="0"/>
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Guns>Models\gun.3ds</Guns>
+  </GunTurret>
+  <GunTurret name="turret_5" >
+    <Vector3 name="position"  x="375" y="-650" z="525"/>
+    <Vector3 name="direction" x="1" y="0.0000001" z="0"/>
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Guns>Models\gun.3ds</Guns>
+  </GunTurret>
+  <GunTurret name="turret_6" >
+    <Vector3 name="position"  x="675" y="-650" z="525"/>
+    <Vector3 name="direction" x="1" y="0.0000001" z="0"/>
+    <Material>
+      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+    </Material>
+    <Guns>Models\gun.3ds</Guns>
+  </GunTurret>
+  <InfinitySphere name="skydome">
+    <Model file="Models\inverted_sphere.dae" />
+    <Material >
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Color r="1" g="1" b="1" a="1"/>
+      <Shininess value="0"/>
+      <Texture type="17" file_name="Textures\skybox_small.jpg"/>
+      <Effect file_name="Shaders\Effects\skydome.xml" />
+    </Material>
+    <Vector3 x="3000" y="3000" z="3000"/>
+  </InfinitySphere>
+</xml>
