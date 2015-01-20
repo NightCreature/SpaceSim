@@ -68,7 +68,11 @@ const InputState& KeyboardInputDevice::update(const std::vector<RAWINPUT>& keybo
     //PRAWINPUT prawInput = rawInput;
     for(auto input : keyboardInput)
     {
-        printKeyState(&input);
+        static bool printRawInput = false;
+        if (printRawInput)
+        {
+            printKeyState(&input);
+        }
 
         input.data.keyboard = rawInputFixup(input.data.keyboard);
         //printKeyState(prawInput);

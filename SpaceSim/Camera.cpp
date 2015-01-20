@@ -120,14 +120,16 @@ void Camera::update( float elapsedTime, double time, const Input& input )
     const InputState* inputState = input.getInput(0);
     if (inputState)
     {
-        float moveAlongDirectionFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_forward")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_backward"));
+        float moveAlongDirectionFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_forwards")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_backwards"));
         moveAlongDirection(moveAlongDirectionFactor * m_movementSpeed * elapsedTime );//Move forwared, backward
         float strafeFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_left")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_right"));
         strafe(strafeFactor   * m_movementSpeed * elapsedTime);//Move left/right
-        //yaw(-inputState->getActionValue(InputActions::eRightXAxis) * m_rotationSpeed * elapsedTime);
-        //pitch(inputState->getActionValue(InputActions::eRightYAxis) * m_rotationSpeed * elapsedTime);
-        //float zAxisDelta = inputState->getActionValue(InputActions::eRightTrigger) - inputState->getActionValue(InputActions::eLeftTrigger);
-        //roll(zAxisDelta * m_rotationSpeed);
+        float yawFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_yaw_left")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_yaw_right"));
+        yaw(yawFactor * m_rotationSpeed * elapsedTime);
+        float pitchFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_pitch_up")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_pitch_down"));
+        pitch(pitchFactor * m_rotationSpeed * elapsedTime); 
+            float zAxisDelta = inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_left")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_right"));
+        roll(zAxisDelta * m_rotationSpeed);
     }
 
     //Use the varibles to avoid a warning and allows us to use them in the code above without change
