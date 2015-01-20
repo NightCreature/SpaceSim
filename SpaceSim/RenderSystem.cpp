@@ -109,7 +109,16 @@ void RenderSystem::initialise(Resource* resource)
                     DXGI_ADAPTER_DESC adapterDesc;
                     adapter->GetDesc(&adapterDesc);
                     MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "vendor id: %x", adapterDesc.VendorId);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", (char*)adapterDesc.Description);
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "device id: %x", adapterDesc.DeviceId);
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "subsytem id: %x", adapterDesc.SubSysId);
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "revision: %d", adapterDesc.Revision);
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated VRAM: %llu", adapterDesc.DedicatedVideoMemory);
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated RAM: %llu", adapterDesc.DedicatedSystemMemory);
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Shared RAM: %llu", adapterDesc.SharedSystemMemory);
+                    std::string str;
+                    convertToCString(adapterDesc.Description, str);
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());
+
                     if (adapterDesc.DedicatedVideoMemory > 0)
                     {
                         break;
