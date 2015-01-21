@@ -11,11 +11,11 @@ void convertToCString(const std::wstring& str, std::string& out)
 {
     char buffer[4096];
     // BOOL usedDefaultChar = FALSE;
-    int numberOfCChars = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, 0, 0, 0);
+    int numberOfCChars = WideCharToMultiByte(CP_UTF8, MB_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, 0, 0, 0);
     if (numberOfCChars > 0)
     {
         out.reserve(numberOfCChars);
-        WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, numberOfCChars, 0, 0);
+        WideCharToMultiByte(CP_UTF8, MB_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, numberOfCChars, 0, 0);
         buffer[numberOfCChars] = 0;
         out = buffer;
     }
@@ -23,7 +23,7 @@ void convertToCString(const std::wstring& str, std::string& out)
     {
         DWORD error = GetLastError();
         HRESULT hr = HRESULT_FROM_WIN32(error);
-        MSG_TRACE_CHANNEL("String Conversion Error", "Failed to convert from MB to UTF8 with Hresult: 0x%08x, %s", hr, iGetLastErrorText(error));
+        MSG_TRACE_CHANNEL("String Conversion Error", "Failed to convert from MB to UTF8 with Hresult: 0x%08x, %s", hr, getLastErrorMessage(error));
     }
 }
 
@@ -44,7 +44,7 @@ void convertToWideString(const std::string& str, std::wstring& out)
     {
         DWORD error = GetLastError();
         HRESULT hr = HRESULT_FROM_WIN32(error);
-        MSG_TRACE_CHANNEL("String Conversion Error", "Failed to convert from UTF8 to MB with Hresult: 0x%08x, %s", hr, iGetLastErrorText(error));
+        MSG_TRACE_CHANNEL("String Conversion Error", "Failed to convert from UTF8 to MB with Hresult: 0x%08x, %s", hr, getLastErrorMessage(error));
     }
 }
 
@@ -52,7 +52,7 @@ void convertToWideString(const std::string& str, std::wstring& out)
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-char* iGetLastErrorText(DWORD nErrorCode)
+char* getLastErrorMessage(DWORD nErrorCode)
 {
     char* msg;
     // Ask Windows to prepare a standard message for a GetLastError() code:
