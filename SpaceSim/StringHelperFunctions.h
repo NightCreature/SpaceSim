@@ -203,6 +203,18 @@ inline std::string extractPathFromFileName( const std::string &fileName )
     return fileName.substr(0, counter + 1);
 }
 
+char* iGetLastErrorText(DWORD nErrorCode)
+{
+    char* msg;
+    // Ask Windows to prepare a standard message for a GetLastError() code:
+    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, nErrorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&msg, 0, NULL);
+    // Return the message
+    if (!msg)
+        return("Unknown error");
+    else
+        return(msg);
+}
+
 inline void convertToWideString(const std::string& str, std::wstring& out)
 {
     wchar_t* buffer = &(out[0]);
@@ -211,6 +223,12 @@ inline void convertToWideString(const std::string& str, std::wstring& out)
     {
         out.reserve(numberOfWideChars);
         MultiByteToWideChar(CP_UTF8, WC_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, numberOfWideChars);
+    }
+    else
+    {
+        DWORD error = GetLastError();
+        HRESULT hr = HRESULT_FROM_WIN32(error);
+        MSG_TRACE_CHANNEL("String Conversion Error", "Failed to convert from UTF8 to MB with Hresult: 0x%08x, %s", hr, iGetLastErrorText(error));
     }
 
 }
@@ -224,5 +242,11 @@ inline void convertToCString(const std::wstring& str, std::string& out)
     {
         out.reserve(numberOfCChars);
         WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, numberOfCChars, nullptr, &usedDefaultChar);
+    }
+    else
+    {
+        DWORD error = GetLastError();
+        HRESULT hr = HRESULT_FROM_WIN32(error);
+        MSG_TRACE_CHANNEL("String Conversion Error", "Failed to convert from MB to UTF8 with Hresult: 0x%08x, %s", hr, iGetLastErrorText(error));
     }
 }
