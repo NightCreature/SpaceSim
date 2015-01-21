@@ -11,11 +11,11 @@ void convertToCString(const std::wstring& str, std::string& out)
 {
     char buffer[4096];
     // BOOL usedDefaultChar = FALSE;
-    int numberOfCChars = WideCharToMultiByte(CP_UTF8, MB_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, 0, 0, 0);
+    int numberOfCChars = WideCharToMultiByte(CP_UTF8, 0, str.c_str(), (int)str.size(), buffer, 0, 0, 0);
     if (numberOfCChars > 0)
     {
         out.reserve(numberOfCChars);
-        WideCharToMultiByte(CP_UTF8, MB_ERR_INVALID_CHARS, str.c_str(), (int)str.size(), buffer, numberOfCChars, 0, 0);
+        WideCharToMultiByte(CP_UTF8, 0, str.c_str(), (int)str.size(), buffer, numberOfCChars, 0, 0);
         buffer[numberOfCChars] = 0;
         out = buffer;
     }
