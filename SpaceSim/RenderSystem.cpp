@@ -112,9 +112,9 @@ void RenderSystem::initialise(Resource* resource)
                     MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "device id: %x", adapterDesc.DeviceId);
                     MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "subsytem id: %x", adapterDesc.SubSysId);
                     MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "revision: %d", adapterDesc.Revision);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated VRAM: %llu", adapterDesc.DedicatedVideoMemory);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated RAM: %llu", adapterDesc.DedicatedSystemMemory);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Shared RAM: %llu", adapterDesc.SharedSystemMemory);
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated VRAM: %llu MiB", adapterDesc.DedicatedVideoMemory / (1024 * 1024));
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated RAM: %llu MiB", adapterDesc.DedicatedSystemMemory / (1024 * 1024));
+                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Shared RAM: %llu MiB", adapterDesc.SharedSystemMemory / (1024 * 1024));
                     std::string str;
                     convertToCString(adapterDesc.Description, str);
                     MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());

@@ -261,6 +261,9 @@
     <ClCompile Include="RKIntegrator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StringHelperFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="applicationsetting.h">

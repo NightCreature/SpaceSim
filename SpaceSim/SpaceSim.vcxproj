@@ -299,6 +299,7 @@
     <ClCompile Include="ShaderCache.cpp" />
     <ClCompile Include="ShaderPack.cpp" />
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="StringHelperFunctions.cpp" />
     <ClCompile Include="StringOperations\StringTemplate.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="..\MatrixAndVectorMath\vector2.cpp" />
