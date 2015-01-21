@@ -203,7 +203,7 @@ inline std::string extractPathFromFileName( const std::string &fileName )
     return fileName.substr(0, counter + 1);
 }
 
-char* iGetLastErrorText(DWORD nErrorCode)
+inline char* iGetLastErrorText(DWORD nErrorCode)
 {
     char* msg;
     // Ask Windows to prepare a standard message for a GetLastError() code:
