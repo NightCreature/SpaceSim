@@ -1,5 +1,5 @@
 #include "MouseController.h"
-
+#include "TypeHelpers.h"
 
 MouseController::MouseController()
 {
@@ -35,6 +35,7 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
 //-----------------------------------------------------------------------------
 const bool MouseController::isConnected() const
 {
+    return false;
 }
 
 //-----------------------------------------------------------------------------
