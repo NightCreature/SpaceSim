@@ -12,6 +12,8 @@ public:
     virtual const bool isConnected() const override;
     virtual void enableController() override;
     virtual void disableController() override;
+
+    HASH_ELEMENT_DEFINITION
 private:
     virtual void internalActionSetup(InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input) override;
 

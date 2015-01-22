@@ -1,0 +1,19 @@
+<xml>
+  <!--Yaw and Pitch controls-->
+  <InputAction input_action="move_yaw_left">
+    <Button input="negative_x"/>
+  </InputAction>
+  <InputAction input_action="move_yaw_right">
+    <Button input="positive_x"/>
+  </InputAction>
+  <InputAction input_action="move_pitch_up">
+    <Button input="positive_y"/>
+  </InputAction>
+  <InputAction input_action="move_pitch_down">
+    <Button input="negative_y"/>
+  </InputAction>
+
+  <InputAction input_action="fire">
+    <Button input="left_click" />
+  </InputAction>
+</xml>

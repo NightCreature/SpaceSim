@@ -23,6 +23,8 @@ void KeyboardInputDevice::initialise()
     rawInputDevice.dwFlags = 0;
     rawInputDevice.hwndTarget = 0;
 
+    //InputSystem.addRawInputDevice(rawInputDevice);
+
     if (RegisterRawInputDevices(&rawInputDevice, 1, sizeof(RAWINPUTDEVICE)) == FALSE)
     {
         MSG_TRACE_CHANNEL("KEYBOARD CONTROLLER ERROR:", "Failed to register the keyboard device with error: %d", GetLastError());

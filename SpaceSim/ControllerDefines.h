@@ -8,6 +8,7 @@ enum ControllerType
     Joystick,
     Wheel,
     Keyboard,
+    Mouse
 };
 
 //!-----------------------------------------------------------------------------

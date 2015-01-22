@@ -368,6 +368,7 @@
     <ClInclude Include="MeshGroup.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="MouseControlDefines.h" />
     <ClInclude Include="MouseController.h" />
     <ClInclude Include="OrientationAxis.h" />
     <ClInclude Include="..\GameEngine\particle.h" />
