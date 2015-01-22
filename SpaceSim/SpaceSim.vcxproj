@@ -273,6 +273,7 @@
     <ClCompile Include="MeshGroup.cpp" />
     <ClCompile Include="Messages.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="MouseController.cpp" />
     <ClCompile Include="OrientationAxis.cpp" />
     <ClCompile Include="..\GameEngine\particle.cpp" />
     <ClCompile Include="..\GameEngine\particleemitter.cpp" />
@@ -367,6 +368,7 @@
     <ClInclude Include="MeshGroup.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="MouseController.h" />
     <ClInclude Include="OrientationAxis.h" />
     <ClInclude Include="..\GameEngine\particle.h" />
     <ClInclude Include="..\GameEngine\particleemitter.h" />
