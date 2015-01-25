@@ -14,6 +14,6 @@
   </InputAction>
 
   <InputAction input_action="fire">
-    <Button input="left_click" />
+    <Button input="button_1" />
   </InputAction>
 </xml>

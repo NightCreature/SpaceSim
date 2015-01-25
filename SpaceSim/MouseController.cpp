@@ -50,6 +50,8 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
     //Postive Y means the mouse is moving down over the screen, and negative when moving up
     //Positive X means moving Right, and negative means left
 
+
+    //Might need to collect the mouse data over an update and then set the values
     for (auto input : mouseInput)
     {
         //Do something with the mouse input
