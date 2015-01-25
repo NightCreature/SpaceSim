@@ -33,6 +33,7 @@ m_firstUpdate(true)
             break;
         }
     }
+    m_connected = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -223,6 +224,8 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
     {
         m_controllerActive = false;
     }
+
+    m_connected = m_controllerActive && m_isControllerActive;
 
     //m_controllerState.setActionValue(InputActions::eAButton, m_gamepadState.wButtons & A ? true : false);
     //m_controllerState.setActionValue(InputActions::eBButton, m_gamepadState.wButtons & B ? true : false);

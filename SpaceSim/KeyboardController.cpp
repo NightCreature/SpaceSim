@@ -24,9 +24,10 @@ void KeyboardInputDevice::initialise()
     rawInputDevice.hwndTarget = 0;
 
     //InputSystem.addRawInputDevice(rawInputDevice);
-
+    m_connected = true;
     if (RegisterRawInputDevices(&rawInputDevice, 1, sizeof(RAWINPUTDEVICE)) == FALSE)
     {
+        m_connected = false;
         MSG_TRACE_CHANNEL("KEYBOARD CONTROLLER ERROR:", "Failed to register the keyboard device with error: %d", GetLastError());
     }
 }
@@ -102,14 +103,6 @@ const InputState& KeyboardInputDevice::update(const std::vector<RAWINPUT>& keybo
 
     //free(rawInput);
     return m_controllerState;
-}
-
-void KeyboardInputDevice::enableController()
-{
-}
-
-void KeyboardInputDevice::disableController()
-{
 }
 
 //Fix code for raw input.

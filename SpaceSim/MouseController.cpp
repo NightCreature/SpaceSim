@@ -1,5 +1,6 @@
 #include "MouseController.h"
 #include "TypeHelpers.h"
+#include "MouseControlDefines.h"
 
 HASH_ELEMENT_IMPLEMENTATION(MouseController);
 
@@ -25,10 +26,12 @@ void MouseController::initialise()
     rawInputDevice.dwFlags = RIDEV_NOLEGACY;   // adds HID mouse and also ignores legacy mouse messages
     rawInputDevice.hwndTarget = 0;
 
+    m_connected = true;
     //InputSystem.addRawInputDevice(rawInputDevice);
 
     if (RegisterRawInputDevices(&rawInputDevice, 1, sizeof(RAWINPUTDEVICE)) == FALSE)
     {
+        m_connected = false;
         unsigned int error = GetLastError();
         MSG_TRACE_CHANNEL("MOUSE CONTROLLER ERROR:", "Failed to register the mouse device with error: %d, %s", error, getLastErrorMessage(error));
     }
@@ -44,24 +47,61 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
     UNUSEDPARAM(mouseInput);
     UNUSEDPARAM(hidInput);
 
+    //Postive Y means the mouse is moving down over the screen, and negative when moving up
+    //Positive X means moving Right, and negative means left
+
     for (auto input : mouseInput)
     {
         //Do something with the mouse input
-        RID_DEVICE_INFO deviceInfo;
-        ZeroMemory(&deviceInfo, sizeof(RID_DEVICE_INFO));
-        unsigned int dataPointerSize = sizeof(RID_DEVICE_INFO);
-        unsigned int returnValue = GetRawInputDeviceInfo(input.header.hDevice, RIDI_DEVICEINFO, &deviceInfo, &dataPointerSize);
-        if (returnValue < 0)
+        RAWMOUSE mouseState = input.data.mouse;
+        if (mouseState.lLastX < 0)
         {
-            unsigned int error = GetLastError();
-            MSG_TRACE_CHANNEL("MOUSE CONTROLLER ERROR:", "Failed to get device info for a mouse with error: %d, %s", error, getLastErrorMessage(error));
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeX], (float)mouseState.lLastX);
+        }
+        else if (mouseState.lLastX < 0)
+        {
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveX], (float)mouseState.lLastX);
         }
         else
         {
-            MSG_TRACE_CHANNEL("MOUSE CONTROLLER", "Device ID: %d", deviceInfo.mouse.dwId);
-            MSG_TRACE_CHANNEL("MOUSE CONTROLLER", "Number of Buttons: %d", deviceInfo.mouse.dwNumberOfButtons);
-            MSG_TRACE_CHANNEL("MOUSE CONTROLLER", "Sample Rate: %d", deviceInfo.mouse.dwSampleRate);
-            MSG_TRACE_CHANNEL("MOUSE CONTROLLER", "Horizontal Wheel: %s", deviceInfo.mouse.fHasHorizontalWheel ? "true" : "false");
+            //Reset the values
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeX], 0.0f);
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveX], 0.0f);
+        }
+        
+        if (mouseState.lLastY < 0)
+        {
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeY], (float)mouseState.lLastY);
+        }
+        else if (mouseState.lLastY < 0)
+        {
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveY], (float)mouseState.lLastY);
+        }
+        else
+        {
+            //Reset the values
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeY], 0.0f);
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveY], 0.0f);
+        }
+
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton1], (float)(RI_MOUSE_BUTTON_1_DOWN & mouseState.usButtonFlags));
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton2], (float)(RI_MOUSE_BUTTON_2_DOWN & mouseState.usButtonFlags));
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton3], (float)(RI_MOUSE_BUTTON_3_DOWN & mouseState.usButtonFlags));
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton4], (float)(RI_MOUSE_BUTTON_4_DOWN & mouseState.usButtonFlags));
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton5], (float)(RI_MOUSE_BUTTON_5_DOWN & mouseState.usButtonFlags));
+        
+        if (RI_MOUSE_WHEEL & mouseState.usButtonFlags)
+        {
+            short wheelDelta = (short)mouseState.usButtonData % 120;
+            if (wheelDelta > 0)
+            {
+                m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseWheelUp], (float)(wheelDelta));
+            }
+            else
+            {
+                m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseWheelDown], (float)(-wheelDelta));
+            }
+
         }
     }
 
@@ -72,33 +112,13 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-const bool MouseController::isConnected() const
-{
-    return false;
-}
-
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
-void MouseController::enableController()
-{
-}
-
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
-void MouseController::disableController()
-{
-}
-
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
 void MouseController::internalActionSetup(InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input)
 {
     UNUSEDPARAM(inputAction);
-    UNUSEDPARAM(input);
+
+    Input::MouseControlDefinitions mouseDefinitions;
+    unsigned int inputHash = hashString(input->Value());
+    Input::MouseControlDefinitions::MouseInput mouseInput = mouseDefinitions.m_MouseToAction[inputHash];
+
+    m_physicalKeyToAction.insert(PhysicalInputPair(mouseInput, inputAction));
 }

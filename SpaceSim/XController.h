@@ -58,15 +58,10 @@ public:
 
     const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput);
 
-    const bool isConnected() const { return m_controllerActive && m_isControllerActive; }
-
     void enableVibration() { m_vibration = true; }
     void disableVibration() { m_vibration = false; }
     void setMinorMotor(const float value) { m_minorMotor = value; }
     void setBigMotor(const float value) { m_bigMotor = value; }
-
-    void enableController()  { m_isControllerActive = true; }
-    void disableController() { m_isControllerActive = false; }
 
     HASH_ELEMENT_DEFINITION;
 protected:

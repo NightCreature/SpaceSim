@@ -273,6 +273,7 @@
     <ClCompile Include="MeshGroup.cpp" />
     <ClCompile Include="Messages.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="MouseControlDefines.cpp" />
     <ClCompile Include="MouseController.cpp" />
     <ClCompile Include="OrientationAxis.cpp" />
     <ClCompile Include="..\GameEngine\particle.cpp" />
