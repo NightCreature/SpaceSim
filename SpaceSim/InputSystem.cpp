@@ -49,8 +49,11 @@ IInputDevice* InputSystem::createController(const ControllerType type)
         controller = new MouseController();
     }
 
-    controller->enableController();
-    m_controllers.insert(ControllerAndStatePair(controller, controller->getState()));
+    if (nullptr != controller)
+    {
+        controller->enableController();
+        m_controllers.insert(ControllerAndStatePair(controller, controller->getState()));
+    }
 
     return controller;
 }

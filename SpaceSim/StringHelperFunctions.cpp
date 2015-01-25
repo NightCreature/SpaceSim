@@ -56,7 +56,7 @@ void convertToWideString(const std::string& str, std::wstring& out)
 //-----------------------------------------------------------------------------
 char* getLastErrorMessage(DWORD nErrorCode)
 {
-    char* msg;
+    char* msg = nullptr;
     // Ask Windows to prepare a standard message for a GetLastError() code:
     FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, nErrorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&msg, 0, NULL);
     // Return the message
