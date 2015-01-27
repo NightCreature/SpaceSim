@@ -267,6 +267,12 @@
     <ClCompile Include="MouseController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MouseControlDefines.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="applicationsetting.h">
@@ -561,6 +567,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MouseController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseControlDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MathUtilityFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

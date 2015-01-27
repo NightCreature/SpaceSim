@@ -1,6 +1,7 @@
 #include "InputSystem.h"
 #include "XController.h"
 #include "KeyboardController.h"
+#include "MouseController.h"
 #include "StringHelperFunctions.h"
 
 InputSystem::AvailableActions InputSystem::m_availableActions;
@@ -32,20 +33,27 @@ InputSystem::~InputSystem()
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-IInputDevice* InputSystem::createController( const ControllerType type )
+IInputDevice* InputSystem::createController(const ControllerType type)
 {
     IInputDevice* controller = nullptr;
     if (type == Gamepad)
     {
-        controller =  new XInputDevice(0);
+        controller = new XInputDevice(0);
     }
     else if (type == Keyboard)
     {
-        controller = new KeyboardInputDevice();        
+        controller = new KeyboardInputDevice();
+    }
+    else if (type == Mouse)
+    {
+        controller = new MouseController();
     }
 
-    controller->enableController();
-    m_controllers.insert(ControllerAndStatePair(controller, controller->getState()));
+    if (nullptr != controller)
+    {
+        controller->enableController();
+        m_controllers.insert(ControllerAndStatePair(controller, controller->getState()));
+    }
 
     return controller;
 }
@@ -125,6 +133,7 @@ void InputSystem::initialise( const std::string& inputMapFileName )
     for (; element; element = element->NextSiblingElement())
     {
         IInputDevice* controller = createController(stringToControllerType(element->Name()));
+        MSG_TRACE_CHANNEL("INPUT SYSTEM", "controller name: %s", element->Name());
         const tinyxml2::XMLAttribute* attribute = element->FindAttribute("input_map");
         if (controller != nullptr && attribute != nullptr )
         {
@@ -158,6 +167,10 @@ ControllerType InputSystem::stringToControllerType( const std::string& controlle
     else if (controllerNameHash ==  KeyboardInputDevice::m_hash)
     {
         return Keyboard;
+    }
+    else if (controllerNameHash == MouseController::m_hash)
+    {
+        return Mouse;
     }
 
     return Gamepad;

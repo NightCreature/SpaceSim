@@ -14,7 +14,7 @@ HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void CubeRendererInitialiseData::deserialise( const tinyxml2::XMLElement* element )
+void CubeRendererInitialiseData::deserialise(const tinyxml2::XMLElement* element)
 {
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute)
@@ -27,7 +27,7 @@ void CubeRendererInitialiseData::deserialise( const tinyxml2::XMLElement* elemen
         m_dynamic = attribute->BoolValue();
     }
 
-    m_position.deserialise( element->FirstChildElement() );
+    m_position.deserialise(element->FirstChildElement());
 }
 
 //-----------------------------------------------------------------------------
@@ -51,16 +51,16 @@ m_totalNumberOfRenderedFrames(0)
 //-----------------------------------------------------------------------------
 RenderSystem::~RenderSystem()
 {
-    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Total number of rendered instances: %d", m_totalNumberOfInstancesRendered )
-    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Total number of frames: %d", m_totalNumberOfRenderedFrames )
-    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Average Number of instances per frame: %d", m_averageNumberOfInstancesRenderingPerFrame )
-    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Number of instances rendered last frame: %d", m_numberOfInstancesRenderingThisFrame )
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Total number of rendered instances: %d", m_totalNumberOfInstancesRendered)
+        MSG_TRACE_CHANNEL("RENDERSYSTEM", "Total number of frames: %d", m_totalNumberOfRenderedFrames)
+        MSG_TRACE_CHANNEL("RENDERSYSTEM", "Average Number of instances per frame: %d", m_averageNumberOfInstancesRenderingPerFrame)
+        MSG_TRACE_CHANNEL("RENDERSYSTEM", "Number of instances rendered last frame: %d", m_numberOfInstancesRenderingThisFrame)
 
-    if (m_lightConstantBuffer != nullptr)
-    {
-        m_lightConstantBuffer->Release();
-        m_lightConstantBuffer = nullptr;
-    }
+        if (m_lightConstantBuffer != nullptr)
+        {
+            m_lightConstantBuffer->Release();
+            m_lightConstantBuffer = nullptr;
+        }
 
     if (m_cubeMapRenderer != nullptr)
     {
@@ -96,13 +96,13 @@ void RenderSystem::initialise(Resource* resource)
     IDXGIAdapter* adapter = nullptr;
     {
         IDXGIFactory * pFactory;
-        HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory) );
+        HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory));
         if (hr == S_OK)
         {
             for (size_t counter = 0; hr == S_OK; ++counter)
             {
                 adapter = nullptr;
-                hr = pFactory->EnumAdapters((UINT)counter, &adapter );
+                hr = pFactory->EnumAdapters((UINT)counter, &adapter);
                 MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "%d", counter);
                 if (adapter != nullptr)
                 {
@@ -145,12 +145,12 @@ void RenderSystem::initialise(Resource* resource)
     const ISetting<int>* widthSetting = resourceHelper.getGameResource().getSettingsManager().getSetting<int>("WindowWidth");
     if (widthSetting)
     {
-        windowWidth = widthSetting->getData();     
+        windowWidth = widthSetting->getData();
     }
     const ISetting<int>* heightSetting = resourceHelper.getGameResource().getSettingsManager().getSetting<int>("WindowHeight");
     if (heightSetting)
     {
-        windowHeight = heightSetting->getData();     
+        windowHeight = heightSetting->getData();
     }
 
     createSwapChain(device, windowWidth, windowHeight);
@@ -191,7 +191,7 @@ void RenderSystem::initialise(Resource* resource)
     depthStencilStateDesc.StencilEnable = false;
     depthStencilStateDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
     depthStencilStateDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-    depthStencilStateDesc.FrontFace.StencilFunc =  D3D11_COMPARISON_ALWAYS;
+    depthStencilStateDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
     depthStencilStateDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
     depthStencilStateDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
     depthStencilStateDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
@@ -258,7 +258,7 @@ void RenderSystem::initialise(Resource* resource)
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void RenderSystem::update( Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time )
+void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
     UNUSEDPARAM(resource);
     m_window.update(elapsedTime, time);
@@ -269,7 +269,7 @@ void RenderSystem::update( Resource* resource, RenderInstanceTree& renderInstanc
     RenderInstanceTree::iterator renderInstanceEnd = renderInstances.end();
     unsigned int stride = 0;
     unsigned int offset = 0;
-    for(; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
+    for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
         RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 #ifdef _DEBUG
@@ -283,7 +283,7 @@ void RenderSystem::update( Resource* resource, RenderInstanceTree& renderInstanc
         technique->setMaterialContent(m_deviceManager, renderInstance.getShaderInstance().getMaterial().getMaterialCB());
         technique->setWVPContent(m_deviceManager, renderInstance.getShaderInstance().getWVPConstants());
 
-        const std::vector<unsigned int>& textureHashes = renderInstance.getShaderInstance().getMaterial().getTextureHashes(); 
+        const std::vector<unsigned int>& textureHashes = renderInstance.getShaderInstance().getMaterial().getTextureHashes();
         //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
         for (unsigned int counter = 0; counter < textureHashes.size(); ++counter)
         {
@@ -303,13 +303,13 @@ void RenderSystem::update( Resource* resource, RenderInstanceTree& renderInstanc
         technique->setupTechnique();
 
         deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
-        if (renderInstance.getShaderInstance().getMaterial().getBlendState() )
+        if (renderInstance.getShaderInstance().getMaterial().getBlendState())
         {
-            deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff );
+            deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
         }
         else
         {
-            deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff );
+            deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
         }
 
         // Set vertex buffer stride and offset.
@@ -318,7 +318,7 @@ void RenderSystem::update( Resource* resource, RenderInstanceTree& renderInstanc
         stride = vb->getVertexStride();
         if (renderInstance.getGeometryInstance().getIB() != nullptr)
         {
-            deviceContext->IASetInputLayout( renderInstance.getGeometryInstance().getVB()->getInputLayout() );
+            deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
             deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
             deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
             deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
@@ -326,7 +326,7 @@ void RenderSystem::update( Resource* resource, RenderInstanceTree& renderInstanc
         }
         else
         {
-            deviceContext->IASetInputLayout( renderInstance.getGeometryInstance().getVB()->getInputLayout() );
+            deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
             deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
             deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
             deviceContext->Draw(renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
@@ -368,8 +368,8 @@ bool RenderSystem::createSwapChain(ID3D11Device* device, int windowWidth, int wi
 
     if (FAILED(m_dxgiFactory->CreateSwapChain((IUnknown*)device, &m_swapChainDescriptor, &m_swapChain)))
     {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to create a swapchain" )
-        return false;
+        MSG_TRACE_CHANNEL("ERROR", "Failed to create a swapchain")
+            return false;
     }
 
     return true;
@@ -387,6 +387,11 @@ void RenderSystem::patchUpDXGIFactory(ID3D11Device* device)
     HRESULT hr = deviceinterface->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice);
     IDXGIAdapter * pDXGIAdapter;
     hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), (void **)&pDXGIAdapter);
+    if (FAILED(hr))
+    {
+        MSG_TRACE_CHANNEL("ERROR", "Failed to path the DXGI Factory");
+        return;
+    }
     pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&m_dxgiFactory);
 }
 
@@ -394,23 +399,25 @@ void RenderSystem::patchUpDXGIFactory(ID3D11Device* device)
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void RenderSystem::setupSwapChainForRendering( ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight )
+void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight)
 {
     // Create a render target view
-    if( FAILED( m_swapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&m_backBuffer ) ) )
+    if (FAILED(m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_backBuffer)))
     {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to acquire the back buffer pointer" )
+        MSG_TRACE_CHANNEL("ERROR", "Failed to acquire the back buffer pointer")
+            return;
     }
 
-    if( FAILED( device->CreateRenderTargetView( m_backBuffer, NULL, &m_renderTargetView ) ) )
+    if (FAILED(device->CreateRenderTargetView(m_backBuffer, NULL, &m_renderTargetView)))
     {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to Create the render target view" )
+        MSG_TRACE_CHANNEL("ERROR", "Failed to Create the render target view")
+            return;
     }
     m_backBuffer->Release();
 
     // Create depth stencil texture
     D3D11_TEXTURE2D_DESC depthBufferDescriptor;
-    ZeroMemory( &depthBufferDescriptor, sizeof(D3D11_TEXTURE2D_DESC) );
+    ZeroMemory(&depthBufferDescriptor, sizeof(D3D11_TEXTURE2D_DESC));
     depthBufferDescriptor.Width = windowWidth;
     depthBufferDescriptor.Height = windowHeight;
     depthBufferDescriptor.MipLevels = 1;
@@ -422,9 +429,10 @@ void RenderSystem::setupSwapChainForRendering( ID3D11Device* device, ID3D11Devic
     depthBufferDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
     depthBufferDescriptor.CPUAccessFlags = 0;
     depthBufferDescriptor.MiscFlags = 0;
-    if( FAILED( device->CreateTexture2D( &depthBufferDescriptor, NULL, &m_depthStencilBuffer ) ) )
+    if (FAILED(device->CreateTexture2D(&depthBufferDescriptor, NULL, &m_depthStencilBuffer)))
     {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to create the back buffer" )
+        MSG_TRACE_CHANNEL("ERROR", "Failed to create the back buffer")
+            return;
     }
 
 #if _DEBUG //Name the depth Stencil buffer
@@ -433,16 +441,17 @@ void RenderSystem::setupSwapChainForRendering( ID3D11Device* device, ID3D11Devic
 
     // Create the depth stencil view
     D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor;
-    ZeroMemory( &depthStencilViewDescriptor, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC) );
+    ZeroMemory(&depthStencilViewDescriptor, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
     depthStencilViewDescriptor.Format = depthBufferDescriptor.Format;
     depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     depthStencilViewDescriptor.Texture2D.MipSlice = 0;
-    if( FAILED(device->CreateDepthStencilView( m_depthStencilBuffer, &depthStencilViewDescriptor, &m_depthStencilView )) )
+    if (FAILED(device->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDescriptor, &m_depthStencilView)))
     {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to create the depth stencil view" )
+        MSG_TRACE_CHANNEL("ERROR", "Failed to create the depth stencil view")
+            return;
     }
 
-    deviceContext->OMSetRenderTargets( 1, &m_renderTargetView, m_depthStencilView );
+    deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
 #if _DEBUG //Name the target views
     //m_depthStencilView->SetPrivateData( WKPDID_D3DDebugObjectName, 16, "DepthStencilView" );
@@ -456,8 +465,8 @@ void RenderSystem::setupSwapChainForRendering( ID3D11Device* device, ID3D11Devic
     vp.MinDepth = 0.0f;
     vp.MaxDepth = 1.0f;
     vp.TopLeftX = 0;
-    vp.TopLeftY = 0; 
-    deviceContext->RSSetViewports( 1, &vp );
+    vp.TopLeftY = 0;
+    deviceContext->RSSetViewports(1, &vp);
 }
 
 //-----------------------------------------------------------------------------
@@ -493,7 +502,7 @@ void RenderSystem::cleanup()
 //-------------------------------------------------------------------------
 void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* resource)
 {
-    float clearColor[4] = {0.8f, 0.8f, 0.8f, 1.0f};
+    float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
     deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
     deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -508,10 +517,10 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
     deviceContext->OMSetDepthStencilState(m_depthStencilState, 0xffffffff);
 
-    std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs) 
-                { 
-                    return lhs->getShaderInstance().getMaterial().getBlendState() < rhs->getShaderInstance().getMaterial().getBlendState();
-                } );
+    std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
+    {
+        return lhs->getShaderInstance().getMaterial().getBlendState() < rhs->getShaderInstance().getMaterial().getBlendState();
+    });
 
     //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
     GameResourceHelper helper(resource);
@@ -525,11 +534,11 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
         camPos = cam->getEye();
     }
     PerFrameConstants perFrameConstants;
-    ZeroMemory(&perFrameConstants.m_lightConstants, sizeof(LightConstants)* 8);
-    Light* light = lm->getLight("light_0");
-    if (light != nullptr)
+    ZeroMemory(&perFrameConstants.m_lightConstants, sizeof(LightConstants) * 8);
+    Light* light0 = lm->getLight("light_0");
+    if (light0 != nullptr)
     {
-        light->setPosition(camPos);
+        light0->setPosition(camPos);
     }
 
     unsigned int lightCounter = 0;
@@ -558,7 +567,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
         counter = 0;
     }
     ++counter;
-    
+
     perFrameConstants.m_cameraPosition[0] = camPos.x();
     perFrameConstants.m_cameraPosition[1] = camPos.y();
     perFrameConstants.m_cameraPosition[2] = camPos.z();
@@ -574,24 +583,24 @@ void RenderSystem::endDraw()
     m_debugAxis->draw(m_deviceManager);
 #endif
 
-    HRESULT hr =  m_swapChain->Present(0,0);
+    HRESULT hr = m_swapChain->Present(0, 0);
     ++m_totalNumberOfRenderedFrames;
     m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
     if (FAILED(hr))
     {
-        MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr )
-        MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason() )
-        assert(false);
+        MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr)
+            MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason())
+            assert(false);
     }
 }
 
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void RenderSystem::initialiseCubemapRendererAndResources( GameResourceHelper &resourceHelper )
+void RenderSystem::initialiseCubemapRendererAndResources(GameResourceHelper &resourceHelper)
 {
     m_cubeMapRenderer = new CubeMapRenderer(m_deviceManager, m_alphaBlendState, m_blendState);
-    
+
     const Paths& path = resourceHelper.getGameResource().getPaths();
     std::string cubeRenderSettingsFileName = path.getSettingsPath() + "cube_map_renderers.xml";
     tinyxml2::XMLDocument doc;
@@ -601,11 +610,11 @@ void RenderSystem::initialiseCubemapRendererAndResources( GameResourceHelper &re
     }
 
     tinyxml2::XMLElement* element = doc.FirstChildElement();
-    element = element->FirstChildElement();    
+    element = element->FirstChildElement();
     for (element; element; element = element->NextSiblingElement())
     {
         unsigned int elementHash = hashString(element->Value());
-        if ( elementHash == CubeRendererInitialiseData::m_hash)
+        if (elementHash == CubeRendererInitialiseData::m_hash)
         {
             CubeRendererInitialiseData currentCubeSetting;
             currentCubeSetting.deserialise(element);
@@ -614,7 +623,7 @@ void RenderSystem::initialiseCubemapRendererAndResources( GameResourceHelper &re
         }
     }
 
-    std::sort(begin(m_cubeSettings), end(m_cubeSettings), [=](const CubeRendererInitialiseData& lhs, const CubeRendererInitialiseData& rhs) { return lhs.m_dynamic < rhs.m_dynamic; } );
+    std::sort(begin(m_cubeSettings), end(m_cubeSettings), [=](const CubeRendererInitialiseData& lhs, const CubeRendererInitialiseData& rhs) { return lhs.m_dynamic < rhs.m_dynamic; });
 
     unsigned int cubeMapWidhtHeight = 1024;
 
@@ -662,6 +671,7 @@ void RenderSystem::initialiseCubemapRendererAndResources( GameResourceHelper &re
         if (FAILED(hr))
         {
             MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create texture resource for the cubemap renderer: 0x%x", hr);
+            return;
         }
 
         rtDesc.Texture2DArray.ArraySize = 1;
@@ -673,6 +683,7 @@ void RenderSystem::initialiseCubemapRendererAndResources( GameResourceHelper &re
             if (FAILED(hr))
             {
                 MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create render target view for the cubemap renderer: 0x%x", hr);
+                return;
             }
         }
 
@@ -680,6 +691,7 @@ void RenderSystem::initialiseCubemapRendererAndResources( GameResourceHelper &re
         if (FAILED(hr))
         {
             MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create shader resource view for the cubemap renderer: 0x%x", hr);
+            return;
         }
 
         cubeMap.createRenderTarget(textureResource, rtView, srView);

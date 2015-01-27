@@ -92,6 +92,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>C:\SDK\Demo\SpaceSim\bin\</OutDir>
     <TargetName>$(ProjectName)_x64d</TargetName>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)_x64</TargetName>
@@ -256,6 +257,7 @@
     <ClCompile Include="IController.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InfinitySphere.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="..\Shapes\laser.cpp" />
@@ -273,6 +275,7 @@
     <ClCompile Include="MeshGroup.cpp" />
     <ClCompile Include="Messages.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="MouseControlDefines.cpp" />
     <ClCompile Include="MouseController.cpp" />
     <ClCompile Include="OrientationAxis.cpp" />
     <ClCompile Include="..\GameEngine\particle.cpp" />
@@ -365,9 +368,11 @@
     <ClInclude Include="LaserManager.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="MathUtilityFunctions.h" />
     <ClInclude Include="MeshGroup.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="MouseControlDefines.h" />
     <ClInclude Include="MouseController.h" />
     <ClInclude Include="OrientationAxis.h" />
     <ClInclude Include="..\GameEngine\particle.h" />
