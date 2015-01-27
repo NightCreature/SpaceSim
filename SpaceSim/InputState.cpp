@@ -33,13 +33,13 @@ void InputState::mergeInputState(const InputState& input)
             if (standardInputAction.getAction().getType() == m_inputState[counter].getAction().getType())
             {
                 float currentValue = m_inputState[counter].getValue();
-                bool currentSign = currentValue > 0.0f;
+                bool currentSign = currentValue >= 0.0f;
                 float inputValue = standardInputAction.getValue();
-                bool inputSign = inputValue > 0.0f;
+                bool inputSign = inputValue >= 0.0f;
                 if (currentSign == inputSign)
                 {
                     //same sign, use max value, values should be clamped to 1.0f max anyway
-                    currentValue = currentValue > inputValue ? currentValue : inputValue;
+                    currentValue = currentValue >= 0.0f ? (currentValue > inputValue ? currentValue : inputValue) : ( currentValue < inputValue ? currentValue : inputValue);
                    
                 }
                 else
