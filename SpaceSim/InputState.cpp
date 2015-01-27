@@ -45,7 +45,7 @@ void InputState::mergeInputState(const InputState& input)
                 else
                 {
                     //Different signs, take the difference, need to figure out which one is bigger or negative
-                    currentValue = currentValue > 0.0f ? (inputValue - currentValue) : (currentValue - inputValue);
+                    currentValue = currentValue >= 0.0f ? (inputValue - currentValue) : (currentValue - inputValue);
                 }
 #ifdef _DEBUG
                 if (test)
