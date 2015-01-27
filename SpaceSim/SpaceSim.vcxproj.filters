@@ -572,6 +572,9 @@
     <ClInclude Include="MouseControlDefines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MathUtilityFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\DebugColorShader.fx">

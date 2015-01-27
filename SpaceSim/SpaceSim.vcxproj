@@ -368,6 +368,7 @@
     <ClInclude Include="LaserManager.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="MathUtilityFunctions.h" />
     <ClInclude Include="MeshGroup.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="ModelLoader.h" />
