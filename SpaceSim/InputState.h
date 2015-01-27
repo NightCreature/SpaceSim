@@ -48,13 +48,11 @@ public:
              it->setValue(value);
     }
 
-    void mergeInputState(const InputState& input)
-    {
-        for (size_t counter = 0; counter < m_inputState.size(); ++counter)
-        {
-            m_inputState[counter].setValue(input.m_inputState[counter].getValue() > 0 ? input.m_inputState[counter].getValue() : m_inputState[counter].getValue());
-        }
-    }
+    void mergeInputState(const InputState& input);
+
+#ifdef _DEBUG
+    void printState() const;
+#endif
 private:
     typedef std::vector< StandardInputAction> InputStateMap; //There is no reason for this class
     InputStateMap m_inputState;

@@ -257,6 +257,7 @@
     <ClCompile Include="IController.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InfinitySphere.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="..\Shapes\laser.cpp" />

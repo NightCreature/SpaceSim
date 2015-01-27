@@ -18,7 +18,7 @@ public:
     //We should merge the input states here so that you can use both keyboard and a controller at the same time
     void setInput(unsigned int index, InputState* input)
     {
-        if (index <= m_input.size())
+        if (m_input.empty() || index > m_input.size())
         {
             m_input.push_back(input);
         }
@@ -37,6 +37,11 @@ public:
 
         return 0;
     }
+
+    size_t getNumberOfControllersInInput() { return m_input.size(); }
+#ifdef _DEBUG
+    void printInput();
+#endif
 protected:
 private:
     std::vector<InputState*> m_input;
