@@ -19,10 +19,6 @@ public:
     virtual void initialise(  );
     virtual const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput);
 
-    virtual const bool isConnected() const { return true; }
-    virtual void enableController();
-    virtual void disableController();
-
     HASH_ELEMENT_DEFINITION
 private:
     enum KeyState

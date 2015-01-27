@@ -203,7 +203,7 @@ inline std::string extractPathFromFileName( const std::string &fileName )
     return fileName.substr(0, counter + 1);
 }
 
- char* iGetLastErrorText(DWORD nErrorCode);
+ char* getLastErrorMessage(DWORD nErrorCode);
 
  void convertToWideString(const std::string& str, std::wstring& out);
 

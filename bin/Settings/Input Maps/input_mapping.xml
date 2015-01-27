@@ -1,4 +1,4 @@
 <xml>
-  <!--<XInputDevice input_map="xcontroller.xml"/>-->
   <KeyboardInputDevice input_map="keyboard_controller.xml"/>
+  <MouseController input_map="mouse_controller.xml"/>
 </xml>

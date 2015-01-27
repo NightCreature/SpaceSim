@@ -48,6 +48,10 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
     depthStencilTextureDesc.CPUAccessFlags = 0;
     depthStencilTextureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
     HRESULT hr = deviceManager.getDevice()->CreateTexture2D(&depthStencilTextureDesc, NULL, &m_depthStencil);
+    if (FAILED(hr))
+    {
+        MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create depth stencil for the cubemap renderer: 0x%x", hr);
+    }
 
     // Create the depth stencil view for the entire cube
     D3D11_DEPTH_STENCIL_VIEW_DESC cubeDepthStencilDescriptor;
@@ -60,7 +64,7 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
     hr = deviceManager.getDevice()->CreateDepthStencilView(m_depthStencil, &cubeDepthStencilDescriptor, &m_depthStencilView);
     if (FAILED(hr))
     {
-        MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create depth stencil for the cubemap renderer: 0x%x", hr);
+        MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create depth stencil view for the cubemap renderer: 0x%x", hr);
     }
 
     ZeroMemory(&m_cubeViewPort, sizeof(D3D11_VIEWPORT));

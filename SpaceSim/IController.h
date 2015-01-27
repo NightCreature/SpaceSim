@@ -20,9 +20,9 @@ public:
     virtual void deserialise(const tinyxml2::XMLElement* element, const InputSystem& inputSystem);
 
     virtual const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput) = 0;
-    virtual const bool isConnected() const = 0;
-    virtual void enableController() = 0;
-    virtual void disableController() = 0;
+    const bool isConnected() const { return m_connected; }
+    void enableController() { m_enabled = true; }
+    void disableController() { m_enabled = false; }
 
     const InputState& getState() const { return m_controllerState; }
 protected:
@@ -30,4 +30,6 @@ protected:
 
     InputState m_controllerState;
     DeadZone   m_sensitivity;
+    bool m_connected;
+    bool m_enabled;
 };
