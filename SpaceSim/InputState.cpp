@@ -23,10 +23,12 @@ void InputState::printState() const
 void InputState::mergeInputState(const InputState& input)
 {
     static bool test = false;
+#ifdef _DEBUG
     if (test)
     {
         printState();
     }
+#endif
     for (size_t counter = 0; counter < m_inputState.size(); ++counter)
     {
         for (auto standardInputAction : input.m_inputState)
@@ -49,10 +51,13 @@ void InputState::mergeInputState(const InputState& input)
             }
         }
     }
+
+#ifdef _DEBUG
     if (test)
     {
         printState();
         input.printState();
     }
+#endif
 }
 

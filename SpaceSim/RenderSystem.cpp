@@ -610,6 +610,11 @@ void RenderSystem::initialiseCubemapRendererAndResources(GameResourceHelper &res
     }
 
     tinyxml2::XMLElement* element = doc.FirstChildElement();
+    if (element == nullptr)
+    {
+        MSG_TRACE_CHANNEL("RENDERSYSTEM ERROR", "First Element is nullptr");
+        return;
+    }
     element = element->FirstChildElement();
     for (element; element; element = element->NextSiblingElement())
     {
