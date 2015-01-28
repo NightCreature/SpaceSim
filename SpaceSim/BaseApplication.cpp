@@ -16,8 +16,6 @@
 
 #include "CubeMapRenderer.h"
 
-#include "ittnotify.h"
-
 class RenderInstance;
 
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
@@ -115,10 +113,6 @@ void Application::mainGameLoop()
         }
         else
         {
-            __itt_domain *my_itt_frame = __itt_domain_create("Application::mainGameLoop");
-            my_itt_frame->flags = 1; //enable it
-            __itt_frame_begin_v3(my_itt_frame, NULL);
-
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();
@@ -147,8 +141,6 @@ void Application::mainGameLoop()
             //{
             //    PostQuitMessage(0);
             //}
-
-            __itt_frame_end_v3(my_itt_frame, NULL);
         }
     }
 }
