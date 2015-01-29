@@ -1,6 +1,7 @@
 #include "MouseController.h"
 #include "TypeHelpers.h"
 #include "MouseControlDefines.h"
+#include "MathUtilityFunctions.h"
 
 HASH_ELEMENT_IMPLEMENTATION(MouseController);
 
@@ -58,11 +59,11 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
         RAWMOUSE mouseState = input.data.mouse;
         if (mouseState.lLastX < 0)
         {
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeX], (float)mouseState.lLastX);
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeX], math::clamp((float)-mouseState.lLastX, 0.0f, 1.0f));
         }
-        else if (mouseState.lLastX < 0)
+        else if (mouseState.lLastX > 0)
         {
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveX], (float)mouseState.lLastX);
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveX], math::clamp((float)mouseState.lLastX, 0.0f, 1.0f));
         }
         else
         {
@@ -73,11 +74,11 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
         
         if (mouseState.lLastY < 0)
         {
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeY], (float)mouseState.lLastY);
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeY], math::clamp((float)-mouseState.lLastY, 0.0f, 1.0f));
         }
-        else if (mouseState.lLastY < 0)
+        else if (mouseState.lLastY > 0)
         {
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveY], (float)mouseState.lLastY);
+            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveY], math::clamp((float)mouseState.lLastY, 0.0f, 1.0f));
         }
         else
         {
