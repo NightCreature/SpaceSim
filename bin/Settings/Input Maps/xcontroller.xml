@@ -1,12 +1,38 @@
  <xml>
-	<Deadzone />
-	<InputAction type="Button" input_action="A" input="A"/>
-	<InputAction type="Button" input_action="B" input="B"/>
-	<InputAction type="Button" input_action="X" input="X"/>
-	<InputAction type="Button" input_action="Y" input="Y"/>
+   <InputAction input_action="move_forwards">
+    <Button input="left_stick_positive_y"/>
+  </InputAction>
+  <InputAction input_action="move_backwards">
+    <Button input="left_stick_negative_y"/>
+  </InputAction>
+  <InputAction input_action="move_left">
+    <Button input="left_stick_negative_x"/>
+  </InputAction>
+  <InputAction input_action="move_right">
+    <Button input="left_stick_positive_x"/>
+  </InputAction>
 
-	<InputAction type="Button" input_action="POV_UP" input="pov_up"/>
-	<InputAction type="Button" input_action="POV_DOWN" input="pov_down"/>
-	<InputAction type="Button" input_action="POV_LEFT" input="pov_left"/>
-	<InputAction type="Button" input_action="POV_RGIGHT" input="pov_right"/>
+<!--Yaw, Pitch and Roll controls-->
+  <InputAction input_action="move_yaw_left">
+    <Button input="right_stick_negative_x"/>
+  </InputAction>
+  <InputAction input_action="move_yaw_right">
+    <Button input="right_stick_positive_x"/>
+  </InputAction>
+  <InputAction input_action="move_pitch_up">
+    <Button input="right_stick_negative_y"/>
+  </InputAction>
+  <InputAction input_action="move_pitch_down">
+    <Button input="right_stick_positive_y"/>
+  </InputAction>
+  <InputAction input_action="left_shoulder">
+    <Button input="81"/>
+  </InputAction>
+  <InputAction input_action="right_shoulder">
+    <Button input="69"/>
+  </InputAction>
+
+  <InputAction input_action="exit_game" >
+    <Button input="start" />
+  </InputAction>
  </xml>
