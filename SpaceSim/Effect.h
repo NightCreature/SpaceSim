@@ -166,6 +166,7 @@ public:
     void deserialise(const tinyxml2::XMLElement* node, Resource* resource);
     void setupEffect() const;
     const Technique* getTechnique(const std::string& techniqueName) const;
+    const Technique* getTechnique(const unsigned int techniqueName) const;
     HASH_ELEMENT_DEFINITION;
 private:
     std::map<unsigned int, Technique> m_techniques;

@@ -260,6 +260,7 @@ void RenderSystem::initialise(Resource* resource)
 //-----------------------------------------------------------------------------
 void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
+    static const unsigned int defaultTechniqueHash = hashString("default");
     UNUSEDPARAM(resource);
     m_window.update(elapsedTime, time);
 
@@ -279,7 +280,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         }
 #endif
         const Effect* effect = renderInstance.getShaderInstance().getMaterial().getEffect();
-        const Technique* technique = effect->getTechnique("default");
+        const Technique* technique = effect->getTechnique(defaultTechniqueHash);
         technique->setMaterialContent(m_deviceManager, renderInstance.getShaderInstance().getMaterial().getMaterialCB());
         technique->setWVPContent(m_deviceManager, renderInstance.getShaderInstance().getWVPConstants());
 
