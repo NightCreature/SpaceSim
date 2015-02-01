@@ -85,8 +85,9 @@ void Camera::moveOverPlane(float deltau, float deltav, float deltan)
 
 Matrix44 Camera::createCamera()
 {
-    cross(m_cameraRight, Vector3::yAxis(), m_cameraForward);
     m_cameraForward.normalize();
+    m_cameraUp.normalize();
+    cross(m_cameraRight, m_cameraUp, m_cameraForward);
     m_cameraRight.normalize();
     cross(m_cameraUp, m_cameraForward, m_cameraRight);
   
@@ -128,8 +129,8 @@ void Camera::update( float elapsedTime, double time, const Input& input )
         yaw(yawFactor * m_rotationSpeed * elapsedTime);
         float pitchFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_pitch_up")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_pitch_down"));
         pitch(pitchFactor * m_rotationSpeed * elapsedTime); 
-            float zAxisDelta = inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_left")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_right"));
-        roll(zAxisDelta * m_rotationSpeed);
+        float zAxisDelta = inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_left")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_right"));
+        roll(zAxisDelta * m_rotationSpeed * 0.1f);
     }
 
     //Use the varibles to avoid a warning and allows us to use them in the code above without change
