@@ -6,6 +6,7 @@
 
 #include "../SpaceSim/StringHelperFunctions.h"
 #include "../SpaceSim/TypeHelpers.h"
+#include "../SpaceSim/XControllerDefines.h"
 
 HASH_ELEMENT_IMPLEMENTATION(XInputDevice)
 
@@ -256,6 +257,9 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
 void XInputDevice::internalActionSetup( InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input )
 {
     //Setup controller specific action map so it can map it's capabilities to the input the game expects
-    UNUSEDPARAM(inputAction);
-    UNUSEDPARAM(input);
+    Input::XControllerDefines xInputDefinitions;
+    unsigned int inputHash = hashString(input->Value());
+    Input::XControllerDefines::XControllerInput xControllerInput = xInputDefinitions.m_XInputToAction[inputHash];
+
+    m_physicalKeyToAction.insert(PhysicalInputPair(xControllerInput, inputAction));
 }

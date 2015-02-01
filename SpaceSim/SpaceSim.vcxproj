@@ -414,6 +414,7 @@
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="XController.cpp" />
+    <ClCompile Include="XControllerDefines.cpp" />
     <ClCompile Include="XMLModelLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -516,6 +517,7 @@
     <ClInclude Include="Types.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="XController.h" />
+    <ClInclude Include="XControllerDefines.h" />
     <ClInclude Include="XMLModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
