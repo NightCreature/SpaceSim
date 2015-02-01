@@ -22,11 +22,13 @@ void InputState::printState() const
 //-----------------------------------------------------------------------------
 void InputState::mergeInputState(const InputState& input)
 {
+#ifdef _DEBUG
     static bool test = false;
     if (test)
     {
         printState();
     }
+#endif
     for (size_t counter = 0; counter < m_inputState.size(); ++counter)
     {
         for (auto standardInputAction : input.m_inputState)
@@ -37,7 +39,7 @@ void InputState::mergeInputState(const InputState& input)
                 float inputValue = standardInputAction.getValue();
                 //Different signs, take the difference, need to figure out which one is bigger or negative
                 currentValue = currentValue + inputValue;
-                currentValue = math::clamp(currentValue, -1.0f, 1.0f);
+                currentValue = math::clamp(currentValue, 0.0f, 1.0f);
 #ifdef _DEBUG
             if (test)
             {
@@ -49,10 +51,13 @@ void InputState::mergeInputState(const InputState& input)
             }
         }
     }
+
+#ifdef _DEBUG
     if (test)
     {
         printState();
         input.printState();
     }
+#endif
 }
 

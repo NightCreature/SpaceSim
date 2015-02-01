@@ -65,6 +65,20 @@ const Technique* Effect::getTechnique(const std::string& techniqueName) const
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
+const Technique* Effect::getTechnique(const unsigned int techniqueName) const
+{
+    auto it = m_techniques.find(techniqueName);
+    if (it != end(m_techniques))
+    {
+        return &(it->second);
+    }
+
+    return nullptr;
+}
+
+//-------------------------------------------------------------------------
+// @brief 
+//-------------------------------------------------------------------------
 void Technique::deserialise(const tinyxml2::XMLElement* element)
 {
     GameResource* gameResource = (GameResource*)m_resource;
