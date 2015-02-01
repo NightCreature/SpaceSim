@@ -5,10 +5,17 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpaceSim", "SpaceSim\SpaceSim.vcxproj", "{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F49BA1B-0CCC-44BC-8DF7-E1DF2DEA86A7}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
+		Profile|Win32 = Profile|Win32
+		Profile|x64 = Profile|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
@@ -17,6 +24,10 @@ Global
 		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Debug|Win32.Build.0 = Debug|Win32
 		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Debug|x64.ActiveCfg = Debug|x64
 		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Debug|x64.Build.0 = Debug|x64
+		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Profile|Win32.ActiveCfg = Profile|Win32
+		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Profile|Win32.Build.0 = Profile|Win32
+		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Profile|x64.ActiveCfg = Profile|x64
+		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Profile|x64.Build.0 = Profile|x64
 		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Release|Win32.ActiveCfg = Release|Win32
 		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Release|Win32.Build.0 = Release|Win32
 		{27E7AA35-5A00-4F7F-8FDD-4D928FD36519}.Release|x64.ActiveCfg = Release|x64
@@ -24,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

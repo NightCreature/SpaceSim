@@ -1,9 +1,11 @@
 #pragma once
 
 #include "IController.h"
+#include "StringHelperFunctions.h"
+
+#include <map>
 #include <Windows.h>
 #include <XInput.h>
-#include "StringHelperFunctions.h"
 
 //!-----------------------------------------------------------------------------
 //! @brief Structure to keep track of the analog deltas
@@ -67,6 +69,10 @@ public:
 protected:
 private:
     virtual void internalActionSetup( InputActions::ActionType , const tinyxml2::XMLAttribute* input );
+
+    typedef std::map<unsigned int, InputActions::ActionType> PhysicalInputMapping;
+    typedef std::pair<unsigned int, InputActions::ActionType> PhysicalInputPair;
+    PhysicalInputMapping m_physicalKeyToAction;
 
     int            m_controllerIndex;
     bool           m_controllerActive;

@@ -6,6 +6,7 @@
 
 #include "../SpaceSim/StringHelperFunctions.h"
 #include "../SpaceSim/TypeHelpers.h"
+#include "../SpaceSim/XControllerDefines.h"
 
 HASH_ELEMENT_IMPLEMENTATION(XInputDevice)
 
@@ -42,47 +43,6 @@ m_firstUpdate(true)
 //-----------------------------------------------------------------------------
 void XInputDevice::initialise( )
 {
-    //if ( DPadUp & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::ePOVUp));
-    //if ( DPadDown & m_capabilities.Gamepad.wButtons )
-    //        m_controllerState.addButtonAction(ButtonAction(ButtonAction::ePOVDown));
-    //if ( DPadLeft & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::ePOVLeft));
-    //if ( DPadRight & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::ePOVRight));
-    //if ( Start & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eStartButton));
-    //if ( Back & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eBackButton));
-    //if ( LeftThumb & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eLeftThumbButton));
-    //if ( RightThumb & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eRightThumbButton));
-    //if ( LB & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eLBButton));
-    //if ( RB & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eRBButton));
-    //if ( A & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eAButton));
-    //if ( B & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eRBButton));
-    //if ( X & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eXButton));
-    //if ( Y & m_capabilities.Gamepad.wButtons )
-    //    m_controllerState.addButtonAction(ButtonAction(ButtonAction::eYButton));
-    //
-    //if (m_capabilities.Gamepad.bRightTrigger != 0 )
-    //    m_controllerState.addAxisAction(AxisAction(AxisAction::eRightTrigger));
-    //if (m_capabilities.Gamepad.bLeftTrigger != 0 )
-    //    m_controllerState.addAxisAction(AxisAction(AxisAction::eLeftTrigger));
-    //if (m_capabilities.Gamepad.sThumbLX != 0 )
-    //    m_controllerState.addAxisAction(AxisAction(AxisAction::eLeftXAxis));
-    //if (m_capabilities.Gamepad.sThumbLY != 0 )
-    //    m_controllerState.addAxisAction(AxisAction(AxisAction::eLeftYAxis));
-    //if (m_capabilities.Gamepad.sThumbRX != 0 )
-    //    m_controllerState.addAxisAction(AxisAction(AxisAction::eRightXAxis));
-    //if (m_capabilities.Gamepad.sThumbRY != 0 )
-    //    m_controllerState.addAxisAction(AxisAction(AxisAction::eRightYAxis));
 }
 
 //!-----------------------------------------------------------------------------
@@ -227,24 +187,77 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
 
     m_connected = m_controllerActive && m_isControllerActive;
 
-    //m_controllerState.setActionValue(InputActions::eAButton, m_gamepadState.wButtons & A ? true : false);
-    //m_controllerState.setActionValue(InputActions::eBButton, m_gamepadState.wButtons & B ? true : false);
-    //m_controllerState.setActionValue(InputActions::eXButton, m_gamepadState.wButtons & X ? true : false);
-    //m_controllerState.setActionValue(InputActions::eYButton, m_gamepadState.wButtons & Y ? true : false);
-    //m_controllerState.setActionValue(InputActions::eBackButton, m_gamepadState.wButtons & Back ? true : false);
-    //m_controllerState.setActionValue(InputActions::eStartButton, m_gamepadState.wButtons & Start ? true : false);
-    //m_controllerState.setActionValue(InputActions::eLBButton, m_gamepadState.wButtons & LB ? true : false);
-    //m_controllerState.setActionValue(InputActions::eRBButton, m_gamepadState.wButtons & RB ? true : false);
-    //m_controllerState.setActionValue(InputActions::ePOVUp, m_gamepadState.wButtons & DPadUp ? true : false);
-    //m_controllerState.setActionValue(InputActions::ePOVDown, m_gamepadState.wButtons & DPadDown ? true : false);
-    //m_controllerState.setActionValue(InputActions::ePOVLeft, m_gamepadState.wButtons & DPadLeft ? true : false);
-    //m_controllerState.setActionValue(InputActions::ePOVRight, m_gamepadState.wButtons & DPadRight ? true : false);
-    //m_controllerState.setActionValue(InputActions::eLeftTrigger, m_gamepadStatefloat.leftTrigger);
-    //m_controllerState.setActionValue(InputActions::eRightTrigger, m_gamepadStatefloat.rightTrigger);
-    //m_controllerState.setActionValue(InputActions::eLeftXAxis, m_gamepadStatefloat.leftXAxis);
-    //m_controllerState.setActionValue(InputActions::eLeftYAxis, m_gamepadStatefloat.leftYAxis);
-    //m_controllerState.setActionValue(InputActions::eRightXAxis, m_gamepadStatefloat.rightXAxis);
-    //m_controllerState.setActionValue(InputActions::eRightYAxis, m_gamepadStatefloat.rightYAxis);
+    if (m_gamepadStatefloat.leftXAxis > 0.f)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickPositiveX], m_gamepadStatefloat.leftXAxis);
+    }
+    else if (m_gamepadStatefloat.leftXAxis < 0.f)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickNegativeX], -m_gamepadStatefloat.leftXAxis);
+    }
+    else
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickPositiveX], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickNegativeX], 0.0f);
+    }
+
+    if (m_gamepadStatefloat.leftYAxis > 0.f)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickPositiveY], m_gamepadStatefloat.leftYAxis);
+    }
+    else if (m_gamepadStatefloat.leftYAxis < 0.f)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickNegativeY], -m_gamepadStatefloat.leftYAxis);
+    }
+    else
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickPositiveY], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickNegativeY], 0.0f);
+    }
+
+    if (m_gamepadStatefloat.rightXAxis > 0.f)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickPositiveX], m_gamepadStatefloat.rightXAxis);
+    }
+    else if (m_gamepadStatefloat.rightXAxis < 0.f)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickNegativeX], -m_gamepadStatefloat.rightXAxis);
+    }
+    else
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickPositiveX], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickNegativeX], 0.0f);
+    }
+
+    if (m_gamepadStatefloat.rightYAxis > 0.f)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickPositiveY], m_gamepadStatefloat.rightYAxis);
+    }
+    else if (m_gamepadStatefloat.rightYAxis < 0.f)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickNegativeY], -m_gamepadStatefloat.rightYAxis);
+    }
+    else
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickPositiveY], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickNegativeY], 0.0f);
+    }
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftTrigger], m_gamepadStatefloat.leftTrigger);
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightTrigger], m_gamepadStatefloat.rightTrigger);
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftShoulderButton],  (float)(m_gamepadState.wButtons & LB) );
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightShoulderButton], (float)(m_gamepadState.wButtons & RB));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::BackButton], (float)(m_gamepadState.wButtons & Back));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::StartButton], (float)(m_gamepadState.wButtons & Start));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::AButton], (float)(m_gamepadState.wButtons & A));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::BBUtton], (float)(m_gamepadState.wButtons & B));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::XButton], (float)(m_gamepadState.wButtons & X));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::YButton], (float)(m_gamepadState.wButtons & Y));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::POVLeft], (float)(m_gamepadState.wButtons & DPadLeft));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::POVRight], (float)(m_gamepadState.wButtons & DPadRight));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::POVUp], (float)(m_gamepadState.wButtons & DPadUp));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::POVDown], (float)(m_gamepadState.wButtons & DPadDown));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickClick], (float)(m_gamepadState.wButtons & LeftThumb));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickClick], (float)(m_gamepadState.wButtons & RightThumb));
 
     return m_controllerState;
 }
@@ -256,6 +269,9 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
 void XInputDevice::internalActionSetup( InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input )
 {
     //Setup controller specific action map so it can map it's capabilities to the input the game expects
-    UNUSEDPARAM(inputAction);
-    UNUSEDPARAM(input);
+    Input::XControllerDefines xInputDefinitions;
+    unsigned int inputHash = hashString(input->Value());
+    Input::XControllerDefines::XControllerInput xControllerInput = xInputDefinitions.m_XInputToAction[inputHash];
+
+    m_physicalKeyToAction.insert(PhysicalInputPair(xControllerInput, inputAction));
 }
