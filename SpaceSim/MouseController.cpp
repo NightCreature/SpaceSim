@@ -57,6 +57,11 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
     {
         //Do something with the mouse input
         RAWMOUSE mouseState = input.data.mouse;
+
+        //Fudge the mouse speed a bit
+        mouseState.lLastX /= 2;
+        mouseState.lLastY /= 2;
+
         if (mouseState.lLastX < 0)
         {
             m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeX], math::clamp((float)-mouseState.lLastX, 0.0f, 1.0f));
