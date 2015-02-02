@@ -451,6 +451,7 @@
     <ClInclude Include="..\Shapes\gunturret.h" />
     <ClInclude Include="GeometryCache.h" />
     <ClInclude Include="GeometryInstance.h" />
+    <ClInclude Include="HashString.h" />
     <ClInclude Include="IController.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InfinitySphere.h" />
