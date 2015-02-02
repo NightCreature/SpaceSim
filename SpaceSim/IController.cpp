@@ -1,6 +1,7 @@
 #include "IController.h"
 #include "InputSystem.h"
 #include "TypeHelpers.h"
+#include "HashString.h"
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
@@ -16,7 +17,8 @@ void IInputDevice::deserialise( const tinyxml2::XMLElement* element, const Input
             const tinyxml2::XMLAttribute* inputActionAttr = element->FindAttribute("input_action");
             if (inputActionAttr != nullptr)
             {
-                InputActions::ActionType inputActionType = inputSystem.getInputActionFromName(inputActionAttr->Value());
+                HashString hash(inputActionAttr->Value());
+                InputActions::ActionType inputActionType = inputSystem.getInputActionFromName(hash.getHash());
                 StandardInputAction inputAction(inputActionType);
                 m_controllerState.addStandardAction(inputAction);
                 for (const tinyxml2::XMLElement* inputElement = element->FirstChildElement(); inputElement; inputElement = inputElement->NextSiblingElement())
