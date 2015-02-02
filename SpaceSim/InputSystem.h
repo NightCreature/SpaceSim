@@ -34,7 +34,6 @@ public:
         return input;
     }
 
-    static InputActions::ActionType getInputActionFromName(const std::string& actionName) { return getInputActionFromName(hashString(actionName.c_str())); }
     static InputActions::ActionType getInputActionFromName(unsigned int actionName);
 
     typedef std::map<IInputDevice*, InputState> ControllersAndState;

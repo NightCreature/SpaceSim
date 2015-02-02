@@ -3,12 +3,23 @@
 #include "Camera.h"
 #include "InputSystem.h"
 #include "matrix33.h"
+#include "HashString.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <directxmath.h>
 
 const float Camera::m_maxPitchAngle = 89.9f;
+const HashString moveForward("move_forwards");
+const HashString moveBackWards("move_backwards");
+const HashString moveLeft("move_left");
+const HashString moveRight("move_right");
+const HashString yawLeft("move_yaw_left");
+const HashString yawRight("move_yaw_right");
+const HashString pitchUp("move_pitch_up");
+const HashString pitchDown("move_pitch_down");
+const HashString rollLeft("move_roll_left");
+const HashString rollRight("move_roll_right");
 
 Camera::Camera() :
 m_roll(0.0f),
@@ -121,15 +132,15 @@ void Camera::update( float elapsedTime, double time, const Input& input )
     const InputState* inputState = input.getInput(0);
     if (inputState)
     {
-        float moveAlongDirectionFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_forwards")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_backwards"));
+        float moveAlongDirectionFactor = inputState->getActionValue(InputSystem::getInputActionFromName(moveForward.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(moveBackWards.getHash()));
         moveAlongDirection(moveAlongDirectionFactor * m_movementSpeed * elapsedTime );//Move forwared, backward
-        float strafeFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_left")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_right"));
+        float strafeFactor = inputState->getActionValue(InputSystem::getInputActionFromName(moveLeft.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(moveRight.getHash()));
         strafe(strafeFactor   * m_movementSpeed * elapsedTime);//Move left/right
-        float yawFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_yaw_left")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_yaw_right"));
+        float yawFactor = inputState->getActionValue(InputSystem::getInputActionFromName(yawLeft.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(yawRight.getHash()));
         yaw(yawFactor * m_rotationSpeed * elapsedTime);
-        float pitchFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_pitch_up")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_pitch_down"));
+        float pitchFactor = inputState->getActionValue(InputSystem::getInputActionFromName(pitchUp.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(pitchDown.getHash()));
         pitch(pitchFactor * m_rotationSpeed * elapsedTime); 
-        float zAxisDelta = inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_left")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_right"));
+        float zAxisDelta = inputState->getActionValue(InputSystem::getInputActionFromName(rollLeft.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(rollRight.getHash()));
         roll(zAxisDelta * m_rotationSpeed * 0.05f);
     }
 
