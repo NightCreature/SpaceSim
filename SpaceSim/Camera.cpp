@@ -130,7 +130,7 @@ void Camera::update( float elapsedTime, double time, const Input& input )
         float pitchFactor = inputState->getActionValue(InputSystem::getInputActionFromName("move_pitch_up")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_pitch_down"));
         pitch(pitchFactor * m_rotationSpeed * elapsedTime); 
         float zAxisDelta = inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_left")) - inputState->getActionValue(InputSystem::getInputActionFromName("move_roll_right"));
-        roll(zAxisDelta * m_rotationSpeed * 0.1f);
+        roll(zAxisDelta * m_rotationSpeed * 0.05f);
     }
 
     //Use the varibles to avoid a warning and allows us to use them in the code above without change
