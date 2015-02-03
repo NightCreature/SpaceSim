@@ -7,26 +7,25 @@
 #include "../SpaceSim/StringHelperFunctions.h"
 #include "../SpaceSim/TypeHelpers.h"
 #include "../SpaceSim/XControllerDefines.h"
+#include "vector4.h"
 
 HASH_ELEMENT_IMPLEMENTATION(XInputDevice)
 
 //!-----------------------------------------------------------------------------
 //!! @brief Constructor
 //!-----------------------------------------------------------------------------
-XInputDevice::XInputDevice(const int controllerNr):
+XInputDevice::XInputDevice(const int controllerNr) :
 m_controllerIndex(controllerNr),
 m_controllerActive(false),
 m_previousPacketNr(0),
-m_vibration(false),
-m_isControllerActive(false),
-m_firstUpdate(true)
+m_vibration(false)
 {
     ZeroMemory(&m_gamepadState, sizeof(XINPUT_GAMEPAD));
     ZeroMemory(&m_capabilities, sizeof(XINPUT_CAPABILITIES));
     XInputGetCapabilities(m_controllerIndex, 0, &m_capabilities);
     if (m_capabilities.Type == XINPUT_DEVTYPE_GAMEPAD)
     {
-        switch(m_capabilities.SubType)
+        switch (m_capabilities.SubType)
         {
         case XINPUT_DEVSUBTYPE_GAMEPAD:
         default:
@@ -41,8 +40,10 @@ m_firstUpdate(true)
 //! @brief   Initialise the controller and add the capabilities to the inputState
 //! @remark
 //-----------------------------------------------------------------------------
-void XInputDevice::initialise( )
+void XInputDevice::initialise()
 {
+    m_sensitivity.leftStick = 0.1f;
+    m_sensitivity.rightStick = 0.1f;
 }
 
 //!-----------------------------------------------------------------------------
@@ -56,121 +57,39 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
     UNUSEDPARAM(mouseInput);
     UNUSEDPARAM(hidInput);
 
-    DWORD gamepadActive = 0;    
+    DWORD gamepadActive = 0;
     XINPUT_STATE newState;
-    ZeroMemory( &newState, sizeof(XINPUT_STATE) );
+    ZeroMemory(&newState, sizeof(XINPUT_STATE));
 
-    XInputEnable(m_isControllerActive);
+    XInputEnable(m_enabled);
 
-    gamepadActive = XInputGetState( m_controllerIndex, &newState );
+    gamepadActive = XInputGetState(m_controllerIndex, &newState);
 
 
-    if( gamepadActive == ERROR_SUCCESS )
-    { 
-        if (!m_firstUpdate)
+    if (gamepadActive == ERROR_SUCCESS)
+    {
+        m_controllerActive = true;
+
+        if (newState.dwPacketNumber != m_previousPacketNr)
         {
-            m_controllerActive = true;
-
-            if (newState.dwPacketNumber != m_previousPacketNr)
-            {
-                m_previousPacketNr = newState.dwPacketNumber;
-                XINPUT_GAMEPAD gamepadState = newState.Gamepad;
-
-                float ThumbLX = gamepadState.sThumbLX / (float)(0xffff / 2);
-                float ThumbLY = gamepadState.sThumbLY / (float)(0xffff / 2);
-                float ThumbRX = gamepadState.sThumbRX / (float)(0xffff / 2);
-                float ThumbRY = gamepadState.sThumbRY / (float)(0xffff / 2);
-                float TriggerLeft = gamepadState.bLeftTrigger / (float)(0xff / 2);
-                float TriggerRight = gamepadState.bRightTrigger / (float)(0xff / 2);
-
-                //!Dead zone the controller
-                if( ( ThumbLX < m_sensitivity.leftStick &&
-                      ThumbLX > -m_sensitivity.leftStick ) &&
-                    ( ThumbLY < m_sensitivity.leftStick &&
-                      ThumbLY > -m_sensitivity.leftStick ) )
-                {
-                    ThumbLX = 0;
-                    ThumbLY = 0;
-                }
-                if( ( ThumbRX < m_sensitivity.rightStick &&
-                      ThumbRX > -m_sensitivity.rightStick ) &&
-                    ( ThumbRY < m_sensitivity.rightStick &&
-                      ThumbRY > -m_sensitivity.rightStick ) )
-                {
-                    ThumbRX = 0;
-                    ThumbRY = 0;
-                }
-
-                //!calculate the deltas
-                m_deltaState.leftXAxis = fabs(m_gamepadStatefloat.leftXAxis) - fabs(ThumbLX);
-                m_deltaState.leftYAxis = fabs(m_gamepadStatefloat.leftYAxis) - fabs(ThumbLY);
-                m_deltaState.rightXAxis = fabs(m_gamepadStatefloat.rightXAxis) - fabs(ThumbRX);
-                m_deltaState.rightYAxis = fabs(m_gamepadStatefloat.rightYAxis) - fabs(ThumbRY);
-                m_deltaState.leftTrigger = m_gamepadStatefloat.leftTrigger - TriggerLeft;
-                m_deltaState.rightTrigger = m_gamepadStatefloat.rightTrigger - TriggerRight;
-                //!Replace previous state with current state for none delta enabled getting of stuff
-                m_gamepadState = gamepadState;
-                m_gamepadStatefloat.leftXAxis = ThumbLX;
-                m_gamepadStatefloat.leftYAxis = ThumbLY;
-                m_gamepadStatefloat.rightXAxis = ThumbRX;
-                m_gamepadStatefloat.rightYAxis = ThumbRY;
-                m_gamepadStatefloat.leftTrigger = TriggerLeft;
-                m_gamepadStatefloat.rightTrigger = TriggerRight;
-
-                if (m_vibration)
-                {
-                    XINPUT_VIBRATION vibration;
-                    ZeroMemory( &vibration, sizeof(XINPUT_VIBRATION) );
-                    vibration.wLeftMotorSpeed = (short)(m_bigMotor * 0xffff);
-                    vibration.wRightMotorSpeed = (short)(m_minorMotor * 0xffff);
-                    if (XInputSetState( m_controllerIndex, &vibration ) != ERROR_SUCCESS)
-                    {
-                        MSG_TRACE_CHANNEL("XCONTROLLER", "Couldn't set the rumble motors" )
-                    }
-
-                }
-
-                //DL_TRACE("New packet arrived this frame: %d", newState.dwPacketNumber);
-            }
-            else
-            {
-                //!Zero the delta the state hasn't changed in this frame
-                ZeroMemory(&m_deltaState, sizeof(AnalogControls));
-                //DL_TRACE("No new packet arrived this frame");
-            }
-        }
-        else
-        {
-            m_firstUpdate = false;
-            ZeroMemory(&m_deltaState, sizeof(AnalogControls));
-
+            m_previousPacketNr = newState.dwPacketNumber;
             XINPUT_GAMEPAD gamepadState = newState.Gamepad;
-            //!Dead zone the controller
-            float ThumbLX = gamepadState.sThumbLX / (float)(0xffff / 2);
-            float ThumbLY = gamepadState.sThumbLY / (float)(0xffff / 2);
-            float ThumbRX = gamepadState.sThumbRX / (float)(0xffff / 2);
-            float ThumbRY = gamepadState.sThumbRY / (float)(0xffff / 2);
+
+            //determine how far the controller is pushed
+            Vector4 leftStickPositionAndMagnitude;
+            Vector4 rightStickPositionAndMagnitude;
+            calculateThumbStickDirectionAndMagnitude(gamepadState.sThumbLX, gamepadState.sThumbLY, true, leftStickPositionAndMagnitude);
+            calculateThumbStickDirectionAndMagnitude(gamepadState.sThumbRX, gamepadState.sThumbRY, false, rightStickPositionAndMagnitude);
+
+
+            float ThumbLX = leftStickPositionAndMagnitude.x() * leftStickPositionAndMagnitude.w();
+            float ThumbLY = leftStickPositionAndMagnitude.y() * leftStickPositionAndMagnitude.w();
+            float ThumbRX = rightStickPositionAndMagnitude.x() * rightStickPositionAndMagnitude.w();
+            float ThumbRY = rightStickPositionAndMagnitude.y() * rightStickPositionAndMagnitude.w();
             float TriggerLeft = gamepadState.bLeftTrigger / (float)(0xff / 2);
             float TriggerRight = gamepadState.bRightTrigger / (float)(0xff / 2);
 
-            //!Dead zone the controller
-            if( ( ThumbLX < m_sensitivity.leftStick &&
-                ThumbLX > -m_sensitivity.leftStick ) &&
-                ( ThumbLY < m_sensitivity.leftStick &&
-                ThumbLY > -m_sensitivity.leftStick ) )
-            {
-                ThumbLX = 0;
-                ThumbLY = 0;
-            }
-            if( ( ThumbRX < m_sensitivity.rightStick &&
-                ThumbRX > -m_sensitivity.rightStick ) &&
-                ( ThumbRY < m_sensitivity.rightStick &&
-                ThumbRY > -m_sensitivity.rightStick ) )
-            {
-                ThumbRX = 0;
-                ThumbRY = 0;
-            }
-
+            //!Replace previous state with current state for none delta enabled getting of stuff
             m_gamepadState = gamepadState;
             m_gamepadStatefloat.leftXAxis = ThumbLX;
             m_gamepadStatefloat.leftYAxis = ThumbLY;
@@ -178,6 +97,21 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
             m_gamepadStatefloat.rightYAxis = ThumbRY;
             m_gamepadStatefloat.leftTrigger = TriggerLeft;
             m_gamepadStatefloat.rightTrigger = TriggerRight;
+
+            if (m_vibration)
+            {
+                XINPUT_VIBRATION vibration;
+                ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+                vibration.wLeftMotorSpeed = (short)(m_bigMotor * 0xffff);
+                vibration.wRightMotorSpeed = (short)(m_minorMotor * 0xffff);
+                if (XInputSetState(m_controllerIndex, &vibration) != ERROR_SUCCESS)
+                {
+                    MSG_TRACE_CHANNEL("XCONTROLLER", "Couldn't set the rumble motors")
+                }
+
+            }
+
+            //DL_TRACE("New packet arrived this frame: %d", newState.dwPacketNumber);
         }
     }
     else
@@ -185,7 +119,7 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
         m_controllerActive = false;
     }
 
-    m_connected = m_controllerActive && m_isControllerActive;
+    m_connected = m_controllerActive && m_enabled;
 
     if (m_gamepadStatefloat.leftXAxis > 0.f)
     {
@@ -244,7 +178,7 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
     }
     m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftTrigger], m_gamepadStatefloat.leftTrigger);
     m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightTrigger], m_gamepadStatefloat.rightTrigger);
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftShoulderButton],  (float)(m_gamepadState.wButtons & LB) );
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftShoulderButton], (float)(m_gamepadState.wButtons & LB));
     m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightShoulderButton], (float)(m_gamepadState.wButtons & RB));
     m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::BackButton], (float)(m_gamepadState.wButtons & Back));
     m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::StartButton], (float)(m_gamepadState.wButtons & Start));
@@ -266,7 +200,7 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void XInputDevice::internalActionSetup( InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input )
+void XInputDevice::internalActionSetup(InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input)
 {
     //Setup controller specific action map so it can map it's capabilities to the input the game expects
     Input::XControllerDefines xInputDefinitions;
@@ -274,4 +208,42 @@ void XInputDevice::internalActionSetup( InputActions::ActionType inputAction, co
     Input::XControllerDefines::XControllerInput xControllerInput = xInputDefinitions.m_XInputToAction[inputHash];
 
     m_physicalKeyToAction.insert(PhysicalInputPair(xControllerInput, inputAction));
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void XInputDevice::calculateThumbStickDirectionAndMagnitude(float stickX, float stickY, bool isLeftStick, Vector4& directionAndMagnitude)
+{
+    float magnitude = sqrt(stickX*stickX + stickY*stickY);
+
+    //determine the direction the controller is pushed
+    float normalizedLX = stickX / magnitude;
+    float normalizedLY = stickY / magnitude;
+    UNUSEDPARAM(normalizedLX);
+    UNUSEDPARAM(normalizedLY);
+    float normalizedMagnitude = 0;
+
+    //check if the controller is outside a circular dead zone
+    float deadZoneValue = isLeftStick == true ? (float)XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE : (float)XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+    if (magnitude > deadZoneValue)
+    {
+        //clip the magnitude at its expected maximum value
+        if (magnitude > 32767) magnitude = 32767;
+
+        //adjust magnitude relative to the end of the dead zone
+        magnitude -= deadZoneValue;
+
+        //optionally normalize the magnitude with respect to its expected range
+        //giving a magnitude value of 0.0 to 1.0
+        normalizedMagnitude = magnitude / (32767 - deadZoneValue);
+    }
+    else //if the controller is in the deadzone zero out the magnitude
+    {
+        magnitude = 0.0;
+        normalizedMagnitude = 0.0;
+    }
+
+    directionAndMagnitude = Vector4(normalizedLX, normalizedLY, magnitude, normalizedMagnitude);
 }

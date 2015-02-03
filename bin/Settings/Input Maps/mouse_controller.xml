@@ -7,10 +7,10 @@
     <Button input="positive_x"/>
   </InputAction>
   <InputAction input_action="move_pitch_up">
-    <Button input="positive_y"/>
+    <Button input="negative_y"/>
   </InputAction>
   <InputAction input_action="move_pitch_down">
-    <Button input="negative_y"/>
+    <Button input="positive_y"/>
   </InputAction>
 
   <InputAction input_action="fire">

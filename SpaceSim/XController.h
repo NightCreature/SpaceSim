@@ -7,6 +7,8 @@
 #include <Windows.h>
 #include <XInput.h>
 
+class Vector4;
+
 //!-----------------------------------------------------------------------------
 //! @brief Structure to keep track of the analog deltas
 //!-----------------------------------------------------------------------------
@@ -57,7 +59,6 @@ public:
     ~XInputDevice() {}
 
     void initialise();
-
     const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput);
 
     void enableVibration() { m_vibration = true; }
@@ -69,6 +70,7 @@ public:
 protected:
 private:
     virtual void internalActionSetup( InputActions::ActionType , const tinyxml2::XMLAttribute* input );
+    void calculateThumbStickDirectionAndMagnitude(float stickX, float stickY, bool isLeftStick, Vector4& directionAndMagnitude);
 
     typedef std::map<unsigned int, InputActions::ActionType> PhysicalInputMapping;
     typedef std::pair<unsigned int, InputActions::ActionType> PhysicalInputPair;
@@ -79,12 +81,9 @@ private:
     XINPUT_GAMEPAD m_gamepadState;
     XINPUT_CAPABILITIES m_capabilities;
     AnalogControls m_gamepadStatefloat;
-    AnalogControls m_deltaState;
     DWORD          m_previousPacketNr;
     float          m_bigMotor;
     float          m_minorMotor;
     bool           m_vibration;
-    bool           m_isControllerActive;
-    bool           m_firstUpdate;
     ControllerType m_type;
 };
