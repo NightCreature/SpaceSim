@@ -51,6 +51,13 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
     //Positive X means moving Right, and negative means left
     float mouseX = 0.0f;
     float mouseY = 0.0f;
+    unsigned int mouseButton1 = false;
+    unsigned int mouseButton2 = false;
+    unsigned int mouseButton3 = false;
+    unsigned int mouseButton4 = false;
+    unsigned int mouseButton5 = false;
+    float wheelData = 0.0f;
+    float oneOverInputLength = 1.0f / mouseInput.size();
     //Might need to collect the mouse data over an update and then set the values
     for (auto input : mouseInput)
     {
@@ -62,29 +69,22 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
         mouseX += mouseState.lLastX;
         mouseY += mouseState.lLastY;
 
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton1], (float)(RI_MOUSE_BUTTON_1_DOWN & mouseState.usButtonFlags));
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton2], (float)(RI_MOUSE_BUTTON_2_DOWN & mouseState.usButtonFlags));
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton3], (float)(RI_MOUSE_BUTTON_3_DOWN & mouseState.usButtonFlags));
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton4], (float)(RI_MOUSE_BUTTON_4_DOWN & mouseState.usButtonFlags));
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton5], (float)(RI_MOUSE_BUTTON_5_DOWN & mouseState.usButtonFlags));
-        
+        mouseButton1 = RI_MOUSE_BUTTON_1_DOWN & mouseState.usButtonFlags;
+        mouseButton2 = RI_MOUSE_BUTTON_2_DOWN & mouseState.usButtonFlags;
+        mouseButton3 = RI_MOUSE_BUTTON_3_DOWN & mouseState.usButtonFlags;
+        mouseButton4 = RI_MOUSE_BUTTON_4_DOWN & mouseState.usButtonFlags;
+        mouseButton5 = RI_MOUSE_BUTTON_5_DOWN & mouseState.usButtonFlags;
+
         if (RI_MOUSE_WHEEL & mouseState.usButtonFlags)
         {
             short wheelDelta = (short)mouseState.usButtonData % 120;
-            if (wheelDelta > 0)
-            {
-                m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseWheelUp], (float)(wheelDelta));
-            }
-            else
-            {
-                m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseWheelDown], (float)(-wheelDelta));
-            }
-
+            wheelData += wheelDelta;
         }
+
     }
 
-    mouseX /= mouseInput.size();
-    mouseY /= mouseInput.size();
+    mouseX *= oneOverInputLength;
+    mouseY *= oneOverInputLength;
 
     if (mouseX < 0)
     {
@@ -114,6 +114,22 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
         //Reset the values
         m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeY], 0.0f);
         m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveY], 0.0f);
+    }
+
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton1], (float)(mouseButton1));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton2], (float)(mouseButton2));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton3], (float)(mouseButton3));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton4], (float)(mouseButton4));
+    m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton5], (float)(mouseButton5));
+
+    wheelData *= oneOverInputLength;
+    if (wheelData > 0)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseWheelUp], (float)(wheelData));
+    }
+    else
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseWheelDown], (float)(-wheelData));
     }
 
     return m_controllerState;
