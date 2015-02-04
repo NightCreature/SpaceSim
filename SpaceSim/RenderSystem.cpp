@@ -277,16 +277,17 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
             pPerf->BeginEvent(renderInstance.m_name.c_str());
         }
 #endif
-        const Effect* effect = renderInstance.getShaderInstance().getMaterial().getEffect();
-        const Technique* technique = effect->getTechnique(defaultTechniqueHash);
-        technique->setMaterialContent(m_deviceManager, renderInstance.getShaderInstance().getMaterial().getMaterialCB());
+        const Material& material = renderInstance.getShaderInstance().getMaterial();
+        const Effect* effect = material.getEffect();
+        const Technique* technique = effect->getTechnique(material.getTechnique());
+        technique->setMaterialContent(m_deviceManager, material.getMaterialCB());
         technique->setWVPContent(m_deviceManager, renderInstance.getShaderInstance().getWVPConstants());
 
-        const std::vector<unsigned int>& textureHashes = renderInstance.getShaderInstance().getMaterial().getTextureHashes();
+        const std::vector<unsigned int>& textureHashes = material.getTextureHashes();
         //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
         for (unsigned int counter = 0; counter < textureHashes.size(); ++counter)
         {
-            const Texture* texture = m_textureManager.getTexture(renderInstance.getShaderInstance().getMaterial().getTextureHashes()[counter]);
+            const Texture* texture = m_textureManager.getTexture(textureHashes[counter]);
             ID3D11ShaderResourceView* srv = texture->getShaderResourceView();
             deviceContext->PSSetShaderResources(counter, 1, &srv);
             ID3D11SamplerState* const samplerState = m_textureManager.getSamplerState();
@@ -302,7 +303,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         technique->setupTechnique();
 
         deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
-        if (renderInstance.getShaderInstance().getMaterial().getBlendState())
+        if (material.getBlendState())
         {
             deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
         }

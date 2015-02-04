@@ -78,7 +78,6 @@ const InputState& KeyboardInputDevice::update(const std::vector<RAWINPUT>& keybo
         }
 
         input.data.keyboard = rawInputFixup(input.data.keyboard);
-        //printKeyState(prawInput);
         PhysicalInputMapping::const_iterator it = m_physicalKeyToAction.find(input.data.keyboard.VKey);
         if (it != m_physicalKeyToAction.end())
         {
@@ -94,7 +93,6 @@ const InputState& KeyboardInputDevice::update(const std::vector<RAWINPUT>& keybo
                 value = 1.0f;
             }
             m_controllerState.setActionValue(it->second, value);
-            m_buttonState[input.data.keyboard.VKey] = KeyState(value > 0.0f);
         }
     }
 
@@ -248,18 +246,13 @@ void KeyboardInputDevice::getHumanReadableChar(char*& buffer, unsigned int flags
 
 void KeyboardInputDevice::printKeyState( PRAWINPUT prawInput )
 {
-    MSG_TRACE("VKEY code pressed %d", prawInput->data.keyboard.VKey);
-    MSG_TRACE("SCAN code pressed %d", prawInput->data.keyboard.MakeCode);
-    MSG_TRACE("Flags pressed %d", prawInput->data.keyboard.Flags);
+    //MSG_TRACE("VKEY code pressed %d", prawInput->data.keyboard.VKey);
+    //MSG_TRACE("SCAN code pressed %d", prawInput->data.keyboard.MakeCode);
+    //MSG_TRACE("Flags pressed %d", prawInput->data.keyboard.Flags);
     char* buffer;
     getHumanReadableChar(buffer, prawInput->data.keyboard.Flags, prawInput->data.keyboard.MakeCode, ((prawInput->data.keyboard.Flags & RI_KEY_E1) != 0));
     MSG_TRACE("Character pressed %s", buffer);
     delete buffer;
-}
-
-void KeyboardInputDevice::resetInputValues()
-{
-    memset(&m_buttonState, 1, sizeof(KeyState) * 255);
 }
 
 //-----------------------------------------------------------------------------

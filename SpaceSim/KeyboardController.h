@@ -21,20 +21,12 @@ public:
 
     HASH_ELEMENT_DEFINITION
 private:
-    enum KeyState
-    {
-        Pressed = 0,
-        Up
-    };
-
     RAWKEYBOARD rawInputFixup(RAWKEYBOARD input);
     void getHumanReadableChar(char*& buffer, unsigned int flags, unsigned int scanCode, bool isE0); 
     void printKeyState( PRAWINPUT prawInput );
-    void resetInputValues();//Should do this differently in the update loopo
 
     virtual void internalActionSetup( InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input );
 
-    KeyState m_buttonState[255];
     typedef std::map<unsigned short, InputActions::ActionType> PhysicalInputMapping;
     typedef std::pair<unsigned short, InputActions::ActionType> PhysicalInputPair;
     PhysicalInputMapping m_physicalKeyToAction;
