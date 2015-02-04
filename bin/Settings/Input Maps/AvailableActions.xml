@@ -18,4 +18,6 @@
   <ActionName name="fe_right" lng="lng_fe_right"/>
   <ActionName name="fe_accept" lng="lng_fe_accept"/>
   <ActionName name="fe_cancel" lng="lng_cancel"/>
+
+  <ActionName name="exit_game" lng="lng_quit_game"/>
 </xml>

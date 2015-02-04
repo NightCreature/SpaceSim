@@ -15,8 +15,11 @@
 #include <list>
 
 #include "CubeMapRenderer.h"
+#include "HashString.h"
 
 class RenderInstance;
+
+HashString exitGame("exit_game");
 
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Matrix44 Application::m_view;
@@ -141,6 +144,11 @@ void Application::mainGameLoop()
             //{
             //    PostQuitMessage(0);
             //}
+
+            if (input.getInput(0)->getActionValue(InputSystem::getInputActionFromName(exitGame)))
+            {
+                PostQuitMessage(0);
+            }
         }
     }
 }
