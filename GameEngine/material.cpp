@@ -12,11 +12,13 @@ HASH_ELEMENT_IMPLEMENTATION(Material)
 
 Material::Material() :
 m_materialCB(),
-m_alphaBlend(false)
+m_alphaBlend(false),
+m_techniqueHash(hashString("default"))
 {
 }
 
-Material::Material(float shininess, const Color& ambient, const Color& specular, const Color& emissive, const Color& diffuse)
+Material::Material(float shininess, const Color& ambient, const Color& specular, const Color& emissive, const Color& diffuse) :
+m_techniqueHash(hashString("default"))
 {
     m_materialCB.m_ambient[3] = ambient.a();
     m_materialCB.m_ambient[0] = ambient.r();
@@ -44,6 +46,7 @@ Material::Material(const Material& material)
     m_materialCB = material.m_materialCB;
     m_texture.insert(m_texture.begin(), material.m_texture.begin(), material.m_texture.end());
     m_alphaBlend = material.m_alphaBlend;
+    m_techniqueHash = material.getTechnique();
 }
 
 //-------------------------------------------------------------------------
@@ -115,6 +118,11 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
             {
                 GameResourceHelper helper(resource);
                 m_effect = const_cast<Effect*>(helper.getWritableGameResource()->getEffectCache()->createEffect(resource, attribute->Value()));
+            }
+            attribute = node->FindAttribute("technique_name");
+            if (attribute)
+            {
+                m_techniqueHash = hashString(attribute->Value());
             }
             //m_effect.deserialise(deviceManager, node);
         }

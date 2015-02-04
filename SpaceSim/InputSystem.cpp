@@ -167,7 +167,7 @@ ControllerType InputSystem::stringToControllerType( const std::string& controlle
     else if (controllerNameHash ==  KeyboardInputDevice::m_hash)
     {
         return Keyboard;
-    }
+    } 
     else if (controllerNameHash == MouseController::m_hash)
     {
         return Mouse;

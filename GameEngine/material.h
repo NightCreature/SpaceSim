@@ -54,8 +54,10 @@ public:
     
     const Effect* getEffect() const { return m_effect; }
     Effect* getEffect() { return m_effect; }
+    unsigned int getTechnique() const { return m_techniqueHash; }
 protected:
 private:
+    unsigned int m_techniqueHash;
     Effect* m_effect;
     MaterialContent m_materialCB;
     std::vector<unsigned int> m_texture;//Order is sampler order as well

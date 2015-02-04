@@ -94,40 +94,38 @@ void RenderSystem::initialise(Resource* resource)
     }
 
     IDXGIAdapter* adapter = nullptr;
+    IDXGIFactory * pFactory;
+    HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory));
+    if (hr == S_OK)
     {
-        IDXGIFactory * pFactory;
-        HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory));
-        if (hr == S_OK)
+        for (size_t counter = 0; hr == S_OK; ++counter)
         {
-            for (size_t counter = 0; hr == S_OK; ++counter)
+            adapter = nullptr;
+            hr = pFactory->EnumAdapters((UINT)counter, &adapter);
+            MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "%d", counter);
+            if (adapter != nullptr)
             {
-                adapter = nullptr;
-                hr = pFactory->EnumAdapters((UINT)counter, &adapter);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "%d", counter);
-                if (adapter != nullptr)
-                {
-                    DXGI_ADAPTER_DESC adapterDesc;
-                    adapter->GetDesc(&adapterDesc);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "vendor id: %x", adapterDesc.VendorId);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "device id: %x", adapterDesc.DeviceId);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "subsytem id: %x", adapterDesc.SubSysId);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "revision: %d", adapterDesc.Revision);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated VRAM: %llu MiB", adapterDesc.DedicatedVideoMemory / (1024 * 1024));
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated RAM: %llu MiB", adapterDesc.DedicatedSystemMemory / (1024 * 1024));
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Shared RAM: %llu MiB", adapterDesc.SharedSystemMemory / (1024 * 1024));
-                    std::string str;
-                    convertToCString(adapterDesc.Description, str);
-                    MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());
+                DXGI_ADAPTER_DESC adapterDesc;
+                adapter->GetDesc(&adapterDesc);
+                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "vendor id: %x", adapterDesc.VendorId);
+                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "device id: %x", adapterDesc.DeviceId);
+                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "subsytem id: %x", adapterDesc.SubSysId);
+                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "revision: %d", adapterDesc.Revision);
+                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated VRAM: %llu MiB", adapterDesc.DedicatedVideoMemory / (1024 * 1024));
+                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated RAM: %llu MiB", adapterDesc.DedicatedSystemMemory / (1024 * 1024));
+                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Shared RAM: %llu MiB", adapterDesc.SharedSystemMemory / (1024 * 1024));
+                std::string str;
+                convertToCString(adapterDesc.Description, str);
+                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());
 
-                    if (adapterDesc.DedicatedVideoMemory > 0)
-                    {
-                        break;
-                    }
+                if (adapterDesc.DedicatedVideoMemory > 0)
+                {
+                    break;
                 }
             }
-
-            pFactory->Release();
         }
+
+        pFactory->Release();
     }
 
     if (!m_deviceManager.createDevice(adapter))
@@ -169,7 +167,7 @@ void RenderSystem::initialise(Resource* resource)
     rasterizerStateDesc.ScissorEnable = false;
     rasterizerStateDesc.SlopeScaledDepthBias = 0.0f;
     rasterizerStateDesc.DepthClipEnable = false;
-    HRESULT hr = device->CreateRasterizerState(&rasterizerStateDesc, &m_rasteriserState);
+    hr = device->CreateRasterizerState(&rasterizerStateDesc, &m_rasteriserState);
 
     D3D11_RASTERIZER_DESC rasterizerWireStateDesc;
     rasterizerWireStateDesc.CullMode = D3D11_CULL_NONE;
@@ -279,16 +277,17 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
             pPerf->BeginEvent(renderInstance.m_name.c_str());
         }
 #endif
-        const Effect* effect = renderInstance.getShaderInstance().getMaterial().getEffect();
-        const Technique* technique = effect->getTechnique(defaultTechniqueHash);
-        technique->setMaterialContent(m_deviceManager, renderInstance.getShaderInstance().getMaterial().getMaterialCB());
+        const Material& material = renderInstance.getShaderInstance().getMaterial();
+        const Effect* effect = material.getEffect();
+        const Technique* technique = effect->getTechnique(material.getTechnique());
+        technique->setMaterialContent(m_deviceManager, material.getMaterialCB());
         technique->setWVPContent(m_deviceManager, renderInstance.getShaderInstance().getWVPConstants());
 
-        const std::vector<unsigned int>& textureHashes = renderInstance.getShaderInstance().getMaterial().getTextureHashes();
+        const std::vector<unsigned int>& textureHashes = material.getTextureHashes();
         //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
         for (unsigned int counter = 0; counter < textureHashes.size(); ++counter)
         {
-            const Texture* texture = m_textureManager.getTexture(renderInstance.getShaderInstance().getMaterial().getTextureHashes()[counter]);
+            const Texture* texture = m_textureManager.getTexture(textureHashes[counter]);
             ID3D11ShaderResourceView* srv = texture->getShaderResourceView();
             deviceContext->PSSetShaderResources(counter, 1, &srv);
             ID3D11SamplerState* const samplerState = m_textureManager.getSamplerState();
@@ -304,7 +303,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         technique->setupTechnique();
 
         deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
-        if (renderInstance.getShaderInstance().getMaterial().getBlendState())
+        if (material.getBlendState())
         {
             deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
         }

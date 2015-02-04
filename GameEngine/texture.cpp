@@ -72,11 +72,11 @@ void Texture::cleanup()
     }
     //if (!m_renderTargetViews.empty())
     //{
-        //for (ID3D11RenderTargetView* rt: m_renderTargetViews)
-        //{
-            //rt->Release();
-            //rt = nullptr;
-        //}
+    //for (ID3D11RenderTargetView* rt: m_renderTargetViews)
+    //{
+    //rt->Release();
+    //rt = nullptr;
+    //}
     //}
     if (m_textureShaderResourceView)
     {
@@ -88,4 +88,14 @@ void Texture::cleanup()
         m_textureSamplerState->Release();
         m_textureSamplerState = nullptr;
     }
+
+    for (size_t counter = 0; counter < 6; ++counter)
+    {
+        if (m_renderTargetViews[counter] != nullptr)
+        {
+            m_renderTargetViews[counter]->Release();
+            m_renderTargetViews[counter] = nullptr;
+        }
+    }
+
 }

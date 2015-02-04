@@ -4,7 +4,7 @@
 #include "Paths.h"
 #include "texture.h"
 #ifdef _DEBUG
-#include "vld.h"
+//#include "vld.h"
 #endif
 #include <iostream>
 #include <direct.h>

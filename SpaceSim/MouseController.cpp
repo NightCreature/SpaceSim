@@ -45,52 +45,22 @@ void MouseController::initialise()
 const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput)
 {
     UNUSEDPARAM(keyboardInput);
-    UNUSEDPARAM(mouseInput);
     UNUSEDPARAM(hidInput);
 
     //Postive Y means the mouse is moving down over the screen, and negative when moving up
     //Positive X means moving Right, and negative means left
-
-
+    float mouseX = 0.0f;
+    float mouseY = 0.0f;
     //Might need to collect the mouse data over an update and then set the values
     for (auto input : mouseInput)
     {
+        
         //Do something with the mouse input
         RAWMOUSE mouseState = input.data.mouse;
 
         //Fudge the mouse speed a bit
-        mouseState.lLastX /= 2;
-        mouseState.lLastY /= 2;
-
-        if (mouseState.lLastX < 0)
-        {
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeX], math::clamp((float)-mouseState.lLastX, 0.0f, 1.0f));
-        }
-        else if (mouseState.lLastX > 0)
-        {
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveX], math::clamp((float)mouseState.lLastX, 0.0f, 1.0f));
-        }
-        else
-        {
-            //Reset the values
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeX], 0.0f);
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveX], 0.0f);
-        }
-        
-        if (mouseState.lLastY < 0)
-        {
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeY], math::clamp((float)-mouseState.lLastY, 0.0f, 1.0f));
-        }
-        else if (mouseState.lLastY > 0)
-        {
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveY], math::clamp((float)mouseState.lLastY, 0.0f, 1.0f));
-        }
-        else
-        {
-            //Reset the values
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeY], 0.0f);
-            m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveY], 0.0f);
-        }
+        mouseX += mouseState.lLastX;
+        mouseY += mouseState.lLastY;
 
         m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton1], (float)(RI_MOUSE_BUTTON_1_DOWN & mouseState.usButtonFlags));
         m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton2], (float)(RI_MOUSE_BUTTON_2_DOWN & mouseState.usButtonFlags));
@@ -111,6 +81,39 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
             }
 
         }
+    }
+
+    mouseX /= mouseInput.size();
+    mouseY /= mouseInput.size();
+
+    if (mouseX < 0)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeX], math::clamp((float)-mouseX, 0.0f, 1.0f));
+    }
+    else if (mouseX > 0)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveX], math::clamp((float)mouseX, 0.0f, 1.0f));
+    }
+    else
+    {
+        //Reset the values
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeX], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveX], 0.0f);
+    }
+
+    if (mouseY < 0)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeY], math::clamp((float)-mouseY, 0.0f, 1.0f));
+    }
+    else if (mouseY > 0)
+    {
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveY], math::clamp((float)mouseY, 0.0f, 1.0f));
+    }
+    else
+    {
+        //Reset the values
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::NegativeY], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::PositiveY], 0.0f);
     }
 
     return m_controllerState;

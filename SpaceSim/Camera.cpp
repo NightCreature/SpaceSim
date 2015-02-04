@@ -73,6 +73,17 @@ void Camera::pitch(float angle)
         m_cameraForward = m_cameraForward * pitchRotation;
         m_cameraUp      = m_cameraUp * pitchRotation;
     }
+    else
+    {
+        if (m_pitch < 0.0f)
+        {
+            m_pitch = -m_maxPitchAngle;
+        }
+        else if (m_pitch < 0.0f)
+        {
+            m_pitch = m_maxPitchAngle;
+        }
+    }
 }
 
 void Camera::yaw(float angle)
