@@ -40,10 +40,9 @@ m_vibration(false)
 //! @brief   Initialise the controller and add the capabilities to the inputState
 //! @remark
 //-----------------------------------------------------------------------------
-void XInputDevice::initialise()
+void XInputDevice::initialise(HWND hwnd)
 {
-    m_sensitivity.leftStick = 0.1f;
-    m_sensitivity.rightStick = 0.1f;
+    UNUSEDPARAM(hwnd);
 }
 
 //!-----------------------------------------------------------------------------

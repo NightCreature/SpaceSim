@@ -98,7 +98,7 @@ void InputSystem::update( float elapsedTime, double time )
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void InputSystem::initialise( const std::string& inputMapFileName )
+void InputSystem::initialise( const std::string& inputMapFileName, HWND hwnd )
 {
     tinyxml2::XMLDocument actionsDoc;
     std::string availableActionsFileName = extractPathFromFileName(inputMapFileName) + "AvailableActions.xml";
@@ -148,7 +148,7 @@ void InputSystem::initialise( const std::string& inputMapFileName )
             tinyxml2::XMLElement* inputElement = inputDoc.FirstChildElement();
             inputElement = inputElement->FirstChildElement();//Skip the <xml> node
             controller->deserialise(inputElement, *this);
-            controller->initialise();
+            controller->initialise(hwnd);
         }
     }
 }

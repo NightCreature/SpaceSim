@@ -71,7 +71,7 @@ bool Application::initialise()
 
     m_renderSystem.initialise(m_gameResource);
     //m_inputSystem.createController(Gamepad);
-    m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml");
+    m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml", m_renderSystem.getWindowHandle());
     m_inputDispatch = &InputSystem::SetRawInput;
     ShaderPack shaderPack(m_gameResource);
     shaderPack.loadShaderPack("shader_pack.xml");

@@ -18,14 +18,14 @@ MouseController::~MouseController()
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void MouseController::initialise()
+void MouseController::initialise(HWND hwnd)
 {
     RAWINPUTDEVICE rawInputDevice;
 
     rawInputDevice.usUsagePage = 0x01;
     rawInputDevice.usUsage = 0x02;
     rawInputDevice.dwFlags = RIDEV_NOLEGACY;   // adds HID mouse and also ignores legacy mouse messages
-    rawInputDevice.hwndTarget = 0;
+    rawInputDevice.hwndTarget = hwnd;
 
     m_connected = true;
     //InputSystem.addRawInputDevice(rawInputDevice);
@@ -36,6 +36,13 @@ void MouseController::initialise()
         unsigned int error = GetLastError();
         MSG_TRACE_CHANNEL("MOUSE CONTROLLER ERROR:", "Failed to register the mouse device with error: %d, %s", error, getLastErrorMessage(error));
     }
+
+    HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO info;
+    info.cbSize = sizeof(MONITORINFO);
+    GetMonitorInfo(monitor, &info);
+    m_monitorWidth = info.rcMonitor.right - info.rcMonitor.left;
+    m_monitorHeight = info.rcMonitor.bottom - info.rcMonitor.top;
 }
 
 //-----------------------------------------------------------------------------
@@ -57,7 +64,6 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
     unsigned int mouseButton4 = false;
     unsigned int mouseButton5 = false;
     float wheelData = 0.0f;
-    float oneOverInputLength = 1.0f / mouseInput.size();
     //Might need to collect the mouse data over an update and then set the values
     for (auto input : mouseInput)
     {
@@ -66,8 +72,8 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
         RAWMOUSE mouseState = input.data.mouse;
 
         //Fudge the mouse speed a bit
-        mouseX += mouseState.lLastX;
-        mouseY += mouseState.lLastY;
+        mouseX += (mouseState.lLastX / (float)m_monitorWidth);
+        mouseY += (mouseState.lLastY / (float)m_monitorHeight);
 
         mouseButton1 = RI_MOUSE_BUTTON_1_DOWN & mouseState.usButtonFlags;
         mouseButton2 = RI_MOUSE_BUTTON_2_DOWN & mouseState.usButtonFlags;
@@ -82,9 +88,6 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
         }
 
     }
-
-    mouseX *= oneOverInputLength;
-    mouseY *= oneOverInputLength;
 
     if (mouseX < 0)
     {
@@ -122,7 +125,6 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
     m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton4], (float)(mouseButton4));
     m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseButton5], (float)(mouseButton5));
 
-    wheelData *= oneOverInputLength;
     if (wheelData > 0)
     {
         m_controllerState.setActionValue(m_physicalKeyToAction[Input::MouseControlDefinitions::MouseWheelUp], (float)(wheelData));
