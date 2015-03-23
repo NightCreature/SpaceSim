@@ -51,7 +51,9 @@ void Square::initialise(const ShaderInstance& shaderInstance)
         const Technique* technique = m_modelData[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
-        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, technique->getVertexShader()->getShaderBlob());
+        const VertexShader* shader = getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        assert(shader);
+        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
         m_modelData.push_back(new MeshGroup(vb, 0, shaderInstance));
         if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {

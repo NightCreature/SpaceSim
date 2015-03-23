@@ -75,12 +75,12 @@ class Technique
 {
 public:
     Technique(Resource* resource) : 
-        m_vertexShader(nullptr),
-        m_hullShader(nullptr),
-        m_domainShader(nullptr),
-        m_geometryShader(nullptr),
-        m_pixelShader(nullptr),
-        m_computeShader(nullptr),
+        m_vertexShader(0),
+        m_hullShader(0),
+        m_domainShader(0),
+        m_geometryShader(0),
+        m_pixelShader(0),
+        m_computeShader(0),
         m_resource(resource)
         {}
     ~Technique() {}
@@ -92,19 +92,19 @@ public:
     void setWVPContent(const DeviceManager& deviceManager, const WVPBufferContent& wvpContent) const;
     void setMaterialContent(const DeviceManager& deviceManager, const MaterialContent& materialContent) const;
 
-    const VertexShader* getVertexShader() const { return m_vertexShader; }
-    const HullShader* getHullShader() const { return m_hullShader; }
-    const DomainShader* getDomainShader() const { return m_domainShader; }
-    const GeometryShader* getGeometryShader() const { return m_geometryShader; }
-    const PixelShader* getPixelShader() const { return m_pixelShader; }
-    const ComputeShader* getComputeShader() const { return m_computeShader; }
+    unsigned int getVertexShader() const { return m_vertexShader; }
+    unsigned int getHullShader() const { return m_hullShader; }
+    unsigned int getDomainShader() const { return m_domainShader; }
+    unsigned int getGeometryShader() const { return m_geometryShader; }
+    unsigned int getPixelShader() const { return m_pixelShader; }
+    unsigned int getComputeShader() const { return m_computeShader; }
 
-    ID3D11VertexShader* getD3DVertexShader() const { return m_vertexShader ? m_vertexShader->getShader() : nullptr; }
-    ID3D11HullShader* getD3DHullShader() const { return m_hullShader ? m_hullShader->getShader() : nullptr; }
-    ID3D11DomainShader* getD3DDomainShader() const { return m_domainShader ? m_domainShader->getShader() : nullptr; }
-    ID3D11GeometryShader* getD3DGeometryShader() const { return m_geometryShader ? m_geometryShader->getShader() : nullptr; }
-    ID3D11PixelShader* getD3DPixelShader() const { return m_pixelShader ? m_pixelShader->getShader() : nullptr; }
-    ID3D11ComputeShader* getD3DComputeShader() const { return m_computeShader ? m_computeShader->getShader() : nullptr; }
+    //ID3D11VertexShader* getD3DVertexShader() const { return m_vertexShader ? m_vertexShader->getShader() : nullptr; }
+    //ID3D11HullShader* getD3DHullShader() const { return m_hullShader ? m_hullShader->getShader() : nullptr; }
+    //ID3D11DomainShader* getD3DDomainShader() const { return m_domainShader ? m_domainShader->getShader() : nullptr; }
+    //ID3D11GeometryShader* getD3DGeometryShader() const { return m_geometryShader ? m_geometryShader->getShader() : nullptr; }
+    //ID3D11PixelShader* getD3DPixelShader() const { return m_pixelShader ? m_pixelShader->getShader() : nullptr; }
+    //ID3D11ComputeShader* getD3DComputeShader() const { return m_computeShader ? m_computeShader->getShader() : nullptr; }
 
     void setupTechnique(bool alsoUseOnGS = false) const
     {
@@ -120,14 +120,14 @@ public:
 
     HASH_ELEMENT_DEFINITION;
 private:
-    std::string m_name;
+    std::string m_name; //This should be compiled out in release
     unsigned int m_nameHash;
-    VertexShader* m_vertexShader;
-    HullShader* m_hullShader;
-    DomainShader* m_domainShader;
-    GeometryShader* m_geometryShader;
-    PixelShader* m_pixelShader;
-    ComputeShader* m_computeShader;
+    unsigned int m_vertexShader;
+    unsigned int m_hullShader;
+    unsigned int m_domainShader;
+    unsigned int m_geometryShader;
+    unsigned int m_pixelShader;
+    unsigned int m_computeShader;
     Resource* m_resource;
     ID3D11Buffer* m_constantBuffers[2]; //Contains the projection, view and world matrices, these should move in to something called constant buffer which can be set by the model
 };

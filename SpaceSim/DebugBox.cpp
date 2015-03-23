@@ -68,7 +68,8 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance )
         const Technique* technique = m_modelData[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.vertexColor = true;
-        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), numberOfBytes, (void*)boxVerts, false, vertexDesc, technique->getVertexShader()->getShaderBlob());
+        const VertexShader* shader = getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), numberOfBytes, (void*)boxVerts, false, vertexDesc, shader->getShaderBlob());
         unsigned int indexData[] =
         {
             0, 2,

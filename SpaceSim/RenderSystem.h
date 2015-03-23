@@ -48,7 +48,7 @@ public:
 
     void update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time);
 
-    void endDraw();
+    void endDraw( Resource* resource );
 
     HWND getWindowHandle() const { return m_window.getWindowHandle(); }
     const IDXGIFactory* getDXGIFactory() const { return m_dxgiFactory; }

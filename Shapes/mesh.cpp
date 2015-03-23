@@ -87,7 +87,9 @@ void Mesh::initialise(const ShaderInstance& shaderInstance)
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.normal = true;
         vertexDesc.textureCoordinateDimensions = texCoordDimensions;
-        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), bufferSize, vertexData, false, vertexDesc, technique->getVertexShader()->getShaderBlob());
+        const VertexShader* shader = getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        assert(shader);
+        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), bufferSize, vertexData, false, vertexDesc, shader->getShaderBlob());
         //vb->createVertexInputLayout(getGameResource().getDeviceManager(), m_modelData[0]->getShaderInstance().getMaterial().getEffect().getVertexShaderBlob());
         delete [] vertexData;
 

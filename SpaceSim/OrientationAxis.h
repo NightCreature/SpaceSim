@@ -34,7 +34,7 @@ public:
     ~OrientationAxis() {}
 
     void initialise(Resource* resource, const DeviceManager& deviceManager);
-    void draw(const DeviceManager& deviceManager);
+    void draw(const DeviceManager& deviceManager, Resource* resource);
 private:
     void transform(const DeviceManager& deviceManager);
     static LineVertex m_vertices[];

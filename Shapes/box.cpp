@@ -258,7 +258,9 @@ void Box::initialise(const ShaderInstance& shaderInstance)
         const Technique* technique = m_modelData[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
-        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), numberOfBytes, (void*)startOfData, m_dynamic, vertexDesc, technique->getVertexShader()->getShaderBlob());
+        const VertexShader* shader = getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        assert(shader);
+        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), numberOfBytes, (void*)startOfData, m_dynamic, vertexDesc, shader->getShaderBlob());
         delete [] startOfData;
         data = nullptr;
         startOfData = nullptr;

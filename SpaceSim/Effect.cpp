@@ -101,27 +101,27 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         unsigned int elmentHash = hashString(childElement->Value());
         if (VertexShader::m_hash == elmentHash)
         {
-            m_vertexShader = (VertexShader*)shaderCache->getVertexShader(childElement, deviceManager);
+            m_vertexShader = shaderCache->getVertexShader(childElement, deviceManager);
         }
         else if (HullShader::m_hash == elmentHash)
         {
-            m_hullShader = (HullShader*)shaderCache->getHullShader(childElement, deviceManager);
+            m_hullShader = shaderCache->getHullShader(childElement, deviceManager);
         }
         else if (DomainShader::m_hash == elmentHash)
         {
-            m_domainShader = (DomainShader*)shaderCache->getDomainShader(childElement, deviceManager);
+            m_domainShader = shaderCache->getDomainShader(childElement, deviceManager);
         }
         else if (GeometryShader::m_hash == elmentHash)
         {
-            m_geometryShader = (GeometryShader*)shaderCache->getGeometryShader(childElement, deviceManager);
+            m_geometryShader = shaderCache->getGeometryShader(childElement, deviceManager);
         }
         else if (PixelShader::m_hash == elmentHash)
         {
-            m_pixelShader = (PixelShader*)shaderCache->getPixelShader(childElement, deviceManager);
+            m_pixelShader = shaderCache->getPixelShader(childElement, deviceManager);
         }
         else if (ComputeShader::m_hash == elmentHash)
         {
-            m_computeShader = (ComputeShader*)shaderCache->getComputeShader(childElement, deviceManager);
+            m_computeShader = shaderCache->getComputeShader(childElement, deviceManager);
         }
     }
 
