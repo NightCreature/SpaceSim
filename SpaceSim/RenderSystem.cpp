@@ -271,6 +271,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
     GameResourceHelper gameResource = GameResourceHelper(resource);
     const ShaderCache& shaderCache = gameResource.getGameResource().getShaderCache();
 
+    size_t oldTechniqueId = 0;
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
         RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
@@ -297,13 +298,16 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
             deviceContext->PSSetSamplers(counter, 1, &samplerState);
         }
 
-        //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-        deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-        deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-        deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-        deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-        deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
-
+        if (technique->getTechniqueId() != oldTechniqueId)
+        {
+            //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
+            deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+            deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+            deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+            deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+            deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+            oldTechniqueId = technique->getTechniqueId();
+        }
         technique->setupTechnique();
 
         deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
@@ -520,6 +524,14 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     }
     deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
     deviceContext->OMSetDepthStencilState(m_depthStencilState, 0xffffffff);
+
+    std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
+    {
+        const Material& lhsMaterial = lhs->getShaderInstance().getMaterial();
+        const Material& rhsMaterial = rhs->getShaderInstance().getMaterial();
+        //This might not be the most effiecient material/sahder id combo
+        return lhsMaterial.getEffect()->getTechnique(lhsMaterial.getTechnique())->getTechniqueId() < rhsMaterial.getEffect()->getTechnique(rhsMaterial.getTechnique())->getTechniqueId();
+    });
 
     std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
     {

@@ -128,6 +128,7 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget,co
         RenderInstanceTree::const_iterator renderInstanceEnd = renderInstances.end();
         unsigned int stride = 0;
         unsigned int offset = 0;
+        size_t oldTechniqueId = 0;
         for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
         {
             RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
@@ -153,12 +154,16 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget,co
                     deviceContext->PSSetSamplers(counter, 1, &samplerState);
                 }
 
-                //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-                deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+                if (technique->getTechniqueId() != oldTechniqueId)
+                {
+                    //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
+                    deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+                    oldTechniqueId = technique->getTechniqueId();
+                }
 
                 technique->setupTechnique(true);
 

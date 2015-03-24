@@ -118,9 +118,14 @@ public:
         deviceContext->PSSetConstantBuffers(0, 1, &m_constantBuffers[1]);
     }
 
+    size_t getTechniqueId() const { return m_techniqueId; }
+
     HASH_ELEMENT_DEFINITION;
 private:
+#ifdef DEBUG
     std::string m_name; //This should be compiled out in release
+#endif
+    size_t m_techniqueId;
     unsigned int m_nameHash;
     unsigned int m_vertexShader;
     unsigned int m_hullShader;
