@@ -50,7 +50,7 @@ void LaserManager::initialise(Resource* resource)
     GameResourceHelper helper( resource );
     const Effect* effect = helper.getWritableGameResource()->getEffectCache()->createEffect(resource, "Shaders\\Effects\\laser_effect.xml");
 
-    m_geometry = new Box(const_cast<Resource*>(resource), Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f), false, false);
+    m_geometry = new Box((resource), Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f), false, false);
     ShaderInstance shaderInstance;
     shaderInstance.setMaterial( Material(0.0f, Color::black(), Color::black(), Color::red(), Color::red() ));
     shaderInstance.getMaterial().setEffect(effect);
