@@ -11,19 +11,21 @@ public:
     ShaderCache();
     ~ShaderCache();
 
-    const VertexShader* getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const HullShader* getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const DomainShader* getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const GeometryShader* getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const PixelShader* getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const ComputeShader* getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    //These should be renamed to shader create functions and return handles
+    const unsigned int getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    const unsigned int getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    const unsigned int getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    const unsigned int getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    const unsigned int getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    const unsigned int getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
 
-    const VertexShader* getVertexShader(const std::string& resourceName);
-    const HullShader* getHullShader(const std::string& resourceName);
-    const DomainShader* getDomainShader(const std::string& resourceName);
-    const GeometryShader* getGeometryShader(const std::string& resourceName);
-    const PixelShader* getPixelShader(const std::string& resourceName);
-    const ComputeShader* getComputeShader(const std::string& resourceName);
+    //This should be taking a shader handle and returning an actual shader object, and only accessed from the renderer.
+    const VertexShader* getVertexShader(unsigned int resourceName) const;
+    const HullShader* getHullShader(unsigned int resourceName) const;
+    const DomainShader* getDomainShader(unsigned int resourceName) const;
+    const GeometryShader* getGeometryShader(unsigned int resourceName) const;
+    const PixelShader* getPixelShader(unsigned int resourceName) const;
+    const ComputeShader* getComputeShader(unsigned int resourceName) const;
 private:
 
     typedef std::pair<unsigned int, VertexShader>   VertexShaderHandle;

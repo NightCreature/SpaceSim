@@ -259,7 +259,6 @@ void RenderSystem::initialise(Resource* resource)
 void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
     static const unsigned int defaultTechniqueHash = hashString("default");
-    UNUSEDPARAM(resource);
     m_window.update(elapsedTime, time);
 
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
@@ -268,6 +267,11 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
     RenderInstanceTree::iterator renderInstanceEnd = renderInstances.end();
     unsigned int stride = 0;
     unsigned int offset = 0;
+
+    GameResourceHelper gameResource = GameResourceHelper(resource);
+    const ShaderCache& shaderCache = gameResource.getGameResource().getShaderCache();
+
+    size_t oldTechniqueId = 0;
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
         RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
@@ -294,12 +298,16 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
             deviceContext->PSSetSamplers(counter, 1, &samplerState);
         }
 
-        deviceContext->VSSetShader(technique->getD3DVertexShader(), nullptr, 0);
-        deviceContext->HSSetShader(technique->getD3DHullShader(), nullptr, 0);
-        deviceContext->DSSetShader(technique->getD3DDomainShader(), nullptr, 0);
-        deviceContext->GSSetShader(technique->getD3DGeometryShader(), nullptr, 0);
-        deviceContext->PSSetShader(technique->getD3DPixelShader(), nullptr, 0);
-
+        if (technique->getTechniqueId() != oldTechniqueId)
+        {
+            //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
+            deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+            deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+            deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+            deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+            deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+            oldTechniqueId = technique->getTechniqueId();
+        }
         technique->setupTechnique();
 
         deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
@@ -519,6 +527,14 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
 
     std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
     {
+        const Material& lhsMaterial = lhs->getShaderInstance().getMaterial();
+        const Material& rhsMaterial = rhs->getShaderInstance().getMaterial();
+        //This might not be the most effiecient material/sahder id combo
+        return lhsMaterial.getEffect()->getTechnique(lhsMaterial.getTechnique())->getTechniqueId() < rhsMaterial.getEffect()->getTechnique(rhsMaterial.getTechnique())->getTechniqueId();
+    });
+
+    std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
+    {
         return lhs->getShaderInstance().getMaterial().getBlendState() < rhs->getShaderInstance().getMaterial().getBlendState();
     });
 
@@ -560,7 +576,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
             ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
             deviceContext->PSSetShaderResources(0, 8, srv);
             m_cubeMapRenderer->initialise(m_cubeSettings[rtCounter].m_position);
-            m_cubeMapRenderer->renderCubeMap((Texture*)tm->getTexture(m_cubeSettings[rtCounter].m_texutureResourceName), renderInstances, m_deviceManager, perFrameConstants, *tm);
+            m_cubeMapRenderer->renderCubeMap(resource, (Texture*)tm->getTexture(m_cubeSettings[rtCounter].m_texutureResourceName), renderInstances, m_deviceManager, perFrameConstants, *tm);
             m_cubeSettings[rtCounter].m_hasBeenRenderedTo = true;
             deviceContext->PSSetShaderResources(0, 8, srv);
         }
@@ -577,10 +593,10 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void RenderSystem::endDraw()
+void RenderSystem::endDraw(Resource* resource)
 {
 #ifdef _DEBUG
-    m_debugAxis->draw(m_deviceManager);
+    m_debugAxis->draw(m_deviceManager, resource);
 #endif
 
     HRESULT hr = m_swapChain->Present(0, 0);

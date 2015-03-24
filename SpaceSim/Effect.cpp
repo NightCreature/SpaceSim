@@ -85,6 +85,7 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
     ShaderCache* shaderCache = gameResource->getShaderCache();
     const DeviceManager& deviceManager = *gameResource->getDeviceManager();
 
+#ifdef _DEBUG
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
     {
@@ -95,35 +96,38 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         m_name = "default_technique";
     }
     m_nameHash = hashString(m_name);
+#endif // _DEBUG
 
     for (const tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement())
     {
         unsigned int elmentHash = hashString(childElement->Value());
         if (VertexShader::m_hash == elmentHash)
         {
-            m_vertexShader = (VertexShader*)shaderCache->getVertexShader(childElement, deviceManager);
+            m_vertexShader = shaderCache->getVertexShader(childElement, deviceManager);
         }
         else if (HullShader::m_hash == elmentHash)
         {
-            m_hullShader = (HullShader*)shaderCache->getHullShader(childElement, deviceManager);
+            m_hullShader = shaderCache->getHullShader(childElement, deviceManager);
         }
         else if (DomainShader::m_hash == elmentHash)
         {
-            m_domainShader = (DomainShader*)shaderCache->getDomainShader(childElement, deviceManager);
+            m_domainShader = shaderCache->getDomainShader(childElement, deviceManager);
         }
         else if (GeometryShader::m_hash == elmentHash)
         {
-            m_geometryShader = (GeometryShader*)shaderCache->getGeometryShader(childElement, deviceManager);
+            m_geometryShader = shaderCache->getGeometryShader(childElement, deviceManager);
         }
         else if (PixelShader::m_hash == elmentHash)
         {
-            m_pixelShader = (PixelShader*)shaderCache->getPixelShader(childElement, deviceManager);
+            m_pixelShader = shaderCache->getPixelShader(childElement, deviceManager);
         }
         else if (ComputeShader::m_hash == elmentHash)
         {
-            m_computeShader = (ComputeShader*)shaderCache->getComputeShader(childElement, deviceManager);
+            m_computeShader = shaderCache->getComputeShader(childElement, deviceManager);
         }
     }
+
+    m_techniqueId = ((size_t)(m_vertexShader + m_pixelShader) << 32) | (m_hullShader + m_domainShader + m_geometryShader + m_computeShader);
 
     ID3D11Device* device = deviceManager.getDevice();
     D3D11_BUFFER_DESC wvpBufferDescriptor;

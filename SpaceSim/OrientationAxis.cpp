@@ -39,25 +39,30 @@ void OrientationAxis::initialise(Resource* resource, const DeviceManager& device
     //Move pointer to start of vertex array
     const Technique* technique = m_effect->getTechnique("default");
     VertexDecalartionDesctriptor vertexDesc;
-    m_vertexBuffer.createBufferAndLayoutElements(deviceManger, bufferSize, m_vertices, false, vertexDesc, technique->getVertexShader()->getShaderBlob());
+    const VertexShader* shader = GameResourceHelper(resource).getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+    assert(shader);
+    m_vertexBuffer.createBufferAndLayoutElements(deviceManger, bufferSize, m_vertices, false, vertexDesc, shader->getShaderBlob());
 }
 
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void OrientationAxis::draw( const DeviceManager& deviceManager )
+void OrientationAxis::draw( const DeviceManager& deviceManager, Resource* resource )
 {   
     transform(deviceManager); //Needs to move to the update of an object not the draw step
     ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
     const Technique* technique = m_effect->getTechnique("default");
     technique->setWVPContent(deviceManager, m_wvpConstants);
 
-    deviceContext->VSSetShader(technique->getD3DVertexShader(), nullptr, 0);
-    deviceContext->HSSetShader(technique->getD3DHullShader(), nullptr, 0);
-    deviceContext->DSSetShader(technique->getD3DDomainShader(), nullptr, 0);
-    deviceContext->GSSetShader(technique->getD3DGeometryShader(), nullptr, 0);
-    deviceContext->PSSetShader(technique->getD3DPixelShader(), nullptr, 0);
+    GameResourceHelper gameResource = GameResourceHelper(resource);
+    const ShaderCache& shaderCache = gameResource.getGameResource().getShaderCache();
+    //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
+    deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+    deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+    deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+    deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+    deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
 
     technique->setupTechnique();
 

@@ -133,7 +133,7 @@ void Application::mainGameLoop()
 
             m_renderSystem.beginDraw(renderList, m_gameResource);
             m_renderSystem.update(m_gameResource, renderList, m_elapsedTime, m_time);
-            m_renderSystem.endDraw();
+            m_renderSystem.endDraw(m_gameResource);
             m_previousRenderInstanceListSize = renderList.size();
 
             //if (input.getInput(0)->getActionValue(InputActions::eAButton))
