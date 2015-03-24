@@ -68,22 +68,8 @@ void Camera::pitch(float angle)
     Matrix33 pitchRotation;
     rotate(pitchRotation, m_cameraRight, angle);
     m_pitch += angle; //Keep track of the pitch angle
-    if (fabs(m_pitch) < m_maxPitchAngle )
-    {
-        m_cameraForward = m_cameraForward * pitchRotation;
-        m_cameraUp      = m_cameraUp * pitchRotation;
-    }
-    else
-    {
-        if (m_pitch < 0.0f)
-        {
-            m_pitch = -m_maxPitchAngle;
-        }
-        else if (m_pitch < 0.0f)
-        {
-            m_pitch = m_maxPitchAngle;
-        }
-    }
+    m_cameraForward = m_cameraForward * pitchRotation;
+    m_cameraUp      = m_cameraUp * pitchRotation;
 }
 
 void Camera::yaw(float angle)
@@ -112,6 +98,7 @@ Matrix44 Camera::createCamera()
     cross(m_cameraRight, m_cameraUp, m_cameraForward);
     m_cameraRight.normalize();
     cross(m_cameraUp, m_cameraForward, m_cameraRight);
+    m_cameraUp.normalize();
   
     Vector3 evec(m_eye);
     m_camera = Matrix44(m_cameraRight.x(),    m_cameraRight.y(),    m_cameraRight.z(),    -evec.dot(m_cameraRight),

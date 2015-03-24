@@ -18,7 +18,7 @@ public:
 	InputSystem();
 	~InputSystem();
     
-    void initialise(const std::string& inputMapFileName);
+    void initialise(const std::string& inputMapFileName, HWND hwnd);
     void update(float elapsedTime, double time);
 
     Input getInput() const

@@ -58,8 +58,8 @@ public:
 	XInputDevice(const int controllerNr);
     ~XInputDevice() {}
 
-    void initialise();
-    const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput);
+    void initialise(HWND hwnd) override;
+    const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput) override;
 
     void enableVibration() { m_vibration = true; }
     void disableVibration() { m_vibration = false; }
@@ -69,7 +69,7 @@ public:
     HASH_ELEMENT_DEFINITION;
 protected:
 private:
-    virtual void internalActionSetup( InputActions::ActionType , const tinyxml2::XMLAttribute* input );
+    virtual void internalActionSetup(InputActions::ActionType, const tinyxml2::XMLAttribute* input) override;
     void calculateThumbStickDirectionAndMagnitude(float stickX, float stickY, bool isLeftStick, Vector4& directionAndMagnitude);
 
     typedef std::map<unsigned int, InputActions::ActionType> PhysicalInputMapping;

@@ -81,10 +81,10 @@ public:
 		m_drawableObject->getBoundingBox() = m_drawableObject->getOriginalBoundingBox();
         m_drawableObject->getBoundingBox().transformAccordingToMatrix(m_world);
         m_drawableObject->update(renderInstances, elapsedTime, m_world, m_name);
-        static Matrix44 temp;
-        temp.identity();
 
 #if defined(SHOW_BOUNDING_BOXES)
+        static Matrix44 temp;
+        temp.identity();
         if (m_debugBox != nullptr)
         {
             m_debugBox->update(renderInstances, elapsedTime, temp, "Bounding box" + m_name);

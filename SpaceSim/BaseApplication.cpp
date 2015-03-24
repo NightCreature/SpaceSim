@@ -15,8 +15,11 @@
 #include <list>
 
 #include "CubeMapRenderer.h"
+#include "HashString.h"
 
 class RenderInstance;
+
+HashString exitGame("exit_game");
 
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Matrix44 Application::m_view;
@@ -68,7 +71,7 @@ bool Application::initialise()
 
     m_renderSystem.initialise(m_gameResource);
     //m_inputSystem.createController(Gamepad);
-    m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml");
+    m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml", m_renderSystem.getWindowHandle());
     m_inputDispatch = &InputSystem::SetRawInput;
     ShaderPack shaderPack(m_gameResource);
     shaderPack.loadShaderPack("shader_pack.xml");
@@ -130,7 +133,7 @@ void Application::mainGameLoop()
 
             m_renderSystem.beginDraw(renderList, m_gameResource);
             m_renderSystem.update(m_gameResource, renderList, m_elapsedTime, m_time);
-            m_renderSystem.endDraw();
+            m_renderSystem.endDraw(m_gameResource);
             m_previousRenderInstanceListSize = renderList.size();
 
             //if (input.getInput(0)->getActionValue(InputActions::eAButton))
@@ -141,6 +144,11 @@ void Application::mainGameLoop()
             //{
             //    PostQuitMessage(0);
             //}
+
+            if (input.getInput(0)->getActionValue(InputSystem::getInputActionFromName(exitGame)))
+            {
+                PostQuitMessage(0);
+            }
         }
     }
 }

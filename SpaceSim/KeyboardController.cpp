@@ -15,13 +15,13 @@ KeyboardInputDevice::~KeyboardInputDevice(void)
 {
 }
 
-void KeyboardInputDevice::initialise()
+void KeyboardInputDevice::initialise(HWND hwnd)
 {
     RAWINPUTDEVICE rawInputDevice;
     rawInputDevice.usUsagePage = 1;
     rawInputDevice.usUsage = 6;
     rawInputDevice.dwFlags = 0;
-    rawInputDevice.hwndTarget = 0;
+    rawInputDevice.hwndTarget = hwnd;
 
     //InputSystem.addRawInputDevice(rawInputDevice);
     m_connected = true;

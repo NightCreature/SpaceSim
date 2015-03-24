@@ -88,7 +88,9 @@ void Face::initialise(const ShaderInstance& shaderInstance, float fillvalue, boo
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.normal = true;
         vertexDesc.textureCoordinateDimensions = texCoordDimensions;
-        if (!vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), bufferSize, startOfVertexArray, false, vertexDesc, technique->getVertexShader()->getShaderBlob()))
+        const VertexShader* shader = getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        assert(shader);
+        if (!vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), bufferSize, startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
         {
             MSG_TRACE_CHANNEL("VERTEXBUFFER_ERROR", "Failed to create VB!");
             assert(false);

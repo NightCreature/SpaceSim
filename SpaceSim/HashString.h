@@ -10,6 +10,7 @@ public:
     ~HashString() {}
 
     unsigned int getHash() const { return m_hash; }
+    operator unsigned int() const { return m_hash; }
 #ifdef _DEBUG
     const std::string& getString() const { return m_string; }
 #endif

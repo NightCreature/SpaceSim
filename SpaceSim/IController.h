@@ -16,7 +16,7 @@ public:
     ~IInputDevice() {}
 
     //Adds actions the controller has to the inputState so we can query this object for input
-    virtual void initialise() = 0;
+    virtual void initialise(HWND hwnd) = 0;
     virtual void deserialise(const tinyxml2::XMLElement* element, const InputSystem& inputSystem);
 
     virtual const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput) = 0;
@@ -29,7 +29,6 @@ protected:
     virtual void internalActionSetup( InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input ) = 0;
 
     InputState m_controllerState;
-    DeadZone   m_sensitivity;
     bool m_connected;
     bool m_enabled;
 };
