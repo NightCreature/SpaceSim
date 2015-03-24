@@ -597,6 +597,8 @@ void RenderSystem::endDraw(Resource* resource)
 {
 #ifdef _DEBUG
     m_debugAxis->draw(m_deviceManager, resource);
+#else
+    UNUSEDPARAM(resource);
 #endif
 
     HRESULT hr = m_swapChain->Present(0, 0);
