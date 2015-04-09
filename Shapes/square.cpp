@@ -2,45 +2,44 @@
 #include "vector4.h"
 #include "matrix44.h"
 #include "..\\SpaceSim\BaseApplication.h"
-#include "..\\SpaceSim\Camera.h"
 
-Square::Square(Resource* resource, float radius) :
-Super(resource),
-    m_lowerleft(Vector2::zero() - Vector2(-radius, -radius)),
-    m_upperright(Vector2::zero() + Vector2(radius, radius))
+namespace Square
 {
-    m_boundingBox = Bbox(Vector3(m_lowerleft.x(), m_lowerleft.y(), 0.0f), Vector3(m_upperright.x(), m_upperright.y(), 0.0f));
-}
 
 //-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
+//! @brief   Creates a square model
 //! @remark
 //-----------------------------------------------------------------------------
-void Square::initialise(const ShaderInstance& shaderInstance)
+CreatedSquare CreateSquare(const SquareCreationParams& params)
 {
-    if (m_modelData.empty())
+    CreatedSquare square;
+    GameResource& gameResource = *(GameResource*)params.resource;
+    square.boundingBox = Bbox(Vector3(params.m_lowerleft.x(), params.m_lowerleft.y(), 0.0f), Vector3(params.m_upperright.x(), params.m_upperright.y(), 0.0f));
+
+    square.model = new Model();
+
+    if (square.model->getMeshData().empty())
     {
-        UNUSEDPARAM(shaderInstance);
         unsigned int bufferSize = 4 * (3 + 2) * sizeof(float);
         byte vertexData[4 * (3 + 2) * sizeof(float)]; //4 points with position and 1 2D textureCoordinates
         byte* data = vertexData;
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
         *(float*)data = 0.0f; data += sizeof(float);
         *(float*)data = 0.0f; data += sizeof(float);
         *(float*)data = 0.0f; data += sizeof(float);
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = 0.0f; data += sizeof(float);
-        *(float*)data = 1.0f; data += sizeof(float);
-        *(float*)data = 0.0f; data += sizeof(float);
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
         *(float*)data = 0.0f; data += sizeof(float);
         *(float*)data = 1.0f; data += sizeof(float);
+        *(float*)data = 0.0f; data += sizeof(float);
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = 0.0f; data += sizeof(float);
         *(float*)data = 1.0f; data += sizeof(float);
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
+        *(float*)data = 1.0f; data += sizeof(float);
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
         *(float*)data = 0.0f; data += sizeof(float);
         *(float*)data = 0.0f; data += sizeof(float);
         *(float*)data = 1.0f; data += sizeof(float);
@@ -48,32 +47,31 @@ void Square::initialise(const ShaderInstance& shaderInstance)
         texCoordDim.push_back(2);
 
         VertexBuffer* vb = new VertexBuffer();
-        const Technique* technique = m_modelData[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
+        const Technique* technique = square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
-        const VertexShader* shader = getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
-        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
-        m_modelData.push_back(new MeshGroup(vb, 0, shaderInstance));
-        if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
+        vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
+        square.model->getMeshData().push_back(new MeshGroup(vb, 0, *(params.shaderInstance)));
+        if (square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            m_modelData[0]->getShaderInstance().getMaterial().setEffect(getGameResource().getEffectCache().getEffect("simple_effect.fx"));
+            square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.fx"));
         }
         data = nullptr;
     }
     else
     {
-        m_modelData[0]->setShaderInstance( shaderInstance );
-        if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
+        square.model->getMeshData()[0]->setShaderInstance(*(params.shaderInstance));
+        if (square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            m_modelData[0]->getShaderInstance().getMaterial().setEffect(getGameResource().getEffectCache().getEffect("simple_effect.fx"));
+            square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.fx"));
         }
     }
 
-    m_modelData[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    square.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    return square;
 }
 
-void Square::transform(Camera &cam)
-{
-    UNUSEDPARAM(cam);
 }

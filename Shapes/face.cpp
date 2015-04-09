@@ -13,52 +13,34 @@
 #include "..\SpaceSim\StringHelperFunctions.h"
 
 
-unsigned long long Face::m_totalNumberOfVerts = 0;
-unsigned long long Face::m_totalNumberOfPolygons = 0;
-
-Face::Face(Resource* resource):
-Super(resource)
+namespace Face
 {
-	m_width = 0;
-	m_height = 0;
-	m_numberOfTexcoords = 1;
-}
 
-Face::Face(Resource* resource, float width, float height, int nrxvertices, int nryvertices, bool tesselate):
-Super(resource)
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+CreatedFace CreateFace(const CreationParams& params)
 {
-	assert(nrxvertices != 1 && nryvertices != 1);
-	m_width = width;
-	m_height = height;
-	m_rows = nrxvertices;
-	m_coloms = nryvertices;
-	m_tesselate = tesselate;
-	m_numberOfTexcoords = 1;
+    GameResource& gameResource = *(GameResource*)params.resource;
+    ShaderInstance& shaderInstance = *(params.shaderInstance);
 
+    CreatedFace face;
+    face.model = new Model();
 
-    m_corridorwidth = 50.0f;
-    m_corridorheight = 50.0f;
-}
-
-Face::~Face()
-{
-}
-
-void Face::initialise(const ShaderInstance& shaderInstance, float fillvalue, bool fillx, bool filly, bool fillz, bool changeWindingOrder, bool invertNormal)
-{
-    if (m_modelData.empty())
+    if (face.model->getMeshData().empty())
     {
-        MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), shaderInstance); 
-        m_modelData.push_back(group);
-        m_modelData[0]->setShaderInstance( shaderInstance );
-        if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr )
+        MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), shaderInstance);
+        face.model->getMeshData().push_back(group);
+        face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
+        if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            m_modelData[0]->getShaderInstance().getMaterial().setEffect(getGameResource().getEffectCache().getEffect("simple_effect.xml"));
+            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.xml"));
         }
 
-        VertexBuffer* vb = m_modelData[0]->getGeometryInstance().getVB();
-        IndexBuffer* ib = m_modelData[0]->getGeometryInstance().getIB();
-        
+        VertexBuffer* vb = face.model->getMeshData()[0]->getGeometryInstance().getVB();
+        IndexBuffer* ib = face.model->getMeshData()[0]->getGeometryInstance().getIB();
+
         std::vector<unsigned int> texCoordDimensions;
         for (int texCoordCounter = 0; texCoordCounter < m_numberOfTexcoords; ++texCoordCounter)
         {
@@ -70,7 +52,7 @@ void Face::initialise(const ShaderInstance& shaderInstance, float fillvalue, boo
         {
             m_rows *= (int)(m_height / m_corridorheight);
         }
-        if ((m_width / m_corridorwidth) > 1  && m_tesselate)
+        if ((m_width / m_corridorwidth) > 1 && m_tesselate)
         {
             m_coloms *= (int)(m_width / m_corridorheight);
         }
@@ -81,33 +63,33 @@ void Face::initialise(const ShaderInstance& shaderInstance, float fillvalue, boo
         bufferSize += sizeof(float) * 2 * m_numberOfTexcoords * numberOfVerts;
         byte* vertexData = new byte[bufferSize];
         byte* startOfVertexArray = vertexData;
-        createVertexData( fillx, fillvalue, filly, fillz, vertexData, invertNormal );
+        createVertexData(params.fillx, params.fillvalue, params.filly, params.fillz, vertexData, params.invertNormal, face.boundingBox);
 
         //Move pointer to start of vertex array  
-        const Technique* technique = m_modelData[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
+        const Technique* technique = face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.normal = true;
         vertexDesc.textureCoordinateDimensions = texCoordDimensions;
-        const VertexShader* shader = getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
-        if (!vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), bufferSize, startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
+        if (!vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), bufferSize, startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
         {
             MSG_TRACE_CHANNEL("VERTEXBUFFER_ERROR", "Failed to create VB!");
             assert(false);
         }
 
-        delete [] startOfVertexArray; //cleanup
+        delete[] startOfVertexArray; //cleanup
         vertexData = nullptr;
         startOfVertexArray = nullptr;
 
-        unsigned int numberOfIndecis = (m_rows-1) * (m_coloms-1) * 6;
-        ib->setNumberOfIndecis( numberOfIndecis );
+        unsigned int numberOfIndecis = (m_rows - 1) * (m_coloms - 1) * 6;
+        ib->setNumberOfIndecis(numberOfIndecis);
         unsigned int* indecis = new unsigned int[numberOfIndecis];
         unsigned int* startOfIndexData = indecis;
-        createIndexData(indecis, changeWindingOrder);
+        createIndexData(indecis, params.changeWindingOrder);
 
-        ib->createBuffer(getGameResource().getDeviceManager(), numberOfIndecis * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
-        delete [] startOfIndexData; //cleanup
+        ib->createBuffer(gameResource.getDeviceManager(), numberOfIndecis * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
+        delete[] startOfIndexData; //cleanup
         indecis = nullptr;
         startOfIndexData = nullptr;
         m_totalNumberOfPolygons += numberOfIndecis / 3;
@@ -117,21 +99,23 @@ void Face::initialise(const ShaderInstance& shaderInstance, float fillvalue, boo
     }
     else
     {
-        m_modelData[0]->setShaderInstance( shaderInstance );
-        if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
+        face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
+        if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            m_modelData[0]->getShaderInstance().getMaterial().setEffect(getGameResource().getEffectCache().getEffect("simple_effect.fx"));
+            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.fx"));
         }
-    } 
+    }
 
-    m_modelData[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    face.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    return face;
 }
 
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void Face::createVertexData( bool fillx, float fillvalue, bool filly, bool fillz, byte*& vertexData, bool invertNormal )
+void Face::createVertexData(bool fillx, float fillvalue, bool filly, bool fillz, byte*& vertexData, bool invertNormal, Bbox& boundingBox)
 {
     if (0 == m_rows || 0 == m_coloms)
         return;
@@ -141,7 +125,7 @@ void Face::createVertexData( bool fillx, float fillvalue, bool filly, bool fillz
         heightpart = m_height / ((float)m_rows - 1);
     }
     float widthpart = m_width / ((float)m_coloms - 1);
-    if ((m_width / m_corridorwidth) > 1  && m_tesselate)
+    if ((m_width / m_corridorwidth) > 1 && m_tesselate)
     {
         widthpart = m_width / ((float)m_coloms - 1);
     }
@@ -151,11 +135,11 @@ void Face::createVertexData( bool fillx, float fillvalue, bool filly, bool fillz
     {
         normal = Vector3::xAxis();
     }
-    else if(filly)
+    else if (filly)
     {
         normal = Vector3::yAxis();
     }
-    else if(fillz)
+    else if (fillz)
     {
         normal = Vector3::zAxis();
     }
@@ -170,7 +154,7 @@ void Face::createVertexData( bool fillx, float fillvalue, bool filly, bool fillz
     {
         for (int j = 0; j < m_coloms; j++)
         {
-            if (fillx)				
+            if (fillx)
                 v = Vector3(fillvalue, i * heightpart, j * widthpart);
             if (filly)
                 v = Vector3(i * heightpart, fillvalue, j * widthpart);
@@ -180,7 +164,7 @@ void Face::createVertexData( bool fillx, float fillvalue, bool filly, bool fillz
             *(float*)vertexData = v.y(); vertexData += sizeof(float);
             *(float*)vertexData = v.z(); vertexData += sizeof(float);
 
-            m_boundingBox.enclose(v);
+            boundingBox.enclose(v);
 
             *(float*)vertexData = normal.x(); vertexData += sizeof(float);
             *(float*)vertexData = normal.y(); vertexData += sizeof(float);
@@ -206,11 +190,11 @@ void Face::createVertexData( bool fillx, float fillvalue, bool filly, bool fillz
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void Face::createIndexData( unsigned int*& indecis, bool changeWindingOrder )
+void Face::createIndexData(unsigned int*& indecis, bool changeWindingOrder)
 {
-    for (int i = 0; i < m_rows-1; i++)
+    for (int i = 0; i < m_rows - 1; i++)
     {
-        for (int j = 0; j < m_coloms-1; j++)
+        for (int j = 0; j < m_coloms - 1; j++)
         {
             unsigned int indexvertex = (i * m_coloms) + j;
             if (changeWindingOrder)
@@ -235,4 +219,6 @@ void Face::createIndexData( unsigned int*& indecis, bool changeWindingOrder )
             }
         }
     }
+}
+
 }

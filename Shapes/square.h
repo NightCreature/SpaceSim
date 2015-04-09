@@ -2,25 +2,28 @@
 #define SQUARE_H
 #include "vector2.h"
 
-#include "..\SpaceSim\Camera.h"
+#include "BBox.h"
 #include "model.h"
 
 class Camera;
 class Matrix44;
-
-class Square : public Model
+//Doesnt need to be  class only generation fucntion is enough
+namespace Square
 {
-public:
-	Square(Resource* resource) : Super(resource) {}
-	Square(Resource* resource, float radius);
-	~Square() {}
+    struct SquareCreationParams
+    {
+        Vector2 m_lowerleft;
+        Vector2 m_upperright;
+        ShaderInstance* shaderInstance;
+        Resource* resource;
+    };
 
-    void initialise(const ShaderInstance& shaderInstance);
+    struct CreatedSquare
+    {
+        Model* model;
+        Bbox boundingBox;
+    };
 
-	void transform (Camera& cam);
-    protected:
-private:
-	Vector2 m_lowerleft;
-	Vector2 m_upperright;
+    CreatedSquare CreateSquare(const SquareCreationParams& params, const ShaderInstance& shaderInstance);
 };
 #endif

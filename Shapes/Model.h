@@ -8,16 +8,13 @@
 #include <vector>
 
 class Input;
-class GameResource;
 class Resource;
 
 class Model
 {
 public:
-    typedef Model Super;
-
-    Model(Resource* resource) : m_resource(resource) {}
-    virtual ~Model() 
+    Model() {}
+    ~Model() 
     {
         if (m_modelData.size() > 0)
         {
@@ -29,14 +26,13 @@ public:
         }
     }
 
-    virtual void initialise(const ShaderInstance& shaderInstance) = 0;
-    void update( RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name)
+    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name)
     {
         if (!m_modelData.empty())
         {
             for (size_t counter = 0; counter < m_modelData.size(); ++counter)
             {
-                m_modelData[counter]->update(m_resource, renderInstance, elapsedTime, world, name);
+                m_modelData[counter]->update(resource, renderInstance, elapsedTime, world, name);
             }
         }
     }
@@ -50,13 +46,10 @@ public:
     //This should indicate which mesh group it wants to set this material on
     void setMaterial( const Material& material) { m_modelData[0]->setMaterial( material ); }
 
-    const Resource& getResource() const { return *m_resource; }
-    const GameResource& getGameResource() const { return *(GameResource*)m_resource; }
-
     const std::vector<MeshGroup*>& getMeshData() const { return m_modelData; }
+    std::vector<MeshGroup*>& getMeshData() { return m_modelData; }
 protected:
     std::vector<MeshGroup*> m_modelData;
 	Bbox m_originalBBox;
     Bbox m_boundingBox;
-    Resource* m_resource;
 };

@@ -6,265 +6,255 @@
 #include "..\SpaceSim\Types.h"
 #include "..\SpaceSim\TypeHelpers.h"
 
-Box::Box(Resource* resource) :
-Super(resource),
-m_lowerleft(Vector3::zero()),
-m_upperright(Vector3::zero()),
-m_dynamic(false),
-m_gentexcoords(false)
+namespace Box
 {
-    m_boundingBox = Bbox(m_lowerleft, m_upperright);
-}
-
-Box::Box(Resource* resource, const Vector3& lowerleft, const Vector3& upperright, bool dynamic, bool gentexcoords) :
-Super(resource),
-m_lowerleft(lowerleft),
-m_upperright(upperright),
-m_dynamic(dynamic),
-m_gentexcoords(gentexcoords)
-{
-    m_boundingBox = Bbox(m_lowerleft, m_upperright);
-}
-
-Box::~Box()
-{
-}
-
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void Box::initialise(const ShaderInstance& shaderInstance)
+CreatedBox CreateBox(const CreationParams& params)
 {
-    if (m_modelData.empty())
+    CreatedBox box;
+
+    GameResource& gameResource = *(GameResource*)params.resource;
+    ShaderInstance& shaderInstance = *(params.shaderInstance);
+
+    if (box.model->getMeshData().empty())
     {
         VertexBuffer* vb = new VertexBuffer();
         IndexBuffer* ib = new IndexBuffer();
 
-        m_modelData.push_back(new MeshGroup(vb, ib, shaderInstance));
-        if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
+        box.model->getMeshData().push_back(new MeshGroup(vb, ib, shaderInstance));
+        const Effect* effect = box.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect();
+        if (effect == nullptr)
         {
-            m_modelData[0]->getShaderInstance().getMaterial().setEffect(getGameResource().getEffectCache().getEffect("laser_effect.xml"));
+            effect = gameResource.getEffectCache().getEffect("laser_effect.xml");
+            box.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(effect);
         }
 
         std::vector<unsigned int> texCoordDim;
-        if (m_gentexcoords)
+        if (params.m_gentexcoords)
         {
             texCoordDim.push_back(2);
         }
 
-        unsigned int numberOfBytes = 6 * 4 * (3 + (m_gentexcoords ? 2 : 0)) * sizeof(float);
+        unsigned int numberOfBytes = 6 * 4 * (3 + (params.m_gentexcoords ? 2 : 0)) * sizeof(float);
         char* data = new char[numberOfBytes]; //4 points with position and two 2D textureCoordinates * 6 faces for a box
         char* startOfData = data;
         //Front face
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
         //Back face
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
         //Left face
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
         //Right face
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
         //	//Top face
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_upperright.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_upperright.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
         //Bottom face
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_lowerleft.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 0.0f; data += sizeof(float);
         }
-        *(float*)data = m_upperright.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_upperright.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 1.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
-        *(float*)data = m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = m_upperright.z(); data += sizeof(float);
-        if (m_gentexcoords)
+        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
+        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
+        *(float*)data = params.m_upperright.z(); data += sizeof(float);
+        if (params.m_gentexcoords)
         {
             *(float*)data = 0.0f; data += sizeof(float);
             *(float*)data = 1.0f; data += sizeof(float);
         }
 
-        const Technique* technique = m_modelData[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
-        const VertexShader* shader = getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        static unsigned int defaultHash = hashString("default");
+        const Technique* technique = effect->getTechnique(defaultHash);
+        if (technique == nullptr)
+        {
+            MSG_TRACE_CHANNEL("BOX", "FAILED TO GET THE TECHNIQUE DEFAULT PASS");
+        }
+        const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader()); //Technique pointer is 0!
         assert(shader);
-        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), numberOfBytes, (void*)startOfData, m_dynamic, vertexDesc, shader->getShaderBlob());
-        delete [] startOfData;
+        vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), numberOfBytes, (void*)startOfData, params.m_dynamic, vertexDesc, shader->getShaderBlob());
+        delete[] startOfData;
         data = nullptr;
         startOfData = nullptr;
-        unsigned int indexData[] = 
+        unsigned int indexData[] =
         {
             0, 1, 2, 2, 3, 0, //FF
             4, 5, 6, 6, 7, 4, //BF
@@ -274,16 +264,20 @@ void Box::initialise(const ShaderInstance& shaderInstance)
             20, 21, 22, 22, 23, 20 //VF2
         };
 
-        ib->createBuffer(getGameResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(gameResource.getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
         ib->setNumberOfIndecis(36);
     }
     else
     {
-        if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
+        if (box.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            m_modelData[0]->getShaderInstance().getMaterial().setEffect(getGameResource().getEffectCache().getEffect("laser_effect.xml"));
+            box.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("laser_effect.xml"));
         }
-    }    
+    }
 
-    m_modelData[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    box.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    return box;
+}
+
 }
