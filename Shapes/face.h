@@ -21,6 +21,11 @@ namespace Face
         ShaderInstance* shaderInstance;
         Resource* resource;
         float fillvalue;
+        float width;
+        float height;
+        size_t nrVerticesInX;
+        size_t nrVerticesInY;
+        bool tesselate;
         bool fillx;
         bool filly;
         bool fillz;
@@ -33,7 +38,7 @@ namespace Face
     static unsigned long long m_totalNumberOfVerts;
     static unsigned long long m_totalNumberOfPolygons;
 
-    void createVertexData( bool fillx, float fillvalue, bool filly, bool fillz, byte*& vertexData, bool invertNormal, Bbox& boundingBox );
-    void createIndexData( unsigned int*& indecis, bool changeWindingOrder );
+    void createVertexData(const CreationParams& params, byte*& vertexData, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns);
+    void createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns);
 };
 #endif

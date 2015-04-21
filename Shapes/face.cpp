@@ -16,6 +16,8 @@
 namespace Face
 {
 
+const size_t numberOfTexcoords = 1;
+
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
@@ -27,6 +29,11 @@ CreatedFace CreateFace(const CreationParams& params)
 
     CreatedFace face;
     face.model = new Model();
+
+
+    float corridorwidth = 50.0f;
+    float corridorheight = 50.0f;
+
 
     if (face.model->getMeshData().empty())
     {
@@ -42,28 +49,30 @@ CreatedFace CreateFace(const CreationParams& params)
         IndexBuffer* ib = face.model->getMeshData()[0]->getGeometryInstance().getIB();
 
         std::vector<unsigned int> texCoordDimensions;
-        for (int texCoordCounter = 0; texCoordCounter < m_numberOfTexcoords; ++texCoordCounter)
+        for (int texCoordCounter = 0; texCoordCounter < numberOfTexcoords; ++texCoordCounter)
         {
             texCoordDimensions.push_back(2);
         }
 
-        unsigned int bufferSize = 0;
-        if ((m_height / m_corridorheight) > 1 && m_tesselate)
+        size_t bufferSize = 0;
+        size_t rows = 0; 
+        size_t columns = 0;
+        if ((params.height / corridorheight) > 1 && params.tesselate)
         {
-            m_rows *= (int)(m_height / m_corridorheight);
+            rows *= (int)(params.height / corridorheight);
         }
-        if ((m_width / m_corridorwidth) > 1 && m_tesselate)
+        if ((params.width / corridorwidth) > 1 && params.tesselate)
         {
-            m_coloms *= (int)(m_width / m_corridorheight);
+            columns *= (int)(params.width / corridorheight);
         }
-        unsigned int numberOfVerts = m_rows * m_coloms;
+        size_t numberOfVerts = rows * columns;
         m_totalNumberOfVerts += numberOfVerts;
         bufferSize += sizeof(float) * 3 * numberOfVerts;
         bufferSize += sizeof(float) * 3 * numberOfVerts;
-        bufferSize += sizeof(float) * 2 * m_numberOfTexcoords * numberOfVerts;
+        bufferSize += sizeof(float) * 2 * numberOfTexcoords * numberOfVerts;
         byte* vertexData = new byte[bufferSize];
         byte* startOfVertexArray = vertexData;
-        createVertexData(params.fillx, params.fillvalue, params.filly, params.fillz, vertexData, params.invertNormal, face.boundingBox);
+        createVertexData(params, vertexData, face.boundingBox, corridorheight, corridorwidth, rows, columns);
 
         //Move pointer to start of vertex array  
         const Technique* technique = face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
@@ -72,7 +81,7 @@ CreatedFace CreateFace(const CreationParams& params)
         vertexDesc.textureCoordinateDimensions = texCoordDimensions;
         const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
-        if (!vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), bufferSize, startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
+        if (!vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), static_cast<unsigned int>(bufferSize), startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
         {
             MSG_TRACE_CHANNEL("VERTEXBUFFER_ERROR", "Failed to create VB!");
             assert(false);
@@ -82,13 +91,13 @@ CreatedFace CreateFace(const CreationParams& params)
         vertexData = nullptr;
         startOfVertexArray = nullptr;
 
-        unsigned int numberOfIndecis = (m_rows - 1) * (m_coloms - 1) * 6;
-        ib->setNumberOfIndecis(numberOfIndecis);
+        size_t numberOfIndecis = (rows - 1) * (columns - 1) * 6;
+        ib->setNumberOfIndecis(static_cast<unsigned int>(numberOfIndecis));
         unsigned int* indecis = new unsigned int[numberOfIndecis];
         unsigned int* startOfIndexData = indecis;
-        createIndexData(indecis, params.changeWindingOrder);
+        createIndexData(indecis, params.changeWindingOrder, rows, columns);
 
-        ib->createBuffer(gameResource.getDeviceManager(), numberOfIndecis * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(gameResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
         delete[] startOfIndexData; //cleanup
         indecis = nullptr;
         startOfIndexData = nullptr;
@@ -115,51 +124,51 @@ CreatedFace CreateFace(const CreationParams& params)
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void Face::createVertexData(bool fillx, float fillvalue, bool filly, bool fillz, byte*& vertexData, bool invertNormal, Bbox& boundingBox)
+void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns)
 {
-    if (0 == m_rows || 0 == m_coloms)
+    if (0 == rows || 0 == columns)
         return;
-    float heightpart = m_height / ((float)m_rows - 1);
-    if ((m_height / m_corridorheight) > 1 && m_tesselate)
+    float heightpart = params.height / ((float)rows - 1);
+    if ((params.height / corridorHeight) > 1 && params.tesselate)
     {
-        heightpart = m_height / ((float)m_rows - 1);
+        heightpart = params.height / ((float)rows - 1);
     }
-    float widthpart = m_width / ((float)m_coloms - 1);
-    if ((m_width / m_corridorwidth) > 1 && m_tesselate)
+    float widthpart = params.width / ((float)columns - 1);
+    if ((params.width / corridorWidth) > 1 && params.tesselate)
     {
-        widthpart = m_width / ((float)m_coloms - 1);
+        widthpart = params.width / ((float)columns - 1);
     }
     Vector3 v;
     Vector3 normal;
-    if (fillx)
+    if (params.fillx)
     {
         normal = Vector3::xAxis();
     }
-    else if (filly)
+    else if (params.filly)
     {
         normal = Vector3::yAxis();
     }
-    else if (fillz)
+    else if (params.fillz)
     {
         normal = Vector3::zAxis();
     }
 
-    if (invertNormal)
+    if (params.invertNormal)
     {
         normal = -normal;
     }
 
     Vector2 texcoord;
-    for (int i = 0; i < m_rows; i++)
+    for (int i = 0; i < rows; i++)
     {
-        for (int j = 0; j < m_coloms; j++)
+        for (int j = 0; j < columns; j++)
         {
-            if (fillx)
-                v = Vector3(fillvalue, i * heightpart, j * widthpart);
-            if (filly)
-                v = Vector3(i * heightpart, fillvalue, j * widthpart);
-            if (fillz)
-                v = Vector3(i * heightpart, j * widthpart, fillvalue);
+            if (params.fillx)
+                v = Vector3(params.fillvalue, i * heightpart, j * widthpart);
+            if (params.filly)
+                v = Vector3(i * heightpart, params.fillvalue, j * widthpart);
+            if (params.fillz)
+                v = Vector3(i * heightpart, j * widthpart, params.fillvalue);
             *(float*)vertexData = v.x(); vertexData += sizeof(float);
             *(float*)vertexData = v.y(); vertexData += sizeof(float);
             *(float*)vertexData = v.z(); vertexData += sizeof(float);
@@ -170,14 +179,14 @@ void Face::createVertexData(bool fillx, float fillvalue, bool filly, bool fillz,
             *(float*)vertexData = normal.y(); vertexData += sizeof(float);
             *(float*)vertexData = normal.z(); vertexData += sizeof(float);
 
-            float uPart = 1 / (float)(m_coloms - 1); //Minus one as index start at zero still want one at maxEle - 1
-            float vPart = 1 / (float)(m_rows - 1);
-            if ((m_width / m_corridorwidth) > 1 && m_tesselate)
-                uPart = uPart * (m_width / m_corridorwidth);
-            if ((m_height / m_corridorheight) > 1 && m_tesselate)
-                vPart = vPart * (m_height / m_corridorheight);
+            float uPart = 1 / (float)(columns - 1); //Minus one as index start at zero still want one at maxEle - 1
+            float vPart = 1 / (float)(rows - 1);
+            if ((params.width / corridorWidth) > 1 && params.tesselate)
+                uPart = uPart * (params.width / corridorWidth);
+            if ((params.height / corridorHeight) > 1 && params.tesselate)
+                vPart = vPart * (params.height / corridorHeight);
             texcoord = Vector2(j * uPart, i * vPart);
-            for (int k = 0; k < m_numberOfTexcoords; k++)
+            for (int k = 0; k < numberOfTexcoords; k++)
             {
                 *(float*)vertexData = 1.0f - texcoord.x(); vertexData += sizeof(float);
                 *(float*)vertexData = 1.0f - texcoord.y(); vertexData += sizeof(float);
@@ -190,31 +199,32 @@ void Face::createVertexData(bool fillx, float fillvalue, bool filly, bool fillz,
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void Face::createIndexData(unsigned int*& indecis, bool changeWindingOrder)
+void Face::createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns)
 {
-    for (int i = 0; i < m_rows - 1; i++)
+    unsigned int nrcolumns = static_cast<unsigned int>(columns);
+    for (unsigned int i = 0; i < static_cast<unsigned int>(rows - 1); i++)
     {
-        for (int j = 0; j < m_coloms - 1; j++)
+        for (unsigned int j = 0; j < nrcolumns - 1; j++)
         {
-            unsigned int indexvertex = (i * m_coloms) + j;
+            unsigned int indexvertex = (i * nrcolumns) + j;
             if (changeWindingOrder)
             {
-                *indecis = indexvertex + m_coloms + 1; ++indecis;
-                *indecis = indexvertex + m_coloms; ++indecis;
+                *indecis = indexvertex + nrcolumns + 1; ++indecis;
+                *indecis = indexvertex + nrcolumns; ++indecis;
                 *indecis = indexvertex; ++indecis;
 
                 *indecis = indexvertex + 1; ++indecis;
-                *indecis = indexvertex + m_coloms + 1; ++indecis;
+                *indecis = indexvertex + nrcolumns + 1; ++indecis;
                 *indecis = indexvertex; ++indecis;
             }
             else
             {
                 *indecis = indexvertex; ++indecis;
-                *indecis = indexvertex + m_coloms; ++indecis;
-                *indecis = indexvertex + m_coloms + 1; ++indecis;
+                *indecis = indexvertex + nrcolumns; ++indecis;
+                *indecis = indexvertex + nrcolumns + 1; ++indecis;
 
                 *indecis = indexvertex; ++indecis;
-                *indecis = indexvertex + m_coloms + 1; ++indecis;
+                *indecis = indexvertex + nrcolumns + 1; ++indecis;
                 *indecis = indexvertex + 1; ++indecis;
             }
         }
