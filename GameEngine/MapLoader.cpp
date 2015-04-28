@@ -59,8 +59,8 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
 
     element = element->FirstChildElement();
     GameResourceHelper gameResourceHelper(resource);
-    GameObjectManager& gameObjectManager = *gameResourceHelper.getWritableGameResource()->getGameObjectManager();
-    LightManager& lightManager = *gameResourceHelper.getWritableGameResource()->getLightManager();
+    GameObjectManager& gameObjectManager = gameResourceHelper.getWritableGameResource().getGameObjectManager();
+    LightManager& lightManager = gameResourceHelper.getWritableGameResource().getLightManager();
 
     MapContainer map;
 
@@ -383,7 +383,7 @@ void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement*
     }
     p->initialise(shaderInstance);
     GameResourceHelper gameResourceHelper(resource);
-    GameObjectManager& gameObjectManager = *gameResourceHelper.getWritableGameResource()->getGameObjectManager();
+    GameObjectManager& gameObjectManager = gameResourceHelper.getWritableGameResource().getGameObjectManager();
     gameObjectManager.addGameObject(p);
 }
 

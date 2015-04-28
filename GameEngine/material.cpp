@@ -117,7 +117,7 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
             if (attribute)
             {
                 GameResourceHelper helper(resource);
-                m_effect = const_cast<Effect*>(helper.getWritableGameResource()->getEffectCache()->createEffect(resource, attribute->Value()));
+                m_effect = const_cast<Effect*>(helper.getWritableGameResource().getEffectCache().createEffect(resource, attribute->Value()));
             }
             attribute = node->FindAttribute("technique_name");
             if (attribute)

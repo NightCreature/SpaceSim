@@ -30,7 +30,7 @@ private:
     LaserQueue m_worldTransforms;
     RenderInstanceQueue m_renderInstances;
     RenderInstancePool m_renderInstancePool;
-    Box* m_geometry;
+    Model* m_geometry;
 
     const static size_t m_maxLasers = 1000;
     size_t m_currentNumberOfLasers;

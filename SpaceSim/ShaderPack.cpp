@@ -10,7 +10,7 @@ bool ShaderPack::loadShaderPack( std::string shaderPack )
 {
     GameResourceHelper helper(m_resource);
     const Paths& paths = helper.getGameResource().getPaths();
-    EffectCache* effectCache = helper.getWritableGameResource()->getEffectCache();
+    EffectCache& effectCache = helper.getWritableGameResource().getEffectCache();
 
     tinyxml2::XMLDocument doc;
     std::string fileName = paths.getEffectShaderPath() + shaderPack;
@@ -31,7 +31,7 @@ bool ShaderPack::loadShaderPack( std::string shaderPack )
         const tinyxml2::XMLAttribute* fileNameAttr = effectElement->FindAttribute("file_name");
         if (fileNameAttr != nullptr)
         {
-            effectCache->createEffect(m_resource, fileNameAttr->Value());
+            effectCache.createEffect(m_resource, fileNameAttr->Value());
         }
     }
 

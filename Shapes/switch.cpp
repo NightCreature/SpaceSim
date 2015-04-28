@@ -161,10 +161,9 @@ void Switch::initialise( const ShaderInstance& shaderInstance )
     if (data.empty())
         return;
     
-    m_drawableObject = getWriteableGameResource()->getModelManager()->LoadModel(m_resource, data);
+    m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, data);
     Material mat = Material(0.0f, Color::white(), Color(0.0f, 0.0f, 0.0f, 0.75f), Color(0.0f, 5.0f, 0.0f, 0.75f), Color(0.0f, 1.0f, 0.0f, 0.75f));
     ////mat.setBlendState(true);
-    m_drawableObject->initialise(shaderInstance);
     //m_drawableObject->setMaterial(mat);
 
     m_active = true;

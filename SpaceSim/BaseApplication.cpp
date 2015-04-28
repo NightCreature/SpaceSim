@@ -17,6 +17,8 @@
 #include "CubeMapRenderer.h"
 #include "HashString.h"
 
+#include "EntityManager.h"
+
 class RenderInstance;
 
 HashString exitGame("exit_game");
@@ -43,7 +45,7 @@ m_previousRenderInstanceListSize(1)
 //-----------------------------------------------------------------------------
 bool Application::initialise()
 {
-    m_gameResource = new GameResource(&m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
+    m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
                                       &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths);
     bool returnValue = true;
 
@@ -88,8 +90,9 @@ bool Application::initialise()
         returnValue &= m_map.loadMap(m_gameResource, mapFileName->getData());
     }
 
-    MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts )
-    MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons )
+    MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts);
+    MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons);
+
 
     return returnValue;
 }
@@ -129,7 +132,7 @@ void Application::mainGameLoop()
             RenderInstanceTree renderList;
             renderList.reserve(m_previousRenderInstanceListSize); //Upfront reserve as much space as the last frame used, it should at max from once or twice a frame this way, ignoring the first one
             m_gameObjectManager.update(renderList, m_elapsedTime, input);
-            m_gameResource->getLaserManager()->update(renderList, m_elapsedTime, m_renderSystem.getDeviceMananger());
+            m_gameResource->getLaserManager().update(renderList, m_elapsedTime, m_renderSystem.getDeviceMananger());
 
             m_renderSystem.beginDraw(renderList, m_gameResource);
             m_renderSystem.update(m_gameResource, renderList, m_elapsedTime, m_time);
@@ -182,12 +185,12 @@ LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wP
 //-----------------------------------------------------------------------------
 void Application::cleanup()
 {
-    m_gameResource->getDeviceManager()->clearDeviceState();
-    m_gameResource->getSettingsManager()->cleanup();
+    m_gameResource->getDeviceManager().clearDeviceState();
+    m_gameResource->getSettingsManager().cleanup();
     m_renderSystem.cleanup();
-    m_gameResource->getTextureManager()->cleanup();
-    m_gameResource->getDeviceManager()->cleanup();
-    m_gameResource->getModelManager()->cleanup();
-    m_gameResource->getGameObjectManager()->cleanup();
+    m_gameResource->getTextureManager().cleanup();
+    m_gameResource->getDeviceManager().cleanup();
+    m_gameResource->getModelManager().cleanup();
+    m_gameResource->getGameObjectManager().cleanup();
 }
 

@@ -50,8 +50,7 @@ void GunTurret::initialise(const ShaderInstance& shaderInstance)
     const ISetting<std::string>* modelString = sm.getSetting<std::string>("Guns");
     if (modelString)
     {
-        m_drawableObject = getWriteableGameResource()->getModelManager()->LoadModel(m_resource, modelString->getData());
-        m_drawableObject->initialise(shaderInstance);
+        m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, modelString->getData());
     }
 
     Super::initialise(shaderInstance);
@@ -65,8 +64,8 @@ void GunTurret::onHit()
 {
     if (m_active)
     {
-        ParticleSystemManager* psm = getWriteableGameResource()->getParticleSystemManager();
-        ParticleEmitter* pe = psm->createEmitter(m_center, Vector3::yAxis());
+        ParticleSystemManager& psm = getWriteableGameResource().getParticleSystemManager();
+        ParticleEmitter* pe = psm.createEmitter(m_center, Vector3::yAxis());
         pe->setMaxParticles(250.0f);
         pe->setEmissionRate(75.0f);
         pe->setParticleStartColor(Color(1.0f, 1.0f, 1.0f, 1.0f));//Color(0.75f, 0.5f, 0.01f, 0.75f));
@@ -140,7 +139,7 @@ void GunTurret::fireLaser()
     shaderInstance.getMaterial().setBlendState(true);
     shaderInstance.getMaterial().setEffect(getGameResource().getEffectCache().getEffect("laser_effect.xml"));
 
-    getWriteableGameResource()->getLaserManager()->addInstance(m_position + Vector3(0.0f, 3.0f, 0.0f), m_direction, shaderInstance);
+    getWriteableGameResource().getLaserManager().addInstance(m_position + Vector3(0.0f, 3.0f, 0.0f), m_direction, shaderInstance);
 }
 
 void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)

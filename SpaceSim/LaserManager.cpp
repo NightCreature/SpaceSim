@@ -48,13 +48,22 @@ LaserManager::~LaserManager()
 void LaserManager::initialise(Resource* resource)
 {
     GameResourceHelper helper( resource );
-    const Effect* effect = helper.getWritableGameResource()->getEffectCache()->createEffect(resource, "Shaders\\Effects\\laser_effect.xml");
+    const Effect* effect = helper.getWritableGameResource().getEffectCache().createEffect(resource, "Shaders\\Effects\\laser_effect.xml");
 
-    m_geometry = new Box((resource), Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f), false, false);
     ShaderInstance shaderInstance;
-    shaderInstance.setMaterial( Material(0.0f, Color::black(), Color::black(), Color::red(), Color::red() ));
+    shaderInstance.setMaterial(Material(0.0f, Color::black(), Color::black(), Color::red(), Color::red()));
     shaderInstance.getMaterial().setEffect(effect);
-    m_geometry->initialise(shaderInstance);
+
+    Box::CreationParams params;
+    params.m_dynamic = false;
+    params.m_gentexcoords = false;
+    params.resource = resource;
+    params.shaderInstance = &shaderInstance;
+    params.m_lowerleft = Vector3(-0.5f, -0.5f, -0.5f);
+    params.m_upperright = Vector3(0.5f, 0.5f, 0.5f);
+    m_geometry = Box::CreateBox(params).model;
+
+    //m_geometry->initialise(shaderInstance);
 }
 
 //-------------------------------------------------------------------------

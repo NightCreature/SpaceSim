@@ -19,43 +19,33 @@ enum meshdatatype
 	texcoords,
 	indices,
 };
-
-class Mesh : public Model
+//Doesnt need to be  class only generation fucntion is enough
+namespace Mesh
 {
-public:
-	Mesh(Resource* resource);
-	~Mesh();
 
-    void initialise(const ShaderInstance& shaderInstance);
+    typedef std::vector<Vector2> TexCoords;
+    typedef std::vector<TexCoords> MultiTexCoords;
 
-	int getNumVertices() const {return (int)m_vertices.size();}
-	int getNumIndices() const {return (int)m_indices.size();}
-	int getNumNormals() const {return (int)m_normals.size();}
-	int getNumTexCoords() const { return (int)m_texcoords.size();}
-	const std::vector<Vector3>& getVertices() const {return m_vertices;}
-	const std::vector<Vector3>& getNormals() const {return m_normals;}
-	const std::vector<Vector2>& getTexCoords(int stage) {return m_texcoords[stage];}
-	const std::vector<unsigned int>& getIndices() const {return m_indices;}
+    struct CreationParams : public Model::CreationParams
+    {
+        std::vector<Vector3>		 m_vertices;
+        std::vector<Vector3>		 m_normals;
+        std::vector<unsigned int>	 m_indices;
+        MultiTexCoords				 m_texcoords;
+        int m_numvertices;
+        int m_numindices;
+        int m_numnormals;
+        int m_numtexcoords;
+    };
 
-    std::vector<Vector3>& getVertices() {return m_vertices;}
-    std::vector<Vector3>& getNormals() {return m_normals;}
-    std::vector<unsigned int>& getIndices() {return m_indices;}
-    std::map<int, std::vector<Vector2> > & getTexCoords() {return m_texcoords;}
+    struct CreatedMesh 
+    {
+        Model* model;
+        Bbox boundingBox;
+    };
 
-    void normalizeNormals();
-protected:
-private:
-	typedef std::vector<Vector2> TexCoords;
-	typedef std::map<int, TexCoords> MultiTexCoords;
+    CreatedMesh CreateMesh(const CreationParams& params);
+    void normalizeNormals(std::vector<Vector3>& normals);
 
-	int							 m_numvertices;
-	int							 m_numindices;
-	int							 m_numnormals;
-	int							 m_numtexcoords;
-	int							 m_nummultitexcoords;
-	std::vector<Vector3>		 m_vertices;
-	std::vector<Vector3>		 m_normals;
-	std::vector<unsigned int>	 m_indices;
-	MultiTexCoords				 m_texcoords;
 };
 #endif

@@ -349,6 +349,7 @@
     <ClCompile Include="..\Shapes\face.cpp" />
     <ClCompile Include="..\Shapes\forcefield.cpp" />
     <ClCompile Include="EffectCache.cpp" />
+    <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
@@ -436,6 +437,7 @@
     <ClInclude Include="CubeMapRenderer.h" />
     <ClInclude Include="D3DDebugHelperFunctions.h" />
     <ClInclude Include="DebugBox.h" />
+    <ClInclude Include="DebugHelperFunctions.h" />
     <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="displaywindow.h" />
     <ClInclude Include="..\Shapes\door.h" />
@@ -443,6 +445,7 @@
     <ClInclude Include="..\Shapes\face.h" />
     <ClInclude Include="..\Shapes\forcefield.h" />
     <ClInclude Include="EffectCache.h" />
+    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectManager.h" />
@@ -473,6 +476,7 @@
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="MathUtilityFunctions.h" />
+    <ClInclude Include="MeshComponentData.h" />
     <ClInclude Include="MeshGroup.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="ModelLoader.h" />
