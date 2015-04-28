@@ -10,13 +10,21 @@ class Resource;
 class RotatingBlades : public GameObject
 {
 public:
-	RotatingBlades(Resource* resource) : GameObject(resource), m_rotatingblades1(resource, 50, 50, 10, 10, false), m_rotatingblades2(resource, 50, 50, 10, 10, false) {}
+	RotatingBlades(Resource* resource) : GameObject(resource) {}
 	~RotatingBlades(){}
 	RotatingBlades(Resource* resource, const Vector3& position);
     void initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder) 
     {
-        m_rotatingblades1.initialise(shaderInstance, .0f, true , false, false, changeWindingOrder, false);
-        m_rotatingblades2.initialise(shaderInstance, .0f, true , false, false, changeWindingOrder, false);
+        Face::CreationParams params;
+        params.shaderInstance = &shaderInstance;
+        params.resource = m_resource;
+        params.fillvalue = 0.0f;
+        params.fillx = true;
+        params.changeWindingOrder = changeWindingOrder;
+        Face::CreatedFace face = Face::CreateFace(params);
+        Face::CreatedFace face2 = Face::CreateFace(params);
+        m_rotatingblades1 = face.model;
+        m_rotatingblades2 = face2.model;
         m_active = true;
 
         //Super::initialise(shaderInstance);
@@ -44,8 +52,8 @@ public:
 protected:
 private:
 	Vector3 m_position;
-	Face m_rotatingblades1;
-	Face m_rotatingblades2;
+	Model* m_rotatingblades1;
+    Model* m_rotatingblades2;
 	float m_angle;
 };
 #endif

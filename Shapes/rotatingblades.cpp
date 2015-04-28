@@ -9,16 +9,10 @@
 HASH_ELEMENT_IMPLEMENTATION(RotatingBlades)
 
 RotatingBlades::RotatingBlades(Resource* resource, const Vector3& position) :
-GameObject(resource),
-m_rotatingblades1(resource),
-m_rotatingblades2(resource)
+GameObject(resource)
 {
 	//position is the middle of a corridor
 	m_position = position;
-	m_drawableObject = new Face(resource, 50, 50, 10, 10, false);
-	m_rotatingblades2 = Face(resource, 50, 50, 10, 10, false);
-	//m_rotatingblades1.setNumberOfTextureCoordinatesToGenerate(2);
-	m_rotatingblades2.setNumberOfTextureCoordinatesToGenerate(2);
 	m_angle = 0.0f;
 	m_active = true;
 }
@@ -77,7 +71,7 @@ void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedT
 //#ifdef _DEBUG
 //        renderInstances.back()->m_name = L"Rotating blades 1";
 //#endif
-        m_rotatingblades2.update(renderInstances, elapsedTime, m_world, "Rotating blades 2");
+        //m_rotatingblades2.update(renderInstances, elapsedTime, m_world, "Rotating blades 2");
 
         //glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0f);
         //glDepthMask(false);
@@ -122,6 +116,8 @@ void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedT
     //glEnd();
 
     UNUSEDPARAM(input);
+    UNUSEDPARAM(renderInstances);
+    UNUSEDPARAM(elapsedTime);
 }
 
 //-------------------------------------------------------------------------

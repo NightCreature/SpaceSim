@@ -14,7 +14,7 @@ XMLModelLoader::~XMLModelLoader(void)
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-Model* XMLModelLoader::LoadModel( Resource* resource, const std::string& fileName )
+Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName)
 {
     if (fileName.empty())
         return nullptr;
@@ -33,12 +33,16 @@ Model* XMLModelLoader::LoadModel( Resource* resource, const std::string& fileNam
     unsigned int meshVertexHash = hashString("MeshVertex");
     unsigned int meshIndecisHash = hashString("MeshIndices");
 
-    Mesh* mesh = new Mesh(resource);
-    std::vector<Vector3>& vertices = mesh->getVertices();
-    std::vector<Vector3>& normals = mesh->getNormals();
-    std::map<int, std::vector<Vector2> >& texCoords = mesh->getTexCoords();
+    Mesh::CreationParams params;
+    params.m_resource = resource;
+    params.m_shaderInstance = &shaderInstance;
+
+    //Mesh* mesh = new Mesh(resource);
+    std::vector<Vector3>& vertices = params.m_vertices;
+    std::vector<Vector3>& normals = params.m_normals;
+    std::vector< std::vector<Vector2> >& texCoords = params.m_texcoords;
     size_t numberOfTexCoords = 0;
-    std::vector<unsigned int>& indices = mesh->getIndices();
+    std::vector<unsigned int>& indices = params.m_indices;
 
     element = element->FirstChildElement();
     for (;element; element = element->NextSiblingElement())
@@ -64,7 +68,7 @@ Model* XMLModelLoader::LoadModel( Resource* resource, const std::string& fileNam
                             {
                                 //See this as position data
                                 vertices.push_back(vec);
-                                mesh->getBoundingBox().enclose(vec);
+                                //mesh->getBoundingBox().enclose(vec);
                                 ++count;
                             }
                             else
@@ -78,15 +82,12 @@ Model* XMLModelLoader::LoadModel( Resource* resource, const std::string& fileNam
                             Vector2 vec;
                             vec.deserialise(vertexDataElement);
                             //Always see this as texture coordinate data
-                            std::map<int, std::vector<Vector2> >::iterator smit = texCoords.find(texCoordSetCount);
-                            if (smit != texCoords.end())
+                            while (params.m_texcoords.size() <= texCoordSetCount)
                             {
-                                smit->second.push_back(vec);
+                                params.m_texcoords.push_back(std::vector<Vector2>());
                             }
-                            else
-                            {
-                                texCoords.insert(std::pair<int, std::vector<Vector2> >(texCoordSetCount, std::vector<Vector2>(1, vec)));
-                            }
+                            std::vector<Vector2>& smit = texCoords[texCoordSetCount];
+                            smit.push_back(vec);
                             ++texCoordSetCount;
                         }
                     }
@@ -110,7 +111,7 @@ Model* XMLModelLoader::LoadModel( Resource* resource, const std::string& fileNam
         }
     }
 
-    mesh->normalizeNormals(); //Avoid read in errors so that all the normals are actually unit vectors
+    Mesh::normalizeNormals(params.m_normals); //Avoid read in errors so that all the normals are actually unit vectors
     //if (mesh->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
     //{
     //    GameResourceHelper helper(resource);
@@ -122,5 +123,7 @@ Model* XMLModelLoader::LoadModel( Resource* resource, const std::string& fileNam
     //}
     //mesh->initialise(ShaderInstance());
 
-    return mesh;
+    Mesh::CreatedMesh mesh = Mesh::CreateMesh(params);
+
+    return mesh.model;
 }

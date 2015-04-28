@@ -17,7 +17,7 @@ GameObject(resource)
 {
 	//position is the middle of a corridor
 	m_position = position;
-	m_drawableObject = new Face(resource, 50, 50, 10, 10, false);
+    m_drawableObject = nullptr;
 	m_texturespeed = 0.0f;
 	m_active = true;
 }
@@ -28,7 +28,14 @@ GameObject(resource)
 //-----------------------------------------------------------------------------
 void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder)
 {
-    ((Face*)m_drawableObject)->initialise(shaderInstance, .0f, true , false, false, changeWindingOrder, false);
+    Face::CreationParams params;
+    params.shaderInstance = &shaderInstance;
+    params.resource = m_resource;
+    params.fillvalue = 0.0f;
+    params.fillx = true;
+    params.changeWindingOrder = changeWindingOrder;
+    Face::CreatedFace face = Face::CreateFace(params);
+    m_drawableObject = face.model;
     m_active = true;
 
     Super::initialise(shaderInstance);

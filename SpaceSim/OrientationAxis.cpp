@@ -32,7 +32,7 @@ OrientationAxis::LineVertex OrientationAxis::m_vertices[] =
 void OrientationAxis::initialise(Resource* resource, const DeviceManager& deviceManger)
 {
     GameResourceHelper helper(resource);
-    m_effect = const_cast<Effect*>(helper.getWritableGameResource()->getEffectCache()->createEffect(resource, "Shaders\\Effects\\Debug_Color_Shader.xml"));
+    m_effect = const_cast<Effect*>(helper.getWritableGameResource().getEffectCache().createEffect(resource, "Shaders\\Effects\\Debug_Color_Shader.xml"));
 
     unsigned int bufferSize = 12 * sizeof(LineVertex);
 

@@ -16,7 +16,7 @@ AssimpModelLoader::~AssimpModelLoader(void)
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-Model* AssimpModelLoader::LoadModel( Resource* resource, const std::string& fileName )
+Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName)
 {
     if (fileName.empty())
     {
@@ -35,23 +35,19 @@ Model* AssimpModelLoader::LoadModel( Resource* resource, const std::string& file
     }  // Now we can access the file's contents.   
 
     //Grab the verts here
-    
-        Mesh* mesh = new Mesh(resource);
-        std::vector<Vector3>& vertices = mesh->getVertices();
-        std::vector<Vector3>& normals = mesh->getNormals();
-        std::map< int, std::vector<Vector2> >& uvs = mesh->getTexCoords();
-        std::vector<unsigned int>& indices = mesh->getIndices();
+    Mesh::CreationParams params;
+    params.m_shaderInstance = const_cast<ShaderInstance*>(&shaderInstance);
+    params.m_resource = resource;
         unsigned int highestIndex = 0;
         //Extract vertices from the mesh here and store in our own vertex buffer
         aiMesh* subMesh = scene->mMeshes[0];
         for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
         {
-            vertices.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
-            mesh->getBoundingBox().enclose(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
+            params.m_vertices.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
 
             if (subMesh->HasNormals())
             {
-                normals.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
+                params.m_normals.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
                 //MSG_TRACE_CHANNEL("NORMAL DEBUG", "Normal: %f, %f, %f", subMesh->mNormals[vertCounter].x, subMesh->mNormals[vertCounter].y, subMesh->mNormals[vertCounter].z);
             }
 
@@ -60,48 +56,33 @@ Model* AssimpModelLoader::LoadModel( Resource* resource, const std::string& file
                 if (subMesh->HasTextureCoords(uvChannel))
                 {
                     aiVector3D* texCoordChannel = subMesh->mTextureCoords[uvChannel];
+                    while (params.m_texcoords.size() <= uvChannel)
+                    {
+                        params.m_texcoords.push_back(std::vector<Vector2>());
+                    }
                     switch (subMesh->mNumUVComponents[uvChannel])
                     {
                     case 1:
                         {
                             Vector2 vec(texCoordChannel[vertCounter].x, 0.0f);
-                            std::map<int, std::vector<Vector2> >::iterator smit = uvs.find(uvChannel);
-                            if (smit != uvs.end())
-                            {
-                                smit->second.push_back(vec);
-                            }
-                            else
-                            {
-                                uvs.insert(std::pair<int, std::vector<Vector2> >(uvChannel, std::vector<Vector2>(1, vec)));
-                            }
+                            std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
+                            smit.push_back(vec);
                         }
                         break;
                     case 2:
                         {
                             Vector2 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y);
-                            std::map<int, std::vector<Vector2> >::iterator smit = uvs.find(uvChannel);
-                            if (smit != uvs.end())
-                            {
-                                smit->second.push_back(vec);
-                            }
-                            else
-                            {
-                                uvs.insert(std::pair<int, std::vector<Vector2> >(uvChannel, std::vector<Vector2>(1, vec)));
-                            }
+                            std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
+                            smit.push_back(vec);
                         }
                         break;
                     case 3:
                         {
                             Vector2 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y);
-                            std::map<int, std::vector<Vector2> >::iterator smit = uvs.find(uvChannel);
-                            if (smit != uvs.end())
-                            {
-                                smit->second.push_back(vec);
-                            }
-                            else
-                            {
-                                uvs.insert(std::pair<int, std::vector<Vector2> >(uvChannel, std::vector<Vector2>(1, vec)));
-                            }
+                            std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
+
+                            smit.push_back(vec);
+
                             //    uvs.push_back(texCoordChannel[vertCounter].x);
                             //    uvs.push_back(texCoordChannel[vertCounter].y);
                             //    uvs.push_back(texCoordChannel[vertCounter].z);
@@ -120,13 +101,13 @@ Model* AssimpModelLoader::LoadModel( Resource* resource, const std::string& file
         {
             for (size_t counterIndex = 0; counterIndex < subMesh->mFaces[indexCounter].mNumIndices; ++counterIndex)
             {
-                indices.push_back(subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset);
+                params.m_indices.push_back(subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset);
                 if (subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset > highestIndex)
                 {
                     highestIndex = subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset;
                 }
             }
         }
-
-    return mesh;
+        Mesh::CreatedMesh mesh = Mesh::CreateMesh(params);
+    return mesh.model;
 }

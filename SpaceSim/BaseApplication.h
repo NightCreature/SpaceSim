@@ -17,6 +17,10 @@
 #include "ShaderCache.h"
 #include "Paths.h"
 
+#include "EntityManager.h"
+
+#include "MeshComponentData.h"
+
 #include <windows.h>
 
 //-----------------------------------------------------------------------------
@@ -46,6 +50,7 @@ public:
 
     const GameResource* getResource() const { return m_gameResource; }    
 private:
+    EntityManager      m_entityManager;
     RenderSystem       m_renderSystem;
     CameraManager      m_cameraSystem;
     SettingsManager    m_settingsManager;
@@ -67,6 +72,8 @@ private:
 
     size_t m_previousRenderInstanceListSize;
 
+
+    ModelComponentManger m_modelManager;
 public:
     static Matrix44 m_view;
     static Matrix44 m_projection;

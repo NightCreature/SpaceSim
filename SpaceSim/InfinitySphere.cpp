@@ -26,7 +26,8 @@ const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* nod
             const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("file");
             if (attribute != nullptr)
             {
-                m_drawableObject = ((GameResource*)m_resource)->getModelManager()->LoadModel(m_resource, attribute->Value());
+                //Heavily relies on the shader instance existing before we load the model, might be better to put the model construction in initialise instead
+                m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
             }
         }
         else if (Vector3::m_hash == childElementHash)
@@ -43,7 +44,7 @@ const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* nod
 //-------------------------------------------------------------------------
 void InfinitySphere::initialise(const ShaderInstance& shaderInstance)
 {
-    m_drawableObject->initialise(shaderInstance);
+    //m_drawableObject->initialise(shaderInstance);
     Super::initialise(shaderInstance);
 }
 

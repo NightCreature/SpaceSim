@@ -6,7 +6,11 @@
 class HashString
 {
 public:
-    HashString(const std::string& str) : m_string(str), m_hash(hashString(str)) {}
+    HashString(const std::string& str) : 
+#ifdef _DEBUG
+        m_string(str),
+#endif
+        m_hash(hashString(str)) {}
     ~HashString() {}
 
     unsigned int getHash() const { return m_hash; }

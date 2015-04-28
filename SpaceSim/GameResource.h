@@ -13,16 +13,19 @@ class LaserManager;
 class ShaderCache;
 class EffectCache;
 class Paths;
+class EntityManager;
 
 class GameResource : public Resource
 {
 public:
-    GameResource(ResourceableParam(CameraManager, cameraManager), ResourceableParam(DeviceManager, deviceManager)
+    GameResource(ResourceableParam(EntityManager, entityManager),
+             ResourceableParam(CameraManager, cameraManager), ResourceableParam(DeviceManager, deviceManager)
             ,ResourceableParam(SettingsManager, settingsManager), ResourceableParam(TextureManager, textureManager)
             ,ResourceableParam(GameObjectManager, gameObjectManager), ResourceableParam(ModelManager, modelManager)
             ,ResourceableParam(ParticleSystemManager, pfxManager), ResourceableParam(LightManager, lightManager)
             ,ResourceableParam(LaserManager, laserManager), ResourceableParam(ShaderCache, shaderCache)
             , ResourceableParam(EffectCache, effectCache), ResourceableParam(Paths, paths)) :
+            ResourceInitialiser(EntityManager, entityManager),
             ResourceInitialiser(CameraManager, cameraManager),
             ResourceInitialiser(DeviceManager, deviceManager),
             ResourceInitialiser(SettingsManager, settingsManager),
@@ -38,6 +41,7 @@ public:
     {}
     ~GameResource() {}
 
+    ResourceDefinition(EntityManager);
     ResourceDefinition(CameraManager)
     ResourceDefinition(DeviceManager)
     ResourceDefinition(SettingsManager)
@@ -61,7 +65,7 @@ public:
     ~GameResourceHelper() {}
 
     const GameResource& getGameResource() const { return *(GameResource*)m_resource; }
-    GameResource* getWritableGameResource() const { return (GameResource*)m_resource; }
+    GameResource& getWritableGameResource() const { return *(GameResource*)m_resource; }
 private:
     Resource* m_resource;
 };

@@ -53,13 +53,7 @@ void Effect::deserialise(const tinyxml2::XMLElement* node, Resource* resource)
 //-------------------------------------------------------------------------
 const Technique* Effect::getTechnique(const std::string& techniqueName) const
 {
-    auto it = m_techniques.find(hashString(techniqueName));
-    if (it != end(m_techniques))
-    {
-        return &(it->second);
-    }
-
-    return nullptr;
+    return getTechnique(hashString(techniqueName));
 }
 
 //-------------------------------------------------------------------------
@@ -82,20 +76,19 @@ const Technique* Effect::getTechnique(const unsigned int techniqueName) const
 void Technique::deserialise(const tinyxml2::XMLElement* element)
 {
     GameResource* gameResource = (GameResource*)m_resource;
-    ShaderCache* shaderCache = gameResource->getShaderCache();
-    const DeviceManager& deviceManager = *gameResource->getDeviceManager();
+    ShaderCache& shaderCache = gameResource->getShaderCache();
+    const DeviceManager& deviceManager = gameResource->getDeviceManager();
 
-#ifdef _DEBUG
+    std::string techniqueName = "default_technique";
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
     {
-        m_name = attribute->Value();
+        techniqueName = attribute->Value();
     }
-    else
-    {
-        m_name = "default_technique";
-    }
-    m_nameHash = hashString(m_name);
+
+    m_nameHash = hashString(techniqueName);
+#ifdef _DEBUG
+    m_name = techniqueName;
 #endif // _DEBUG
 
     for (const tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement())
@@ -103,27 +96,27 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         unsigned int elmentHash = hashString(childElement->Value());
         if (VertexShader::m_hash == elmentHash)
         {
-            m_vertexShader = shaderCache->getVertexShader(childElement, deviceManager);
+            m_vertexShader = shaderCache.getVertexShader(childElement, deviceManager);
         }
         else if (HullShader::m_hash == elmentHash)
         {
-            m_hullShader = shaderCache->getHullShader(childElement, deviceManager);
+            m_hullShader = shaderCache.getHullShader(childElement, deviceManager);
         }
         else if (DomainShader::m_hash == elmentHash)
         {
-            m_domainShader = shaderCache->getDomainShader(childElement, deviceManager);
+            m_domainShader = shaderCache.getDomainShader(childElement, deviceManager);
         }
         else if (GeometryShader::m_hash == elmentHash)
         {
-            m_geometryShader = shaderCache->getGeometryShader(childElement, deviceManager);
+            m_geometryShader = shaderCache.getGeometryShader(childElement, deviceManager);
         }
         else if (PixelShader::m_hash == elmentHash)
         {
-            m_pixelShader = shaderCache->getPixelShader(childElement, deviceManager);
+            m_pixelShader = shaderCache.getPixelShader(childElement, deviceManager);
         }
         else if (ComputeShader::m_hash == elmentHash)
         {
-            m_computeShader = shaderCache->getComputeShader(childElement, deviceManager);
+            m_computeShader = shaderCache.getComputeShader(childElement, deviceManager);
         }
     }
 

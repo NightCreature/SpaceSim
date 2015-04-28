@@ -10,7 +10,6 @@ class Door : public GameObject
 public:
 	Door(Resource* resource) : GameObject(resource)
     {
-        m_drawableObject = new Face(resource, 50, 50, 10, 10, false);
     }
 	~Door(){}
 	Door(Resource* resource, const Vector3& position);

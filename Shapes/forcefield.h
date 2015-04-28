@@ -10,7 +10,7 @@ class ForceField : public GameObject
 public:
 	ForceField(Resource* resource) : GameObject(resource), m_texturespeed(0.0f)
     {
-        m_drawableObject = new Face(resource, 50, 50, 10, 10, false);
+        m_drawableObject = nullptr;
     }
 	~ForceField(){}
 	ForceField(Resource* resource, const Vector3& position);

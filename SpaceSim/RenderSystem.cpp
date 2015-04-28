@@ -541,7 +541,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
     GameResourceHelper helper(resource);
     const CameraManager& cm = helper.getGameResource().getCameraManager();
-    LightManager* lm = helper.getWritableGameResource()->getLightManager();
+    LightManager& lm = helper.getWritableGameResource().getLightManager();
 
     const Camera* cam = cm.getCamera("global");
     Vector3 camPos;
@@ -551,14 +551,14 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     }
     PerFrameConstants perFrameConstants;
     ZeroMemory(&perFrameConstants.m_lightConstants, sizeof(LightConstants) * 8);
-    Light* light0 = lm->getLight("light_0");
+    Light* light0 = lm.getLight("light_0");
     if (light0 != nullptr)
     {
         light0->setPosition(camPos);
     }
 
     unsigned int lightCounter = 0;
-    for (auto light : lm->getLights())
+    for (auto light : lm.getLights())
     {
         perFrameConstants.m_lightConstants[lightCounter] = light->getLightConstants();
         ++lightCounter;
@@ -568,7 +568,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     if (counter > 15)
     {
         //Loop over rts here and render to all of them
-        TextureManager* tm = helper.getWritableGameResource()->getTextureManager();
+        TextureManager& tm = helper.getWritableGameResource().getTextureManager();
         static size_t rtCounter = 0;
         rtCounter = (++rtCounter) % m_cubeSettings.size();
         if (m_cubeSettings[rtCounter].m_dynamic || m_cubeSettings[rtCounter].m_hasBeenRenderedTo == false)
@@ -576,7 +576,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
             ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
             deviceContext->PSSetShaderResources(0, 8, srv);
             m_cubeMapRenderer->initialise(m_cubeSettings[rtCounter].m_position);
-            m_cubeMapRenderer->renderCubeMap(resource, (Texture*)tm->getTexture(m_cubeSettings[rtCounter].m_texutureResourceName), renderInstances, m_deviceManager, perFrameConstants, *tm);
+            m_cubeMapRenderer->renderCubeMap(resource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), renderInstances, m_deviceManager, perFrameConstants, tm);
             m_cubeSettings[rtCounter].m_hasBeenRenderedTo = true;
             deviceContext->PSSetShaderResources(0, 8, srv);
         }
@@ -597,6 +597,8 @@ void RenderSystem::endDraw(Resource* resource)
 {
 #ifdef _DEBUG
     m_debugAxis->draw(m_deviceManager, resource);
+#else
+    UNUSEDPARAM(resource);
 #endif
 
     HRESULT hr = m_swapChain->Present(0, 0);
@@ -678,7 +680,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(GameResourceHelper &res
     srvDesc.TextureCube.MipLevels = 1;
     srvDesc.TextureCube.MostDetailedMip = 0;
 
-    TextureManager* tm = resourceHelper.getWritableGameResource()->getTextureManager();
+    TextureManager& tm = resourceHelper.getWritableGameResource().getTextureManager();
 
     for (size_t counter = 0; counter < m_cubeSettings.size(); ++counter)
     {
@@ -716,6 +718,6 @@ void RenderSystem::initialiseCubemapRendererAndResources(GameResourceHelper &res
         }
 
         cubeMap.createRenderTarget(textureResource, rtView, srView);
-        tm->addTexture(m_cubeSettings[counter].m_texutureResourceName, cubeMap);
+        tm.addTexture(m_cubeSettings[counter].m_texutureResourceName, cubeMap);
     }
 }

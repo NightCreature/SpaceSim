@@ -51,9 +51,7 @@ GameObject(resource), m_position(position), m_radius(radius), m_slices(slices), 
 //-----------------------------------------------------------------------------
 void Core::initialise(const ShaderInstance& shaderInstance)
 {
-    m_drawableObject = ((GameResource*)m_resource)->getModelManager()->LoadModel(m_resource, "Models\\sphere.dae");
-
-    m_drawableObject->initialise(shaderInstance);
+    m_drawableObject = ((GameResource*)m_resource)->getModelManager().LoadModel(m_resource, shaderInstance, "Models\\sphere.dae");
     //m_drawableObject->dontCleanupGeometry();
     //m_position = Vector3(525, -75, 175);
     m_world = scale(m_radius, m_radius, m_radius) * translate(m_position);
@@ -114,17 +112,17 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
 
     //Get texture strings and load textures
     const SettingsManager& sm = getGameResource().getSettingsManager();
-    TextureManager* tm = ((GameResource*)m_resource)->getTextureManager();
+    TextureManager& tm = getWriteableGameResource().getTextureManager();
     const ISetting<std::string>* textureString = sm.getSetting<std::string>("Core");
     if (textureString)
     {
-        tm->addLoad(getGameResource().getDeviceManager(), textureString->getData());
+        tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
         shaderInstance.getMaterial().addTextureReference(hashString(getTextureNameFromFileName(textureString->getData())));
     }
     textureString = sm.getSetting<std::string>("ForceFieldCore");
     if (textureString)
     {
-        tm->addLoad(getGameResource().getDeviceManager(), textureString->getData());
+        tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
         shaderInstance.getMaterial().addTextureReference(hashString(getTextureNameFromFileName(textureString->getData())));
     }
 
