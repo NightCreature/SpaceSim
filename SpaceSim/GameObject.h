@@ -80,7 +80,7 @@ public:
         UNUSEDPARAM(input);
 		m_drawableObject->getBoundingBox() = m_drawableObject->getOriginalBoundingBox();
         m_drawableObject->getBoundingBox().transformAccordingToMatrix(m_world);
-        m_drawableObject->update(renderInstances, elapsedTime, m_world, m_name);
+        m_drawableObject->update(m_resource, renderInstances, elapsedTime, m_world, m_name);
 
 #if defined(SHOW_BOUNDING_BOXES)
         static Matrix44 temp;
@@ -106,7 +106,7 @@ public:
     const std::string& getName() const { return m_name; }
     const Resource& getResource() const { return *m_resource; }
     const GameResource& getGameResource() const { return *(GameResource*)m_resource; }
-    GameResource* getWriteableGameResource() const { return (GameResource*)m_resource; }
+    GameResource& getWriteableGameResource() const { return *(GameResource*)m_resource; } //This should return a reference
 
     bool collision(const Bbox& bbox, const Vector3& dir)
     {

@@ -232,7 +232,7 @@ void Player::fireLaser()
     shaderInstance.getMaterial().setBlendState(true);
     shaderInstance.getMaterial().setEffect(getGameResource().getEffectCache().getEffect("laser_effect.xml"));
 
-    getWriteableGameResource()->getLaserManager()->addInstance(m_position, m_direction * 10, shaderInstance);
+    getWriteableGameResource().getLaserManager().addInstance(m_position, m_direction * 10, shaderInstance);
     //}
 }
 

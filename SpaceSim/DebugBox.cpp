@@ -12,9 +12,9 @@ namespace DebugGraphics
 // @brief 
 //-------------------------------------------------------------------------
 DebugBox::DebugBox(Resource* resource, const Vector3& lowerLeft, const Vector3& upperRight) :
-Super(resource),
 m_lowerLeft(lowerLeft),
-m_upperRight(upperRight)
+m_upperRight(upperRight),
+m_resource(resource)
 {
 }
 
@@ -25,14 +25,15 @@ DebugBox::~DebugBox()
 {
 }
 
-#pragma optimize ( "", off)
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
 void DebugBox::initialise( const ShaderInstance& shaderInstance )
 {
     UNUSEDPARAM(shaderInstance);
-    if (m_modelData.empty())
+    box = new Model();
+    GameResourceHelper helper(m_resource);
+    if (box->getMeshData().empty())
     {
         VertexBuffer* vb = new VertexBuffer();
         IndexBuffer* ib = new IndexBuffer();
@@ -44,10 +45,10 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance )
         wvp.m_view = Application::m_view;
         wvp.m_projection = Application::m_projection;
         ShaderInstance newShaderInstance(wvp, Material());
-        m_modelData.push_back(new MeshGroup(vb, ib, newShaderInstance));
+        box->getMeshData().push_back(new MeshGroup(vb, ib, newShaderInstance));
         //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         //{
-        m_modelData[0]->getShaderInstance().getMaterial().setEffect(getGameResource().getEffectCache().getEffect("debug_effect.xml"));
+        box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getGameResource().getEffectCache().getEffect("debug_effect.xml"));
         //}
 
         ColorVertex boxVerts[] = 
@@ -65,11 +66,11 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance )
         unsigned int numberOfBytes = sizeof(boxVerts);
 
 
-        const Technique* technique = m_modelData[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
+        const Technique* technique = box->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.vertexColor = true;
-        const VertexShader* shader = getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
-        vb->createBufferAndLayoutElements(getGameResource().getDeviceManager(), numberOfBytes, (void*)boxVerts, false, vertexDesc, shader->getShaderBlob());
+        const VertexShader* shader = helper.getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        vb->createBufferAndLayoutElements(helper.getGameResource().getDeviceManager(), numberOfBytes, (void*)boxVerts, false, vertexDesc, shader->getShaderBlob());
         unsigned int indexData[] =
         {
             0, 2,
@@ -86,19 +87,19 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance )
             3, 1
         };
 
-        ib->createBuffer(getGameResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(helper.getGameResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
         ib->setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
     }
     else
     {
-        if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
+        if (box->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            m_modelData[0]->getShaderInstance().getMaterial().setEffect(getGameResource().getEffectCache().getEffect("laser_effect.xml"));
+            box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getGameResource().getEffectCache().getEffect("laser_effect.xml"));
         }
     }
 
-    m_modelData[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+    box->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 }
 
 }
-#pragma optimize ( "", on)
+

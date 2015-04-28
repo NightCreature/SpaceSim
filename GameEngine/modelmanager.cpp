@@ -29,7 +29,7 @@ void ModelManager::cleanup()
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-Model* ModelManager::LoadModel( Resource* resource, const std::string& fileName ) const
+Model* ModelManager::LoadModel( Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName ) const
 {
     if (fileName.empty())
     {
@@ -50,13 +50,13 @@ Model* ModelManager::LoadModel( Resource* resource, const std::string& fileName 
     if ( strICmp(extension, "dat") || strICmp(extension, "xml") )
     {
         XMLModelLoader loader;
-        model = loader.LoadModel(resource, fileName);
+        model = loader.LoadModel(resource, shaderInstance, fileName);
         //m_loadedModels.insert(GeometryTreePair(fileNameHash, model));
     }
     else
     {
         AssimpModelLoader loader;
-        model = loader.LoadModel(resource, fileName);
+        model = loader.LoadModel(resource, shaderInstance, fileName);
         //m_loadedModels.insert(GeometryTreePair(fileNameHash, model)); 
     }
     

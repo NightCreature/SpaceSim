@@ -24,13 +24,14 @@ namespace Mesh
 {
 
     typedef std::vector<Vector2> TexCoords;
-    typedef std::map<int, TexCoords> MultiTexCoords;
+    typedef std::vector<TexCoords> MultiTexCoords;
 
-    struct CreationParams
+    struct CreationParams : public Model::CreationParams
     {
-        ShaderInstance* shaderInstance;
-        Resource* resource;
-
+        std::vector<Vector3>		 m_vertices;
+        std::vector<Vector3>		 m_normals;
+        std::vector<unsigned int>	 m_indices;
+        MultiTexCoords				 m_texcoords;
         int m_numvertices;
         int m_numindices;
         int m_numnormals;

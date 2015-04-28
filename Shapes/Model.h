@@ -13,6 +13,12 @@ class Resource;
 class Model
 {
 public:
+    struct CreationParams
+    {
+        Resource* m_resource;
+        const ShaderInstance* m_shaderInstance;
+    };
+
     Model() {}
     ~Model() 
     {
@@ -42,6 +48,7 @@ public:
     Bbox& getBoundingBox() { return m_boundingBox; }
 	const Bbox& getOriginalBoundingBox() const { return m_originalBBox; }
     Bbox& getOriginalBoundingBox() { return m_originalBBox; }
+    void setOriginalBoundingBox(const Bbox& boundingBox) { m_originalBBox = boundingBox; }
 
     //This should indicate which mesh group it wants to set this material on
     void setMaterial( const Material& material) { m_modelData[0]->setMaterial( material ); }
@@ -52,4 +59,10 @@ protected:
     std::vector<MeshGroup*> m_modelData;
 	Bbox m_originalBBox;
     Bbox m_boundingBox;
+};
+
+struct CreatedModel
+{
+    Model* model;
+    Bbox boundingBox;
 };

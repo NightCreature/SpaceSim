@@ -122,7 +122,7 @@ public:
 
     HASH_ELEMENT_DEFINITION;
 private:
-#ifdef DEBUG
+#ifdef _DEBUG
     std::string m_name; //This should be compiled out in release
 #endif
     size_t m_techniqueId;

@@ -25,8 +25,8 @@ CreatedMesh CreateMesh(const CreationParams& params)
 {
     CreatedMesh mesh;
 
-    GameResource& gameResource = *(GameResource*)params.resource;
-    ShaderInstance& shaderInstance = *(params.shaderInstance);
+    GameResource& gameResource = *(GameResource*)params.m_resource;
+    const ShaderInstance& shaderInstance = *(params.m_shaderInstance);
 
     mesh.model = new Model();
 
@@ -41,26 +41,22 @@ CreatedMesh CreateMesh(const CreationParams& params)
         }
 
         unsigned int m_nummultitexcoords = 1; //HACK FIX THIS
-        std::vector<Vector3>		 m_vertices;
-        std::vector<Vector3>		 m_normals;
-        std::vector<unsigned int>	 m_indices;
-        MultiTexCoords				 m_texcoords;
         unsigned int bufferSize = 0;
-        bufferSize += sizeof(float) * 3 * (unsigned int)m_vertices.size();
-        bufferSize += sizeof(float) * 3 * (unsigned int)m_normals.size();
-        bufferSize += sizeof(float) * 2 * m_nummultitexcoords * (unsigned int)m_vertices.size();//(unsigned int)params.m_texcoords[0].size();
+        bufferSize += sizeof(float) * 3 * (unsigned int)params.m_vertices.size();
+        bufferSize += sizeof(float) * 3 * (unsigned int)params.m_normals.size();
+        bufferSize += sizeof(float) * 2 * m_nummultitexcoords * (unsigned int)params.m_vertices.size();//(unsigned int)params.m_texcoords[0].size();
         char* vertexData = new char[bufferSize];
-        for (unsigned int counter = 0; counter < m_vertices.size(); ++counter)
+        for (unsigned int counter = 0; counter < params.m_vertices.size(); ++counter)
         {
-            *(float*)vertexData = m_vertices[counter].x(); vertexData += sizeof(float);
-            *(float*)vertexData = m_vertices[counter].y(); vertexData += sizeof(float);
-            *(float*)vertexData = m_vertices[counter].z(); vertexData += sizeof(float);
-            *(float*)vertexData = m_normals[counter].x(); vertexData += sizeof(float);
-            *(float*)vertexData = m_normals[counter].y(); vertexData += sizeof(float);
-            *(float*)vertexData = m_normals[counter].z(); vertexData += sizeof(float);
+            *(float*)vertexData = params.m_vertices[counter].x(); vertexData += sizeof(float);
+            *(float*)vertexData = params.m_vertices[counter].y(); vertexData += sizeof(float);
+            *(float*)vertexData = params.m_vertices[counter].z(); vertexData += sizeof(float);
+            *(float*)vertexData = params.m_normals[counter].x(); vertexData += sizeof(float);
+            *(float*)vertexData = params.m_normals[counter].y(); vertexData += sizeof(float);
+            *(float*)vertexData = params.m_normals[counter].z(); vertexData += sizeof(float);
             for (unsigned int texCoordCounter = 0; texCoordCounter < m_nummultitexcoords; ++texCoordCounter)
             {
-                TexCoords& texCoords = m_texcoords[texCoordCounter];
+                const TexCoords& texCoords = params.m_texcoords[texCoordCounter];
                 if (texCoords.size() > 0)
                 {
                     *(float*)vertexData = texCoords[counter].x(); vertexData += sizeof(float);
@@ -74,7 +70,7 @@ CreatedMesh CreateMesh(const CreationParams& params)
                 }
             }
 
-            mesh.boundingBox.enclose(m_vertices[counter]);
+            mesh.boundingBox.enclose(params.m_vertices[counter]);
         }
         std::vector<unsigned int> texCoordDimensions;
         for (unsigned int texCoordCounter = 0; texCoordCounter < m_nummultitexcoords; ++texCoordCounter)
@@ -92,8 +88,8 @@ CreatedMesh CreateMesh(const CreationParams& params)
         //vb->createVertexInputLayout(gameResource.getDeviceManager(), mesh.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect().getVertexShaderBlob());
         delete[] vertexData;
 
-        ib->setNumberOfIndecis((unsigned int)m_indices.size());
-        ib->createBuffer(gameResource.getDeviceManager(), (unsigned int)m_indices.size() * sizeof(unsigned int), (void*)&m_indices[0], false, D3D11_BIND_INDEX_BUFFER);
+        ib->setNumberOfIndecis((unsigned int)params.m_indices.size());
+        ib->createBuffer(gameResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false, D3D11_BIND_INDEX_BUFFER);
     }
     else
     {

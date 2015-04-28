@@ -7,6 +7,7 @@
 
 class Model;
 class Resource;
+class ShaderInstance;
 
 class ModelManager
 {
@@ -16,7 +17,7 @@ public:
 
     void cleanup();
 
-    Model* LoadModel(Resource* resource, const std::string& fileName) const;
+    Model* LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName) const;
 
 protected:
 private:

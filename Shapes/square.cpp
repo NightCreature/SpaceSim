@@ -10,10 +10,10 @@ namespace Square
 //! @brief   Creates a square model
 //! @remark
 //-----------------------------------------------------------------------------
-CreatedSquare CreateSquare(const SquareCreationParams& params)
+CreatedModel CreateSquare(const SquareCreationParams& params)
 {
-    CreatedSquare square;
-    GameResource& gameResource = *(GameResource*)params.resource;
+    CreatedModel square;
+    GameResource& gameResource = *(GameResource*)params.m_resource;
     square.boundingBox = Bbox(Vector3(params.m_lowerleft.x(), params.m_lowerleft.y(), 0.0f), Vector3(params.m_upperright.x(), params.m_upperright.y(), 0.0f));
 
     square.model = new Model();
@@ -53,7 +53,7 @@ CreatedSquare CreateSquare(const SquareCreationParams& params)
         const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
         vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
-        square.model->getMeshData().push_back(new MeshGroup(vb, 0, *(params.shaderInstance)));
+        square.model->getMeshData().push_back(new MeshGroup(vb, 0, *(params.m_shaderInstance)));
         if (square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
             square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.fx"));
@@ -62,7 +62,7 @@ CreatedSquare CreateSquare(const SquareCreationParams& params)
     }
     else
     {
-        square.model->getMeshData()[0]->setShaderInstance(*(params.shaderInstance));
+        square.model->getMeshData()[0]->setShaderInstance(*(params.m_shaderInstance));
         if (square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
             square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.fx"));

@@ -4,6 +4,9 @@
 #include "..\SpaceSim\GameObject.h"
 #include "vector3.h"
 #include "face.h"
+
+#include "..\SpaceSim\EntityManager.h"
+
 #include <vector>
 #include <sstream>
 
@@ -17,6 +20,9 @@ public:
         ++m_planeCount;
         m_name = str.str();
         m_invertNormal = false;
+
+        e = getWriteableGameResource().getEntityManager().create();
+
     }
 	Plane(Resource* resource, const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4, bool changeWindingOrder);
 	~Plane() {}
@@ -40,6 +46,7 @@ private:
     //-------------------------------------------------------------------------
     virtual void handleMessage( const Message& msg );
     
+    Entity e;
 	float m_widthstartpos;
 	float m_widthendpos;
 	float m_heightstartpos;

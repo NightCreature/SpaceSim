@@ -9,8 +9,6 @@ GameObject(resource)
 	m_normal = normal;
 	m_lifetime = lifetime;
 	Color green = Color(0, 1, 0, 1);
-    m_drawableObject = new Square(resource, 1.0f);
-    m_drawableObject->setMaterial( Material(0, Color::white(), Color::white(), Color::white(), Color::white()) );
     
     Matrix44 transform;
     if (Vector3::xAxis() == m_normal)
@@ -31,7 +29,14 @@ GameObject(resource)
 //-----------------------------------------------------------------------------
 void ScorchMark::initialise(const ShaderInstance& shaderInstance)
 {
-    m_drawableObject->initialise(shaderInstance);
+    Square::SquareCreationParams params;
+    params.m_resource = m_resource;
+    params.m_shaderInstance = &shaderInstance;
+    params.m_lowerleft = Vector2(-0.5f, -0.5f);
+    params.m_lowerleft = Vector2(0.5f, 0.5f);
+    CreatedModel square = Square::CreateSquare(params);
+    m_drawableObject = square.model;
+    m_drawableObject->setOriginalBoundingBox(square.boundingBox);
     Super::initialise(shaderInstance);
 }
 

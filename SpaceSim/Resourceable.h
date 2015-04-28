@@ -52,7 +52,7 @@ public:
 #define ResourceDefinition(ResourceObject)\
     public:\
     const ResourceObject& get##ResourceObject() const { return *m_##ResourceObject; } \
-    ResourceObject* get##ResourceObject() { return m_##ResourceObject; } \
+    ResourceObject& get##ResourceObject() { return *m_##ResourceObject; } \
     private:\
     ResourceObject* m_##ResourceObject;
 #define ResourceableParam(ResourceObject, resourceObject) ResourceObject* resourceObject

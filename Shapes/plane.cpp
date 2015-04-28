@@ -5,6 +5,8 @@
 #include <cmath>
 #include "Windows.h"
 
+#include "..\SpaceSim\MeshComponentData.h"
+
 int Plane::m_planeCount = 0;
 
 //This needs to change so that it is a helper class that sets up a face correctly and then returns the face
@@ -52,11 +54,7 @@ m_changeWindingOrder(changeWindingOrder)
 		m_fillz = true;
 		m_fillvalue = v1.z();
 	}
-
-    if (10 != m_rows && 10 != m_coloms)
-        m_drawableObject = new Face(m_resource, m_widthendpos - m_widthstartpos, m_heightendpos - m_heightstartpos, m_rows, m_coloms, false);
-    else
-        m_drawableObject = new Face(m_resource, m_widthendpos - m_widthstartpos, m_heightendpos - m_heightstartpos, m_rows, m_coloms);
+    
     UNUSEDPARAM(changeWindingOrder);
     //getPlane().initialise(m_fillvalue, m_fillx, m_filly, m_fillz, changeWindingOrder);
     transform();
@@ -69,7 +67,34 @@ m_changeWindingOrder(changeWindingOrder)
 //-----------------------------------------------------------------------------
 void Plane::initialise(const ShaderInstance& shaderInstance)
 {
-    ((Face*)m_drawableObject)->initialise(shaderInstance, m_fillvalue, m_fillx, m_filly, m_fillz, m_changeWindingOrder, m_invertNormal);
+    Face::CreationParams params;
+    params.resource = m_resource;
+    params.shaderInstance = &shaderInstance;
+    params.nrVerticesInX = m_rows;
+    params.nrVerticesInY = m_coloms;
+    params.width = m_widthendpos - m_widthstartpos;
+    params.height = m_heightendpos - m_heightstartpos;
+    params.fillx = m_fillx;
+    params.filly = m_filly;
+    params.fillz = m_fillz;
+    params.fillvalue = m_fillvalue;
+    params.invertNormal = m_invertNormal;
+    params.changeWindingOrder = m_changeWindingOrder;
+    if (10 != m_rows && 10 != m_coloms)
+    {
+        params.tesselate = false;
+    }
+    else
+    {
+        params.tesselate = true;
+    }
+
+    Face::CreatedFace face = Face::CreateFace(params);
+    m_drawableObject = face.model;
+    m_drawableObject->setOriginalBoundingBox(face.boundingBox);
+
+    ModelComponentManger mcm;
+    mcm.addEntity(e, *m_drawableObject, m_world);
 
     Super::initialise(shaderInstance);
 }

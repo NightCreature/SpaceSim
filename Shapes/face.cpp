@@ -25,7 +25,7 @@ const size_t numberOfTexcoords = 1;
 CreatedFace CreateFace(const CreationParams& params)
 {
     GameResource& gameResource = *(GameResource*)params.resource;
-    ShaderInstance& shaderInstance = *(params.shaderInstance);
+    const ShaderInstance& shaderInstance = *(params.shaderInstance);
 
     CreatedFace face;
     face.model = new Model();

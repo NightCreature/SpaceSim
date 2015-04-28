@@ -22,7 +22,8 @@ m_vibration(false)
 {
     ZeroMemory(&m_gamepadState, sizeof(XINPUT_GAMEPAD));
     ZeroMemory(&m_capabilities, sizeof(XINPUT_CAPABILITIES));
-    XInputGetCapabilities(m_controllerIndex, 0, &m_capabilities);
+    if (XInputGetCapabilities(m_controllerIndex, 0, &m_capabilities) != ERROR_DEVICE_NOT_CONNECTED)
+    {
     if (m_capabilities.Type == XINPUT_DEVTYPE_GAMEPAD)
     {
         switch (m_capabilities.SubType)
@@ -34,6 +35,13 @@ m_vibration(false)
         }
     }
     m_connected = true;
+    }
+    else
+    {
+        m_connected = false;
+        m_controllerActive = false;
+        m_enabled = false;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -49,9 +57,14 @@ void XInputDevice::initialise(HWND hwnd)
 //!! @brief Update the gamepad state
 //!! @return
 //!! @remarks Need to implement setting the values in the InputState
+// Need to actually only call this when a device is attached seems to be expensive when device is not there 6.9% of cpu trace
 //!-----------------------------------------------------------------------------
 const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput)
 {
+    if (!m_enabled)
+    {
+        return m_controllerState;
+    }
     UNUSEDPARAM(keyboardInput);
     UNUSEDPARAM(mouseInput);
     UNUSEDPARAM(hidInput);

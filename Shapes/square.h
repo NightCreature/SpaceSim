@@ -10,20 +10,13 @@ class Matrix44;
 //Doesnt need to be  class only generation fucntion is enough
 namespace Square
 {
-    struct SquareCreationParams
+    struct SquareCreationParams : public Model::CreationParams
     {
+
         Vector2 m_lowerleft;
         Vector2 m_upperright;
-        ShaderInstance* shaderInstance;
-        Resource* resource;
     };
 
-    struct CreatedSquare
-    {
-        Model* model;
-        Bbox boundingBox;
-    };
-
-    CreatedSquare CreateSquare(const SquareCreationParams& params, const ShaderInstance& shaderInstance);
+    CreatedModel CreateSquare(const SquareCreationParams& params);
 };
 #endif
