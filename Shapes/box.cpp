@@ -19,6 +19,7 @@ CreatedBox CreateBox(const CreationParams& params)
     GameResource& gameResource = *(GameResource*)params.resource;
     ShaderInstance& shaderInstance = *(params.shaderInstance);
 
+    box.model = new Model();
     if (box.model->getMeshData().empty())
     {
         VertexBuffer* vb = new VertexBuffer();

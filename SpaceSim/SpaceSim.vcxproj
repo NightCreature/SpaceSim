@@ -437,6 +437,7 @@
     <ClInclude Include="CubeMapRenderer.h" />
     <ClInclude Include="D3DDebugHelperFunctions.h" />
     <ClInclude Include="DebugBox.h" />
+    <ClInclude Include="DebugHelperFunctions.h" />
     <ClInclude Include="DeviceManager.h" />
     <ClInclude Include="displaywindow.h" />
     <ClInclude Include="..\Shapes\door.h" />

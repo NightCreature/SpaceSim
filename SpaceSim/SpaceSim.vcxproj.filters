@@ -593,6 +593,9 @@
     <ClInclude Include="MeshComponentData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DebugHelperFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\DebugColorShader.fx">

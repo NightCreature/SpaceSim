@@ -82,6 +82,10 @@ Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shade
                             Vector2 vec;
                             vec.deserialise(vertexDataElement);
                             //Always see this as texture coordinate data
+                            while (params.m_texcoords.size() <= texCoordSetCount)
+                            {
+                                params.m_texcoords.push_back(std::vector<Vector2>());
+                            }
                             std::vector<Vector2>& smit = texCoords[texCoordSetCount];
                             smit.push_back(vec);
                             ++texCoordSetCount;

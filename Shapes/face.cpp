@@ -55,8 +55,8 @@ CreatedFace CreateFace(const CreationParams& params)
         }
 
         size_t bufferSize = 0;
-        size_t rows = 0; 
-        size_t columns = 0;
+        size_t rows = params.nrVerticesInX;
+        size_t columns = params.nrVerticesInY;
         if ((params.height / corridorheight) > 1 && params.tesselate)
         {
             rows *= (int)(params.height / corridorheight);

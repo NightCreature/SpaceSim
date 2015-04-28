@@ -56,6 +56,10 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
                 if (subMesh->HasTextureCoords(uvChannel))
                 {
                     aiVector3D* texCoordChannel = subMesh->mTextureCoords[uvChannel];
+                    while (params.m_texcoords.size() <= uvChannel)
+                    {
+                        params.m_texcoords.push_back(std::vector<Vector2>());
+                    }
                     switch (subMesh->mNumUVComponents[uvChannel])
                     {
                     case 1:

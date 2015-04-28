@@ -21,7 +21,7 @@
 #include "..\SpaceSim\Types.h"
 #include "..\SpaceSim\TypeHelpers.h"
 #include "Model.h"
-
+#include "DebugHelperFunctions.h"
 #include <assert.h>
 
 class Input;
@@ -66,7 +66,9 @@ public:
     {
         UNUSEDPARAM(shaderInstance); 
 
-		m_drawableObject->getOriginalBoundingBox() = m_drawableObject->getBoundingBox();
+        ASSERT(m_drawableObject, "nullptr == drawable object");
+
+		m_drawableObject->setOriginalBoundingBox(m_drawableObject->getBoundingBox());
         m_drawableObject->getBoundingBox().transformAccordingToMatrix(m_world);
 
 #if defined(SHOW_BOUNDING_BOXES)

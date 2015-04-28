@@ -56,11 +56,20 @@ CreatedMesh CreateMesh(const CreationParams& params)
             *(float*)vertexData = params.m_normals[counter].z(); vertexData += sizeof(float);
             for (unsigned int texCoordCounter = 0; texCoordCounter < m_nummultitexcoords; ++texCoordCounter)
             {
-                const TexCoords& texCoords = params.m_texcoords[texCoordCounter];
-                if (texCoords.size() > 0)
+                if (params.m_texcoords.size() > 0)
                 {
-                    *(float*)vertexData = texCoords[counter].x(); vertexData += sizeof(float);
-                    *(float*)vertexData = texCoords[counter].y(); vertexData += sizeof(float);
+                    const TexCoords& texCoords = params.m_texcoords[texCoordCounter];
+                    if (texCoords.size() > 0)
+                    {
+                        *(float*)vertexData = texCoords[counter].x(); vertexData += sizeof(float);
+                        *(float*)vertexData = texCoords[counter].y(); vertexData += sizeof(float);
+                    }
+                    else
+                    {
+
+                        *(float*)vertexData = 0.0f; vertexData += sizeof(float);
+                        *(float*)vertexData = 0.0f; vertexData += sizeof(float);
+                    }
                 }
                 else
                 {
