@@ -46,7 +46,7 @@ m_previousRenderInstanceListSize(1)
 bool Application::initialise()
 {
     m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
-                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths);
+                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager);
     bool returnValue = true;
 
     int windowWidth = 1280;
@@ -71,6 +71,7 @@ bool Application::initialise()
         returnValue &= false;
     }
 
+    m_uiManager.initialise();
     m_renderSystem.initialise(m_gameResource);
     //m_inputSystem.createController(Gamepad);
     m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml", m_renderSystem.getWindowHandle());

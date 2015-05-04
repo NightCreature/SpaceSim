@@ -111,6 +111,7 @@ CreatedMesh CreateMesh(const CreationParams& params)
 
     mesh.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+
     return mesh;
 }
 
