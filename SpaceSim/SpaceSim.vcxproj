@@ -416,6 +416,7 @@
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="UIManger.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="ViewManager.cpp" />
     <ClCompile Include="WebkitThread.cpp" />
     <ClCompile Include="XController.cpp" />
     <ClCompile Include="XControllerDefines.cpp" />
@@ -525,6 +526,7 @@
     <ClInclude Include="Types.h" />
     <ClInclude Include="UIManger.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="ViewManager.h" />
     <ClInclude Include="WebkitThread.h" />
     <ClInclude Include="XController.h" />
     <ClInclude Include="XControllerDefines.h" />

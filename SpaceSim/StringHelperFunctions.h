@@ -28,6 +28,9 @@ inline void debugOutput( const std::string& prefix, const char * format, ...)
     OutputDebugStringA( debugOutputStr ); //Should really call the log provider instead here
 }
 
+//#define MSG_TRACE_WITH_FILE_LINENUMBER(msg, ...)
+//#define MSG_TRACE_CHANNEL_WITH_FILE_LINENUMBER(channel, msg, ...)
+
 //#ifndef _DEBUG
 //#define MSG_TRACE(message_string, ...) 
 //#define MSG_TRACE_CHANNEL(channel, msg, ...) 

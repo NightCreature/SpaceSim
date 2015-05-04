@@ -9,11 +9,13 @@ std::atomic<int> WebkitThread::m_atomicInt = 0;
 WebkitThread::WebkitThread()
 {
     m_runThread = true;
+    m_viewManager = nullptr;
 }
 
 
 WebkitThread::~WebkitThread()
 {
+    delete m_viewManager;
 }
 
 //-----------------------------------------------------------------------------
@@ -33,8 +35,7 @@ DWORD WebkitThread::ThreadEntryFunction(void* userData)
             }
         }
             
-        thisThread->getTimer().update();
-        m_elapsedTimeOnThread = static_cast<double>(thisThread->getTimer().getElapsedTime());
+        thisThread->doLoopIteration();
     }
 
     return 1;
@@ -98,8 +99,24 @@ bool WebkitThread::Initialise()
         return false;
     }
 
+    m_viewManager = new ViewManager(m_eaWebkitLib, Vector2(1280.0f, 720.0f));
+
+    InitializeCriticalSection(&m_criticalSecition);
+
     m_initialised = true;
     return true;
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void WebkitThread::AddCommand(Command command, const CommandData& data)
+{
+    EnterCriticalSection(&m_criticalSecition);
+    UNUSEDPARAM(command);
+    UNUSEDPARAM(data);
+    LeaveCriticalSection(&m_criticalSecition);
 }
 
 //-----------------------------------------------------------------------------
@@ -158,4 +175,21 @@ void WebkitThread::cryptoRandomValue(unsigned char *buffer, size_t length)
 {
     UNUSEDPARAM(buffer);
     UNUSEDPARAM(length);
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void WebkitThread::doLoopIteration()
+{
+    m_timer.update();
+    m_elapsedTimeOnThread = static_cast<double>(m_timer.getElapsedTime());
+
+    EnterCriticalSection(&m_criticalSecition);
+    //Process the command queue
+
+    LeaveCriticalSection(&m_criticalSecition);
+
+    m_eaWebkitLib->Tick();
 }
