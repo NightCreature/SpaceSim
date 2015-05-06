@@ -24,3 +24,12 @@ void ViewManager::loadUrl(const std::string& url)
 
     view->SetURI(url.c_str());
 }
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void ViewManager::AddView(ViewSurfacePair& viewPair)
+{
+    m_views.push_back(viewPair);
+}

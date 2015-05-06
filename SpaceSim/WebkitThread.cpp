@@ -111,11 +111,11 @@ bool WebkitThread::Initialise()
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void WebkitThread::AddCommand(Command command, const CommandData& data)
+void WebkitThread::AddCommand(WebkitCommand* command)
 {
     EnterCriticalSection(&m_criticalSecition);
-    UNUSEDPARAM(command);
-    UNUSEDPARAM(data);
+    command->setWebkitLibPtr(m_eaWebkitLib);
+    m_commandQueue.push_back(command);
     LeaveCriticalSection(&m_criticalSecition);
 }
 
@@ -188,7 +188,17 @@ void WebkitThread::doLoopIteration()
 
     EnterCriticalSection(&m_criticalSecition);
     //Process the command queue
-
+    for (ICommand* command : m_commandQueue)
+    {
+        if (!command->RunCommand())
+        {
+#ifdef _DEBUG
+            MSG_TRACE_CHANNEL("WebkitThread", "Failed to run command %s", command->getName());
+#else
+            MSG_TRACE_CHANNEL("WebkitThread", "Failed to run command");
+#endif
+        }
+    }
     LeaveCriticalSection(&m_criticalSecition);
 
     m_eaWebkitLib->Tick();

@@ -12,33 +12,58 @@
 const unsigned int c_fnvHashOffset = 2166136261;
 const unsigned int c_fnvHashPrime = 16777619;
 
+enum TraceSeverity
+{
+    EDEBUG,
+    ELOG,
+    EWARN,
+    EASSERT
+};
+
 //This is first so we can use the macros in debugging the functions below
-inline void debugOutput(const std::string& prefix, const char* file, int line, const char * format, ...)
+inline void debugOutput(TraceSeverity severity, const std::string& prefix, const char* file, int line, const char * format, ...)
 {
     static char buf[2048];
     va_list args;
-    va_start( args, format );
-    vsprintf_s( buf, format, args );
-    va_end( args );
+    va_start(args, format);
+    vsprintf_s(buf, format, args);
+    va_end(args);
     static char debugOutputStr[3072];
+    std::string outputFormatString = "";
     std::string prefixInternal = prefix;
     if (prefix.empty())
     {
         prefixInternal = "TRACE";
     }
-    sprintf_s(debugOutputStr, 3072, "[%s]:%s(%d): %s\n", prefixInternal.c_str(), file, line, buf);
+    switch (severity)
+    {
+    default:
+    case EDEBUG:
+    case ELOG:
+        outputFormatString = "[%s] : %s(%d) : %s\n";
+        break;
+    case EWARN:
+
+        outputFormatString = "[%s] : WARNING %s(%d) : %s\n";
+        break;
+    case EASSERT:
+
+        outputFormatString = "[%s] : ASSERT %s(%d) : %s\n";
+        break;
+    }
+    sprintf_s(debugOutputStr, 3072, outputFormatString.c_str(), prefixInternal.c_str(), file, line, buf);
     OutputDebugStringA( debugOutputStr ); //Should really call the log provider instead here
 }
 
-#define MSG_TRACE_WITH_FILE_LINENUMBER(channel, msg, ...) debugOutput(channel, __FILE__, __LINE__, msg, __VA_ARGS__);
+#define MSG_TRACE_WITH_FILE_LINENUMBER(severity, channel, msg, ...) debugOutput(severity, channel, __FILE__, __LINE__, msg, __VA_ARGS__);
 
 
 //#ifndef _DEBUG
 //#define MSG_TRACE(message_string, ...) 
 //#define MSG_TRACE_CHANNEL(channel, msg, ...) 
 //#else
-#define MSG_TRACE(message_string, ...) MSG_TRACE_WITH_FILE_LINENUMBER("", message_string, __VA_ARGS__);
-#define MSG_TRACE_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(channel, msg, __VA_ARGS__);
+#define MSG_TRACE(message_string, ...) MSG_TRACE_WITH_FILE_LINENUMBER(EDEBUG, "", message_string, __VA_ARGS__);
+#define MSG_TRACE_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(EDEBUG, channel, msg, __VA_ARGS__);
 //#endif
 
 #define HASH_ELEMENT_DEFINITION static const unsigned int m_hash;

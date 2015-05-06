@@ -16,13 +16,16 @@ class HardwareViewRenderer;
 class ViewManager
 {
 public:
+
+    typedef std::pair<EA::WebKit::View*, ViewSurface*> ViewSurfacePair;
+
     ViewManager(EA::WebKit::EAWebKitLib* lib, const Vector2& viewSize) : m_eaWebkitLib(lib), m_viewSize(viewSize) {}
     ~ViewManager() {}
 
     void loadUrl(const std::string& url);
-
+    void AddView(ViewSurfacePair& m_view);
 private:
-    typedef std::pair<EA::WebKit::View*, ViewSurface*> ViewSurfacePair;
+
     EA::WebKit::EAWebKitLib* m_eaWebkitLib;
     HardwareViewRenderer* m_hardwareViewRenderer;
     Vector2 m_viewSize;

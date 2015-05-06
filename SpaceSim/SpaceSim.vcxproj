@@ -459,6 +459,7 @@
     <ClInclude Include="GeometryCache.h" />
     <ClInclude Include="GeometryInstance.h" />
     <ClInclude Include="HashString.h" />
+    <ClInclude Include="ICommand.h" />
     <ClInclude Include="IController.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InfinitySphere.h" />
@@ -524,7 +525,9 @@
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="TypeHelpers.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="UIHTMLCommands.h" />
     <ClInclude Include="UIManger.h" />
+    <ClInclude Include="UI\WebkitCommands.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="ViewManager.h" />
     <ClInclude Include="WebkitThread.h" />

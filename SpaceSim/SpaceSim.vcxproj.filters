@@ -614,6 +614,15 @@
     <ClInclude Include="ViewManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UIHTMLCommands.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ICommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\WebkitCommands.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\DebugColorShader.fx">
