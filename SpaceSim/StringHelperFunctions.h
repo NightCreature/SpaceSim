@@ -52,7 +52,7 @@ inline void debugOutput(TraceSeverity severity, const std::string& prefix, const
         break;
     }
     sprintf_s(debugOutputStr, 3072, outputFormatString.c_str(), prefixInternal.c_str(), file, line, buf);
-    OutputDebugStringA( debugOutputStr ); //Should really call the log provider instead here
+    OutputDebugStringA( debugOutputStr ); //Should really call the log provider instead here 
 }
 
 #define MSG_TRACE_WITH_FILE_LINENUMBER(severity, channel, msg, ...) debugOutput(severity, channel, __FILE__, __LINE__, msg, __VA_ARGS__);
