@@ -82,6 +82,123 @@ bool BitmapFont::openFont(const std::string& bmpFile)
 
     ASSERT_CHANNEL(infoElement && commonElement && pageElement && charElement, "BitmapFont", "Failed to get required elements for bitmap font defintion file %s", bmpFile.c_str());
 
+    if (infoElement)
+    {
+        for (const tinyxml2::XMLAttribute* attribute = infoElement->FirstAttribute(); attribute; attribute = attribute->Next())
+        {
+            size_t hashAttribute = hashString(attribute->Name());
+            if (FontInfo::fontNameHash == hashAttribute)
+            {
+                m_fontInformation.m_fontName = attribute->Value();
+            }
+            else if (FontInfo::sizeHash == hashAttribute)
+            {
+                m_fontInformation.m_fontSize = static_cast<size_t>(attribute->IntValue());
+            }
+            else if (FontInfo::boldHash == hashAttribute)
+            {
+                m_fontInformation.m_bold = attribute->BoolValue();
+            }
+            else if (FontInfo::italicHash == hashAttribute)
+            {
+                m_fontInformation.m_italic = attribute->BoolValue();
+            }
+            else if (FontInfo::charsetHash == hashAttribute)
+            {
+                m_fontInformation.m_charSet = attribute->Value();
+            }
+            else if (FontInfo::unicodeHash == hashAttribute)
+            {
+                m_fontInformation.m_unicode = attribute->BoolValue();
+            }
+            else if (FontInfo::horizontalStretchHash == hashAttribute)
+            {
+                m_fontInformation.m_horizontalStretchPercentage = static_cast<size_t>(attribute->IntValue());
+            }
+            else if (FontInfo::smootHash == hashAttribute)
+            {
+                m_fontInformation.m_smooth = attribute->BoolValue();
+            }
+            else if (FontInfo::antiAliasedHash == hashAttribute)
+            {
+                m_fontInformation.m_antiAliased = static_cast<short>(attribute->IntValue());
+            }
+            else if (FontInfo::outlineHash == hashAttribute)
+            {
+                m_fontInformation.m_outline = attribute->BoolValue();
+            }
+        }
+    }
+
+    if (commonElement)
+    {
+        for (const tinyxml2::XMLAttribute* attribute = commonElement->FirstAttribute(); attribute; attribute = attribute->Next())
+        {
+            size_t hashAttribute = hashString(attribute->Name());
+            if (CommonFontInfo::lineHeightHash == hashAttribute)
+            {
+                m_commonFontInformation.m_lineHeight = static_cast<short>(attribute->IntValue());
+            }
+            else if (CommonFontInfo::baseHash == hashAttribute)
+            {
+                m_commonFontInformation.m_base = static_cast<short>(attribute->IntValue());
+            }
+            else if (CommonFontInfo::widthScaleHash == hashAttribute)
+            {
+                m_commonFontInformation.m_widthScale = static_cast<short>(attribute->IntValue());
+            }
+            else if (CommonFontInfo::heightScaleHash == hashAttribute)
+            {
+                m_commonFontInformation.m_heightScale = static_cast<short>(attribute->IntValue());
+            }
+            else if (CommonFontInfo::pagesHash == hashAttribute)
+            {
+                m_commonFontInformation.m_numberOfPages = static_cast<short>(attribute->IntValue());
+            }
+            else if (CommonFontInfo::packedHash == hashAttribute)
+            {
+                m_commonFontInformation.m_packed = attribute->BoolValue();
+            }
+            else if (CommonFontInfo::alphaChannelHash == hashAttribute)
+            {
+                m_commonFontInformation.m_alphaChannel = attribute->BoolValue();
+            }
+            else if (CommonFontInfo::redChannelHash == hashAttribute)
+            {
+                m_commonFontInformation.m_redChannel = attribute->BoolValue();
+            }
+            else if (CommonFontInfo::greenChannelHash == hashAttribute)
+            {
+                m_commonFontInformation.m_greenChannel = attribute->BoolValue();
+            }
+            else if (CommonFontInfo::blueChannelHash == hashAttribute)
+            {
+                m_commonFontInformation.m_blueChannel = attribute->BoolValue();
+            }
+        }
+    }
+
+    if (pageElement)
+    {
+        for (tinyxml2::XMLElement* page = pageElement->FirstChildElement(); page; page = page->NextSiblingElement())
+        {
+            Pages::PageInfo pageInfo;
+            for (const tinyxml2::XMLAttribute* attribute = page->FirstAttribute(); attribute; attribute = attribute->Next())
+            {
+                size_t hashAttribute = hashString(attribute->Name());
+                if (Pages::PageInfo::idHash == hashAttribute)
+                {
+                    pageInfo.m_id = static_cast<short>(attribute->IntValue());
+                }
+                else if (Pages::PageInfo::fileHash == hashAttribute)
+                {
+                    pageInfo.m_fileName = attribute->Value();
+                }
+            }
+            m_pagesInformation.m_pages.push_back(pageInfo);
+        }
+    }
+
     for (tinyxml2::XMLElement* glyphElement = charElement->FirstChildElement(); glyphElement; glyphElement = glyphElement->NextSiblingElement())
     {
         Glyph glyph;
