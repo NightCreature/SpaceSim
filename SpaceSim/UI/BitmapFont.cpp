@@ -1,6 +1,9 @@
 #include "BitmapFont.h"
 
 #include "..\DebugHelperFunctions.h"
+#include "..\DeviceManager.h"
+#include "..\GameResource.h"
+#include "texturemanager.h"
 
 #include "..\tinyxml2.h"
 
@@ -51,9 +54,12 @@ const size_t Pages::PageInfo::fileHash = hashString("file");
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-bool BitmapFont::openFont(const std::string& bmpFile)
+bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
 {
     using namespace tinyxml2;
+
+    std::string currentPath = extractPathFromFileName(bmpFile);
+    GameResourceHelper gameResource(resource);
 
     tinyxml2::XMLDocument document;
     tinyxml2::XMLError error = document.LoadFile(bmpFile.c_str());
@@ -193,6 +199,7 @@ bool BitmapFont::openFont(const std::string& bmpFile)
                 else if (Pages::PageInfo::fileHash == hashAttribute)
                 {
                     pageInfo.m_fileName = attribute->Value();
+                    gameResource.getWritableGameResource().getTextureManager().addLoad(gameResource.getGameResource().getDeviceManager(), currentPath + pageInfo.m_fileName);
                 }
             }
             m_pagesInformation.m_pages.push_back(pageInfo);

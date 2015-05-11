@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+class Resource;
+
 namespace BitmapFont
 {
 
@@ -153,13 +155,12 @@ public:
     BitmapFont() {}
     ~BitmapFont() {}
 
-    bool openFont(const std::string& bmpFile);
+    bool openFont(const std::string& bmpFile, Resource* resource);
 
 private:
      Glyph* findGlyph(short id);
 
     std::vector<Glyph> m_glyphs;
-    Texture* m_fontTexture;
     FontInfo m_fontInformation;
     CommonFontInfo m_commonFontInformation;
     Pages m_pagesInformation;

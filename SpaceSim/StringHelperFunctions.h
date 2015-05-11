@@ -198,21 +198,17 @@ inline std::string getResourceNameFromFileName(const std::string& fileName)
 //-------------------------------------------------------------------------
 inline std::string extractExtensionFromFileName( const std::string &fileName )
 {
-    char* extension = (char*)fileName.c_str();
-    //strip relative path ..
-    while (extension[0] == '.')
+    std::string::const_reverse_iterator it = fileName.rbegin();
+    size_t counter = fileName.size();
+    for (; counter > 0; --counter)
     {
-        ++extension;
+        if (fileName[counter] == '.')
+        {
+            break;
+        }
     }
 
-    extension = strstr(extension, ".");
-    if (extension && extension[0] == '.')
-    {
-        ++extension;
-        return extension;
-    }
-
-    return "";
+    return fileName.substr(counter + 1, fileName.size());
 }
 
 //-------------------------------------------------------------------------
