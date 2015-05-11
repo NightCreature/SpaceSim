@@ -18,13 +18,13 @@ class HardwareViewRenderer : public EA::WebKit::IHardwareRenderer
 class WebkitCommand : public ICommand
 {
 public:
-    WebkitCommand(ICommandData* commandData) : ICommand(commandData) {}
+    WebkitCommand(ICommandData* commandData) : ICommand(commandData, nullptr) {}
     void setWebkitLibPtr(EA::WebKit::EAWebKitLib* lib) { m_webkitLib = lib; }
 protected:
     EA::WebKit::EAWebKitLib* m_webkitLib; //Needed for things in webkit
 };
 
-class CreateViewCommand : public WebkitCommand
+class CreateViewCommand : public WebkitCommand //Should be triggered from the viewmanager
 {
 public:
     CreateViewCommand(ICommandData* commandData) : WebkitCommand(commandData) {}
@@ -52,11 +52,16 @@ public:
         pair.first = commandData->m_view;
         pair.second = commandData->m_surface;
         commandData->m_viewManager->AddView(pair);
+
+        if (m_callback)
+        {
+            m_callback(m_commandData);
+        }
     }
 
 };
 
-class LoadUrlCommand : public WebkitCommand
+class LoadUrlCommand : public WebkitCommand//Should be triggered from the viewmanager
 {
 public:
     LoadUrlCommand(ICommandData* commandData) : WebkitCommand(commandData) {}
@@ -71,6 +76,11 @@ public:
     {
         LoadUrlCommandData* commandData = static_cast<LoadUrlCommandData*>(m_commandData);
         commandData->m_view->SetURI(commandData->m_urlToLoad.c_str());
+
+        if (m_callback)
+        {
+            m_callback(m_commandData);
+        }
     }
 
 };

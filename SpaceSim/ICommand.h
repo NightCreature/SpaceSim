@@ -15,7 +15,9 @@ struct ICommandData
 class ICommand
 {
 public:
-    ICommand(ICommandData* commandData) : m_commandData(commandData) {}
+    typedef void (CommandCallback)(ICommandData* data); //Use this if the command requires a return value when it is done, return values are configurable in the data
+
+    ICommand(ICommandData* commandData, CommandCallback* callback) : m_commandData(commandData), m_callback(callback) {}
     virtual ~ICommand() {}
 
     virtual bool RunCommand() = 0;
@@ -25,4 +27,5 @@ public:
 #endif
 protected:
     ICommandData* m_commandData;
+    CommandCallback* m_callback;
 };

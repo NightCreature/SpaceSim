@@ -288,6 +288,12 @@
     <ClCompile Include="ViewManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TextSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\BitmapFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="applicationsetting.h">
@@ -621,6 +627,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UI\WebkitCommands.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\BitmapFont.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

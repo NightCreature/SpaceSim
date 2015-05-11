@@ -336,6 +336,7 @@
     <ClCompile Include="BaseApplication.cpp" />
     <ClCompile Include="..\GameEngine\bbox.cpp" />
     <ClCompile Include="..\Shapes\box.cpp" />
+    <ClCompile Include="UI\BitmapFont.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="..\GameEngine\color.cpp" />
@@ -409,6 +410,7 @@
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="StringHelperFunctions.cpp" />
     <ClCompile Include="StringOperations\StringTemplate.cpp" />
+    <ClCompile Include="TextSystem.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="..\MatrixAndVectorMath\vector2.cpp" />
     <ClCompile Include="..\MatrixAndVectorMath\vector3.cpp" />
@@ -431,6 +433,7 @@
     <ClInclude Include="BaseApplication.h" />
     <ClInclude Include="..\GameEngine\bbox.h" />
     <ClInclude Include="..\Shapes\box.h" />
+    <ClInclude Include="UI\BitmapFont.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraManager.h" />
@@ -518,6 +521,7 @@
     <ClInclude Include="..\GameEngine\texture.h" />
     <ClInclude Include="..\GameEngine\texturemanager.h" />
     <ClInclude Include="StringOperations\StringTemplate.h" />
+    <ClInclude Include="TextSystem.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="..\MatrixAndVectorMath\vector2.h" />
     <ClInclude Include="..\MatrixAndVectorMath\vector3.h" />
