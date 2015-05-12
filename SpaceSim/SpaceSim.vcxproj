@@ -336,6 +336,7 @@
     <ClCompile Include="BaseApplication.cpp" />
     <ClCompile Include="..\GameEngine\bbox.cpp" />
     <ClCompile Include="..\Shapes\box.cpp" />
+    <ClCompile Include="UI\TextBlock.cpp" />
     <ClCompile Include="UI\BitmapFont.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraManager.cpp" />
@@ -433,6 +434,7 @@
     <ClInclude Include="BaseApplication.h" />
     <ClInclude Include="..\GameEngine\bbox.h" />
     <ClInclude Include="..\Shapes\box.h" />
+    <ClInclude Include="UI\TextBlock.h" />
     <ClInclude Include="UI\BitmapFont.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />

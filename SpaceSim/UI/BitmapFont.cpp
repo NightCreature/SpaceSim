@@ -7,7 +7,7 @@
 
 #include "..\tinyxml2.h"
 
-namespace BitmapFont
+namespace Text
 {
 
 const size_t KerningInformation::firstIdHash = hashString("first");
@@ -280,6 +280,23 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
     }
 
     return true;
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+const Glyph& BitmapFont::getGlyph(short id) const
+{
+    for (auto& glyph : m_glyphs)
+    {
+        if (glyph.m_id == id)
+        {
+            return glyph;
+        }
+    }
+
+    return m_invalidGlyph;
 }
 
 //-----------------------------------------------------------------------------

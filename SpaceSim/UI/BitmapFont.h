@@ -7,7 +7,7 @@
 
 class Resource;
 
-namespace BitmapFont
+namespace Text
 {
 
 //-----------------------------------------------------------------------------
@@ -156,10 +156,14 @@ public:
     ~BitmapFont() {}
 
     bool openFont(const std::string& bmpFile, Resource* resource);
-
+    const Glyph& getGlyph(short id) const;
+    const FontInfo& getFontInfo() const { return m_fontInformation; }
+    const CommonFontInfo& getCommonFontInfo() const { return m_commonFontInformation; }
+    bool isSdfFont() const { return m_isSDFFont; }
 private:
-     Glyph* findGlyph(short id);
+    Glyph* findGlyph(short id);
 
+    Glyph m_invalidGlyph;
     std::vector<Glyph> m_glyphs;
     FontInfo m_fontInformation;
     CommonFontInfo m_commonFontInformation;
