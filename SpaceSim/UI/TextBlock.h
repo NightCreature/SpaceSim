@@ -1,8 +1,11 @@
 #pragma once
 
 #include "vector4.h"
+#include "BitmapFont.h"
 #include <string>
 #include <vector>
+
+class Resource;
 
 namespace Text
 {
@@ -18,13 +21,31 @@ enum Align
 
 struct GlyphQuad
 {
-    Vector4 m_vertices[4]; //xy is position, zw is uv
+    Vector4 m_vertices[4]; //xy is position, zw is uv, 0 = TL, 1 = BL, 2 = BR, 3 = TR
     Glyph* m_bitmapChar;
     size_t m_lineNumber;
     size_t m_wordNumber;
     float m_sizeScale;
     float m_wordWidth;
     char m_character;
+
+    void setY(float value)
+    {
+        for (size_t counter = 0; counter < 4; ++counter)
+        {
+            Vector4 temp(0.f, value + counter == 1 || counter == 2 ? value : 0.f, 0.f, 0.f);
+            m_vertices[counter] += temp;
+        }
+    }
+
+    void setX(float value)
+    {
+        for (size_t counter = 0; counter < 4; ++counter)
+        {
+            Vector4 temp(value + counter == 1 || counter == 2 ? value : 0.f, 0.f, 0.f, 0.f);
+            m_vertices[counter] += temp;
+        }
+    }
 };
 
 struct TextBlockInfo
@@ -37,6 +58,7 @@ struct TextBlockInfo
     size_t m_textLenght; 
     float m_size;
     bool m_applyKerning;
+    BitmapFont* m_font;
 
     void ProcessText();
 
@@ -48,14 +70,20 @@ public:
     TextBlockCache(size_t maxTextblocks) : m_maxTextBlocks(maxTextblocks) { m_textBlocks.reserve(maxTextblocks); }
     ~TextBlockCache() {}
 
-    bool addText(const std::string& text, const Vector4& textBox, Align alignment, float size, bool applyKerning);
+    bool addFont(const std::string& fileName, Resource* resource);
+    bool addText(const std::string& text, const Vector4& textBox, Align alignment, size_t fontHash, float size, bool applyKerning);
     size_t getTextIndex(const std::string& text);
     size_t getTextIndex(size_t textHash);
     bool removeText(const std::string& text);
     bool removeText(size_t text);
     void removeAllTexts();
+
+    TextBlockInfo& getTextBlock(size_t index) { return m_textBlocks[index]; } //Rewrite this so its safe if the index is not there
 private:
+    BitmapFont* getBitmapFont(size_t fontNameHash);
+
     std::vector<TextBlockInfo> m_textBlocks;
+    std::vector<BitmapFont> m_fonts;
     size_t m_maxTextBlocks;
 };
 

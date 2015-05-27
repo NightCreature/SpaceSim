@@ -1,18 +1,39 @@
 #include "TextBlock.h"
 
 #include "..\StringHelperFunctions.h"
+#include "..\DebugHelperFunctions.h"
 #include "BitmapFont.h"
 
 namespace Text
 {
 
 //-----------------------------------------------------------------------------
+//! @brief   Maybe this should move to a font cache
+//! @remark
+//-----------------------------------------------------------------------------
+bool TextBlockCache::addFont(const std::string& fileName, Resource* resource)
+{
+    BitmapFont font;
+    font.openFont(fileName, resource); //This is not great because we have to load a font file each time to check if a font is present
+
+    ASSERT_CHANNEL(nullptr == getBitmapFont(font.getFontInfo().m_fontNameHash), "Font Creation", "Font(%s) from file(%s) already exists!", font.getFontInfo().m_fontName.c_str(), fileName.c_str());
+    if (nullptr != getBitmapFont(font.getFontInfo().m_fontNameHash))
+    {
+        return false;
+    }
+
+    m_fonts.push_back(font);
+
+    return true;
+}
+
+    //-----------------------------------------------------------------------------
 //! @brief   Calculates where the text is in the rectangle specified, might scale the text to fit
 //! @remark
 //-----------------------------------------------------------------------------
-bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Align alignment, float size, bool kerning)
+bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Align m_alignment, size_t fontHash, float size, bool kerning)
 {
-    if (m_maxTextBlocks > m_textBlocks.size())
+    if (m_maxTextBlocks <= m_textBlocks.size())
     {
         return false;
     }
@@ -27,11 +48,12 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
     TextBlockInfo info;
     info.m_text = text;
     info.m_textBlockSize = textBox;
-    info.m_alignment = alignment;
+    info.m_alignment = m_alignment;
     info.m_textHash = hash;
     info.m_textLenght = text.size();
     info.m_size = size;
     info.m_applyKerning = kerning;
+    info.m_font = getBitmapFont(fontHash);
     m_textBlocks.push_back(info);
 
     return false;
@@ -112,176 +134,170 @@ void TextBlockCache::removeAllTexts()
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
+BitmapFont* TextBlockCache::getBitmapFont(size_t fontNameHash)
+{
+    for (BitmapFont& font : m_fonts)
+    {
+        if (font.getFontInfo().m_fontNameHash == fontNameHash)
+        {
+            return &font;
+        }
+    }
+
+    return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
 void TextBlockInfo::ProcessText()
 {
-    float width = m_textBlockSize.w() - m_textBlockSize.y();
-
-
-    List<fontquad> quads = new List<fontquad>();
-    StringBlock b = m_strings[index];
-    string text = b.Text;
-    float x = b.TextBox.X;
-    float y = b.TextBox.Y;
-    float maxWidth = b.TextBox.Width;
-    Align alignment = b.Alignment;
-    float lineWidth = 0f;
-    float sizeScale = b.Size / (float)m_charSet.RenderedSize;
-    char lastChar = new char();
+    float x = m_textBlockSize.x();
+    float y = m_textBlockSize.y();
+    float maxWidth = m_textBlockSize.w() - m_textBlockSize.y();
+    float lineWidth = 0.f;
+    float sizeScale = m_size / m_font->getFontInfo().m_fontSize;
+    char* lastChar = nullptr;
     int lineNumber = 1;
     int wordNumber = 1;
-    float wordWidth = 0f;
+    float wordWidth = 0.f;
     bool firstCharOfLine = true;
+    
+    const CommonFontInfo& commonFontInfo = m_font->getCommonFontInfo();
 
-    float z = 0f;
-    float rhw = 1f;
-
-    for (int i = 0; i < text.Length; i++)
+    for (int i = 0; i < m_text.size(); i++)
     {
-        BitmapCharacter c = m_charSet.Characters1];
-        float xOffset = c.XOffset * sizeScale;
-        float yOffset = c.YOffset * sizeScale;
-        float xAdvance = c.XAdvance * sizeScale;
-        float width = c.Width * sizeScale;
-        float height = c.Height * sizeScale;
+        const Glyph& glyph = m_font->getGlyph(m_text[i]);
+        float xOffset = glyph.m_xOffset * sizeScale;
+        float yOffset = glyph.m_yOffset * sizeScale;
+        float xAdvance = glyph.m_xAdvance * sizeScale;
+        float width = glyph.m_width * sizeScale;
+        float height = glyph.m_height * sizeScale;
 
         // Check vertical bounds
-        if (y + yOffset + height > b.TextBox.Bottom)
+        if (y + yOffset + height > m_textBlockSize.z())
         {
             break;
         }
 
         // Newline
-        if (text[i] == '\n' || text[i] == '\r' || (lineWidth + xAdvance >= maxWidth))
+        if (m_text[i] == '\n' || m_text[i] == '\r' || (lineWidth + xAdvance >= maxWidth))
         {
-            if (alignment == Align.Left)
+            if (m_alignment == Align::left)
             {
                 // Start at left
-                x = b.TextBox.X;
+                x = m_textBlockSize.x();
             }
-            if (alignment == Align.Center)
+            if (m_alignment == Align::center)
             {
                 // Start in center
-                x = b.TextBox.X + (maxWidth / 2f);
+                x = m_textBlockSize.x() + (maxWidth * 0.5f);
             }
-            else if (alignment == Align.Right)
+            else if (m_alignment == Align::right)
             {
                 // Start at right
-                x = b.TextBox.Right;
+                x = m_textBlockSize.w();
             }
 
-            y += m_charSet.LineHeight * sizeScale;
-            float offset = 0f;
+            y += commonFontInfo.m_lineHeight * sizeScale;
+            float offset = 0.f;
 
             if ((lineWidth + xAdvance >= maxWidth) && (wordNumber != 1))
             {
                 // Next character extends past text box width
                 // We have to move the last word down one line
-                char newLineLastChar = new char();
-                lineWidth = 0f;
-                for (int j = 0; j < quads.Count; j++)
+                char* newLineLastChar = nullptr;
+                lineWidth = 0.f;
+                for (int j = 0; j < m_glyphQuads.size(); j++)
                 {
-                    if (alignment == Align.Left)
+                    const Glyph& glyphToReset = m_font->getGlyph(static_cast<short>(m_glyphQuads[j].m_character));
+                    if (m_alignment == Align::left)
                     {
                         // Move current word to the left side of the text box
-                        if ((quads[j].LineNumber == lineNumber) &&
-                            (quads[j].WordNumber == wordNumber))
+                        if ((m_glyphQuads[j].m_lineNumber == lineNumber) &&
+                            (m_glyphQuads[j].m_wordNumber == wordNumber))
                         {
-                            quads[j].LineNumber++;
-                            quads[j].WordNumber = 1;
-                            quads[j].X = x + (quads[j].BitmapCharacter.XOffset * sizeScale);
-                            quads[j].Y = y + (quads[j].BitmapCharacter.YOffset * sizeScale);
-                            x += quads[j].BitmapCharacter.XAdvance * sizeScale;
-                            lineWidth += quads[j].BitmapCharacter.XAdvance * sizeScale;
-                            if (b.Kerning)
+                            m_glyphQuads[j].m_lineNumber++;
+                            m_glyphQuads[j].m_wordNumber = 1;
+                            m_glyphQuads[j].setX(x + (glyphToReset.m_xOffset * sizeScale));
+                            m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale));
+                            x += glyphToReset.m_xAdvance * sizeScale;
+                            lineWidth += glyphToReset.m_xAdvance * sizeScale;
+                            if (m_applyKerning)
                             {
-                                m_nextChar = quads[j].Character;
-                                Kerning kern = m_charSet.Characters[newLineLastChar].KerningList.Find(FindKerningNode);
-                                if (kern != null)
-                                {
-                                    x += kern.Amount * sizeScale;
-                                    lineWidth += kern.Amount * sizeScale;
-                                }
+                                const KerningInformation& kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
+                                x += kerningInfo.m_ammount * sizeScale;
+                                lineWidth += kerningInfo.m_ammount * sizeScale;
                             }
                         }
                     }
-                    else if (alignment == Align.Center)
+                    else if (m_alignment == Align::center)
                     {
-                        if ((quads[j].LineNumber == lineNumber) &&
-                            (quads[j].WordNumber == wordNumber))
+                        if ((m_glyphQuads[j].m_lineNumber == lineNumber) &&
+                            (m_glyphQuads[j].m_wordNumber == wordNumber))
                         {
                             // First move word down to next line
-                            quads[j].LineNumber++;
-                            quads[j].WordNumber = 1;
-                            quads[j].X = x + (quads[j].BitmapCharacter.XOffset * sizeScale);
-                            quads[j].Y = y + (quads[j].BitmapCharacter.YOffset * sizeScale);
-                            x += quads[j].BitmapCharacter.XAdvance * sizeScale;
-                            lineWidth += quads[j].BitmapCharacter.XAdvance * sizeScale;
-                            offset += quads[j].BitmapCharacter.XAdvance * sizeScale / 2f;
-                            float kerning = 0f;
-                            if (b.Kerning)
+                            m_glyphQuads[j].m_lineNumber++;
+                            m_glyphQuads[j].m_wordNumber = 1;
+                            m_glyphQuads[j].setX(x + (glyphToReset.m_xOffset * sizeScale));
+                            m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale));
+                            x += glyphToReset.m_xAdvance * sizeScale;
+                            lineWidth += glyphToReset.m_xAdvance * sizeScale;
+                            offset += glyphToReset.m_xAdvance * sizeScale * 0.5f;
+                            if (m_applyKerning)
                             {
-                                m_nextChar = quads[j].Character;
-                                Kerning kern = m_charSet.Characters[newLineLastChar].KerningList.Find(FindKerningNode);
-                                if (kern != null)
-                                {
-                                    kerning = kern.Amount * sizeScale;
-                                    x += kerning;
-                                    lineWidth += kerning;
-                                    offset += kerning / 2f;
-                                }
+                                const KerningInformation& kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
+                                x += kerningInfo.m_ammount * sizeScale;
+                                lineWidth += kerningInfo.m_ammount * sizeScale;
+                                offset += kerningInfo.m_ammount * 0.5f;
                             }
                         }
                     }
-                    else if (alignment == Align.Right)
+                    else if (m_alignment == Align::right)
                     {
-                        if ((quads[j].LineNumber == lineNumber) &&
-                            (quads[j].WordNumber == wordNumber))
+                        if ((m_glyphQuads[j].m_lineNumber == lineNumber) &&
+                            (m_glyphQuads[j].m_wordNumber == wordNumber))
                         {
                             // Move character down to next line
-                            quads[j].LineNumber++;
-                            quads[j].WordNumber = 1;
-                            quads[j].X = x + (quads[j].BitmapCharacter.XOffset * sizeScale);
-                            quads[j].Y = y + (quads[j].BitmapCharacter.YOffset * sizeScale);
-                            lineWidth += quads[j].BitmapCharacter.XAdvance * sizeScale;
-                            x += quads[j].BitmapCharacter.XAdvance * sizeScale;
-                            offset += quads[j].BitmapCharacter.XAdvance * sizeScale;
-                            float kerning = 0f;
-                            if (b.Kerning)
+                            m_glyphQuads[j].m_lineNumber++;
+                            m_glyphQuads[j].m_wordNumber = 1;
+                            m_glyphQuads[j].setX(x + (glyphToReset.m_xOffset * sizeScale));
+                            m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale));
+                            x += glyphToReset.m_xAdvance * sizeScale;
+                            lineWidth += glyphToReset.m_xAdvance * sizeScale;
+                            offset += glyphToReset.m_xAdvance * sizeScale;
+                            if (m_applyKerning)
                             {
-                                m_nextChar = quads[j].Character;
-                                Kerning kern = m_charSet.Characters[newLineLastChar].KerningList.Find(FindKerningNode);
-                                if (kern != null)
-                                {
-                                    kerning = kern.Amount * sizeScale;
-                                    x += kerning;
-                                    lineWidth += kerning;
-                                    offset += kerning;
-                                }
+                                const KerningInformation& kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
+                                x += kerningInfo.m_ammount * sizeScale;
+                                lineWidth += kerningInfo.m_ammount * sizeScale;
+                                offset += kerningInfo.m_ammount;
                             }
                         }
                     }
-                    newLineLastChar = quads[j].Character;
+                    newLineLastChar = &(m_glyphQuads[j].m_character);
                 }
 
                 // Make post-newline justifications
-                if (alignment == Align.Center || alignment == Align.Right)
+                if (m_alignment == Align::center || m_alignment == Align::right)
                 {
                     // Justify the new line
-                    for (int k = 0; k < quads.Count; k++)
+                    for (int k = 0; k < m_glyphQuads.size(); k++)
                     {
-                        if (quads[k].LineNumber == lineNumber + 1)
+                        if (m_glyphQuads[k].m_lineNumber == lineNumber + 1)
                         {
-                            quads[k].X -= offset;
+                            m_glyphQuads[k].setX(-offset);
                         }
                     }
                     x -= offset;
 
                     // Rejustify the line it was moved from
-                    for (int k = 0; k < quads.Count; k++)
+                    for (int k = 0; k < m_glyphQuads.size(); k++)
                     {
-                        if (quads[k].LineNumber == lineNumber)
+                        if (m_glyphQuads[k].m_lineNumber == lineNumber)
                         {
-                            quads[k].X += offset;
+                            m_glyphQuads[k].setX(offset);
                         }
                     }
                 }
@@ -290,7 +306,7 @@ void TextBlockInfo::ProcessText()
             {
                 // New line without any "carry-down" word
                 firstCharOfLine = true;
-                lineWidth = 0f;
+                lineWidth = 0.f;
             }
 
             wordNumber = 1;
@@ -299,126 +315,128 @@ void TextBlockInfo::ProcessText()
         } // End new line check
 
         // Don't print these
-        if (text[i] == '\n' || text[i] == '\r' || text[i] == '\t')
+        if (m_text[i] == '\n' || m_text[i] == '\r' || m_text[i] == '\t')
         {
             continue;
         }
 
-        // Set starting cursor for alignment
+        // Set starting cursor for m_alignment
         if (firstCharOfLine)
         {
-            if (alignment == Align.Left)
+            if (m_alignment == Align::left)
             {
                 // Start at left
-                x = b.TextBox.Left;
+                x = m_textBlockSize.x();
             }
-            if (alignment == Align.Center)
+            if (m_alignment == Align::center)
             {
                 // Start in center
-                x = b.TextBox.Left + (maxWidth / 2f);
+                x = m_textBlockSize.x() + (maxWidth * 0.5f);
             }
-            else if (alignment == Align.Right)
+            else if (m_alignment == Align::right)
             {
                 // Start at right
-                x = b.TextBox.Right;
+                x = m_textBlockSize.z();
             }
         }
 
         // Adjust for kerning
-        float kernAmount = 0f;
-        if (b.Kerning && !firstCharOfLine)
+        float kernAmount = 0.f;
+        if (m_applyKerning && !firstCharOfLine)
         {
-            m_nextChar = (char)text[i];
-            Kerning kern = m_charSet.Characters[lastChar].KerningList.Find(FindKerningNode);
-            if (kern != null)
+            const KerningInformation& kerningInfo = glyph.getKerningInfoFor(m_text[i + 1]);
+            if (kerningInfo.m_secondId != -1)
             {
-                kernAmount = kern.Amount * sizeScale;
-                x += kernAmount;
-                lineWidth += kernAmount;
-                wordWidth += kernAmount;
+                x += kerningInfo.m_ammount * sizeScale;
+                lineWidth += kerningInfo.m_ammount * sizeScale;
+                wordWidth += kerningInfo.m_ammount * sizeScale;
             }
         }
 
         firstCharOfLine = false;
 
         // Create the vertices
-        TransformedColoredTextured topLeft = new TransformedColoredTextured(
-            x + xOffset, y + yOffset, z, rhw, b.Color.ToArgb(),
-            (float)c.X / (float)m_charSet.Width,
-            (float)c.Y / (float)m_charSet.Height);
-        TransformedColoredTextured topRight = new TransformedColoredTextured(
-            topLeft.X + width, y + yOffset, z, rhw, b.Color.ToArgb(),
-            (float)(c.X + c.Width) / (float)m_charSet.Width,
-            (float)c.Y / (float)m_charSet.Height);
-        TransformedColoredTextured bottomRight = new TransformedColoredTextured(
-            topLeft.X + width, topLeft.Y + height, z, rhw, b.Color.ToArgb(),
-            (float)(c.X + c.Width) / (float)m_charSet.Width,
-            (float)(c.Y + c.Height) / (float)m_charSet.Height);
-        TransformedColoredTextured bottomLeft = new TransformedColoredTextured(
-            x + xOffset, topLeft.Y + height, z, rhw, b.Color.ToArgb(),
-            (float)c.X / (float)m_charSet.Width,
-            (float)(c.Y + c.Height) / (float)m_charSet.Height);
+        Vector4 topLeft = Vector4(
+            x + xOffset, y + yOffset,
+            (float)glyph.m_x / (float)commonFontInfo.m_widthScale,
+            (float)glyph.m_y / (float)commonFontInfo.m_heightScale);
+        Vector4 topRight = Vector4(
+            topLeft.x() + width, y + yOffset,
+            (float)(glyph.m_x + glyph.m_width) / (float)commonFontInfo.m_widthScale,
+            (float)glyph.m_y / (float)commonFontInfo.m_heightScale);
+        Vector4 bottomRight = Vector4(
+            topLeft.x() + width, topLeft.y() + height,
+            (float)(glyph.m_x + glyph.m_width) / (float)commonFontInfo.m_widthScale,
+            (float)(glyph.m_y + glyph.m_height) / (float)commonFontInfo.m_heightScale);
+        Vector4 bottomLeft = Vector4(
+            x + xOffset, topLeft.y() + height,
+            (float)glyph.m_x / (float)commonFontInfo.m_widthScale,
+            (float)(glyph.m_y + glyph.m_height) / (float)commonFontInfo.m_heightScale);
 
         // Create the quad
-        FontQuad q = new FontQuad(topLeft, topRight, bottomLeft, bottomRight);
-        q.LineNumber = lineNumber;
-        if (text[i] == ' ' && alignment == Align.Right)
+        GlyphQuad q;
+        q.m_vertices[0] = topLeft;
+        q.m_vertices[1] = bottomLeft; 
+        q.m_vertices[2] = bottomRight; 
+        q.m_vertices[3] = topRight;
+        q.m_lineNumber = lineNumber;
+        if (m_text[i] == ' ' && m_alignment == Align::right)
         {
             wordNumber++;
-            wordWidth = 0f;
+            wordWidth = 0.f;
         }
-        q.WordNumber = wordNumber;
+        q.m_wordNumber = wordNumber;
         wordWidth += xAdvance;
-        q.WordWidth = wordWidth;
-        q.BitmapCharacter = c;
-        q.SizeScale = sizeScale;
-        q.Character = text[i];
-        quads.Add(q);
+        q.m_wordWidth = wordWidth;
+        q.m_bitmapChar = const_cast<Glyph*>(&glyph);
+        q.m_sizeScale = sizeScale;
+        q.m_character = m_text[i];
+        m_glyphQuads.push_back(q);
 
-        if (text[i] == ' ' && alignment == Align.Left)
+        if (m_text[i] == ' ' && m_alignment == Align::left)
         {
             wordNumber++;
-            wordWidth = 0f;
+            wordWidth = 0.f;
         }
 
         x += xAdvance;
         lineWidth += xAdvance;
-        lastChar = text[i];
+        lastChar = &(m_text[i]);
 
-        // Rejustify text
-        if (alignment == Align.Center)
+        // Rejustify m_text
+        if (m_alignment == Align::center)
         {
             // We have to recenter all Quads since we addded a 
             // new character
-            float offset = xAdvance / 2f;
-            if (b.Kerning)
+            float offset = xAdvance * 0.5f;
+            if (m_applyKerning)
             {
-                offset += kernAmount / 2f;
+                offset += kernAmount * 0.5f;
             }
-            for (int j = 0; j < quads.Count; j++)
+            for (int j = 0; j < m_glyphQuads.size(); j++)
             {
-                if (quads[j].LineNumber == lineNumber)
+                if (m_glyphQuads[j].m_lineNumber == lineNumber)
                 {
-                    quads[j].X -= offset;
+                    m_glyphQuads[j].setX(-offset);
                 }
             }
             x -= offset;
         }
-        else if (alignment == Align.Right)
+        else if (m_alignment == Align::right)
         {
             // We have to rejustify all Quads since we addded a 
             // new character
-            float offset = 0f;
-            if (b.Kerning)
+            float offset = 0.f;
+            if (m_applyKerning)
             {
                 offset += kernAmount;
             }
-            for (int j = 0; j < quads.Count; j++)
+            for (int j = 0; j < m_glyphQuads.size(); j++)
             {
-                if (quads[j].LineNumber == lineNumber)
+                if (m_glyphQuads[j].m_lineNumber == lineNumber)
                 {
                     offset = xAdvance;
-                    quads[j].X -= xAdvance;
+                    m_glyphQuads[j].setX(-xAdvance);
                 }
             }
             x -= offset;

@@ -96,6 +96,7 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
             if (FontInfo::fontNameHash == hashAttribute)
             {
                 m_fontInformation.m_fontName = attribute->Value();
+                m_fontInformation.m_fontNameHash = hashString(attribute->Value());
             }
             else if (FontInfo::sizeHash == hashAttribute)
             {

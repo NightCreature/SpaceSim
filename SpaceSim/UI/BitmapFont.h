@@ -86,6 +86,7 @@ struct FontInfo
     std::string m_charSet;
     size_t m_fontSize;
     size_t m_horizontalStretchPercentage;
+    size_t m_fontNameHash;
     short m_antiAliased;
     bool m_bold;
     bool m_italic;
