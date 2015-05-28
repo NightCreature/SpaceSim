@@ -15,6 +15,8 @@ struct VertexDecalartionDesctriptor
         textureCoordinateDimensions.clear();
     }
 
+    const std::vector<D3D11_INPUT_ELEMENT_DESC> createInputElementLayout() const;
+
     bool position;
     bool normal;
     bool vertexColor;
@@ -25,12 +27,12 @@ class VertexBuffer
 {
 public:
     VertexBuffer(void) : m_inputLayout(0), m_buffer(0), m_vertexStride(0) {}
-    ~VertexBuffer(void) 
+    ~VertexBuffer(void)
     {
         cleanup();
     }
 
-    void cleanup() 
+    void cleanup()
     {
         if (m_buffer)
         {
@@ -52,7 +54,6 @@ public:
     ID3D11InputLayout* getInputLayout() const { return m_inputLayout; }
     unsigned int getVertexCount() const { return m_vertexCount; }
 private:
-    const std::vector<D3D11_INPUT_ELEMENT_DESC> createInputElementLayout( const VertexDecalartionDesctriptor& vertexDeclartion );
     bool createVertexInputLayout(const DeviceManager& deviceManager, ID3DBlob* vertexShaderCodeBlob, const std::vector<D3D11_INPUT_ELEMENT_DESC>& inputElements);
     
     ID3D11InputLayout* m_inputLayout;

@@ -32,7 +32,7 @@ bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceMana
         return false;
     }
 
-    if (!createVertexInputLayout(deviceManager, const_cast<ID3DBlob*>(vertexShaderCodeBlob), createInputElementLayout(vertexDeclartion)))
+    if (!createVertexInputLayout(deviceManager, const_cast<ID3DBlob*>(vertexShaderCodeBlob), vertexDeclartion.createInputElementLayout()))
     {
         MSG_TRACE_CHANNEL("VERTEXBUFFER", "Failed to create Vertex Input Layout" );
         return false;
@@ -63,93 +63,93 @@ bool VertexBuffer::createVertexInputLayout( const DeviceManager& deviceManager, 
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexBuffer::createInputElementLayout( const VertexDecalartionDesctriptor& vertexDeclartion )
+const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::createInputElementLayout(size_t& vertexStride)
 {
     std::vector<D3D11_INPUT_ELEMENT_DESC> vertexDataLayoutElements;
     //Create the buffer layout elements
     unsigned int numberOfElements = 0;
-    if (vertexDeclartion.position)
+    if (position)
     {
         ++numberOfElements;
     }
-    if (vertexDeclartion.normal)
+    if (normal)
     {
         ++numberOfElements;
     }
-    numberOfElements += (unsigned int)vertexDeclartion.textureCoordinateDimensions.size();
+    numberOfElements += (unsigned int)textureCoordinateDimensions.size();
     vertexDataLayoutElements.reserve(numberOfElements);//New overwrites data on the stack
-    m_vertexStride = 0;
-    if (vertexDeclartion.position)
+    vertexStride = 0;
+    if (position)
     {
         D3D11_INPUT_ELEMENT_DESC layout;
         layout.SemanticName = "POSITION";
         layout.SemanticIndex = 0; 
         layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
         layout.InputSlot = 0;
-        layout.AlignedByteOffset = m_vertexStride;
+        layout.AlignedByteOffset = vertexStride;
         layout.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
         layout.InstanceDataStepRate = 0;
         vertexDataLayoutElements.push_back(layout);
-        m_vertexStride += 12;
+        vertexStride += 12;
     }
 
-    if (vertexDeclartion.normal)
+    if (normal)
     {
         D3D11_INPUT_ELEMENT_DESC layout;
         layout.SemanticName = "NORMAL";
         layout.SemanticIndex = 0; 
         layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
         layout.InputSlot = 0;
-        layout.AlignedByteOffset = m_vertexStride;
+        layout.AlignedByteOffset = vertexStride;
         layout.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
         layout.InstanceDataStepRate = 0;
         vertexDataLayoutElements.push_back(layout);
-        m_vertexStride += 12;
+        vertexStride += 12;
     }
 
-    if (vertexDeclartion.vertexColor)
+    if (vertexColor)
     {
         D3D11_INPUT_ELEMENT_DESC layout;
         layout.SemanticName = "COLOR";
         layout.SemanticIndex = 0; 
         layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
         layout.InputSlot = 0;
-        layout.AlignedByteOffset = m_vertexStride;
+        layout.AlignedByteOffset = vertexStride;
         layout.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
         layout.InstanceDataStepRate = 0;
         vertexDataLayoutElements.push_back(layout);
-        m_vertexStride += 16;
+        vertexStride += 16;
     }
 
-    for (unsigned int counter = 0; counter < vertexDeclartion.textureCoordinateDimensions.size(); ++counter)
+    for (unsigned int counter = 0; counter < textureCoordinateDimensions.size(); ++counter)
     {
         D3D11_INPUT_ELEMENT_DESC layout;
         layout.SemanticName = "TEXCOORD";
         layout.SemanticIndex = counter; 
         layout.InputSlot = 0;
-        layout.AlignedByteOffset = m_vertexStride;
+        layout.AlignedByteOffset = vertexStride;
         layout.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
         layout.InstanceDataStepRate = 0;
-        if (vertexDeclartion.textureCoordinateDimensions[counter] == 2)
+        if (textureCoordinateDimensions[counter] == 2)
         {
             layout.Format = DXGI_FORMAT_R32G32_FLOAT;
-            m_vertexStride += 8;
+            vertexStride += 8;
         }
-        else if (vertexDeclartion.textureCoordinateDimensions[counter] == 3)
+        else if (textureCoordinateDimensions[counter] == 3)
         {
             layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-            m_vertexStride += 12;
+            vertexStride += 12;
         }
-        else if (vertexDeclartion.textureCoordinateDimensions[counter] == 4)
+        else if (textureCoordinateDimensions[counter] == 4)
         {
             layout.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-            m_vertexStride += 16;
+            vertexStride += 16;
         }
         else
         {
             //Assume 2D texcoords
             layout.Format = DXGI_FORMAT_R32G32_FLOAT;
-            m_vertexStride += 8;
+            vertexStride += 8;
         }
         vertexDataLayoutElements.push_back(layout);
         
