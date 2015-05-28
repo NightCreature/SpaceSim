@@ -15,7 +15,7 @@ struct VertexDecalartionDesctriptor
         textureCoordinateDimensions.clear();
     }
 
-    const std::vector<D3D11_INPUT_ELEMENT_DESC> createInputElementLayout() const;
+    const std::vector<D3D11_INPUT_ELEMENT_DESC> createInputElementLayout(size_t& vertexStride) const;
 
     bool position;
     bool normal;

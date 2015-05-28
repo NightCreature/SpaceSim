@@ -32,7 +32,7 @@ bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceMana
         return false;
     }
 
-    if (!createVertexInputLayout(deviceManager, const_cast<ID3DBlob*>(vertexShaderCodeBlob), vertexDeclartion.createInputElementLayout()))
+    if (!createVertexInputLayout(deviceManager, const_cast<ID3DBlob*>(vertexShaderCodeBlob), vertexDeclartion.createInputElementLayout(m_vertexStride)))
     {
         MSG_TRACE_CHANNEL("VERTEXBUFFER", "Failed to create Vertex Input Layout" );
         return false;
@@ -63,7 +63,7 @@ bool VertexBuffer::createVertexInputLayout( const DeviceManager& deviceManager, 
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::createInputElementLayout(size_t& vertexStride)
+const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::createInputElementLayout(size_t& vertexStride) const
 {
     std::vector<D3D11_INPUT_ELEMENT_DESC> vertexDataLayoutElements;
     //Create the buffer layout elements
