@@ -33,6 +33,7 @@ void PerformanceTimer::update()
     getNow();
     m_previousTime = m_timePerformance;
     m_timePerformance = m_now;
+    //Convert to floats
     m_time = (m_now.QuadPart) / m_resolution;
     m_elapsedTime = (float)((m_now.QuadPart - m_previousTime.QuadPart) / m_resolution);
     if (m_elapsedTime < 0.0f)

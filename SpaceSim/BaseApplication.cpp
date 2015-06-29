@@ -19,6 +19,9 @@
 
 #include "EntityManager.h"
 
+#include "UI/BitmapFont.h"
+#include "UI/TextBlock.h"
+
 class RenderInstance;
 
 HashString exitGame("exit_game");
@@ -39,6 +42,8 @@ m_previousRenderInstanceListSize(1)
     //m_controller = 0;
 }
 
+Text::TextBlockCache* cache;
+
 //-----------------------------------------------------------------------------
 //! @brief   Initialise the application
 //! @remark
@@ -47,6 +52,9 @@ bool Application::initialise()
 {
     m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
                                       &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager);
+    
+    cache = new Text::TextBlockCache(1000, m_gameResource);
+    
     bool returnValue = true;
 
     int windowWidth = 1280;
@@ -71,7 +79,7 @@ bool Application::initialise()
         returnValue &= false;
     }
 
-    m_uiManager.initialise();
+    //m_uiManager.initialise();
     m_renderSystem.initialise(m_gameResource);
     //m_inputSystem.createController(Gamepad);
     m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml", m_renderSystem.getWindowHandle());
@@ -84,6 +92,15 @@ bool Application::initialise()
     Player* player = new Player(m_gameResource);
     player->initialize(m_cameraSystem);
     m_gameObjectManager.addGameObject(player);
+
+
+    //Test Code
+    //Text::BitmapFont bitmapFont;
+    //bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt", m_gameResource);
+    //cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt");
+    //cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 12.0f, true);
+    //Text::TextBlockInfo& textInfo = cache->getTextBlock(0);
+    //textInfo.ProcessText(m_gameResource);
 
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");
     if (mapFileName)

@@ -56,7 +56,11 @@ public:
 
         return index;
     }
-    const KerningInformation& getKerningInfoFor(short id) const { return m_kerningInformation[findKernIndex(id)]; }
+    const KerningInformation* getKerningInfoFor(short id) const 
+    {
+        size_t kernIndex = findKernIndex(id);
+        return m_kerningInformation.empty() || kernIndex > m_kerningInformation.size() ? nullptr : &m_kerningInformation[kernIndex];
+    }
 
     short m_id;
     float m_x;

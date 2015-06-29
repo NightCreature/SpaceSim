@@ -2,6 +2,8 @@
 
 #include "vector4.h"
 #include "BitmapFont.h"
+#include "Material.h"
+#include "..\VertexBuffer.h"
 #include <string>
 #include <vector>
 
@@ -59,18 +61,23 @@ struct TextBlockInfo
     float m_size;
     bool m_applyKerning;
     BitmapFont* m_font;
+    Material m_material;
+    VertexBuffer m_vertexBuffer;
 
-    void ProcessText();
+    void ProcessText(Resource* resource);
+
+private:
+    void CreateVertexBuffer(Resource* resource);
 
 };
 
 class TextBlockCache
 {
 public:
-    TextBlockCache(size_t maxTextblocks) : m_maxTextBlocks(maxTextblocks) { m_textBlocks.reserve(maxTextblocks); }
+    TextBlockCache(size_t maxTextblocks, Resource* resource) : m_maxTextBlocks(maxTextblocks), m_resource(resource) { m_textBlocks.reserve(maxTextblocks); }
     ~TextBlockCache() {}
 
-    bool addFont(const std::string& fileName, Resource* resource);
+    bool addFont(const std::string& fileName);
     bool addText(const std::string& text, const Vector4& textBox, Align alignment, size_t fontHash, float size, bool applyKerning);
     size_t getTextIndex(const std::string& text);
     size_t getTextIndex(size_t textHash);
@@ -85,6 +92,7 @@ private:
     std::vector<TextBlockInfo> m_textBlocks;
     std::vector<BitmapFont> m_fonts;
     size_t m_maxTextBlocks;
+    Resource* m_resource;
 };
 
 }

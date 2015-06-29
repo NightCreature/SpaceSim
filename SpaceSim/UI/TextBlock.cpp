@@ -4,6 +4,16 @@
 #include "..\DebugHelperFunctions.h"
 #include "BitmapFont.h"
 
+#include "..\VertexBuffer.h"
+
+#include "..\GameResource.h"
+#include "..\DeviceManager.h"
+#include "..\ShaderCache.h"
+
+
+#include "..\TypeHelpers.h"
+
+
 namespace Text
 {
 
@@ -11,10 +21,10 @@ namespace Text
 //! @brief   Maybe this should move to a font cache
 //! @remark
 //-----------------------------------------------------------------------------
-bool TextBlockCache::addFont(const std::string& fileName, Resource* resource)
+bool TextBlockCache::addFont(const std::string& fileName)
 {
     BitmapFont font;
-    font.openFont(fileName, resource); //This is not great because we have to load a font file each time to check if a font is present
+    font.openFont(fileName, m_resource); //This is not great because we have to load a font file each time to check if a font is present
 
     ASSERT_CHANNEL(nullptr == getBitmapFont(font.getFontInfo().m_fontNameHash), "Font Creation", "Font(%s) from file(%s) already exists!", font.getFontInfo().m_fontName.c_str(), fileName.c_str());
     if (nullptr != getBitmapFont(font.getFontInfo().m_fontNameHash))
@@ -151,7 +161,7 @@ BitmapFont* TextBlockCache::getBitmapFont(size_t fontNameHash)
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void TextBlockInfo::ProcessText()
+void TextBlockInfo::ProcessText(Resource* resource)
 {
     float x = m_textBlockSize.x();
     float y = m_textBlockSize.y();
@@ -224,11 +234,14 @@ void TextBlockInfo::ProcessText()
                             m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale));
                             x += glyphToReset.m_xAdvance * sizeScale;
                             lineWidth += glyphToReset.m_xAdvance * sizeScale;
-                            if (m_applyKerning)
+                            if (m_applyKerning && j < m_glyphQuads.size())
                             {
-                                const KerningInformation& kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
-                                x += kerningInfo.m_ammount * sizeScale;
-                                lineWidth += kerningInfo.m_ammount * sizeScale;
+                                const KerningInformation* kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
+                                if (kerningInfo)
+                                {
+                                    x += kerningInfo->m_ammount * sizeScale;
+                                    lineWidth += kerningInfo->m_ammount * sizeScale;
+                                }
                             }
                         }
                     }
@@ -245,12 +258,15 @@ void TextBlockInfo::ProcessText()
                             x += glyphToReset.m_xAdvance * sizeScale;
                             lineWidth += glyphToReset.m_xAdvance * sizeScale;
                             offset += glyphToReset.m_xAdvance * sizeScale * 0.5f;
-                            if (m_applyKerning)
+                            if (m_applyKerning && j < m_glyphQuads.size())
                             {
-                                const KerningInformation& kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
-                                x += kerningInfo.m_ammount * sizeScale;
-                                lineWidth += kerningInfo.m_ammount * sizeScale;
-                                offset += kerningInfo.m_ammount * 0.5f;
+                                const KerningInformation* kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
+                                if (kerningInfo)
+                                {
+                                    x += kerningInfo->m_ammount * sizeScale;
+                                    lineWidth += kerningInfo->m_ammount * sizeScale;
+                                    offset += kerningInfo->m_ammount * 0.5f;
+                                }
                             }
                         }
                     }
@@ -267,12 +283,15 @@ void TextBlockInfo::ProcessText()
                             x += glyphToReset.m_xAdvance * sizeScale;
                             lineWidth += glyphToReset.m_xAdvance * sizeScale;
                             offset += glyphToReset.m_xAdvance * sizeScale;
-                            if (m_applyKerning)
+                            if (m_applyKerning && j < m_glyphQuads.size())
                             {
-                                const KerningInformation& kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
-                                x += kerningInfo.m_ammount * sizeScale;
-                                lineWidth += kerningInfo.m_ammount * sizeScale;
-                                offset += kerningInfo.m_ammount;
+                                const KerningInformation* kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
+                                if (kerningInfo)
+                                {
+                                    x += kerningInfo->m_ammount * sizeScale;
+                                    lineWidth += kerningInfo->m_ammount * sizeScale;
+                                    offset += kerningInfo->m_ammount;
+                                }
                             }
                         }
                     }
@@ -342,14 +361,17 @@ void TextBlockInfo::ProcessText()
 
         // Adjust for kerning
         float kernAmount = 0.f;
-        if (m_applyKerning && !firstCharOfLine)
+        if (m_applyKerning && !firstCharOfLine && i < m_text.size())
         {
-            const KerningInformation& kerningInfo = glyph.getKerningInfoFor(m_text[i + 1]);
-            if (kerningInfo.m_secondId != -1)
+            const KerningInformation* kerningInfo = glyph.getKerningInfoFor(m_text[i + 1]);
+            if (kerningInfo)
             {
-                x += kerningInfo.m_ammount * sizeScale;
-                lineWidth += kerningInfo.m_ammount * sizeScale;
-                wordWidth += kerningInfo.m_ammount * sizeScale;
+                if (kerningInfo->m_secondId != -1)
+                {
+                    x += kerningInfo->m_ammount * sizeScale;
+                    lineWidth += kerningInfo->m_ammount * sizeScale;
+                    wordWidth += kerningInfo->m_ammount * sizeScale;
+                }
             }
         }
 
@@ -442,6 +464,27 @@ void TextBlockInfo::ProcessText()
             x -= offset;
         }
     }
+
+    CreateVertexBuffer(resource);
+
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void TextBlockInfo::CreateVertexBuffer(Resource* resource)
+{
+    UNUSEDPARAM(resource);
+    //GameResourceHelper gameResource(resource);
+    //VertexDecalartionDesctriptor descriptor;
+    //descriptor.position = true;
+    //std::vector<unsigned int> texcoords;
+    //texcoords.push_back(2);
+    //descriptor.textureCoordinateDimensions = texcoords;
+    //unsigned int vertexShaderHash = hashString("shaders\\shaders\\simple_2d_vertex_shader.vs");
+    //const VertexShader* sdfVertexShader = gameResource.getGameResource().getShaderCache().getVertexShader(vertexShaderHash);
+    //m_vertexBuffer.createBufferAndLayoutElements(gameResource.getGameResource().getDeviceManager(), sizeof(Vector4) * m_glyphQuads.size(), &m_glyphQuads[0], false, descriptor, sdfVertexShader->getShaderBlob());
 }
 
 }

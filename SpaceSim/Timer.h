@@ -50,4 +50,5 @@ private:
     LARGE_INTEGER m_now;
     LARGE_INTEGER m_timePerformance;
     LARGE_INTEGER m_previousTime;
+    LARGE_INTEGER m_elapsedTimeHighPrecision;
 };
