@@ -214,3 +214,17 @@ const ComputeShader* ShaderCache::getComputeShader(unsigned int resourceName) co
     }
     return nullptr;
 }
+
+#ifdef DEBUG
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void ShaderCache::DumpLoadedShaderNames()
+{
+    for (VertexShaders::const_iterator it = m_vertexShaders.begin(); it != m_vertexShaders.end(); ++it)
+    {
+        MSG_TRACE_CHANNEL("ShaderCache", "Vertex Shader: %s", it->second.getFileName().c_str());
+    }
+}
+#endif

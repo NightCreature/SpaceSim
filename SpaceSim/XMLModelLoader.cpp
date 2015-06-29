@@ -123,7 +123,7 @@ Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shade
     //}
     //mesh->initialise(ShaderInstance());
 
-    Mesh::CreatedMesh mesh = Mesh::CreateMesh(params);
+    CreatedModel mesh = Mesh::CreateMesh(params);
 
     return mesh.model;
 }
