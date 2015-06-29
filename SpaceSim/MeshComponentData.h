@@ -23,7 +23,7 @@ class ModelComponentManger
 public:
     ModelComponentManger()
     {
-        allocate(32);
+        //allocate(32);
     }
 
     void allocate(size_t sz)

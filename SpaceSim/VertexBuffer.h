@@ -8,7 +8,7 @@ class DeviceManager;
 struct VertexDecalartionDesctriptor
 {
     VertexDecalartionDesctriptor() :
-        position(true),
+        position(3),
         normal(false),
         vertexColor(false)
     {
@@ -17,7 +17,7 @@ struct VertexDecalartionDesctriptor
 
     const std::vector<D3D11_INPUT_ELEMENT_DESC> createInputElementLayout(size_t& vertexStride) const;
 
-    bool position;
+    size_t position;
     bool normal;
     bool vertexColor;
     std::vector<unsigned int> textureCoordinateDimensions;
@@ -47,18 +47,18 @@ public:
         }
     }
 
-    bool createBufferAndLayoutElements(const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic, const VertexDecalartionDesctriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob);
+bool createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDecalartionDesctriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob);
 
     ID3D11Buffer* getBuffer() const { return m_buffer; }
-    unsigned int getVertexStride() const { return m_vertexStride; }
+    size_t getVertexStride() const { return m_vertexStride; }
     ID3D11InputLayout* getInputLayout() const { return m_inputLayout; }
-    unsigned int getVertexCount() const { return m_vertexCount; }
+    size_t getVertexCount() const { return m_vertexCount; }
 private:
     bool createVertexInputLayout(const DeviceManager& deviceManager, ID3DBlob* vertexShaderCodeBlob, const std::vector<D3D11_INPUT_ELEMENT_DESC>& inputElements);
     
     ID3D11InputLayout* m_inputLayout;
     ID3D11Buffer* m_buffer;
 
-    unsigned int m_vertexStride;
-    unsigned int m_vertexCount;
+    size_t m_vertexStride;
+    size_t m_vertexCount;
 };

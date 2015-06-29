@@ -21,9 +21,9 @@ namespace Mesh
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-CreatedMesh CreateMesh(const CreationParams& params)
+CreatedModel CreateMesh(const CreationParams& params)
 {
-    CreatedMesh mesh;
+    CreatedModel mesh;
 
     GameResource& gameResource = *(GameResource*)params.m_resource;
     const ShaderInstance& shaderInstance = *(params.m_shaderInstance);

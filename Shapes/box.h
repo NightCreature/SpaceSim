@@ -18,12 +18,7 @@ namespace Box
         bool		m_gentexcoords;
     };
 
-    struct CreatedBox
-    {
-        Model* model;
-        Bbox boundingBox;
-    };
 
-    CreatedBox CreateBox(const CreationParams& params);
+    CreatedModel CreateBox(const CreationParams& params);
 };
 #endif

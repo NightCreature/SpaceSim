@@ -9,12 +9,12 @@
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic, const VertexDecalartionDesctriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob)
+bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDecalartionDesctriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob)
 {
     D3D11_BUFFER_DESC bufferDescriptor;
     ZeroMemory(&bufferDescriptor, sizeof(D3D11_BUFFER_DESC));
     bufferDescriptor.Usage = D3D11_USAGE_IMMUTABLE;
-    bufferDescriptor.ByteWidth = bufferSize;
+    bufferDescriptor.ByteWidth = (unsigned int)bufferSize;
     bufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bufferDescriptor.CPUAccessFlags = 0;
     bufferDescriptor.MiscFlags = 0;
@@ -68,7 +68,7 @@ const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::create
     std::vector<D3D11_INPUT_ELEMENT_DESC> vertexDataLayoutElements;
     //Create the buffer layout elements
     unsigned int numberOfElements = 0;
-    if (position)
+    if (position > 0)
     {
         ++numberOfElements;
     }
@@ -79,18 +79,33 @@ const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::create
     numberOfElements += (unsigned int)textureCoordinateDimensions.size();
     vertexDataLayoutElements.reserve(numberOfElements);//New overwrites data on the stack
     vertexStride = 0;
-    if (position)
+    if (position > 0)
     {
         D3D11_INPUT_ELEMENT_DESC layout;
         layout.SemanticName = "POSITION";
         layout.SemanticIndex = 0; 
-        layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+        switch (position)
+        {
+        case 1:
+            layout.Format = DXGI_FORMAT_R32_FLOAT;
+            break;
+        case 2:
+            layout.Format = DXGI_FORMAT_R32G32_FLOAT;
+            break;
+        default:
+        case 3:
+            layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+            break;
+        case 4:
+            layout.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+            break;
+        }
         layout.InputSlot = 0;
-        layout.AlignedByteOffset = vertexStride;
+        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
         layout.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
         layout.InstanceDataStepRate = 0;
         vertexDataLayoutElements.push_back(layout);
-        vertexStride += 12;
+        vertexStride += sizeof(float) * position;
     }
 
     if (normal)
@@ -100,7 +115,7 @@ const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::create
         layout.SemanticIndex = 0; 
         layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
         layout.InputSlot = 0;
-        layout.AlignedByteOffset = vertexStride;
+        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
         layout.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
         layout.InstanceDataStepRate = 0;
         vertexDataLayoutElements.push_back(layout);
@@ -114,7 +129,7 @@ const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::create
         layout.SemanticIndex = 0; 
         layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
         layout.InputSlot = 0;
-        layout.AlignedByteOffset = vertexStride;
+        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
         layout.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
         layout.InstanceDataStepRate = 0;
         vertexDataLayoutElements.push_back(layout);
@@ -127,7 +142,7 @@ const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::create
         layout.SemanticName = "TEXCOORD";
         layout.SemanticIndex = counter; 
         layout.InputSlot = 0;
-        layout.AlignedByteOffset = vertexStride;
+        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
         layout.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
         layout.InstanceDataStepRate = 0;
         if (textureCoordinateDimensions[counter] == 2)
