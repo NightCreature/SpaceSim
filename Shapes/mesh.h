@@ -38,13 +38,7 @@ namespace Mesh
         int m_numtexcoords;
     };
 
-    struct CreatedMesh 
-    {
-        Model* model;
-        Bbox boundingBox;
-    };
-
-    CreatedMesh CreateMesh(const CreationParams& params);
+    CreatedModel CreateMesh(const CreationParams& params);
     void normalizeNormals(std::vector<Vector3>& normals);
 
 };

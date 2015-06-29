@@ -10,11 +10,6 @@ class Matrix44;
 //Doesnt need to be  class only generation fucntion is enough
 namespace Face
 {
-    struct CreatedFace
-    {
-        Model* model;
-        Bbox boundingBox;
-    };
 
     struct CreationParams
     {
@@ -50,7 +45,7 @@ namespace Face
         bool invertNormal;
     };
 
-    CreatedFace CreateFace(const CreationParams& params);
+    CreatedModel CreateFace(const CreationParams& params);
 
     static unsigned long long m_totalNumberOfVerts;
     static unsigned long long m_totalNumberOfPolygons;

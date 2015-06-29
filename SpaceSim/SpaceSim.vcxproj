@@ -113,9 +113,9 @@
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EmbedManifest>
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</EmbedManifest>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\include\;D:\SDK\Visual Leak Detector\2012\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;D:\SDK\EAWebKit_13.3.2.0.0\;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\EAWebKit\include\;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\lib\x86;D:\SDK\Visual Leak Detector\2012\lib\Win32;D:\SDK\tinyxml\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Assimp\lib\x64;D:\SDK\Visual Leak Detector\lib\Win64;D:\SDK\tinyxml\Debug;D:\SDK\DirectXTK\Bin\Desktop_2013\x64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Assimp\lib\x64;D:\SDK\Visual Leak Detector\lib\Win64;D:\SDK\tinyxml\Debug;D:\SDK\DirectXTK\Bin\Desktop_2013\x64\Debug;D:\SDK\EAWebKit_13.3.2.0.0\Projects\Win64\EAWebKit\13.3.2.0.0\pc64-vc-dev-debug\lib\;$(LibraryPath)</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
@@ -129,6 +129,7 @@
     <OutDir>D:\SDK\Demo\SpaceSim\bin\</OutDir>
     <TargetName>$(ProjectName)_x64d</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <ExecutablePath>D:\SDK\EAWebKit_13.3.2.0.0\Projects\Win64\EAWebKit\13.3.2.0.0\pc64-vc-dev-debug\bin\;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)_x64</TargetName>
@@ -176,7 +177,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories);D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bridge\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\page\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\cairo;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders\gif;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders\jpeg;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders\png;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders\webp;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\network\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\EAWebKit\include;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\EAWebKit\source;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\private;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\WebCoreSupport;D:\SDK\EAWebKit_13.3.2.0.0\WebCore;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\accessibility;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bindings;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bindings\generic;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bridge;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\css;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\dom;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\dom\default;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\editing;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\fileapi;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\history;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html\canvas;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html\parser;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html\shadow;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html\track;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\inspector;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader\appcache;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader\archive;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader\cache;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader\icon;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\mathml;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\notifications;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\page;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\page\animation;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\animation;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\filters;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\filters\arm;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\texmap;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\transforms;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\leveldb;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\mock;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\network;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\sql;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\text;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\text\transcoder;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\plugins;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\rendering;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\rendering\style;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\rendering\svg;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\storage;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg\animation;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg\graphics;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg\graphics\filters;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg\properties;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\testing;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\webaudio;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\websockets;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\workers;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\xml;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\xml\parser;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\generated;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bridge\jsc;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bindings\js;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bindings\js\specialization;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bridge\c;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\testing\js;D:\SDK\EAWebKit_13.3.2.0.0\include\EAWebKit;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\win;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\win;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EABaseEAWebKit\local-2.00.35-01\include\Common;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\coreallocatorEAWebKit\local-1.03.10-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\assembler;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\bytecode;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\bytecompiler;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\heap;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\dfg;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\debugger;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\interpreter;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\jit;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\parser;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\profiler;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\runtime;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\wtf;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\wtf\gobject;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\wtf\unicode;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\yarr;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\API;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\ForwardingHeaders;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\generated;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EASTLEAWebKit\local-1.15.03-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EAIOEAWebKit\local-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EAIOEAWebKit\local-01\include\EAIO\Wii;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EAAssertEAWebKit\local-1.03.04-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\libjpegEAWebKit\local-1.00.06-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\libpngEAWebKit\local-1.01.00-01\include\libpng;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\cairo\local-1.8.10\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\cairo\local-1.8.10\include\cairo;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\pixman\local\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\UTFXmlEAWebKit\local-3.08.01-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\SQLiteEAWebKit\local\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\DirtySDKEAWebKit\local\platform;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\DirtySDKEAWebKit\local\core\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\DirtySDKEAWebKit\local\core\include\pc64;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EATextEAWebKit\local-1.09.01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\FreeTypeEAWebKit\local-2.4.8.02-01\freetype-2.4.8\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\PPMallocEAWebKit\local-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\PPMallocEAWebKit\local-01\Extras;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\zlibEAWebKit\local-1.2.5-7-01\install;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\zlibEAWebKit\local-1.2.5-7-01\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;x64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -335,6 +336,8 @@
     <ClCompile Include="BaseApplication.cpp" />
     <ClCompile Include="..\GameEngine\bbox.cpp" />
     <ClCompile Include="..\Shapes\box.cpp" />
+    <ClCompile Include="UI\TextBlock.cpp" />
+    <ClCompile Include="UI\BitmapFont.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="..\GameEngine\color.cpp" />
@@ -408,12 +411,16 @@
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="StringHelperFunctions.cpp" />
     <ClCompile Include="StringOperations\StringTemplate.cpp" />
+    <ClCompile Include="TextSystem.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="..\MatrixAndVectorMath\vector2.cpp" />
     <ClCompile Include="..\MatrixAndVectorMath\vector3.cpp" />
     <ClCompile Include="..\MatrixAndVectorMath\vector4.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="UIManger.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="ViewManager.cpp" />
+    <ClCompile Include="WebkitThread.cpp" />
     <ClCompile Include="XController.cpp" />
     <ClCompile Include="XControllerDefines.cpp" />
     <ClCompile Include="XMLModelLoader.cpp" />
@@ -427,6 +434,8 @@
     <ClInclude Include="BaseApplication.h" />
     <ClInclude Include="..\GameEngine\bbox.h" />
     <ClInclude Include="..\Shapes\box.h" />
+    <ClInclude Include="UI\TextBlock.h" />
+    <ClInclude Include="UI\BitmapFont.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraManager.h" />
@@ -455,6 +464,7 @@
     <ClInclude Include="GeometryCache.h" />
     <ClInclude Include="GeometryInstance.h" />
     <ClInclude Include="HashString.h" />
+    <ClInclude Include="ICommand.h" />
     <ClInclude Include="IController.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InfinitySphere.h" />
@@ -513,6 +523,7 @@
     <ClInclude Include="..\GameEngine\texture.h" />
     <ClInclude Include="..\GameEngine\texturemanager.h" />
     <ClInclude Include="StringOperations\StringTemplate.h" />
+    <ClInclude Include="TextSystem.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="..\MatrixAndVectorMath\vector2.h" />
     <ClInclude Include="..\MatrixAndVectorMath\vector3.h" />
@@ -520,7 +531,12 @@
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="TypeHelpers.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="UIHTMLCommands.h" />
+    <ClInclude Include="UIManger.h" />
+    <ClInclude Include="UI\WebkitCommands.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="ViewManager.h" />
+    <ClInclude Include="WebkitThread.h" />
     <ClInclude Include="XController.h" />
     <ClInclude Include="XControllerDefines.h" />
     <ClInclude Include="XMLModelLoader.h" />

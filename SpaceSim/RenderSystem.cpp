@@ -323,7 +323,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         // Set vertex buffer stride and offset.
         const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
         ID3D11Buffer* buffer = vb->getBuffer();
-        stride = vb->getVertexStride();
+        stride = stride = static_cast<unsigned int>(vb->getVertexStride()); 
         if (renderInstance.getGeometryInstance().getIB() != nullptr)
         {
             deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
@@ -337,7 +337,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
             deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
             deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
             deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-            deviceContext->Draw(renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
+            deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
         }
 #ifdef _DEBUG
         if (!renderInstance.m_name.empty())

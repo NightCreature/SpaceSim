@@ -14,6 +14,7 @@ class ShaderCache;
 class EffectCache;
 class Paths;
 class EntityManager;
+class UIManger;
 
 class GameResource : public Resource
 {
@@ -24,7 +25,8 @@ public:
             ,ResourceableParam(GameObjectManager, gameObjectManager), ResourceableParam(ModelManager, modelManager)
             ,ResourceableParam(ParticleSystemManager, pfxManager), ResourceableParam(LightManager, lightManager)
             ,ResourceableParam(LaserManager, laserManager), ResourceableParam(ShaderCache, shaderCache)
-            , ResourceableParam(EffectCache, effectCache), ResourceableParam(Paths, paths)) :
+            ,ResourceableParam(EffectCache, effectCache), ResourceableParam(Paths, paths)
+            ,ResourceableParam(UIManger, uiManager) ):
             ResourceInitialiser(EntityManager, entityManager),
             ResourceInitialiser(CameraManager, cameraManager),
             ResourceInitialiser(DeviceManager, deviceManager),
@@ -37,7 +39,8 @@ public:
             ResourceInitialiser(LaserManager, laserManager),
             ResourceInitialiser(ShaderCache, shaderCache),
             ResourceInitialiser(EffectCache, effectCache),
-            ResourceInitialiser(Paths, paths)
+            ResourceInitialiser(Paths, paths),
+            ResourceInitialiser(UIManger, uiManager)
     {}
     ~GameResource() {}
 
@@ -54,6 +57,7 @@ public:
     ResourceDefinition(ShaderCache)
     ResourceDefinition(EffectCache)
     ResourceDefinition(Paths);
+    ResourceDefinition(UIManger);
 };
 
 //This class should contain all the accessors for the game resource, means a resource can have everthing in a list and this class is the one objects use to interfact with the systems

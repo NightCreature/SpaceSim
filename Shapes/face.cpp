@@ -22,12 +22,12 @@ const size_t numberOfTexcoords = 1;
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-CreatedFace CreateFace(const CreationParams& params)
+CreatedModel CreateFace(const CreationParams& params)
 {
     GameResource& gameResource = *(GameResource*)params.resource;
     const ShaderInstance& shaderInstance = *(params.shaderInstance);
 
-    CreatedFace face;
+    CreatedModel face;
     face.model = new Model();
 
 
@@ -77,6 +77,7 @@ CreatedFace CreateFace(const CreationParams& params)
         //Move pointer to start of vertex array  
         const Technique* technique = face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
         VertexDecalartionDesctriptor vertexDesc;
+        vertexDesc.position = 3;
         vertexDesc.normal = true;
         vertexDesc.textureCoordinateDimensions = texCoordDimensions;
         const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());

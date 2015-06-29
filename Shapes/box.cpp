@@ -12,9 +12,9 @@ namespace Box
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-CreatedBox CreateBox(const CreationParams& params)
+CreatedModel CreateBox(const CreationParams& params)
 {
-    CreatedBox box;
+    CreatedModel box;
 
     GameResource& gameResource = *(GameResource*)params.resource;
     ShaderInstance& shaderInstance = *(params.shaderInstance);

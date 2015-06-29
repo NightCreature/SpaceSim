@@ -89,7 +89,7 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
         params.tesselate = true;
     }
 
-    Face::CreatedFace face = Face::CreateFace(params);
+    CreatedModel face = Face::CreateFace(params);
     m_drawableObject = face.model;
     m_drawableObject->setOriginalBoundingBox(face.boundingBox);
 

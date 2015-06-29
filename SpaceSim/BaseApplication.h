@@ -16,7 +16,7 @@
 #include "EffectCache.h"
 #include "ShaderCache.h"
 #include "Paths.h"
-
+#include "UIManger.h"
 #include "EntityManager.h"
 
 #include "MeshComponentData.h"
@@ -60,6 +60,7 @@ private:
     LaserManager    m_laserManager;
     ShaderCache m_shaderCache;
     EffectCache m_effectCache;
+    UIManger m_uiManager;
     GameResource*      m_gameResource;
     bool               m_controllerConnected;
     bool               m_useController;

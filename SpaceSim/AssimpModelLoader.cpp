@@ -108,6 +108,6 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
                 }
             }
         }
-        Mesh::CreatedMesh mesh = Mesh::CreateMesh(params);
+        CreatedModel mesh = Mesh::CreateMesh(params);
     return mesh.model;
 }

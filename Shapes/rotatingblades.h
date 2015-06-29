@@ -21,8 +21,8 @@ public:
         params.fillvalue = 0.0f;
         params.fillx = true;
         params.changeWindingOrder = changeWindingOrder;
-        Face::CreatedFace face = Face::CreateFace(params);
-        Face::CreatedFace face2 = Face::CreateFace(params);
+        CreatedModel face = Face::CreateFace(params);
+        CreatedModel face2 = Face::CreateFace(params);
         m_rotatingblades1 = face.model;
         m_rotatingblades2 = face2.model;
         m_active = true;

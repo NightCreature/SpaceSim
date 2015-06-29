@@ -26,6 +26,10 @@ public:
     const GeometryShader* getGeometryShader(unsigned int resourceName) const;
     const PixelShader* getPixelShader(unsigned int resourceName) const;
     const ComputeShader* getComputeShader(unsigned int resourceName) const;
+
+#ifdef DEBUG
+    void DumpLoadedShaderNames();
+#endif
 private:
 
     typedef std::pair<unsigned int, VertexShader>   VertexShaderHandle;

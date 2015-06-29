@@ -68,7 +68,7 @@ void OrientationAxis::draw( const DeviceManager& deviceManager, Resource* resour
 
     // Set vertex buffer stride and offset.
     unsigned int offset = 0;
-    unsigned int stride = m_vertexBuffer.getVertexStride();
+    unsigned int stride = static_cast<unsigned int>(m_vertexBuffer.getVertexStride());
     ID3D11Buffer* buffer = m_vertexBuffer.getBuffer();
     deviceContext->IASetInputLayout( m_vertexBuffer.getInputLayout() );
     deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
