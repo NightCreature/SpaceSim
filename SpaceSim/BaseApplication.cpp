@@ -95,12 +95,12 @@ bool Application::initialise()
 
 
     //Test Code
-    //Text::BitmapFont bitmapFont;
-    //bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt", m_gameResource);
-    //cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt");
-    //cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 12.0f, true);
-    //Text::TextBlockInfo& textInfo = cache->getTextBlock(0);
-    //textInfo.ProcessText(m_gameResource);
+    Text::BitmapFont bitmapFont;
+    bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt", m_gameResource);
+    cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt");
+    cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 12.0f, true);
+    Text::TextBlockInfo& textInfo = cache->getTextBlock(0);
+    textInfo.ProcessText(m_gameResource);
 
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");
     if (mapFileName)
@@ -151,6 +151,7 @@ void Application::mainGameLoop()
             renderList.reserve(m_previousRenderInstanceListSize); //Upfront reserve as much space as the last frame used, it should at max from once or twice a frame this way, ignoring the first one
             m_gameObjectManager.update(renderList, m_elapsedTime, input);
             m_gameResource->getLaserManager().update(renderList, m_elapsedTime, m_renderSystem.getDeviceMananger());
+			cache->ProvideRenderInstances(renderList);
 
             m_renderSystem.beginDraw(renderList, m_gameResource);
             m_renderSystem.update(m_gameResource, renderList, m_elapsedTime, m_time);

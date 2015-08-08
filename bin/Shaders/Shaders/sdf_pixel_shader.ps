@@ -41,10 +41,30 @@ struct PS_INPUT
     float4 Pos : SV_POSITION;
     float2 Tex : TEXCOORD0;
 };
+
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
 float4 ps_main( PS_INPUT input) : SV_Target
-{
-    return saturate(float4(1,1,1,1));
+{ 
+    // retrieve distance from texture
+    float mask = shaderTextures.Sample( SampleType, input.Tex);
+
+    float4 color = diffuse; //Pick the diffuse material color for the text
+     
+    // perform simple thresholding
+    if( mask < 0.5 )  
+    {
+        color.a = 0.0;
+    }
+    else  
+    {
+        color.a = 1.0;
+    }
+
+    // do some anti-aliasing
+    color.a *= smoothstep(0.25, 0.75, mask);
+
+    // final color
+    return color;
 }

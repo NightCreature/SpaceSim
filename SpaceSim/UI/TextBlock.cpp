@@ -9,7 +9,8 @@
 #include "..\GameResource.h"
 #include "..\DeviceManager.h"
 #include "..\ShaderCache.h"
-
+#include "..\EffectCache.h"
+#include "..\BaseApplication.h"
 
 #include "..\TypeHelpers.h"
 
@@ -144,6 +145,18 @@ void TextBlockCache::removeAllTexts()
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
+void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
+{
+	for (auto& textBlock : m_textBlocks)
+	{
+		renderInstances.push_back(&textBlock.m_renderInstance);
+	}
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
 BitmapFont* TextBlockCache::getBitmapFont(size_t fontNameHash)
 {
     for (BitmapFont& font : m_fonts)
@@ -230,8 +243,8 @@ void TextBlockInfo::ProcessText(Resource* resource)
                         {
                             m_glyphQuads[j].m_lineNumber++;
                             m_glyphQuads[j].m_wordNumber = 1;
-                            m_glyphQuads[j].setX(x + (glyphToReset.m_xOffset * sizeScale));
-                            m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale));
+                            m_glyphQuads[j].setX(x + (glyphToReset.m_xOffset * sizeScale), *this);
+                            m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale), *this);
                             x += glyphToReset.m_xAdvance * sizeScale;
                             lineWidth += glyphToReset.m_xAdvance * sizeScale;
                             if (m_applyKerning && j < m_glyphQuads.size())
@@ -253,8 +266,8 @@ void TextBlockInfo::ProcessText(Resource* resource)
                             // First move word down to next line
                             m_glyphQuads[j].m_lineNumber++;
                             m_glyphQuads[j].m_wordNumber = 1;
-                            m_glyphQuads[j].setX(x + (glyphToReset.m_xOffset * sizeScale));
-                            m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale));
+                            m_glyphQuads[j].setX(x + (glyphToReset.m_xOffset * sizeScale), *this);
+                            m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale), *this);
                             x += glyphToReset.m_xAdvance * sizeScale;
                             lineWidth += glyphToReset.m_xAdvance * sizeScale;
                             offset += glyphToReset.m_xAdvance * sizeScale * 0.5f;
@@ -278,8 +291,8 @@ void TextBlockInfo::ProcessText(Resource* resource)
                             // Move character down to next line
                             m_glyphQuads[j].m_lineNumber++;
                             m_glyphQuads[j].m_wordNumber = 1;
-                            m_glyphQuads[j].setX(x + (glyphToReset.m_xOffset * sizeScale));
-                            m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale));
+                            m_glyphQuads[j].setX(x + (glyphToReset.m_xOffset * sizeScale), *this);
+                            m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale), *this);
                             x += glyphToReset.m_xAdvance * sizeScale;
                             lineWidth += glyphToReset.m_xAdvance * sizeScale;
                             offset += glyphToReset.m_xAdvance * sizeScale;
@@ -306,7 +319,7 @@ void TextBlockInfo::ProcessText(Resource* resource)
                     {
                         if (m_glyphQuads[k].m_lineNumber == lineNumber + 1)
                         {
-                            m_glyphQuads[k].setX(-offset);
+                            m_glyphQuads[k].setX(-offset, *this);
                         }
                     }
                     x -= offset;
@@ -316,7 +329,7 @@ void TextBlockInfo::ProcessText(Resource* resource)
                     {
                         if (m_glyphQuads[k].m_lineNumber == lineNumber)
                         {
-                            m_glyphQuads[k].setX(offset);
+                            m_glyphQuads[k].setX(offset, *this);
                         }
                     }
                 }
@@ -397,10 +410,11 @@ void TextBlockInfo::ProcessText(Resource* resource)
 
         // Create the quad
         GlyphQuad q;
-        q.m_vertices[0] = topLeft;
-        q.m_vertices[1] = bottomLeft; 
-        q.m_vertices[2] = bottomRight; 
-        q.m_vertices[3] = topRight;
+		q.m_vertexOffset = m_glyphVerts.size();
+        m_glyphVerts.push_back( topLeft );
+        m_glyphVerts.push_back( bottomLeft );
+        m_glyphVerts.push_back( bottomRight );
+        m_glyphVerts.push_back( topRight );
         q.m_lineNumber = lineNumber;
         if (m_text[i] == ' ' && m_alignment == Align::right)
         {
@@ -439,7 +453,7 @@ void TextBlockInfo::ProcessText(Resource* resource)
             {
                 if (m_glyphQuads[j].m_lineNumber == lineNumber)
                 {
-                    m_glyphQuads[j].setX(-offset);
+                    m_glyphQuads[j].setX(-offset, *this);
                 }
             }
             x -= offset;
@@ -458,7 +472,7 @@ void TextBlockInfo::ProcessText(Resource* resource)
                 if (m_glyphQuads[j].m_lineNumber == lineNumber)
                 {
                     offset = xAdvance;
-                    m_glyphQuads[j].setX(-xAdvance);
+                    m_glyphQuads[j].setX(-xAdvance, *this);
                 }
             }
             x -= offset;
@@ -466,7 +480,11 @@ void TextBlockInfo::ProcessText(Resource* resource)
     }
 
     CreateVertexBuffer(resource);
-
+	CreateShaderSetup(resource);
+	m_renderInstance = RenderInstance(&m_geometryInstance, &m_shaderInstance);
+#ifdef _DEBUG
+	m_renderInstance.m_name = L"TextBlock";
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -475,16 +493,78 @@ void TextBlockInfo::ProcessText(Resource* resource)
 //-----------------------------------------------------------------------------
 void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
-    UNUSEDPARAM(resource);
-    //GameResourceHelper gameResource(resource);
-    //VertexDecalartionDesctriptor descriptor;
-    //descriptor.position = true;
-    //std::vector<unsigned int> texcoords;
-    //texcoords.push_back(2);
-    //descriptor.textureCoordinateDimensions = texcoords;
-    //unsigned int vertexShaderHash = hashString("shaders\\shaders\\simple_2d_vertex_shader.vs");
-    //const VertexShader* sdfVertexShader = gameResource.getGameResource().getShaderCache().getVertexShader(vertexShaderHash);
-    //m_vertexBuffer.createBufferAndLayoutElements(gameResource.getGameResource().getDeviceManager(), sizeof(Vector4) * m_glyphQuads.size(), &m_glyphQuads[0], false, descriptor, sdfVertexShader->getShaderBlob());
+	VertexBuffer* vb = new VertexBuffer();
+	IndexBuffer* ib = new IndexBuffer();
+	m_geometryInstance = GeometryInstance(vb, ib);
+
+	GameResourceHelper gameResource(resource);
+	VertexDecalartionDesctriptor descriptor;
+	descriptor.position = 4;
+	unsigned int vertexShaderHash = hashString("simple_2d_vertex_shader.vs");
+	const VertexShader* sdfVertexShader = gameResource.getGameResource().getShaderCache().getVertexShader(vertexShaderHash);
+	
+	m_geometryInstance.getVB()->createBufferAndLayoutElements(gameResource.getGameResource().getDeviceManager(), sizeof(Vector4) * m_glyphVerts.size(), &m_glyphVerts[0], false, descriptor, sdfVertexShader->getShaderBlob());
+
+	short glyphIndexBufer[] = 
+	{
+		0, 1, 2,
+		2, 3, 0
+	};
+
+	short* indexBuffer = new short[6 * m_glyphVerts.size()];
+	for (size_t counter = 0; counter < m_glyphVerts.size(); ++counter)
+	{
+		memcpy(indexBuffer + counter * 6, glyphIndexBufer, sizeof(short) * 6);
+	}
+	m_geometryInstance.getIB()->createBuffer(gameResource.getGameResource().getDeviceManager(), 6 * (unsigned int)m_glyphVerts.size(), indexBuffer, false, D3D11_BIND_INDEX_BUFFER);
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void TextBlockInfo::CreateShaderSetup(Resource* resource)
+{
+	Material mat;
+	GameResourceHelper gameResource(resource);
+	const Effect* effect = gameResource.getGameResource().getEffectCache().getEffect("sdf_font_effect.xml");
+	mat.setEffect(effect);
+	mat.setBlendState(true);
+	mat.addTextureReference((unsigned int)m_font->getFontInfo().fontNameHash);//Requires we have a texture under the font name
+	mat.setDiffuse(Color::yellow());
+	mat.setTechnique(hashString("default"));
+	m_shaderInstance.setMaterial(mat);
+	WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
+	wvpConstants.m_projection = math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
+	wvpConstants.m_view = Application::m_view;
+	wvpConstants.m_world = Matrix44();
+
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void GlyphQuad::setY(float value, TextBlockInfo& textBlock)
+{
+	for (size_t counter = 0; counter < 4; ++counter)
+	{
+		Vector4 temp(0.f, value + counter == 1 || counter == 2 ? value : 0.f, 0.f, 0.f);
+		textBlock.m_glyphVerts[counter + m_vertexOffset] += temp;
+	}
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void GlyphQuad::setX(float value, TextBlockInfo& textBlock)
+{
+	for (size_t counter = 0; counter < 4; ++counter)
+	{
+		Vector4 temp(value + counter == 1 || counter == 2 ? value : 0.f, 0.f, 0.f, 0.f);
+		textBlock.m_glyphVerts[counter + m_vertexOffset] += temp;;
+	}
 }
 
 }

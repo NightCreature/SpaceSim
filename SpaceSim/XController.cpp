@@ -22,6 +22,9 @@ m_vibration(false)
 {
     ZeroMemory(&m_gamepadState, sizeof(XINPUT_GAMEPAD));
     ZeroMemory(&m_capabilities, sizeof(XINPUT_CAPABILITIES));
+	XINPUT_BATTERY_INFORMATION batteryInfo;
+	ZeroMemory(&batteryInfo, sizeof(XINPUT_BATTERY_INFORMATION));
+	XInputGetBatteryInformation(0, BATTERY_DEVTYPE_GAMEPAD, &batteryInfo);
     if (XInputGetCapabilities(m_controllerIndex, 0, &m_capabilities) != ERROR_DEVICE_NOT_CONNECTED)
     {
     if (m_capabilities.Type == XINPUT_DEVTYPE_GAMEPAD)

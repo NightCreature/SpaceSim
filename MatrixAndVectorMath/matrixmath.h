@@ -29,5 +29,15 @@ namespace math
                         0.0f, 0.0f, zfarPlane/(zfarPlane-znearPlane), 1.0f,
                         0.0f, 0.0f, -znearPlane*zfarPlane/(zfarPlane-znearPlane), 0.0f);
     }
+
+	inline Matrix44 createOrthoGraphicProjection(float width, float height, float zNear, float zFar)
+	{
+		return Matrix44(
+			2 / width, 0,		   0,					   0,
+			0,		   2 / height, 0,				       0,
+			0,         0,          1 / (zFar - zNear),	   0,
+			0,	       0,          zNear / (zNear - zFar), 1
+			);
+	}
 }
 #endif

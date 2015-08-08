@@ -54,7 +54,8 @@ public:
     
     const Effect* getEffect() const { return m_effect; }
     Effect* getEffect() { return m_effect; }
-    unsigned int getTechnique() const { return m_techniqueHash; }
+	unsigned int getTechnique() const { return m_techniqueHash; }
+	void setTechnique(unsigned int techniqueHash) { m_techniqueHash = techniqueHash; }
 protected:
 private:
     unsigned int m_techniqueHash;

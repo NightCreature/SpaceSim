@@ -4,7 +4,14 @@
 #include "Paths.h"
 #include "texture.h"
 #ifdef _DEBUG
-//#include "vld.h"
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
+#ifndef DBG_NEW
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DBG_NEW
+#endif
 #endif
 #include <iostream>
 #include <direct.h>
@@ -14,8 +21,33 @@
 #include "StringOperations/StringTemplate.h"
 
 
-int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
+constexpr unsigned int constantHash(const char* str, size_t index, unsigned int previousHash)
 {
+	return str[index] != '\0' ? constantHash(str, index + 1, (previousHash ^ tolower(*str)) * c_fnvHashPrime) : previousHash;
+}
+constexpr unsigned int hashString1(const char* str)
+{
+	return constantHash(str, 0, c_fnvHashOffset);
+}
+
+unsigned int hashString2(const std::string& sourceStr)
+{
+	return hashString1(sourceStr.c_str());
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
+{
+#ifdef _DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
+#endif
+	const char* str = "helloworld";
+	std::string str1 = str;
+	const unsigned int constHash = hashString1(str);
+	unsigned int hashValue = hashString2(str1);
+	if (constHash == hashValue)
+	{
+		MSG_TRACE("Yay Constant expression hashes work :)");
+	}
     //int sizeOfList = SizeT<node1>::value;
     //sizeOfList = HashT<0, node1>::value;
     //UNUSEDPARAM(sizeOfList);

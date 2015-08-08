@@ -74,7 +74,7 @@ private:
     size_t m_previousRenderInstanceListSize;
 
 
-    ModelComponentManger m_modelManager;
+    //ModelComponentManger m_modelManager;
 public:
     static Matrix44 m_view;
     static Matrix44 m_projection;

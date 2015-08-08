@@ -118,7 +118,7 @@ void RenderSystem::initialise(Resource* resource)
                 convertToCString(adapterDesc.Description, str);
                 MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());
 
-                if (adapterDesc.DedicatedVideoMemory > 0)
+                if (adapterDesc.VendorId != 0x8086)
                 {
                     break;
                 }
