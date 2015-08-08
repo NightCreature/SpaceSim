@@ -323,7 +323,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         // Set vertex buffer stride and offset.
         const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
         ID3D11Buffer* buffer = vb->getBuffer();
-        stride = stride = static_cast<unsigned int>(vb->getVertexStride()); 
+        stride = static_cast<unsigned int>(vb->getVertexStride()); 
         if (renderInstance.getGeometryInstance().getIB() != nullptr)
         {
             deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
