@@ -164,6 +164,7 @@ public:
     const Glyph& getGlyph(short id) const;
     const FontInfo& getFontInfo() const { return m_fontInformation; }
     const CommonFontInfo& getCommonFontInfo() const { return m_commonFontInformation; }
+	const Pages& getPages() const { return m_pagesInformation;  }
     bool isSdfFont() const { return m_isSDFFont; }
 private:
     Glyph* findGlyph(short id);

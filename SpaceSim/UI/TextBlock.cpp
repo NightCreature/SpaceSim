@@ -530,7 +530,8 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 	const Effect* effect = gameResource.getGameResource().getEffectCache().getEffect("sdf_font_effect.xml");
 	mat.setEffect(effect);
 	mat.setBlendState(true);
-	mat.addTextureReference((unsigned int)m_font->getFontInfo().fontNameHash);//Requires we have a texture under the font name
+	//Should fix this if we have more than one page somehow
+	mat.addTextureReference((unsigned int)m_font->getPages().m_pages[0].fileHash);//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
 	mat.setTechnique(hashString("default"));
 	m_shaderInstance.setMaterial(mat);
