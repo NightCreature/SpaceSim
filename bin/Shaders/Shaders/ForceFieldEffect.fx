@@ -1,14 +1,14 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer WVPConstants : register(cb0)
+cbuffer WVPConstants : register(b0)
 {
     matrix World;
     matrix View;
     matrix Projection;
 };
 
-cbuffer MaterialConstants : register(cb0)
+cbuffer MaterialConstants : register(b0)
 {
     float4 ambient;
     float4 diffuse;
