@@ -40,8 +40,10 @@ public:
         }
     }
 
-    VertexBuffer* getVB() const { return m_vb; }
-    IndexBuffer* getIB() const { return m_ib; }
+	VertexBuffer* getVB() const { return m_vb; }
+	void setVB(VertexBuffer* vb) { m_vb = vb; }
+	IndexBuffer* getIB() const { return m_ib; }
+	void setIB(IndexBuffer* ib)  { m_ib = ib; }
     unsigned int getPrimitiveType() const { return m_primitiveType; }
     void setPrimitiveType(unsigned int primitiveType) { m_primitiveType = primitiveType; }
 private:

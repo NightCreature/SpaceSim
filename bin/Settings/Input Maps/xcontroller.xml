@@ -32,7 +32,11 @@
     <Button input="69"/>
   </InputAction>
 
+<InputAction input_action="fire">
+  <Button input="a_button"/>
+</InputAction>
+
   <InputAction input_action="exit_game" >
-    <Button input="start" />
+    <Button input="back_button" />
   </InputAction>
  </xml>

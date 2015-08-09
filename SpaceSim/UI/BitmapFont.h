@@ -56,7 +56,11 @@ public:
 
         return index;
     }
-    const KerningInformation& getKerningInfoFor(short id) const { return m_kerningInformation[findKernIndex(id)]; }
+    const KerningInformation* getKerningInfoFor(short id) const 
+    {
+        size_t kernIndex = findKernIndex(id);
+        return m_kerningInformation.empty() || kernIndex > m_kerningInformation.size() ? nullptr : &m_kerningInformation[kernIndex];
+    }
 
     short m_id;
     float m_x;
@@ -160,6 +164,7 @@ public:
     const Glyph& getGlyph(short id) const;
     const FontInfo& getFontInfo() const { return m_fontInformation; }
     const CommonFontInfo& getCommonFontInfo() const { return m_commonFontInformation; }
+	const Pages& getPages() const { return m_pagesInformation;  }
     bool isSdfFont() const { return m_isSDFFont; }
 private:
     Glyph* findGlyph(short id);

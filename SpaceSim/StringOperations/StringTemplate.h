@@ -425,10 +425,10 @@ private:
         return *this;
     }
 
-    StaticStringType subrange( const T* m_buffer, const T* firstInstance )
+    StaticStringType subrange( const T* buffer, const T* firstInstance )
     {
         StaticStringType str;
-        str.set(m_buffer, firstInstance - m_buffer);
+        str.set(buffer, firstInstance - buffer);
         return str;
     }
 

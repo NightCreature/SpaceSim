@@ -69,6 +69,7 @@ inline void debugOutput(TraceSeverity severity, const std::string& prefix, const
 #define HASH_ELEMENT_DEFINITION static const unsigned int m_hash;
 #define HASH_ELEMENT_IMPLEMENTATION(CLASS) const unsigned int CLASS::m_hash = hashString( #CLASS );
 
+
 //-----------------------------------------------------------------------------
 //! @brief   Case insensitive hash function
 //! @remark

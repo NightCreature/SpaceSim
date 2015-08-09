@@ -1,0 +1,8 @@
+<xml>
+  <Effect >
+    <Technique name="default">
+      <VertexShader entry_point="vs_main" file_name="Shaders\Shaders\simple_2d_vertex_shader.vs" />
+      <PixelShader entry_point="ps_main" file_name="Shaders\Shaders\sdf_pixel_shader.ps" />
+    </Technique>
+  </Effect>
+</xml>

@@ -15,9 +15,12 @@
 #include "..\SpaceSim\GameResource.h"
 #include "..\SpaceSim\LaserManager.h"
 #include "..\SpaceSim\EffectCache.h"
+#include "..\SpaceSim\HashString.h"
+#include "..\SpaceSim\InputSystem.h"
 
 const int playerlive = 5;
 const int playerffstrength = 10;
+const HashString fire("fire");
 
 void Player::initialize(const CameraManager& cameraManager)
 {
@@ -329,14 +332,15 @@ void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, con
     m_position = m_camera->getEye();
     m_direction = m_camera->getLookAt();
 
-    //if (input.getInput(0)->getActionValue(InputActions::eRightTrigger) > 0.9)
-    //{
-    //    if (m_lasergentime > 0.25)
-    //    {
-    //        m_lasergentime = 0;
-    //        fireLaser();
-    //    }
-    //}
+	
+	if (input.getInput(0)->getActionValue((InputSystem::getInputActionFromName(fire.getHash()))) > 0.0f)
+	{
+		if (m_lasergentime > 0.25)
+		{
+			m_lasergentime = 0;
+			fireLaser();
+		}
+	}
 
     m_lasergentime += elapsedTime;
 }

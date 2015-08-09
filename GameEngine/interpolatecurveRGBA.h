@@ -21,52 +21,52 @@ public:
 		NumValues = 4,
 	};
 private:
-	Vector4 keyFrameValues[NumValues];
-	float keyFramePos1, keyFramePos2;
+	Vector4 m_keyFrameValues[NumValues];
+	float m_keyFramePos1, m_keyFramePos2;
 };
 
 inline interpolateCurveRGBA::interpolateCurveRGBA() :
-keyFramePos1(.2f),
-keyFramePos2(.8f)
+m_keyFramePos1(.2f),
+m_keyFramePos2(.8f)
 {
-	keyFrameValues[0] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	keyFrameValues[1] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	keyFrameValues[2] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	keyFrameValues[3] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_keyFrameValues[0] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_keyFrameValues[1] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_keyFrameValues[2] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_keyFrameValues[3] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 inline interpolateCurveRGBA::interpolateCurveRGBA(const Vector4& keyFrameValue0,
 											 const Vector4& keyFrameValue1, const Vector4& keyFrameValue2,
 											 const Vector4& keyFrameValue3, const float keyFramePos1,
 											 const float keyFramePos2) :
-keyFramePos1(keyFramePos1),
-keyFramePos2(keyFramePos2)
+m_keyFramePos1(keyFramePos1),
+m_keyFramePos2(keyFramePos2)
 {
-	this->keyFrameValues[0] = keyFrameValue0;
-	this->keyFrameValues[1] = keyFrameValue1;
-	this->keyFrameValues[2] = keyFrameValue2;
-	this->keyFrameValues[3] = keyFrameValue3;
+	this->m_keyFrameValues[0] = keyFrameValue0;
+	this->m_keyFrameValues[1] = keyFrameValue1;
+	this->m_keyFrameValues[2] = keyFrameValue2;
+	this->m_keyFrameValues[3] = keyFrameValue3;
 }
 
 inline void interpolateCurveRGBA::SetParameters(const Vector4& keyFrameValue0, const Vector4& keyFrameValue1,
 									 const Vector4& keyFrameValue2, const Vector4& keyFrameValue3,
 									 const float keyFramePos1, const float keyFramePos2)
 {
-	this->keyFrameValues[0] = keyFrameValue0;
-	this->keyFrameValues[1] = keyFrameValue1;
-	this->keyFrameValues[2] = keyFrameValue2;
-	this->keyFrameValues[3] = keyFrameValue3;
-	this->keyFramePos1 = keyFramePos1;
-	this->keyFramePos2 = keyFramePos2;
+	this->m_keyFrameValues[0] = keyFrameValue0;
+	this->m_keyFrameValues[1] = keyFrameValue1;
+	this->m_keyFrameValues[2] = keyFrameValue2;
+	this->m_keyFrameValues[3] = keyFrameValue3;
+	this->m_keyFramePos1 = keyFramePos1;
+	this->m_keyFramePos2 = keyFramePos2;
 }
 inline void interpolateCurveRGBA::SetParameters(const interpolateCurveRGBA& src)
 {
-	this->keyFrameValues[0] = src.keyFrameValues[0];
-	this->keyFrameValues[1] = src.keyFrameValues[1];
-	this->keyFrameValues[2] = src.keyFrameValues[2];
-	this->keyFrameValues[3] = src.keyFrameValues[3];
-	this->keyFramePos1 = src.keyFramePos1;
-	this->keyFramePos2 = src.keyFramePos2;
+	this->m_keyFrameValues[0] = src.m_keyFrameValues[0];
+	this->m_keyFrameValues[1] = src.m_keyFrameValues[1];
+	this->m_keyFrameValues[2] = src.m_keyFrameValues[2];
+	this->m_keyFrameValues[3] = src.m_keyFrameValues[3];
+	this->m_keyFramePos1 = src.m_keyFramePos1;
+	this->m_keyFramePos2 = src.m_keyFramePos2;
 }
 
 inline const Vector4& interpolateCurveRGBA::GetValue(float pos) const
@@ -93,26 +93,26 @@ inline const Vector4& interpolateCurveRGBA::GetValue(float pos) const
 	//}
 	static Vector4 linearValue;
 
-	if (pos < keyFramePos1)
+	if (pos < m_keyFramePos1)
 	{
 		//linearValue.lerp(keyFrameValues[1], keyFrameValues[0], pos / keyFramePos1);
-		linearValue = this->keyFrameValues[1];
-		linearValue.lerp(this->keyFrameValues[0],
-			(pos / this->keyFramePos1));
+		linearValue = this->m_keyFrameValues[1];
+		linearValue.lerp(this->m_keyFrameValues[0],
+			(pos / this->m_keyFramePos1));
 	}
-	else if (pos < keyFramePos2)
+	else if (pos < m_keyFramePos2)
 	{
 		//linearValue.lerp(keyFrameValues[2], keyFrameValues[1], (pos - keyFramePos1) / (keyFramePos2 - keyFramePos1));
-		linearValue = this->keyFrameValues[2];
-		linearValue.lerp(this->keyFrameValues[1],
-			(pos-this->keyFramePos1) / (this->keyFramePos2-this->keyFramePos1));
+		linearValue = this->m_keyFrameValues[2];
+		linearValue.lerp(this->m_keyFrameValues[1],
+			(pos-this->m_keyFramePos1) / (this->m_keyFramePos2-this->m_keyFramePos1));
 	}
 	else
 	{
 		//linearValue.lerp(keyFrameValues[3], keyFrameValues[2], (pos - keyFramePos2) / (1.0 - keyFramePos1));
-		linearValue = this->keyFrameValues[3];
-		linearValue.lerp(this->keyFrameValues[2],
-			(pos-this->keyFramePos2) / (1.0f-this->keyFramePos2));
+		linearValue = this->m_keyFrameValues[3];
+		linearValue.lerp(this->m_keyFrameValues[2],
+			(pos-this->m_keyFramePos2) / (1.0f-this->m_keyFramePos2));
 	}
 	return linearValue;
 }

@@ -118,7 +118,7 @@ void RenderSystem::initialise(Resource* resource)
                 convertToCString(adapterDesc.Description, str);
                 MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());
 
-                if (adapterDesc.DedicatedVideoMemory > 0)
+                if (adapterDesc.VendorId != 0x8086)
                 {
                     break;
                 }
@@ -323,7 +323,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         // Set vertex buffer stride and offset.
         const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
         ID3D11Buffer* buffer = vb->getBuffer();
-        stride = stride = static_cast<unsigned int>(vb->getVertexStride()); 
+        stride = static_cast<unsigned int>(vb->getVertexStride()); 
         if (renderInstance.getGeometryInstance().getIB() != nullptr)
         {
             deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());

@@ -10,10 +10,10 @@ public:
     UIManger() {}
     ~UIManger() {}
 
-    void initialise();
+    //void initialise();
 private:
     //This will need a thread handle so EAWebkit can run on it
     HANDLE m_threadHandle;
-    WebkitThread m_webKitThread;
+    //WebkitThread m_webKitThread;
 };
 

@@ -91,6 +91,7 @@ const InputState& KeyboardInputDevice::update(const std::vector<RAWINPUT>& keybo
             else
             {
                 value = 1.0f;
+				printKeyState(&input);
             }
             m_controllerState.setActionValue(it->second, value);
         }
