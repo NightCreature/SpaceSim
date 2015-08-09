@@ -43,8 +43,7 @@ struct GlyphQuad
 
 struct TextBlockInfo
 {
-	TextBlockInfo() : m_renderInstance(nullptr, nullptr) {}
-
+	TextBlockInfo() : m_renderInstance(nullptr) {}
     std::vector<GlyphQuad> m_glyphQuads;
 	std::vector<GlyphVertex> m_glyphVerts;
     std::string m_text; //We should not have this and have length of the string instead with the hash, though debug would be handy to have
@@ -55,12 +54,14 @@ struct TextBlockInfo
     float m_size;
     bool m_applyKerning;
     BitmapFont* m_font;
+	VertexBuffer vb;
+	IndexBuffer ib;
 	ShaderInstance m_shaderInstance;
 	GeometryInstance m_geometryInstance;
-	RenderInstance m_renderInstance;
+	RenderInstance* m_renderInstance;
 
     void ProcessText(Resource* resource);
-	RenderInstance* getRenderInstance() { return &m_renderInstance; }
+	RenderInstance* getRenderInstance() { return m_renderInstance; }
 private:
     void CreateVertexBuffer(Resource* resource);
 	void CreateShaderSetup(Resource* resource);

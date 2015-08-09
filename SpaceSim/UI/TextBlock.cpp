@@ -66,6 +66,7 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
     info.m_applyKerning = kerning;
     info.m_font = getBitmapFont(fontHash);
     m_textBlocks.push_back(info);
+	m_textBlocks[m_textBlocks.size() - 1].ProcessText(m_resource);
 
     return false;
 }
@@ -147,9 +148,9 @@ void TextBlockCache::removeAllTexts()
 //-----------------------------------------------------------------------------
 void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 {
-	for (auto& textBlock : m_textBlocks)
+	for (size_t counter = 0; counter < m_textBlocks.size(); ++counter)
 	{
-		renderInstances.push_back(&textBlock.m_renderInstance);
+		renderInstances.push_back(m_textBlocks[counter].m_renderInstance);
 	}
 }
 
@@ -481,9 +482,13 @@ void TextBlockInfo::ProcessText(Resource* resource)
 
     CreateVertexBuffer(resource);
 	CreateShaderSetup(resource);
-	m_renderInstance = RenderInstance(&m_geometryInstance, &m_shaderInstance);
+	if (m_renderInstance)
+	{
+		delete m_renderInstance;
+	}
+	m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
 #ifdef _DEBUG
-	m_renderInstance.m_name = L"TextBlock";
+	m_renderInstance->m_name = L"TextBlock";
 #endif
 }
 
@@ -493,30 +498,34 @@ void TextBlockInfo::ProcessText(Resource* resource)
 //-----------------------------------------------------------------------------
 void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
-	VertexBuffer* vb = new VertexBuffer();
-	IndexBuffer* ib = new IndexBuffer();
-	m_geometryInstance = GeometryInstance(vb, ib);
-
 	GameResourceHelper gameResource(resource);
 	VertexDecalartionDesctriptor descriptor;
 	descriptor.position = 4;
 	unsigned int vertexShaderHash = hashString("simple_2d_vertex_shader.vs");
 	const VertexShader* sdfVertexShader = gameResource.getGameResource().getShaderCache().getVertexShader(vertexShaderHash);
 	
-	m_geometryInstance.getVB()->createBufferAndLayoutElements(gameResource.getGameResource().getDeviceManager(), sizeof(Vector4) * m_glyphVerts.size(), &m_glyphVerts[0], false, descriptor, sdfVertexShader->getShaderBlob());
+	vb.createBufferAndLayoutElements(gameResource.getGameResource().getDeviceManager(), sizeof(Vector4) * m_glyphVerts.size(), &m_glyphVerts[0], false, descriptor, sdfVertexShader->getShaderBlob());
+	m_geometryInstance.setPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	short glyphIndexBufer[] = 
+	unsigned int glyphIndexBufer[] = 
 	{
 		0, 1, 2,
 		2, 3, 0
 	};
 
-	short* indexBuffer = new short[6 * m_glyphVerts.size()];
-	for (size_t counter = 0; counter < m_glyphVerts.size(); ++counter)
+	unsigned int* indexBuffer = new unsigned int[6 * m_glyphVerts.size()];
+	for (size_t counter = 0; counter < m_glyphVerts.size() / 4; ++counter)
 	{
-		memcpy(indexBuffer + counter * 6, glyphIndexBufer, sizeof(short) * 6);
+		for (size_t indexCounter = 0; indexCounter < 6; ++indexCounter)
+		{
+			indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
+		}
 	}
-	m_geometryInstance.getIB()->createBuffer(gameResource.getGameResource().getDeviceManager(), 6 * (unsigned int)m_glyphVerts.size(), indexBuffer, false, D3D11_BIND_INDEX_BUFFER);
+	ib.createBuffer(gameResource.getGameResource().getDeviceManager(), 6 * (unsigned int)(m_glyphVerts.size() / 4), indexBuffer, false, D3D11_BIND_INDEX_BUFFER);
+	ib.setNumberOfIndecis(6 * (unsigned int)(m_glyphVerts.size() / 4));
+
+	m_geometryInstance.setVB(&vb);
+	m_geometryInstance.setIB(&ib);
 }
 
 //-----------------------------------------------------------------------------
@@ -531,7 +540,7 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 	mat.setEffect(effect);
 	mat.setBlendState(true);
 	//Should fix this if we have more than one page somehow
-	mat.addTextureReference((unsigned int)m_font->getPages().m_pages[0].fileHash);//Requires we have a texture under the font name
+	mat.addTextureReference((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName));//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
 	mat.setTechnique(hashString("default"));
 	m_shaderInstance.setMaterial(mat);
@@ -539,7 +548,6 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 	wvpConstants.m_projection = math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
 	wvpConstants.m_view = Application::m_view;
 	wvpConstants.m_world = Matrix44();
-
 }
 
 //-----------------------------------------------------------------------------

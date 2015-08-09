@@ -99,8 +99,6 @@ bool Application::initialise()
     bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt", m_gameResource);
     cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt");
     cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 12.0f, true);
-    Text::TextBlockInfo& textInfo = cache->getTextBlock(0);
-    textInfo.ProcessText(m_gameResource);
 
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");
     if (mapFileName)
