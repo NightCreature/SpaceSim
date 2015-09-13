@@ -64,6 +64,10 @@ float4 ps_main( PS_INPUT input) : SV_Target
 
     // do some anti-aliasing
     color.a *= smoothstep(0.25, 0.75, mask);
+    color.r = shaderTextures.Sample( SampleType, input.Tex).a;
+    color.g = shaderTextures.Sample( SampleType, input.Tex).a;
+    color.b = shaderTextures.Sample( SampleType, input.Tex).a;
+
 
     // final color
     return color;

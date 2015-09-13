@@ -151,6 +151,7 @@ void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 	for (size_t counter = 0; counter < m_textBlocks.size(); ++counter)
 	{
 		renderInstances.push_back(m_textBlocks[counter].m_renderInstance);
+		//Need to update the view here
 	}
 }
 
@@ -549,8 +550,8 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 	m_shaderInstance.setMaterial(mat);
 	WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
 	wvpConstants.m_projection = math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
-	wvpConstants.m_view = Application::m_view;
-	wvpConstants.m_world = Matrix44();
+	wvpConstants.m_view.identity();
+	wvpConstants.m_world.identity();
 }
 
 //-----------------------------------------------------------------------------
