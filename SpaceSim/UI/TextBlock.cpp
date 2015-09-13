@@ -513,7 +513,8 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 		2, 3, 0
 	};
 
-	unsigned int* indexBuffer = new unsigned int[6 * m_glyphVerts.size()];
+	size_t numberIndecis = 6 * (m_glyphVerts.size() / 4);
+	unsigned int* indexBuffer = new unsigned int[numberIndecis];
 	for (size_t counter = 0; counter < m_glyphVerts.size() / 4; ++counter)
 	{
 		for (size_t indexCounter = 0; indexCounter < 6; ++indexCounter)
@@ -521,11 +522,13 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 			indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
 		}
 	}
-	ib.createBuffer(gameResource.getGameResource().getDeviceManager(), 6 * (unsigned int)(m_glyphVerts.size() / 4), indexBuffer, false, D3D11_BIND_INDEX_BUFFER);
-	ib.setNumberOfIndecis(6 * (unsigned int)(m_glyphVerts.size() / 4));
+	ib.createBuffer(gameResource.getGameResource().getDeviceManager(), static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer, false, D3D11_BIND_INDEX_BUFFER);
+	ib.setNumberOfIndecis(static_cast<unsigned int>(numberIndecis));
 
 	m_geometryInstance.setVB(&vb);
 	m_geometryInstance.setIB(&ib);
+
+	delete [] indexBuffer;
 }
 
 //-----------------------------------------------------------------------------
