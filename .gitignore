@@ -214,3 +214,4 @@ pip-log.txt
 .mr.developer.cfg
 *.lastcodeanalysissucceeded
 *.diagsession
+bin/Shaders/Shaders/text_sdf_pixel_shader.ps
