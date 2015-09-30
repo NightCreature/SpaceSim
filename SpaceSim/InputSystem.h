@@ -34,7 +34,8 @@ public:
         return input;
     }
 
-    static InputActions::ActionType getInputActionFromName(unsigned int actionName);
+	//Expensive function
+    static bool getInputActionFromName(unsigned int actionName, InputActions::ActionType& actionType);
 
     typedef std::map<IInputDevice*, InputState> ControllersAndState;
     typedef std::map<IInputDevice*, InputState>::iterator ControllersAndStateIt;
@@ -43,7 +44,18 @@ public:
 
     static void SetRawInput(RAWINPUT* rawInput) 
     {
-        m_rawInput.push_back(*rawInput); 
+		if (RIM_TYPEKEYBOARD == rawInput->header.dwType)
+		{
+			m_rawKeyBoardInput.push_back(*rawInput);
+		}
+		else if (RIM_TYPEMOUSE == rawInput->header.dwType)
+		{
+			m_rawMouseInput.push_back(*rawInput);
+		}
+		else if (RIM_TYPEHID == rawInput->header.dwType)
+		{
+			m_rawHidInput.push_back(*rawInput);
+		}
     }
 
     void addRawInputDevice(const RAWINPUTDEVICE& device) { m_devices.push_back(device); }
@@ -56,5 +68,7 @@ private:
     std::vector<RAWINPUTDEVICE> m_devices;
     static AvailableActions m_availableActions;
 
-    static std::vector<RAWINPUT> m_rawInput;
+	static std::vector<RAWINPUT> m_rawKeyBoardInput;
+	static std::vector<RAWINPUT> m_rawMouseInput;
+	static std::vector<RAWINPUT> m_rawHidInput;
 };

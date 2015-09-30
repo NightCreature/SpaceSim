@@ -58,7 +58,7 @@ public:
     InputAction(const InputActionType action) : m_action(action), m_value(0) {}
     ~InputAction() {}
 
-    const InputActionType getAction() const { return m_action; }
+    const InputActionType& getAction() const { return m_action; }
     const ValueType getValue() const { return m_value; }
     void setValue(const ValueType& value) { m_value = value; }
 private:

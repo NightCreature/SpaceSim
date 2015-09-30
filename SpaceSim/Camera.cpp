@@ -130,15 +130,36 @@ void Camera::update( float elapsedTime, double time, const Input& input )
     const InputState* inputState = input.getInput(0);
     if (inputState)
     {
-        float moveAlongDirectionFactor = inputState->getActionValue(InputSystem::getInputActionFromName(moveForward.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(moveBackWards.getHash()));
+		InputActions::ActionType fowardAction;
+		InputActions::ActionType backwardAction;
+		InputActions::ActionType moveLeftAction;
+		InputActions::ActionType moveRightAction;
+		InputActions::ActionType yawLeftAction;
+		InputActions::ActionType yawRightAction;
+		InputActions::ActionType pitchUpAction;
+		InputActions::ActionType pitchDownAction;
+		InputActions::ActionType rollLeftAction;
+		InputActions::ActionType rollRightAction;
+		InputSystem::getInputActionFromName(moveForward.getHash(), fowardAction);
+		InputSystem::getInputActionFromName(moveBackWards.getHash(), backwardAction);
+		InputSystem::getInputActionFromName(moveLeft.getHash(), moveLeftAction);
+		InputSystem::getInputActionFromName(moveRight.getHash(), moveRightAction);
+		InputSystem::getInputActionFromName(yawLeft.getHash(), yawLeftAction);
+		InputSystem::getInputActionFromName(yawRight.getHash(), yawRightAction);
+		InputSystem::getInputActionFromName(pitchUp.getHash(), pitchUpAction);
+		InputSystem::getInputActionFromName(pitchDown.getHash(), pitchDownAction);
+		InputSystem::getInputActionFromName(rollLeft.getHash(), rollLeftAction);
+		InputSystem::getInputActionFromName(rollRight.getHash(), rollRightAction);
+
+        float moveAlongDirectionFactor = inputState->getActionValue(fowardAction) - inputState->getActionValue(backwardAction);
         moveAlongDirection(moveAlongDirectionFactor * m_movementSpeed * elapsedTime );//Move forwared, backward
-        float strafeFactor = inputState->getActionValue(InputSystem::getInputActionFromName(moveLeft.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(moveRight.getHash()));
+        float strafeFactor = inputState->getActionValue(moveLeftAction) - inputState->getActionValue(moveRightAction);
         strafe(strafeFactor   * m_movementSpeed * elapsedTime);//Move left/right
-        float yawFactor = inputState->getActionValue(InputSystem::getInputActionFromName(yawLeft.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(yawRight.getHash()));
+        float yawFactor = inputState->getActionValue(yawLeftAction) - inputState->getActionValue(yawRightAction);
         yaw(yawFactor * m_rotationSpeed * elapsedTime);
-        float pitchFactor = inputState->getActionValue(InputSystem::getInputActionFromName(pitchUp.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(pitchDown.getHash()));
+        float pitchFactor = inputState->getActionValue(pitchUpAction) - inputState->getActionValue(pitchDownAction);
         pitch(pitchFactor * m_rotationSpeed * elapsedTime); 
-        float zAxisDelta = inputState->getActionValue(InputSystem::getInputActionFromName(rollLeft.getHash())) - inputState->getActionValue(InputSystem::getInputActionFromName(rollRight.getHash()));
+        float zAxisDelta = inputState->getActionValue(rollLeftAction) - inputState->getActionValue(rollRightAction);
         roll(zAxisDelta * m_rotationSpeed * 0.05f);
     }
 

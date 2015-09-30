@@ -332,8 +332,9 @@ void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, con
     m_position = m_camera->getEye();
     m_direction = m_camera->getLookAt();
 
-	
-	if (input.getInput(0)->getActionValue((InputSystem::getInputActionFromName(fire.getHash()))) > 0.0f)
+	InputActions::ActionType inputAction;
+	InputSystem::getInputActionFromName(fire.getHash(), inputAction);
+	if (input.getInput(0)->getActionValue(inputAction) > 0.0f)
 	{
 		if (m_lasergentime > 0.25)
 		{
