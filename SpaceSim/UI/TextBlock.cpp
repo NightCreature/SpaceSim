@@ -152,6 +152,7 @@ void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 	{
 		renderInstances.push_back(m_textBlocks[counter].m_renderInstance);
 		//Need to update the view here
+		m_textBlocks[counter].m_shaderInstance.getWVPConstants().m_view = Application::m_view;
 	}
 }
 
@@ -413,10 +414,19 @@ void TextBlockInfo::ProcessText(Resource* resource)
         // Create the quad
         GlyphQuad q;
 		q.m_vertexOffset = m_glyphVerts.size();
-        m_glyphVerts.push_back( topLeft );
-        m_glyphVerts.push_back( bottomLeft );
-        m_glyphVerts.push_back( bottomRight );
-        m_glyphVerts.push_back( topRight );
+		GlyphVertex vertex;
+		vertex.position = Vector3(-topLeft.x(), -topLeft.y(), 0.0f);
+		vertex.uv = Vector2(topLeft.z(), topLeft.w());
+        m_glyphVerts.push_back(vertex);
+		vertex.position = Vector3(-bottomLeft.x(), -bottomLeft.y(), 0.0f);
+		vertex.uv = Vector2(bottomLeft.z(), bottomLeft.w());
+        m_glyphVerts.push_back(vertex);
+		vertex.position = Vector3(-bottomRight.x(), -bottomRight.y(), 0.0f);
+		vertex.uv = Vector2(bottomRight.z(), bottomRight.w());
+        m_glyphVerts.push_back(vertex);
+		vertex.position = Vector3(-topRight.x(), -topRight.y(), 0.0f);
+		vertex.uv = Vector2(topRight.z(), topRight.w());
+        m_glyphVerts.push_back(vertex);
         q.m_lineNumber = lineNumber;
         if (m_text[i] == ' ' && m_alignment == Align::right)
         {
@@ -501,11 +511,12 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
 	GameResourceHelper gameResource(resource);
 	VertexDecalartionDesctriptor descriptor;
-	descriptor.position = 4;
+	descriptor.position = 3;
+	descriptor.textureCoordinateDimensions.push_back(2);
 	unsigned int vertexShaderHash = hashString("simple_2d_vertex_shader.vs");
 	const VertexShader* sdfVertexShader = gameResource.getGameResource().getShaderCache().getVertexShader(vertexShaderHash);
 	
-	vb.createBufferAndLayoutElements(gameResource.getGameResource().getDeviceManager(), sizeof(Vector4) * m_glyphVerts.size(), &m_glyphVerts[0], false, descriptor, sdfVertexShader->getShaderBlob());
+	vb.createBufferAndLayoutElements(gameResource.getGameResource().getDeviceManager(), sizeof(GlyphVertex) * m_glyphVerts.size(), &m_glyphVerts[0], false, descriptor, sdfVertexShader->getShaderBlob());
 	m_geometryInstance.setPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	unsigned int glyphIndexBufer[] = 
@@ -549,8 +560,8 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 	mat.setTechnique(hashString("default"));
 	m_shaderInstance.setMaterial(mat);
 	WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
-	wvpConstants.m_projection = math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
-	wvpConstants.m_view.identity();
+	wvpConstants.m_projection = Application::m_projection; //math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
+	wvpConstants.m_view = Application::m_view; //gameResource.getGameResource().getCameraManager().getCamera("text_block_camera")->getCamera();
 	wvpConstants.m_world.identity();
 }
 
@@ -562,8 +573,8 @@ void GlyphQuad::setY(float value, TextBlockInfo& textBlock)
 {
 	for (size_t counter = 0; counter < 4; ++counter)
 	{
-		Vector4 temp(0.f, value + counter == 1 || counter == 2 ? value : 0.f, 0.f, 0.f);
-		textBlock.m_glyphVerts[counter + m_vertexOffset] += temp;
+		Vector3 temp(0.f, value + counter == 1 || counter == 2 ? value : 0.f, 0.f);
+		textBlock.m_glyphVerts[counter + m_vertexOffset].position += temp;
 	}
 }
 
@@ -575,8 +586,8 @@ void GlyphQuad::setX(float value, TextBlockInfo& textBlock)
 {
 	for (size_t counter = 0; counter < 4; ++counter)
 	{
-		Vector4 temp(value + counter == 1 || counter == 2 ? value : 0.f, 0.f, 0.f, 0.f);
-		textBlock.m_glyphVerts[counter + m_vertexOffset] += temp;;
+		Vector3 temp(value + counter == 1 || counter == 2 ? value : 0.f, 0.f, 0.f);
+		textBlock.m_glyphVerts[counter + m_vertexOffset].position += temp;;
 	}
 }
 

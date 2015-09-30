@@ -1,5 +1,6 @@
 #pragma once
 
+#include "vector2.h"
 #include "vector4.h"
 #include "BitmapFont.h"
 #include "Material.h"
@@ -23,7 +24,12 @@ enum Align
     left
 };
 
-typedef Vector4 GlyphVertex; //xy is position, zw is uv, 0 = TL, 1 = BL, 2 = BR, 3 = TR
+//typedef Vector4 GlyphVertex; //xy is position, zw is uv, 0 = TL, 1 = BL, 2 = BR, 3 = TR
+struct GlyphVertex
+{
+	Vector3 position;
+	Vector2 uv;
+};
 
 struct TextBlockInfo;
 

@@ -157,7 +157,7 @@ void RenderSystem::initialise(Resource* resource)
 
     //Everything is in GL format so turn off culling
     D3D11_RASTERIZER_DESC rasterizerStateDesc;
-    rasterizerStateDesc.CullMode = D3D11_CULL_BACK;
+    rasterizerStateDesc.CullMode = D3D11_CULL_NONE;
     rasterizerStateDesc.FillMode = D3D11_FILL_SOLID;
     rasterizerStateDesc.AntialiasedLineEnable = false;
     rasterizerStateDesc.DepthBias = 0;

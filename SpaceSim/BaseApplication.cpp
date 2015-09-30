@@ -87,7 +87,8 @@ bool Application::initialise()
     ShaderPack shaderPack(m_gameResource);
     shaderPack.loadShaderPack("shader_pack.xml");
     m_laserManager.initialise(m_gameResource);
-    returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+	returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+	returnValue &= m_cameraSystem.createCamera(*m_gameResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
     returnValue &= m_cameraSystem.createCamera(*m_gameResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
     Player* player = new Player(m_gameResource);
     player->initialize(m_cameraSystem);
@@ -95,6 +96,10 @@ bool Application::initialise()
 
 
     //Test Code
+	m_cameraSystem.update(m_elapsedTime, m_time);
+	const Camera* cam = m_cameraSystem.getCamera("global");
+	m_view = cam->getCamera();
+
     Text::BitmapFont bitmapFont;
     bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt", m_gameResource);
     cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt");
@@ -146,7 +151,7 @@ void Application::mainGameLoop()
             m_view = cam->getCamera();
             
             RenderInstanceTree renderList;
-            renderList.reserve(m_previousRenderInstanceListSize); //Upfront reserve as much space as the last frame used, it should at max from once or twice a frame this way, ignoring the first one
+            //renderList.reserve(m_previousRenderInstanceListSize); //Upfront reserve as much space as the last frame used, it should at max from once or twice a frame this way, ignoring the first one
             m_gameObjectManager.update(renderList, m_elapsedTime, input);
             m_gameResource->getLaserManager().update(renderList, m_elapsedTime, m_renderSystem.getDeviceMananger());
 			cache->ProvideRenderInstances(renderList);
@@ -165,7 +170,9 @@ void Application::mainGameLoop()
             //    PostQuitMessage(0);
             //}
 
-            if (input.getInput(0)->getActionValue(InputSystem::getInputActionFromName(exitGame)))
+			InputActions::ActionType inputAction;
+			InputSystem::getInputActionFromName(exitGame, inputAction);
+            if (input.getInput(0)->getActionValue(inputAction))
             {
                 PostQuitMessage(0);
             }
