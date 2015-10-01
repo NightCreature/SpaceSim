@@ -59,6 +59,9 @@ public:
     }
 
     void addRawInputDevice(const RAWINPUTDEVICE& device) { m_devices.push_back(device); }
+#ifdef DEBUG
+	static std::map < InputActions::ActionType, std::string > m_actionNames;
+#endif
 protected:
 private:
     IInputDevice* createController(const ControllerType type);
@@ -67,6 +70,7 @@ private:
     ControllersAndState m_controllers;
     std::vector<RAWINPUTDEVICE> m_devices;
     static AvailableActions m_availableActions;
+	
 
 	static std::vector<RAWINPUT> m_rawKeyBoardInput;
 	static std::vector<RAWINPUT> m_rawMouseInput;

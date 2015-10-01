@@ -33,20 +33,20 @@ namespace InputActions
     class ActionType
     {
     public:
-        ActionType() : m_actionType(0), m_actionTypeLngKey(0), m_actionTypeName("") {}
-        ActionType(const std::string& actionTypeName) : m_actionType(hashString(actionTypeName)), m_actionTypeLngKey(0), m_actionTypeName(actionTypeName) {}
-        ActionType(const std::string& actionTypeName, const std::string& lngActionName) : m_actionType(hashString(actionTypeName)), m_actionTypeLngKey(hashString(lngActionName.c_str())), m_actionTypeName(actionTypeName) {}
+        ActionType() : m_actionType(0), m_actionTypeLngKey(0){}
+        ActionType(const std::string& actionTypeName) : m_actionType(hashString(actionTypeName)), m_actionTypeLngKey(0) {}
+        ActionType(const std::string& actionTypeName, const std::string& lngActionName) : m_actionType(hashString(actionTypeName)), m_actionTypeLngKey(hashString(lngActionName.c_str())) {}
 
         unsigned int getType() const { return m_actionType; }
         unsigned int getLanguageString() const { return m_actionTypeLngKey; }
 #if defined( DEBUG ) || defined( _DEBUG )
-        const std::string& getNameString() const { return m_actionTypeName; }
+        //const std::string& getNameString() const { return m_actionTypeName; }
 #endif
         bool operator < ( const ActionType& rhs ) const { return m_actionType < rhs.m_actionType; }
     private:
         unsigned int m_actionType;
         unsigned int m_actionTypeLngKey;
-        std::string m_actionTypeName;
+        //std::string m_actionTypeName;
     };
 }
 
