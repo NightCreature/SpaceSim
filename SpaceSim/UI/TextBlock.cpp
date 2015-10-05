@@ -66,7 +66,11 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
     info.m_applyKerning = kerning;
     info.m_font = getBitmapFont(fontHash);
     m_textBlocks.push_back(info);
-	m_textBlocks[m_textBlocks.size() - 1].ProcessText(m_resource);
+	if (m_textBlocks[m_textBlocks.size() - 1].ProcessText(m_resource))
+	{
+		m_textBlocksToRender.push_back(m_textBlocks[m_textBlocks.size() - 1].getRenderInstance());
+		return true;
+	}
 
     return false;
 }
@@ -148,11 +152,16 @@ void TextBlockCache::removeAllTexts()
 //-----------------------------------------------------------------------------
 void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 {
-	for (size_t counter = 0; counter < m_textBlocks.size(); ++counter)
+	//Should only really do this for blocks that are active
+	for (auto textBlock : m_textBlocks)
 	{
-		renderInstances.push_back(m_textBlocks[counter].m_renderInstance);
-		//Need to update the view here
-		m_textBlocks[counter].m_shaderInstance.getWVPConstants().m_view = Application::m_view;
+		textBlock.m_shaderInstance.getWVPConstants().m_view = Application::m_view;
+	}
+
+	//std::copy(m_textBlocksToRender.begin(), m_textBlocksToRender.end(), renderInstances.end());
+	for (size_t counter = 0; counter < m_textBlocksToRender.size(); ++counter)
+	{
+		renderInstances.push_back(m_textBlocksToRender[counter]);
 	}
 }
 
@@ -177,13 +186,13 @@ BitmapFont* TextBlockCache::getBitmapFont(size_t fontNameHash)
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void TextBlockInfo::ProcessText(Resource* resource)
+bool TextBlockInfo::ProcessText(Resource* resource)
 {
     float x = m_textBlockSize.x();
     float y = m_textBlockSize.y();
     float maxWidth = m_textBlockSize.w() - m_textBlockSize.y();
     float lineWidth = 0.f;
-    float sizeScale = m_size / m_font->getFontInfo().m_fontSize;
+    float sizeScale = (float) m_font->getFontInfo().m_fontSize;
     char* lastChar = nullptr;
     int lineNumber = 1;
     int wordNumber = 1;
@@ -491,6 +500,11 @@ void TextBlockInfo::ProcessText(Resource* resource)
         }
     }
 
+	if (m_glyphVerts.empty())
+	{
+		return false; //Dont try to create a vb for an empty text block
+	}
+
     CreateVertexBuffer(resource);
 	CreateShaderSetup(resource);
 	if (m_renderInstance)
@@ -501,6 +515,8 @@ void TextBlockInfo::ProcessText(Resource* resource)
 #ifdef _DEBUG
 	m_renderInstance->m_name = L"TextBlock";
 #endif
+
+	return true;
 }
 
 //-----------------------------------------------------------------------------

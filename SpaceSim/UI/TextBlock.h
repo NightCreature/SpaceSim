@@ -50,27 +50,29 @@ struct GlyphQuad
 struct TextBlockInfo
 {
 	TextBlockInfo() : m_renderInstance(nullptr) {}
-    std::vector<GlyphQuad> m_glyphQuads;
+	std::vector<GlyphQuad> m_glyphQuads;
 	std::vector<GlyphVertex> m_glyphVerts;
-    std::string m_text; //We should not have this and have length of the string instead with the hash, though debug would be handy to have
-    Vector4 m_textBlockSize; //xy is top left, zw is bottom right
-    Align m_alignment;
-    size_t m_textHash;
-    size_t m_textLenght;
-    float m_size;
-    bool m_applyKerning;
-    BitmapFont* m_font;
+	std::string m_text; //We should not have this and have length of the string instead with the hash, though debug would be handy to have
+	Vector4 m_textBlockSize; //xy is top left, zw is bottom right
+	Align m_alignment;
+	size_t m_textHash;
+	size_t m_textLenght;
+	float m_size;
+	bool m_applyKerning;
+	BitmapFont* m_font;
 	VertexBuffer vb;
 	IndexBuffer ib;
 	ShaderInstance m_shaderInstance;
 	GeometryInstance m_geometryInstance;
 	RenderInstance* m_renderInstance;
 
-    void ProcessText(Resource* resource);
+	bool ProcessText(Resource* resource);
 	RenderInstance* getRenderInstance() { return m_renderInstance; }
 private:
-    void CreateVertexBuffer(Resource* resource);
+	void CreateVertexBuffer(Resource* resource);
 	void CreateShaderSetup(Resource* resource);
+
+	void ProcessTextForReals(Resource* resource) { UNUSEDPARAM(resource);  }
 };
 
 class TextBlockCache
@@ -94,6 +96,7 @@ private:
     BitmapFont* getBitmapFont(size_t fontNameHash);
 
     std::vector<TextBlockInfo> m_textBlocks;
+	std::vector<RenderInstance*> m_textBlocksToRender;
     std::vector<BitmapFont> m_fonts;
     size_t m_maxTextBlocks;
     Resource* m_resource;
