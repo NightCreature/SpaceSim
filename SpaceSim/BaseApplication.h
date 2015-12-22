@@ -22,6 +22,11 @@
 #include "MeshComponentData.h"
 
 #include <windows.h>
+#include "Memory.h"
+
+#include "Http Server/httpserver.h"
+#include "Logging/Logger.h"
+
 
 //-----------------------------------------------------------------------------
 //! @brief   Base class for an application object
@@ -61,6 +66,7 @@ private:
     ShaderCache m_shaderCache;
     EffectCache m_effectCache;
     UIManger m_uiManager;
+    HTTPServer m_httpServer;
     GameResource*      m_gameResource;
     bool               m_controllerConnected;
     bool               m_useController;
@@ -78,4 +84,6 @@ private:
 public:
     static Matrix44 m_view;
     static Matrix44 m_projection;
+
+    static Logger m_logger;
 };
