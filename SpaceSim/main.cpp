@@ -1,18 +1,10 @@
+#include "Memory.h"
 #include "BaseApplication.h"
 #include <stdio.h>
 #include <tchar.h>
 #include "Paths.h"
 #include "texture.h"
-#ifdef _DEBUG
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
 
-#ifndef DBG_NEW
-#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-#define new DBG_NEW
-#endif
-#endif
 #include <iostream>
 #include <direct.h>
 
@@ -21,11 +13,30 @@
 #include "StringOperations/StringTemplate.h"
 
 
-constexpr unsigned int constantHash(const char* str, size_t index, unsigned int previousHash)
+class SingleTonTest
+{
+public:
+    static SingleTonTest& getInstance() 
+    {
+        static SingleTonTest instance; 
+        return instance; 
+    }
+
+    void printMember()
+    {
+        std::cout << m_member << std::endl;
+    }
+
+private:
+    SingleTonTest() : m_member(1) {}
+    int m_member;
+};
+
+unsigned int constantHash(const char* str, size_t index, unsigned int previousHash)
 {
 	return str[index] != '\0' ? constantHash(str, index + 1, (previousHash ^ tolower(*str)) * c_fnvHashPrime) : previousHash;
 }
-constexpr unsigned int hashString1(const char* str)
+unsigned int hashString1(const char* str)
 {
 	return constantHash(str, 0, c_fnvHashOffset);
 }
@@ -37,6 +48,10 @@ unsigned int hashString2(const std::string& sourceStr)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
+
+    SingleTonTest& instance = SingleTonTest::getInstance();
+    instance.printMember();
+
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 #endif
@@ -64,6 +79,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     test3.split(tokens, delimters);
     String16::iterator it1 = test3.begin();
     String16::iterator it2 = test3.end();
+
     if (it1 == it2)
     {
         MSG_TRACE("iterators are equal");

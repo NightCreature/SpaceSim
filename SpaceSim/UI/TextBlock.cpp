@@ -1,5 +1,7 @@
 #include "TextBlock.h"
 
+#include "Memory.h"
+
 #include "..\StringHelperFunctions.h"
 #include "..\DebugHelperFunctions.h"
 #include "BitmapFont.h"
@@ -153,7 +155,7 @@ void TextBlockCache::removeAllTexts()
 void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 {
 	//Should only really do this for blocks that are active
-	for (auto textBlock : m_textBlocks)
+	for (auto& textBlock : m_textBlocks)
 	{
 		textBlock.m_shaderInstance.getWVPConstants().m_view = Application::m_view;
 	}
@@ -192,7 +194,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
     float y = m_textBlockSize.y();
     float maxWidth = m_textBlockSize.w() - m_textBlockSize.y();
     float lineWidth = 0.f;
-    float sizeScale = (float) m_font->getFontInfo().m_fontSize;
+	float sizeScale = m_size / (float)m_font->getFontInfo().m_fontSize;
     char* lastChar = nullptr;
     int lineNumber = 1;
     int wordNumber = 1;
@@ -259,7 +261,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
                             m_glyphQuads[j].setY(y + (glyphToReset.m_yOffset * sizeScale), *this);
                             x += glyphToReset.m_xAdvance * sizeScale;
                             lineWidth += glyphToReset.m_xAdvance * sizeScale;
-                            if (m_applyKerning && j < m_glyphQuads.size())
+                            if (m_applyKerning && j < m_glyphQuads.size() - 1)
                             {
                                 const KerningInformation* kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
                                 if (kerningInfo)
@@ -283,7 +285,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
                             x += glyphToReset.m_xAdvance * sizeScale;
                             lineWidth += glyphToReset.m_xAdvance * sizeScale;
                             offset += glyphToReset.m_xAdvance * sizeScale * 0.5f;
-                            if (m_applyKerning && j < m_glyphQuads.size())
+                            if (m_applyKerning && j < m_glyphQuads.size() - 1)
                             {
                                 const KerningInformation* kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
                                 if (kerningInfo)
@@ -308,7 +310,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
                             x += glyphToReset.m_xAdvance * sizeScale;
                             lineWidth += glyphToReset.m_xAdvance * sizeScale;
                             offset += glyphToReset.m_xAdvance * sizeScale;
-                            if (m_applyKerning && j < m_glyphQuads.size())
+                            if (m_applyKerning && j < m_glyphQuads.size() - 1)
                             {
                                 const KerningInformation* kerningInfo = glyphToReset.getKerningInfoFor(m_glyphQuads[j + 1].m_character);
                                 if (kerningInfo)
@@ -589,7 +591,7 @@ void GlyphQuad::setY(float value, TextBlockInfo& textBlock)
 {
 	for (size_t counter = 0; counter < 4; ++counter)
 	{
-		Vector3 temp(0.f, value + counter == 1 || counter == 2 ? value : 0.f, 0.f);
+		Vector3 temp(0.f, value + (counter == 1 || counter == 2 ? value : 0.f), 0.f);
 		textBlock.m_glyphVerts[counter + m_vertexOffset].position += temp;
 	}
 }
@@ -602,7 +604,7 @@ void GlyphQuad::setX(float value, TextBlockInfo& textBlock)
 {
 	for (size_t counter = 0; counter < 4; ++counter)
 	{
-		Vector3 temp(value + counter == 1 || counter == 2 ? value : 0.f, 0.f, 0.f);
+		Vector3 temp(value + (counter == 1 || counter == 2 ? value : 0.f), 0.f, 0.f);
 		textBlock.m_glyphVerts[counter + m_vertexOffset].position += temp;;
 	}
 }

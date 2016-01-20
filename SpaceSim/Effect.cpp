@@ -120,7 +120,7 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         }
     }
 
-    m_techniqueId = ((size_t)(m_vertexShader + m_pixelShader) << 32) | (m_hullShader + m_domainShader + m_geometryShader + m_computeShader);
+    m_techniqueId = ((size_t)(m_vertexShader + m_pixelShader) /*<< 32*/) | (m_hullShader + m_domainShader + m_geometryShader + m_computeShader);
 
     ID3D11Device* device = deviceManager.getDevice();
     D3D11_BUFFER_DESC wvpBufferDescriptor;

@@ -5,6 +5,8 @@
 Thread::~Thread()
 {
     stopThread();
+
+    DeleteCriticalSection(&m_criticalSection);
 }
 
 void Thread::createThread(int stacksize)

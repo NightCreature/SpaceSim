@@ -42,13 +42,22 @@ struct PS_INPUT
     float2 Tex : TEXCOORD0;
 };
 
+float contour(float d, float w) {
+    // smoothstep(lower edge0, upper edge1, x)
+    return smoothstep(0.5 - w , 0.5 + w , d);
+}
+
+float samp(float2 uv, float w) {
+    return contour(shaderTextures.Sample( SampleType, uv).a, w);
+}
+
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
 float4 ps_main( PS_INPUT input) : SV_Target
 { 
     // retrieve distance from texture
-    float mask = shaderTextures.Sample( SampleType, input.Tex);
+    float mask = shaderTextures.Sample( SampleType, input.Tex).a;
 
     float4 color = diffuse; //Pick the diffuse material color for the text
      
@@ -62,12 +71,30 @@ float4 ps_main( PS_INPUT input) : SV_Target
         color.a = 1.0;
     }
 
+    //mask = smoothstep(0.45, 0.55, mask);
+
+    float width = fwidth(mask);
+    float alpha = contour( mask, width );
+    float dscale = 0.354; // half of 1/sqrt2; you can play with this
+    float2 duv = dscale * (ddx(input.Tex) + ddy(input.Tex));
+    float4 box = float4(input.Tex-duv, input.Tex+duv);
+
+    float asum = samp( box.xy, width )
+               + samp( box.zw, width )
+               + samp( box.xw, width )
+               + samp( box.zy, width );
+
+    // weighted average, with 4 extra points having 0.5 weight each,
+    // so 1 + 0.5*4 = 3 is the divisor
+    alpha = (alpha + 0.5 * asum) / 3.0;
+    //alpha = color.a * smoothstep(0.25, 0.75, color.a );
+
     // do some anti-aliasing
-    color.a *= smoothstep(0.25, 0.75, mask);
-    color.r = shaderTextures.Sample( SampleType, input.Tex).a;
-    color.g = shaderTextures.Sample( SampleType, input.Tex).a;
-    color.b = shaderTextures.Sample( SampleType, input.Tex).a;
-    color.a = 1;
+	color.r = 1;
+	color.g = 1;
+	color.b = 1;
+    color.a = color.a;
+    //color.a = 1;
 
     //color = float(1,1,1,1);
     // final color

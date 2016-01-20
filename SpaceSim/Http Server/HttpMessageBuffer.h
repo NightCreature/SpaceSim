@@ -1,11 +1,25 @@
 #pragma once
 
+#include "httpserver.h"
+#include "../SpaceSim/GameResource.h"
+
 #include <string>
 #include <vector>
+
+class MessageTask : public IHttpTask
+{
+public:
+    MessageTask(std::vector<std::string> messages) : m_messages(messages) {}
+
+    virtual void DoTask() override {}
+
+    std::vector<std::string> m_messages;
+};
 
 class HttpMessageBuffer
 {
 public:
+    HttpMessageBuffer(Resource* resource) : m_gameResource(resource) {}
 
     //-----------------------------------------------------------------------------
     //! @brief   TODO enter a description
@@ -13,13 +27,11 @@ public:
     //-----------------------------------------------------------------------------
     void AddMessages(const std::vector< std::string >& buffer)
     {
-        for (auto message : buffer)
-        {
-            m_buffer.push_back(message);
-        }
+        MessageTask* task = new MessageTask(buffer);
+
+        m_gameResource.getWritableGameResource().getHTTPServer().AddTask(task);
     }
 
 private:
-    std::vector<std::string> m_buffer;
-
+    GameResourceHelper m_gameResource;
 };

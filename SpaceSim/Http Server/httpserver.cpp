@@ -13,6 +13,7 @@
 #include "httpserver.h"
 #include "../StringHelperFunctions.h"
 
+#include <winsock2.h>
 #include <windows.h>
 #include <http.h>
 #include <stdio.h>
@@ -21,6 +22,24 @@
 #pragma comment(lib, "httpapi.lib")
 
 
+//
+// Macros.
+//
+#define INITIALIZE_HTTP_RESPONSE( resp, status, reason )    \
+        RtlZeroMemory( (resp), sizeof(*(resp)) );           \
+        (resp)->StatusCode = (status);                      \
+        (resp)->pReason = (reason);                         \
+        (resp)->ReasonLength = (USHORT) strlen(reason);     
+
+#define ADD_KNOWN_HEADER(Response, HeaderId, RawValue)               \
+        (Response).Headers.KnownHeaders[(HeaderId)].pRawValue =      \
+                                                          (RawValue);\
+        (Response).Headers.KnownHeaders[(HeaderId)].RawValueLength = \
+            (USHORT) strlen(RawValue);
+
+#define ALLOC_MEM(cb) HeapAlloc(GetProcessHeap(), 0, (cb))
+
+#define FREE_MEM(ptr) HeapFree(GetProcessHeap(), 0, (ptr))
 
 void HTTPServer::Initialise()
 {
@@ -425,6 +444,7 @@ unsigned int HTTPServer::SendHttpPostResponse( HANDLE hReqQueue, PHTTP_REQUEST p
             goto Done;
         }
 
+        static bool loopConstant = true;
         do
         {
             //
@@ -578,7 +598,7 @@ unsigned int HTTPServer::SendHttpPostResponse( HANDLE hReqQueue, PHTTP_REQUEST p
                   goto Done;
             }
 
-        } while(TRUE);
+        } while(loopConstant);
     }
     else
     {

@@ -5,7 +5,9 @@
 #include "StringHelperFunctions.h"
 
 InputSystem::AvailableActions InputSystem::m_availableActions;
+#ifdef DEBUG
 std::map < InputActions::ActionType, std::string > InputSystem::m_actionNames;
+#endif
 
 std::vector<RAWINPUT> InputSystem::m_rawKeyBoardInput;
 std::vector<RAWINPUT> InputSystem::m_rawMouseInput;
@@ -106,7 +108,9 @@ void InputSystem::initialise( const std::string& inputMapFileName, HWND hwnd )
         {
             MSG_TRACE_CHANNEL("Input SYSTEM", "adding actions for: %s with hash %u", actionNameAttribute->Value(), hashString(actionNameAttribute->Value()));
             m_availableActions.emplace_back(InputActions::ActionType(actionNameAttribute->Value(), actionLngNameAttribute != nullptr ? actionLngNameAttribute->Value() : ""));
+#ifdef DEBUG
 			m_actionNames.insert(std::make_pair(m_availableActions[m_availableActions.size() - 1],actionNameAttribute->Value()));
+#endif
         }
     }
 

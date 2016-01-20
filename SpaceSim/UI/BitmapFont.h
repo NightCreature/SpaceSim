@@ -158,7 +158,7 @@ class BitmapFont
 {
 public:
     BitmapFont() {}
-    ~BitmapFont() {}
+    ~BitmapFont() { m_glyphs.clear(); }
 
     bool openFont(const std::string& bmpFile, Resource* resource);
     const Glyph& getGlyph(short id) const;

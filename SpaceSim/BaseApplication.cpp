@@ -53,7 +53,9 @@ Text::TextBlockCache* cache;
 bool Application::initialise()
 {
     m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
-                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager);
+                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, &m_httpServer);
+
+    m_httpServer.Initialise();
 
     m_logger.addLogger(new OutputDebugLog());
     //m_logger.addLogger(new HttpDebugLog());
@@ -118,8 +120,6 @@ bool Application::initialise()
 
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts);
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons);
-
-    m_httpServer.Initialise();
 
     return returnValue;
 }

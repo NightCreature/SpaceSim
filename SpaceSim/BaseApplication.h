@@ -1,5 +1,7 @@
 #pragma once
 
+#include <WinSock2.h>
+
 #include "CameraManager.h"
 #include "RenderSystem.h"
 #include "GameWindow.h"

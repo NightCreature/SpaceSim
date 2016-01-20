@@ -7,31 +7,17 @@
 
 #include <string>
 #include <vector>
-//
-// Macros.
-//
-#define INITIALIZE_HTTP_RESPONSE( resp, status, reason )    \
-    do                                                      \
-    {                                                       \
-        RtlZeroMemory( (resp), sizeof(*(resp)) );           \
-        (resp)->StatusCode = (status);                      \
-        (resp)->pReason = (reason);                         \
-        (resp)->ReasonLength = (USHORT) strlen(reason);     \
-    } while (FALSE)
 
-#define ADD_KNOWN_HEADER(Response, HeaderId, RawValue)               \
-    do                                                               \
-    {                                                                \
-        (Response).Headers.KnownHeaders[(HeaderId)].pRawValue =      \
-                                                          (RawValue);\
-        (Response).Headers.KnownHeaders[(HeaderId)].RawValueLength = \
-            (USHORT) strlen(RawValue);                               \
-    } while(FALSE)
 
-#define ALLOC_MEM(cb) HeapAlloc(GetProcessHeap(), 0, (cb))
 
-#define FREE_MEM(ptr) HeapFree(GetProcessHeap(), 0, (ptr))
+class IHttpTask
+{
+public:
+    IHttpTask() {}
+    ~IHttpTask() {}
 
+    virtual void DoTask() = 0;
+};
 
 class HTTPServer : public Thread
 {
@@ -43,6 +29,8 @@ public:
     void Cleanup();
 
     void Update();
+
+    void AddTask(IHttpTask* task) { EnterCriticalSection(&m_criticalSection); m_tasks.push_back(task); LeaveCriticalSection(&m_criticalSection); }
 private:
     unsigned int DoReceiveRequests(HANDLE hReqQueue);
     unsigned int SendHttpResponse(HANDLE hReqQueue, PHTTP_REQUEST pRequest, unsigned short StatusCode, const char* pReason, const char* pEntity );
@@ -55,6 +43,7 @@ private:
     virtual int workerFunction() override;
 
     std::vector< std::wstring > m_urlsToListenTo;
+    std::vector< IHttpTask* > m_tasks;
     HANDLE          m_httpRequestQueue;
     HTTPAPI_VERSION m_httpApiVersion;
 };

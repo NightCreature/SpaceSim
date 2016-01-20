@@ -50,6 +50,10 @@ struct GlyphQuad
 struct TextBlockInfo
 {
 	TextBlockInfo() : m_renderInstance(nullptr) {}
+    ~TextBlockInfo()
+    {
+        delete m_renderInstance;
+    }
 	std::vector<GlyphQuad> m_glyphQuads;
 	std::vector<GlyphVertex> m_glyphVerts;
 	std::string m_text; //We should not have this and have length of the string instead with the hash, though debug would be handy to have
@@ -79,7 +83,16 @@ class TextBlockCache
 {
 public:
     TextBlockCache(size_t maxTextblocks, Resource* resource) : m_maxTextBlocks(maxTextblocks), m_resource(resource) { m_textBlocks.reserve(maxTextblocks); }
-    ~TextBlockCache() {}
+    ~TextBlockCache() 
+    {
+        for (size_t counter = 0; counter < m_textBlocksToRender.size(); ++counter)
+        {
+            delete m_textBlocksToRender[counter];
+        }
+
+        m_fonts.clear();
+        m_textBlocks.clear();
+    }
 
     bool addFont(const std::string& fileName);
     bool addText(const std::string& text, const Vector4& textBox, Align alignment, size_t fontHash, float size, bool applyKerning);
