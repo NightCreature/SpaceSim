@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assert.h>
+#include <malloc.h>
 
 namespace Allocator
 {
@@ -8,9 +9,9 @@ namespace Allocator
 class AllocatorInterface
 {
 public:
-    AllocatorInterface(size_t size, void* start)
+    AllocatorInterface(size_t size)
     {
-        m_start = start;
+        m_start = malloc(size);
         m_size = size;
 
         m_usedMemory = 0;
@@ -21,6 +22,7 @@ public:
     {
         assert(m_numAllocations == 0 && m_usedMemory == 0);
 
+        free(m_start);
         m_start = nullptr;
         m_size = 0;
     }
