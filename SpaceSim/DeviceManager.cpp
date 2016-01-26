@@ -22,7 +22,7 @@ bool DeviceManager::createDevice(IDXGIAdapter* adapter)
 
     DWORD deviceCreationFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 #ifdef _DEBUG
-    //deviceCreationFlags |= D3D11_CREATE_DEVICE_DEBUG ;//| D3D11_CREATE_DEVICE_DEBUGGABLE;
+    deviceCreationFlags |= D3D11_CREATE_DEVICE_DEBUG ;//| D3D11_CREATE_DEVICE_DEBUGGABLE;
 #endif
     hr = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, 0, deviceCreationFlags, &featureLevel, 1, D3D11_SDK_VERSION, &m_device, &m_featureLevel, &m_deviceContext);
     if (FAILED(hr))

@@ -27,7 +27,7 @@ public:
         m_size = 0;
     }
 
-    virtual void* allocate(size_t size, unsigned char alignment = 4) = 0;
+    virtual void* allocate(size_t size) = 0;
 
     virtual void deallocate(void* p) = 0;
 
@@ -61,12 +61,12 @@ protected:
 
 template <class T> T* allocateNew(AllocatorInterface& allocator)
 {
-    return new (allocator.allocate(sizeof(T), __alignof(T))) T;
+    return new (allocator.allocate(sizeof(T))) T;
 }
 
 template <class T> T* allocateNew(AllocatorInterface& allocator, const T& t)
 {
-    return new (allocator.allocate(sizeof(T), __alignof(T))) T(t);
+    return new (allocator.allocate(sizeof(T))) T(t);
 }
 
 template<class T> void deallocateDelete(AllocatorInterface& allocator, T& object)
