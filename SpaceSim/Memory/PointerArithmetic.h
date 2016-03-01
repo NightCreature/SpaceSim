@@ -4,20 +4,20 @@
 
 namespace PointerMath
 {
-    inline size_t findAdjustmentForAligmentFromCurrentPtr(void* ptr, size_t alignment)
-    {
-        //                              This bit masks out anything in the original pointer and only keeps the bits that are not aligned, if this returns 0 its already aligned
-        size_t adjustment = alignment - (reinterpret_cast<uintptr_t>(ptr) & reinterpret_cast<uintptr_t>(alignment - 1)); //adjustment is how many bytes we need to add to the current pointer to make it alligned
-
-         return adjustment == alignment ? 0 : adjustment; //If we need to add a whole alignment the pointer is already aligned
-    }
-
     inline uintptr_t alignPointer(void* ptr, size_t alignment)
     {
         return reinterpret_cast<uintptr_t>(ptr) + (alignment - 1) & (~(alignment - 1)); //Add alignment to original address than make the address a multiple of the alignment
     }
 
-    inline uintptr_t alignPointerWithSpaceForHeader(void* ptr, size_t alignment, size_t headerSize)
+    inline size_t findAdjustmentForAligmentFromCurrentPtr(void* ptr, size_t alignment)
+    {
+        //                              This bit masks out anything in the original pointer and only keeps the bits that are not aligned, if this returns 0 its already aligned
+        size_t adjustment = alignment - (reinterpret_cast<uintptr_t>(ptr) & reinterpret_cast<uintptr_t>(alignment - 1)); //adjustment is how many bytes we need to add to the current pointer to make it alligned
+
+        return adjustment == alignment ? 0 : adjustment; //If we need to add a whole alignment the pointer is already aligned
+    }
+
+    inline size_t findAdjustmentrWithSpaceForHeader(void* ptr, size_t alignment, size_t headerSize)
     {
         size_t adjustment = findAdjustmentForAligmentFromCurrentPtr(ptr, alignment);
 
