@@ -9,6 +9,11 @@ namespace PointerMath
         return reinterpret_cast<uintptr_t>(ptr) + (alignment - 1) & (~(alignment - 1)); //Add alignment to original address than make the address a multiple of the alignment
     }
 
+    inline uintptr_t addSizeToPointer(void* ptr, size_t sizeToAdd)
+    {
+        return reinterpret_cast<uintptr_t>(ptr) + sizeToAdd;
+    }
+
     inline size_t findAdjustmentForAligmentFromCurrentPtr(void* ptr, size_t alignment)
     {
         //                              This bit masks out anything in the original pointer and only keeps the bits that are not aligned, if this returns 0 its already aligned
