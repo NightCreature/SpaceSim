@@ -14,10 +14,15 @@ namespace PointerMath
         return reinterpret_cast<uintptr_t>(ptr) + sizeToAdd;
     }
 
+    inline uintptr_t subtractSizeToPointer(void* ptr, size_t sizeToAdd)
+    {
+        return reinterpret_cast<uintptr_t>(ptr) - sizeToAdd;
+    }
+
     inline size_t findAdjustmentForAligmentFromCurrentPtr(void* ptr, size_t alignment)
     {
         //                              This bit masks out anything in the original pointer and only keeps the bits that are not aligned, if this returns 0 its already aligned
-        size_t adjustment = alignment - (reinterpret_cast<uintptr_t>(ptr) & reinterpret_cast<uintptr_t>(alignment - 1)); //adjustment is how many bytes we need to add to the current pointer to make it alligned
+        size_t adjustment = alignment - (reinterpret_cast<uintptr_t>(ptr) & (alignment - 1)); //adjustment is how many bytes we need to add to the current pointer to make it alligned
 
         return adjustment == alignment ? 0 : adjustment; //If we need to add a whole alignment the pointer is already aligned
     }
