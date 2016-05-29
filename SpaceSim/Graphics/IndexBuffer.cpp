@@ -1,7 +1,7 @@
-#include "IndexBuffer.h"
-#include "DeviceManager.h"
+#include "Graphics/IndexBuffer.h"
+#include "Graphics/DeviceManager.h"
 #include <iostream>
-#include "../SpaceSim/StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 void IndexBuffer::createBuffer( const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic, unsigned int bindFlag )
 {

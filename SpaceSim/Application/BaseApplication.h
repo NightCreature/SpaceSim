@@ -65,7 +65,6 @@ private:
     ShaderCache m_shaderCache;
     EffectCache m_effectCache;
     UIManger m_uiManager;
-    HTTPServer m_httpServer;
     GameResource*      m_gameResource;
     bool               m_controllerConnected;
     bool               m_useController;

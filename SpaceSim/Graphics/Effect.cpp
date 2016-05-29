@@ -1,17 +1,17 @@
-#include "Effect.h"
-#include "DeviceManager.h"
-#include "..\SpaceSim\tinyxml2.h"
+#include "Graphics/Effect.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/tinyxml2.h"
 
 #include <assert.h>
 #include <D3DCompiler.h>
 #include <algorithm>
 #include <iostream>
 #include <fstream>
-#include "..\SpaceSim\DeviceManager.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
-#include "..\SpaceSim\D3DDebugHelperFunctions.h"
-#include "..\SpaceSim\GameResource.h"
-#include "..\SpaceSim\ShaderCache.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
+#include "Core/Resource/GameResource.h"
+#include "Graphics/ShaderCache.h"
 #include <stdio.h>
 
 HASH_ELEMENT_IMPLEMENTATION(Effect)

@@ -1,13 +1,13 @@
-#include "RenderSystem.h"
-#include "DeviceManager.h"
-#include "Effect.h"
-#include "Settings.h"
-#include "SettingsManager.h"
+#include "Graphics/RenderSystem.h"
+#include "Graphics/DeviceManager.h"
+#include "Graphics/Effect.h"
+#include "Core/Settings/Settings.h"
+#include "Core/Settings/SettingsManager.h"
 #include <assert.h>
 
-#include "BaseApplication.h"
-#include "..\SpaceSim\RenderInstance.h"
-#include "../SpaceSim/StringHelperFunctions.h"
+#include "Application/BaseApplication.h"
+#include "Graphics/RenderInstance.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 

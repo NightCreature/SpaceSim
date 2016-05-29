@@ -1,5 +1,5 @@
-#include "texture.h"
-#include "..\SpaceSim\DeviceManager.h"
+#include "Graphics/texture.h"
+#include "Graphics\DeviceManager.h"
 
 #include "..\..\..\DirectXTK\Inc\WICTextureLoader.h"
 #include "..\..\..\DirectXTK\Inc\DDSTextureLoader.h"

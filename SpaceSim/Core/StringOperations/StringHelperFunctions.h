@@ -6,7 +6,6 @@
 #include <string>
 #include <sstream>
 
-#include <WinSock2.h>
 #include <Windows.h>
 #include <Stringapiset.h>
 

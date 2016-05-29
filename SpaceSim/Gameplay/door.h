@@ -1,9 +1,9 @@
 #ifndef DOOR_H
 #define DOOR_H
 
-#include "..\SpaceSim\GameObject.h"
-#include "face.h"
-#include "vector3.h"
+#include "Gameplay/GameObject.h"
+#include "Gameplay/face.h"
+#include "Math/vector3.h"
 
 class Door : public GameObject
 {

@@ -1,11 +1,11 @@
 #ifndef GUNTURRET_H
 #define GUNTURRET_H
 
-#include "..\SpaceSim\GameObject.h"
-#include "vector3.h"
-#include "laser.h"
-#include "scorchmark.h"
-#include "MapLoader.h"
+#include "Gameplay/GameObject.h"
+#include "Math/vector3.h"
+#include "Gameplay/laser.h"
+#include "Gameplay/scorchmark.h"
+#include "Loader/MapLoader.h"
 #include <string>
 
 namespace DebugGraphics

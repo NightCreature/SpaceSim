@@ -1,8 +1,8 @@
-#include "Shaders.h"
+#include "Graphics/Shaders.h"
 
-#include "D3DDebugHelperFunctions.h"
-#include "DeviceManager.h"
-#include "StringHelperFunctions.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 #include <D3Dcompiler.h>
 #include <fstream>

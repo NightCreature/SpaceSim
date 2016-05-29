@@ -1,6 +1,6 @@
-#include "KeyboardController.h"
-#include "StringHelperFunctions.h"
-#include "TypeHelpers.h"
+#include "Input/KeyboardController.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/Types/TypeHelpers.h"
 
 #include <limits>
 

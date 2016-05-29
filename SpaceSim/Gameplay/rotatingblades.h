@@ -1,9 +1,9 @@
 #ifndef RotatingBlades_H
 #define RotatingBlades_H
 
-#include "..\SpaceSim\GameObject.h"
-#include "face.h"
-#include "vector3.h"
+#include "Gameplay/GameObject.h"
+#include "Gameplay/face.h"
+#include "Math/vector3.h"
 
 class Resource;
 

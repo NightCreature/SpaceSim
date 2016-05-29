@@ -1,10 +1,10 @@
-#include "MeshGroup.h"
-#include "..\SpaceSim\BaseApplication.h"
-#include "..\SpaceSim\DeviceManager.h"
-#include "..\SpaceSim\GameResource.h"
-#include "..\SpaceSim\RenderInstance.h"
+#include "Graphics/MeshGroup.h"
+#include "Application/BaseApplication.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/Resource/GameResource.h"
+#include "Graphics/RenderInstance.h"
 #ifdef _DEBUG
-#include "..\SpaceSim\StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #endif
 
 //-------------------------------------------------------------------------

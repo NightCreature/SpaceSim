@@ -1,9 +1,9 @@
 #ifndef SQUARE_H
 #define SQUARE_H
-#include "vector2.h"
+#include "Math/vector2.h"
 
-#include "BBox.h"
-#include "model.h"
+#include "Gameplay/BBox.h"
+#include "Graphics/model.h"
 
 class Camera;
 class Matrix44;

@@ -1,7 +1,7 @@
-#include "ShaderPack.h"
-#include "GameResource.h"
-#include "EffectCache.h"
-#include "Paths.h"
+#include "Graphics/ShaderPack.h"
+#include "Core/Resource/GameResource.h"
+#include "Graphics/EffectCache.h"
+#include "Core/Paths.h"
 
 //-------------------------------------------------------------------------
 // @brief 

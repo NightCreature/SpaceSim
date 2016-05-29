@@ -1,8 +1,8 @@
-#include "InputSystem.h"
-#include "XController.h"
-#include "KeyboardController.h"
-#include "MouseController.h"
-#include "StringHelperFunctions.h"
+#include "Input/InputSystem.h"
+#include "Input/XController.h"
+#include "Input/KeyboardController.h"
+#include "Input/MouseController.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 InputSystem::AvailableActions InputSystem::m_availableActions;
 #ifdef DEBUG

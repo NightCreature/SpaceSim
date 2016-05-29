@@ -1,12 +1,12 @@
 #pragma once
-#include "icontroller.h"
+#include "Input/icontroller.h"
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include "Windows.h"
 #include "WinUser.h"
 #include "Windns.h"
-#include "StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 #include <map>
 

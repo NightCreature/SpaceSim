@@ -1,5 +1,5 @@
-#include "light.h"
-#include <..\SpaceSim\tinyxml2.h>
+#include "Graphics/light.h"
+#include <Core/tinyxml2.h>
 
 
 HASH_ELEMENT_IMPLEMENTATION(Light) 

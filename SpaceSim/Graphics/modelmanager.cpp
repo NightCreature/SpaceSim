@@ -1,12 +1,10 @@
-#include "modelmanager.h"
+#include "Graphics/modelmanager.h"
 #include "assert.h"
 #include <iostream>
-#include "Model.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
-#include "..\SpaceSim\AssimpModelLoader.h"
-#include "Model.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
-#include "..\SpaceSim\XMLModelLoader.h"
+#include "Graphics/Model.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Loader/ModelLoaders/AssimpModelLoader.h"
+#include "Loader/ModelLoaders/XMLModelLoader.h"
 
 ModelManager::~ModelManager()
 {

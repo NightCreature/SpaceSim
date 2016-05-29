@@ -1,9 +1,9 @@
 #ifndef PARTICLEEMITTER_H
 #define PARTICLEEMITTER_H
 
-#include "vector3.h"
-#include "Model.h"
-#include "color.h"
+#include "Math/vector3.h"
+#include "Graphics/Model.h"
+#include "Graphics/color.h"
 #include <deque>
 
 class Particle;

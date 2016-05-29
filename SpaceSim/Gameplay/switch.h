@@ -1,10 +1,10 @@
 #ifndef SWITCH_H
 #define SWITCH_H
 
-#include "..\SpaceSim\GameObject.h"
-#include "vector3.h"
-#include "face.h"
-#include "mesh.h"
+#include "Gameplay/GameObject.h"
+#include "Math/vector3.h"
+#include "Gameplay/face.h"
+#include "Graphics/mesh.h"
 #include <vector>
 
 class Resource;

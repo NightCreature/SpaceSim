@@ -1,11 +1,11 @@
-#include "mesh.h"
+#include "Graphics/mesh.h"
 #include <fstream>
 #include <iostream>
-#include "texture.h"
-#include "texturemanager.h"
-#include "..\SpaceSim\BaseApplication.h"
-#include "..\SpaceSim\DeviceManager.h"
-#include "..\SpaceSim\TypeHelpers.h"
+#include "Graphics/texture.h"
+#include "Graphics/texturemanager.h"
+#include "Application/BaseApplication.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/Types/TypeHelpers.h"
 #ifdef  _WIN32
 #include <windows.h>
 #endif//_WIN32

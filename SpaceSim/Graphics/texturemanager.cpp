@@ -1,8 +1,8 @@
-#include "texturemanager.h"
-#include "texture.h"
+#include "Graphics/texturemanager.h"
+#include "Graphics/texture.h"
 #include "assert.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
-#include "..\SpaceSim\DeviceManager.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Graphics/DeviceManager.h"
 #include <iostream>
 
 TextureManager::~TextureManager()

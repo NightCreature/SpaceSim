@@ -1,9 +1,9 @@
-#include "VertexBuffer.h"
-#include "DeviceManager.h"
+#include "Graphics/VertexBuffer.h"
+#include "Graphics/DeviceManager.h"
 #include <sstream>
 #include <iostream>
 
-#include "../SpaceSim/StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description

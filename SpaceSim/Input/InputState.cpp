@@ -1,6 +1,6 @@
-#include "InputState.h"
-#include "MathUtilityFunctions.h"
-#include "InputSystem.h"
+#include "Input/InputState.h"
+#include "Math/MathUtilityFunctions.h"
+#include "Input/InputSystem.h"
 
 #ifdef _DEBUG
 //-----------------------------------------------------------------------------

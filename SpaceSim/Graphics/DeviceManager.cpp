@@ -1,7 +1,7 @@
-#include "DeviceManager.h"
+#include "Graphics/DeviceManager.h"
 #include <iostream>
 
-#include "..\SpaceSim\StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description

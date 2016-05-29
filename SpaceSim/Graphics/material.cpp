@@ -1,12 +1,12 @@
-#include "material.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
+#include "Graphics/material.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include "Windows.h"
-#include "texture.h"
-#include "texturemanager.h"
-#include "..\SpaceSim\DeviceManager.h"
-#include "..\SpaceSim\EffectCache.h"
-#include "..\SpaceSim\LightManager.h"
-#include "..\SpaceSim\TypeHelpers.h"
+#include "Graphics/texture.h"
+#include "Graphics/texturemanager.h"
+#include "Graphics/DeviceManager.h"
+#include "Graphics/EffectCache.h"
+#include "Graphics/LightManager.h"
+#include "Core/Types/TypeHelpers.h"
 
 HASH_ELEMENT_IMPLEMENTATION(Material)
 

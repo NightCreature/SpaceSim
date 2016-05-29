@@ -1,10 +1,10 @@
-#include "OrientationAxis.h"
+#include "Graphics/OrientationAxis.h"
 
-#include "BaseApplication.h"
-#include "DeviceManager.h"
-#include "EffectCache.h"
+#include "Application/BaseApplication.h"
+#include "Graphics/DeviceManager.h"
+#include "Graphics/EffectCache.h"
 
-#include "tinyxml2.h"
+#include "Core/tinyxml2.h"
 
 #include <d3d11.h>
 #include <assert.h>

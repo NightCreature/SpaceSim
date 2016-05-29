@@ -1,8 +1,8 @@
 #pragma once
 
-#include "vector2.h"
-#include "vector3.h"
-#include "matrix44.h"
+#include "Math/vector2.h"
+#include "Math/vector3.h"
+#include "Math/matrix44.h"
 
 class Frustum
 {

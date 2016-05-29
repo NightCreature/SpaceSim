@@ -1,6 +1,6 @@
 #ifndef CORE_H
 #define CORE_H
-#include "..\SpaceSim\GameObject.h"
+#include "Gameplay/GameObject.h"
 
 class Resource;
 

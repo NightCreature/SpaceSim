@@ -1,7 +1,7 @@
-#include "IController.h"
-#include "InputSystem.h"
-#include "TypeHelpers.h"
-#include "HashString.h"
+#include "Input/IController.h"
+#include "Input/InputSystem.h"
+#include "Core/Types/TypeHelpers.h"
+#include "Core/StringOperations/HashString.h"
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark

@@ -1,5 +1,5 @@
-#include "MouseControlDefines.h"
-#include "StringHelperFunctions.h"
+#include "Input/MouseControlDefines.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 namespace InputDefines
 {
