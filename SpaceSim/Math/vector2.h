@@ -1,9 +1,9 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H
 
-#include "..\SpaceSim\AlignMacros.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
-#include "..\SpaceSim\tinyxml2.h"
+#include "Memory/AlignMacros.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/tinyxml2.h"
 #include <iostream>
 
 class Vector2

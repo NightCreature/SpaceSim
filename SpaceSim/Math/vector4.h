@@ -1,8 +1,8 @@
 #ifndef VECTOR4_H
 #define VECTOR4_H
 
-#include "..\SpaceSim\AlignMacros.h"
-#include <vector3.h>
+#include "Memory/AlignMacros.h"
+#include <Math/vector3.h>
 #include <iostream>
 
 class ALIGN16 Vector4

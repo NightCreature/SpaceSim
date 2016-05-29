@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Input.h"
-#include "matrix44.h"
-#include "matrixmath.h"
-#include "vector3.h"
+#include "Input/Input.h"
+#include "Math/matrix44.h"
+#include "Math/matrixmath.h"
+#include "Math/vector3.h"
 
 #include <sstream>
 #include <iostream>

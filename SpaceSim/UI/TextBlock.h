@@ -1,12 +1,12 @@
 #pragma once
 
-#include "..\..\MatrixAndVectorMath\vector2.h"
-#include "vector4.h"
+#include "math/vector2.h"
+#include "math/vector4.h"
 #include "BitmapFont.h"
-#include "Material.h"
-#include "..\GeometryInstance.h"
-#include "..\ShaderInstance.h"
-#include "..\RenderInstance.h"
+#include "Graphics/material.h"
+#include "Graphics/GeometryInstance.h"
+#include "Graphics/ShaderInstance.h"
+#include "Graphics/RenderInstance.h"
 #include <string>
 #include <vector>
 

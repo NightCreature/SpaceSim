@@ -1,9 +1,9 @@
 #pragma once 
 
-#include "IndexBuffer.h"
-#include "VertexBuffer.h"
-#include "TypeHelpers.h"
-#include "StringHelperFunctions.h"
+#include "Graphics/IndexBuffer.h"
+#include "Graphics/VertexBuffer.h"
+#include "Core/Types/TypeHelpers.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <vector>
 
 //Wrapper to hold a vertex and index buffer reference

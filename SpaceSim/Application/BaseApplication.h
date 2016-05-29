@@ -1,32 +1,29 @@
 #pragma once
 
-#include <WinSock2.h>
+#include "Graphics/CameraManager.h"
+#include "Graphics/RenderSystem.h"
+#include "Application/GameWindow.h"
+#include "Core/Settings/SettingsParser.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Gameplay/GameObjectManager.h"
+#include "Graphics/particlesystemmanager.h"
+#include "Graphics/LaserManager.h"
+#include "Graphics/LightManager.h"
+#include "Core/Resource/GameResource.h"
+#include "Input/InputSystem.h"
+#include "Loader/MapLoader.h"
+#include "Core/Thread/Timer.h"
+#include "Graphics/EffectCache.h"
+#include "Graphics/ShaderCache.h"
+#include "Core/Paths.h"
+#include "UI/UIManger.h"
+#include "Gameplay/EntityManager.h"
 
-#include "CameraManager.h"
-#include "RenderSystem.h"
-#include "GameWindow.h"
-#include "SettingsParser.h"
-#include "SettingsManager.h"
-#include "GameObjectManager.h"
-#include "particlesystemmanager.h"
-#include "LaserManager.h"
-#include "LightManager.h"
-#include "GameResource.h"
-#include "InputSystem.h"
-#include "MapLoader.h"
-#include "Timer.h"
-#include "EffectCache.h"
-#include "ShaderCache.h"
-#include "Paths.h"
-#include "UIManger.h"
-#include "EntityManager.h"
-
-#include "MeshComponentData.h"
+#include "Graphics/MeshComponentData.h"
 
 #include <windows.h>
 #include "Memory.h"
 
-#include "Http Server/httpserver.h"
 #include "Logging/Logger.h"
 
 

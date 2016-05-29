@@ -2,10 +2,10 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include "Color.h"
-#include "..\SpaceSim\Effect.h"
+#include "Graphics/Color.h"
+#include "Graphics/Effect.h"
 #include "D3D11.h"
-#include "..\SpaceSim\tinyxml2.h"
+#include "Core/tinyxml2.h"
 #include <string>
 #include <vector>
 

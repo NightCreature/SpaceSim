@@ -1,4 +1,4 @@
-#include "StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <assert.h>
 
 //#ifndef _DEBUG

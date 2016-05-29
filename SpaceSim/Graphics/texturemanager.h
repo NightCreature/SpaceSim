@@ -1,7 +1,7 @@
 #ifndef TEXTUREMANAGER_H
 #define TEXTUREMANAGER_H
-#include "..\SpaceSim\tinyxml2.h"
-#include "Texture.h"
+#include "Core/tinyxml2.h"
+#include "Graphics/Texture.h"
 #include <d3d11.h>
 #include <map>
 #include <string>

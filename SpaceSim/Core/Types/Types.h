@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Messages.h"
-#include "Resourceable.h"
-#include "GameResource.h"
+#include "Core/Resource/Resourceable.h"
+#include "Core/Resource/GameResource.h"
 #include <cstddef>
 #include <vector>
 

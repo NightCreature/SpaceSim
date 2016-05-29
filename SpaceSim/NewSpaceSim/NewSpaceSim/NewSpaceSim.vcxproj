@@ -68,7 +68,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -114,9 +116,9 @@
     <ClInclude Include="..\..\Application\BaseApplication.h" />
     <ClInclude Include="..\..\Application\displaywindow.h" />
     <ClInclude Include="..\..\Application\GameWindow.h" />
-    <ClInclude Include="..\..\Core\Buffer.h" />
     <ClInclude Include="..\..\Core\ICommand.h" />
     <ClInclude Include="..\..\Core\Paths.h" />
+    <ClInclude Include="..\..\Core\Resource\GameResource.h" />
     <ClInclude Include="..\..\Core\Resource\resource.h" />
     <ClInclude Include="..\..\Core\Resource\Resourceable.h" />
     <ClInclude Include="..\..\Core\Settings\Settings.h" />
@@ -139,7 +141,6 @@
     <ClInclude Include="..\..\Gameplay\forcefield.h" />
     <ClInclude Include="..\..\Gameplay\GameObject.h" />
     <ClInclude Include="..\..\Gameplay\GameObjectManager.h" />
-    <ClInclude Include="..\..\Gameplay\GameResource.h" />
     <ClInclude Include="..\..\Gameplay\gunturret.h" />
     <ClInclude Include="..\..\Gameplay\InfinitySphere.h" />
     <ClInclude Include="..\..\Gameplay\laser.h" />
@@ -240,6 +241,7 @@
     <ClCompile Include="..\..\Application\GameWindow.cpp" />
     <ClCompile Include="..\..\Application\main.cpp" />
     <ClCompile Include="..\..\Core\Paths.cpp" />
+    <ClCompile Include="..\..\Core\Resource\GameResource.cpp" />
     <ClCompile Include="..\..\Core\Resource\Resourceable.cpp" />
     <ClCompile Include="..\..\Core\Settings\Settings.cpp" />
     <ClCompile Include="..\..\Core\Settings\SettingsManager.cpp" />
@@ -258,7 +260,6 @@
     <ClCompile Include="..\..\Gameplay\forcefield.cpp" />
     <ClCompile Include="..\..\Gameplay\GameObject.cpp" />
     <ClCompile Include="..\..\Gameplay\GameObjectManager.cpp" />
-    <ClCompile Include="..\..\Gameplay\GameResource.cpp" />
     <ClCompile Include="..\..\Gameplay\gunturret.cpp" />
     <ClCompile Include="..\..\Gameplay\InfinitySphere.cpp" />
     <ClCompile Include="..\..\Gameplay\laser.cpp" />

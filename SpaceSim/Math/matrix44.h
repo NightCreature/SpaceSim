@@ -1,9 +1,9 @@
 #ifndef MATRIX44_H
 #define MATRIX44_H
 
-#include "..\SpaceSim\AlignMacros.h"
-#include "vector4.h"
-#include "vector3.h"
+#include "Memory/AlignMacros.h"
+#include "Math/vector4.h"
+#include "Math/vector3.h"
 #include <cmath>
 
 //Operators assume a row major implementation of this matrix so v * T ipv T * v for normal transformations

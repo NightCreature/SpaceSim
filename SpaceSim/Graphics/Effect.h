@@ -1,8 +1,8 @@
 #pragma once
-#include "matrix44.h"
-#include "..\SpaceSim\DeviceManager.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
-#include "..\SpaceSim\Shaders.h"
+#include "Math/matrix44.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Graphics/Shaders.h"
 #include <d3d11.h>
 #include <D3Dcompiler.h>
 #include <string>

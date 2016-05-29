@@ -1,7 +1,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "..\SpaceSim\StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <fstream>
 
 namespace tinyxml2

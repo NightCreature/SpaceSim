@@ -1,6 +1,6 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
-#include "..\SpaceSim\StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <d3d11.h>
 #include <string>
 #include <vector>

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "StringHelperFunctions.h"
-#include "Types.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/Types/Types.h"
 
-#include "tinyxml2.h"
+#include "Core/tinyxml2.h"
 #include <d3d11.h>
 #include <string>
 

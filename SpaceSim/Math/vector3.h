@@ -1,8 +1,8 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
-#include "..\SpaceSim\AlignMacros.h"
-#include "..\SpaceSim\tinyxml2.h"
+#include "Memory/AlignMacros.h"
+#include "Core/tinyxml2.h"
 #include <iostream>
 
 class Vector3
