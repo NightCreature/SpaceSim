@@ -119,6 +119,7 @@ void MaterialSetting::deserialise( const tinyxml2::XMLElement* element)
 void VectorSetting::deserialise( const tinyxml2::XMLElement* element)
 {
     DeserialisableSetting::deserialise(element);
+	m_numberElements = 0;
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("type");
     if (attribute)
     {

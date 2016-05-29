@@ -63,13 +63,13 @@ public:
     }
 
     short m_id;
-    float m_x;
-    float m_y;
-    float m_width;
-    float m_height;
-    float m_xOffset;
+    float m_x; //pos in texture, needed to find the uv coordinate
+    float m_y; //pos in texture, needed to find the uv coordinate
+    float m_width; //width in texture, needed to find the uv coordinate
+    float m_height; //height in texture, needed to find the uv coordinate
+    float m_xOffset; //Add this to the current cursor to find the left edge of the glyph square
     float m_yOffset;
-    float m_xAdvance;
+    float m_xAdvance; //Add this to the current cursor to find the next cursor position, should add the kerning value if there is one for next cursor position
     std::vector<KerningInformation> m_kerningInformation;
 
     static const size_t idHash;
@@ -158,7 +158,7 @@ class BitmapFont
 {
 public:
     BitmapFont() {}
-    ~BitmapFont() {}
+    ~BitmapFont() { m_glyphs.clear(); }
 
     bool openFont(const std::string& bmpFile, Resource* resource);
     const Glyph& getGlyph(short id) const;

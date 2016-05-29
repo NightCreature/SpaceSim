@@ -18,7 +18,8 @@ void IInputDevice::deserialise( const tinyxml2::XMLElement* element, const Input
             if (inputActionAttr != nullptr)
             {
                 HashString hash(inputActionAttr->Value());
-                InputActions::ActionType inputActionType = inputSystem.getInputActionFromName(hash.getHash());
+				InputActions::ActionType inputActionType;
+				inputSystem.getInputActionFromName(hash.getHash(), inputActionType);
                 StandardInputAction inputAction(inputActionType);
                 m_controllerState.addStandardAction(inputAction);
                 for (const tinyxml2::XMLElement* inputElement = element->FirstChildElement(); inputElement; inputElement = inputElement->NextSiblingElement())

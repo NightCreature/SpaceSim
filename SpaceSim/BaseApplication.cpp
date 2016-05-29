@@ -29,6 +29,8 @@ HashString exitGame("exit_game");
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Matrix44 Application::m_view;
 Matrix44 Application::m_projection;
+Logger Application::m_logger;
+
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
@@ -51,9 +53,14 @@ Text::TextBlockCache* cache;
 bool Application::initialise()
 {
     m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
-                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager);
+                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, &m_httpServer);
+
+    m_httpServer.Initialise();
+
+    m_logger.addLogger(new OutputDebugLog());
+    //m_logger.addLogger(new HttpDebugLog());
     
-    cache = new Text::TextBlockCache(1000, m_gameResource);
+    //cache = new Text::TextBlockCache(1000, m_gameResource);
     
     bool returnValue = true;
 
@@ -87,7 +94,8 @@ bool Application::initialise()
     ShaderPack shaderPack(m_gameResource);
     shaderPack.loadShaderPack("shader_pack.xml");
     m_laserManager.initialise(m_gameResource);
-    returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+	returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+	returnValue &= m_cameraSystem.createCamera(*m_gameResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
     returnValue &= m_cameraSystem.createCamera(*m_gameResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
     Player* player = new Player(m_gameResource);
     player->initialize(m_cameraSystem);
@@ -95,10 +103,14 @@ bool Application::initialise()
 
 
     //Test Code
-    Text::BitmapFont bitmapFont;
-    bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt", m_gameResource);
-    cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/arialhighres.fnt.conv.fnt");
-    cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 12.0f, true);
+	m_cameraSystem.update(m_elapsedTime, m_time);
+	const Camera* cam = m_cameraSystem.getCamera("global");
+	m_view = cam->getCamera();
+
+    //Text::BitmapFont bitmapFont;
+    //bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt", m_gameResource);
+    //cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt");
+    //cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 48.0f, true);
 
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");
     if (mapFileName)
@@ -108,7 +120,6 @@ bool Application::initialise()
 
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts);
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons);
-
 
     return returnValue;
 }
@@ -146,10 +157,10 @@ void Application::mainGameLoop()
             m_view = cam->getCamera();
             
             RenderInstanceTree renderList;
-            renderList.reserve(m_previousRenderInstanceListSize); //Upfront reserve as much space as the last frame used, it should at max from once or twice a frame this way, ignoring the first one
+            //renderList.reserve(m_previousRenderInstanceListSize); //Upfront reserve as much space as the last frame used, it should at max from once or twice a frame this way, ignoring the first one
             m_gameObjectManager.update(renderList, m_elapsedTime, input);
             m_gameResource->getLaserManager().update(renderList, m_elapsedTime, m_renderSystem.getDeviceMananger());
-			cache->ProvideRenderInstances(renderList);
+			//cache->ProvideRenderInstances(renderList);
 
             m_renderSystem.beginDraw(renderList, m_gameResource);
             m_renderSystem.update(m_gameResource, renderList, m_elapsedTime, m_time);
@@ -165,7 +176,9 @@ void Application::mainGameLoop()
             //    PostQuitMessage(0);
             //}
 
-            if (input.getInput(0)->getActionValue(InputSystem::getInputActionFromName(exitGame)))
+			InputActions::ActionType inputAction;
+			InputSystem::getInputActionFromName(exitGame, inputAction);
+            if (input.getInput(0)->getActionValue(inputAction))
             {
                 PostQuitMessage(0);
             }
@@ -202,6 +215,8 @@ LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wP
 //-----------------------------------------------------------------------------
 void Application::cleanup()
 {
+    m_httpServer.killThread();
+    m_httpServer.Cleanup();
     m_gameResource->getDeviceManager().clearDeviceState();
     m_gameResource->getSettingsManager().cleanup();
     m_renderSystem.cleanup();
@@ -209,5 +224,8 @@ void Application::cleanup()
     m_gameResource->getDeviceManager().cleanup();
     m_gameResource->getModelManager().cleanup();
     m_gameResource->getGameObjectManager().cleanup();
+
+    //Need to add a cleanup call to the cache
+    //delete cache;
 }
 

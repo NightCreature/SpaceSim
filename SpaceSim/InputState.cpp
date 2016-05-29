@@ -1,5 +1,6 @@
 #include "InputState.h"
 #include "MathUtilityFunctions.h"
+#include "InputSystem.h"
 
 #ifdef _DEBUG
 //-----------------------------------------------------------------------------
@@ -11,7 +12,7 @@ void InputState::printState() const
     MSG_TRACE_CHANNEL("Input State", "/**********************INPUT STATE DATA*********************************/");
     for (auto inputAction : m_inputState)
     {
-        MSG_TRACE_CHANNEL( "Input State", "Input state for action %s is value %f ", inputAction.getAction().getNameString().c_str(), inputAction.getValue());
+        MSG_TRACE_CHANNEL( "Input State", "Input state for action %s is value %f ", InputSystem::m_actionNames[inputAction.getAction()], inputAction.getValue());
     }
 }
 #endif
@@ -43,7 +44,7 @@ void InputState::mergeInputState(const InputState& input)
 #ifdef _DEBUG
             if (test)
             {
-                MSG_TRACE_CHANNEL("Input State", "During merging %s value will change to %f", standardInputAction.getAction().getNameString().c_str(), currentValue);
+                MSG_TRACE_CHANNEL("Input State", "During merging %s value will change to %f", InputSystem::m_actionNames[standardInputAction.getAction()], currentValue);
             }
 #endif
 

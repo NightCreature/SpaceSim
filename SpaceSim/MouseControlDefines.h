@@ -2,30 +2,32 @@
 
 #include <map>
 
-namespace Input
+namespace InputDefines
 {
-    class MouseControlDefinitions
+class MouseControlDefinitions
+{
+public:
+    MouseControlDefinitions();
+    ~MouseControlDefinitions() {}
+    enum MouseInput
     {
-    public:
-        MouseControlDefinitions();
-        ~MouseControlDefinitions() {}
-        enum MouseInput
-        {
-            PositiveX,
-            NegativeX,
-            PositiveY,
-            NegativeY,
-            MouseButton1,
-            MouseButton2,
-            MouseButton3,
-            MouseButton4,
-            MouseButton5,
-            MouseWheelUp,
-            MouseWheelDown
-        };
+        PositiveX,
+        NegativeX,
+        PositiveY,
+        NegativeY,
+        MouseButton1,
+        MouseButton2,
+        MouseButton3,
+        MouseButton4,
+        MouseButton5,
+        MouseWheelUp,
+        MouseWheelDown,
 
-        typedef std::map<unsigned int, MouseInput> NameHashToMouseInput;
-        typedef std::pair<unsigned int, MouseInput> NameHashToMouseInputPair;
-        NameHashToMouseInput m_MouseToAction;
+        NumInputActions
     };
+    MouseInput FindControllerInputIdForHashId(unsigned int hashId) const;
+private:
+    unsigned int m_inputNameHash[NumInputActions];
+    MouseInput m_xControllerInputId[NumInputActions];
+};
 }

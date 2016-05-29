@@ -2,37 +2,57 @@
 
 #include "StringHelperFunctions.h"
 
-namespace Input
-{
+#include <algorithm>
 
+namespace InputDefines
+{
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
 XControllerDefines::XControllerDefines()
 {
-    m_XInputToAction = NameHashToXInput();
+    m_inputNameHash[LeftStickPositiveX] = hashString("left_stick_positive_x");
+    m_inputNameHash[LeftStickNegativeX] = hashString("left_stick_negative_x");
+    m_inputNameHash[LeftStickPositiveY] = hashString("left_stick_positive_y");
+    m_inputNameHash[LeftStickNegativeY] = hashString("left_stick_negative_y");
+    m_inputNameHash[RightStickPositiveX] = hashString("right_stick_positive_x");
+    m_inputNameHash[RightStickNegativeX] = hashString("right_stick_negative_x");
+    m_inputNameHash[RightStickPositiveY] = hashString("right_stick_positive_y");
+    m_inputNameHash[RightStickNegativeY] = hashString("right_stick_negative_y");
+    m_inputNameHash[LeftTrigger] = hashString("left_trigger");
+    m_inputNameHash[RightTrigger] = hashString("right_trigger");
+    m_inputNameHash[LeftShoulderButton] = hashString("left_shoulder_button");
+    m_inputNameHash[RightShoulderButton] = hashString("right_shoulder_button");
+    m_inputNameHash[BackButton] = hashString("back_button");
+    m_inputNameHash[StartButton] = hashString("start_button");
+    m_inputNameHash[AButton] = hashString("a_button");
+    m_inputNameHash[BBUtton] = hashString("b_button");
+    m_inputNameHash[XButton] = hashString("x_button");
+    m_inputNameHash[YButton] = hashString("y_button");
+    m_inputNameHash[POVLeft] = hashString("pov_left");
+    m_inputNameHash[POVRight] = hashString("pov_right");
+    m_inputNameHash[POVUp] = hashString("pov_up");
+    m_inputNameHash[POVDown] = hashString("pov_down");
+    m_inputNameHash[LeftStickClick] = hashString("left_stick_click");
+    m_inputNameHash[RightStickClick] = hashString("right_stick_click");
+}
 
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("left_stick_positive_x"), LeftStickPositiveX));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("left_stick_negative_x"), LeftStickNegativeX));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("left_stick_positive_y"), LeftStickPositiveY));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("left_stick_negative_y"), LeftStickNegativeY));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("right_stick_positive_x"), RightStickPositiveX));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("right_stick_negative_x"), RightStickNegativeX));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("right_stick_positive_y"), RightStickPositiveY));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("right_stick_negative_y"), RightStickNegativeY));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("left_trigger"), LeftTrigger));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("right_trigger"), RightTrigger));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("left_shoulder_button"), LeftShoulderButton));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("right_shoulder_button"), RightShoulderButton));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("back_button"), BackButton));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("start_button"), StartButton));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("a_button"), AButton));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("b_button"), BBUtton));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("x_button"), XButton));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("y_button"), YButton));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("pov_left"), POVLeft));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("pov_right"), POVRight));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("pov_up"), POVUp));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("pov_down"), POVDown));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("left_stick_click"), LeftStickClick));
-    m_XInputToAction.insert(NameHashToXInputPair(hashString("right_stick_click"), RightStickClick));
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+XControllerDefines::XControllerInput XControllerDefines::FindControllerInputIdForHashId(unsigned int hashId) const
+{
+    for (short counter = 0; counter < NumInputActions; ++counter)
+    {
+        if (m_inputNameHash[counter] == hashId)
+        {
+            return static_cast<XControllerInput>(counter);
+        }
+    }
+
+    return NumInputActions;
 }
 
 }

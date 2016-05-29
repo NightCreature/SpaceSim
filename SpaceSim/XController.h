@@ -2,6 +2,7 @@
 
 #include "IController.h"
 #include "StringHelperFunctions.h"
+#include "XControllerDefines.h"
 
 #include <map>
 #include <Windows.h>
@@ -56,7 +57,9 @@ class XInputDevice : public IInputDevice
 {
 public:
 	XInputDevice(const int controllerNr);
-    ~XInputDevice() {}
+    ~XInputDevice() 
+    {
+    }
 
     void initialise(HWND hwnd) override;
     const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput) override;
@@ -72,9 +75,7 @@ private:
     virtual void internalActionSetup(InputActions::ActionType, const tinyxml2::XMLAttribute* input) override;
     void calculateThumbStickDirectionAndMagnitude(float stickX, float stickY, bool isLeftStick, Vector4& directionAndMagnitude);
 
-    typedef std::map<unsigned int, InputActions::ActionType> PhysicalInputMapping;
-    typedef std::pair<unsigned int, InputActions::ActionType> PhysicalInputPair;
-    PhysicalInputMapping m_physicalKeyToAction;
+    InputActions::ActionType m_PhysicalInputState[InputDefines::XControllerDefines::NumInputActions];
 
     int            m_controllerIndex;
     bool           m_controllerActive;

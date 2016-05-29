@@ -12,6 +12,7 @@ cbuffer WVPConstants : register(b0)
 struct VS_INPUT
 {
     float4 Pos  : POSITION0; //xy is position zw is uv coordinates
+    float2 Tex  : TEXCOORD0;
 };
 
 struct PS_INPUT
@@ -26,10 +27,10 @@ struct PS_INPUT
 PS_INPUT vs_main( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;
-    float4 position = float4(input.Pos.xy, 1, 1);
-    output.Pos = mul( position, World );
+    output.Pos = mul( input.Pos, World );
     output.Pos = mul( output.Pos, View );
     output.Pos = mul( output.Pos, Projection );
-    output.Tex = input.Pos.zw; 
+    //output.Pos = position;
+    output.Tex = input.Tex; 
     return output;
 }

@@ -28,7 +28,7 @@ bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, std::strin
 	//Should convert through multibyte function this is dangerous and will fail on IME support
     std::string extension = extractExtensionFromFileName(filename);
 	std::wstring wfilename;
-	convertToWideString(extension, wfilename);
+	convertToWideString(filename, wfilename);
     if (extension == "dds")
     {
         hr = DirectX::CreateDDSTextureFromFile(device, wfilename.c_str(), 0, &m_textureShaderResourceView);
