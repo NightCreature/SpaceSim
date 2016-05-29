@@ -1,17 +1,17 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "vector3.h"
+#include "Math/vector3.h"
 #include <string>
 #include <list>
-#include "..\SpaceSim\Camera.h"
-#include "laser.h"
-#include "scorchmark.h"
-#include "particleemitter.h"
-#include "bbox.h"
-#include "..\SpaceSim\Camera.h"
-#include "..\SpaceSim\GameObject.h"
-#include "..\SpaceSim\tinyxml2.h"
+#include "Graphics/Camera.h"
+#include "Gameplay/laser.h"
+#include "Gameplay/scorchmark.h"
+#include "Gameplay/particleemitter.h"
+#include "Gameplay/bbox.h"
+#include "Graphics/Camera.h"
+#include "Gameplay/GameObject.h"
+#include "Core/tinyxml2.h"
 
 class MapLoader;
 class RenderInstance;

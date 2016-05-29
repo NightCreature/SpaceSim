@@ -1,9 +1,9 @@
 #ifndef BOX_H
 #define BOX_H
 
-#include "model.h"
-#include "Vector3.h"
-#include "face.h"
+#include "Graphics/model.h"
+#include "Math/Vector3.h"
+#include "Gameplay/face.h"
 
 //Doesnt need to be  class only generation fucntion is enough
 namespace Box

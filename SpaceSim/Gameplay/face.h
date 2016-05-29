@@ -1,7 +1,7 @@
 #ifndef FACE_H
 #define FACE_H
 
-#include "Model.h"
+#include "Graphics/Model.h"
 #include <vector>
 #include <map>
 

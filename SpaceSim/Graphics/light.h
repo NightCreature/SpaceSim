@@ -1,12 +1,12 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include "Vector3.h"
-#include "Vector4.h"
-#include "Color.h"
+#include "Math/Vector3.h"
+#include "Math/Vector4.h"
+#include "Graphics/color.h"
 #include "assert.h"
 
-#include "..\SpaceSim\Effect.h"
+#include "Graphics/Effect.h"
 
 namespace tinyxml2
 {

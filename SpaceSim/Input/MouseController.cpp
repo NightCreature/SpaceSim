@@ -1,7 +1,7 @@
-#include "MouseController.h"
-#include "TypeHelpers.h"
-#include "MouseControlDefines.h"
-#include "MathUtilityFunctions.h"
+#include "Input/MouseController.h"
+#include "Core/Types/TypeHelpers.h"
+#include "Input/MouseControlDefines.h"
+#include "Math/MathUtilityFunctions.h"
 
 HASH_ELEMENT_IMPLEMENTATION(MouseController);
 

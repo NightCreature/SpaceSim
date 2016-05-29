@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GeometryInstance.h"
-#include "Laser.h"
-#include "VertexBuffer.h"
+#include "Graphics/GeometryInstance.h"
+#include "Gameplay/Laser.h"
+#include "Graphics/VertexBuffer.h"
 #include <deque>
 
 class ShaderInstance;

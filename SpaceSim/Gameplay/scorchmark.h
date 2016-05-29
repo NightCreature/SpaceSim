@@ -1,10 +1,10 @@
 #ifndef SCORCHMARK_H
 #define SCORCHMARK_H
 
-#include "vector3.h"
-#include "matrix44.h"
-#include "square.h"
-#include "..\SpaceSim\GameObject.h"
+#include "Math/vector3.h"
+#include "Math/matrix44.h"
+#include "Gameplay/square.h"
+#include "Gameplay/GameObject.h"
 
 class Resource;
 

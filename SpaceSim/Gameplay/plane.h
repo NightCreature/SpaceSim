@@ -1,11 +1,11 @@
 #ifndef PLANE_H
 #define PLANE_H
 
-#include "..\SpaceSim\GameObject.h"
-#include "vector3.h"
-#include "face.h"
+#include "Gameplay/GameObject.h"
+#include "Math/vector3.h"
+#include "Gameplay/face.h"
 
-#include "..\SpaceSim\EntityManager.h"
+#include "Gameplay/EntityManager.h"
 
 #include <vector>
 #include <sstream>

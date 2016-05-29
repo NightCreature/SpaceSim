@@ -1,10 +1,10 @@
 #ifndef LASER_H
 #define LASER_H
 
-#include "box.h"
-#include "matrix44.h"
-#include "..\SpaceSim\ShaderInstance.h"
-#include "vector3.h"
+#include "Gameplay/box.h"
+#include "Math/matrix44.h"
+#include "Graphics/ShaderInstance.h"
+#include "Math/vector3.h"
 
 class DeviceManager;
 

@@ -2,7 +2,7 @@
 #define PARTICLESYSTEMMANAGER_H
 
 #include <vector>
-#include "vector3.h"
+#include "Math/vector3.h"
 
 class ParticleEmitter;
 class Particle;

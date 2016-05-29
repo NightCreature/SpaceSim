@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Settings.h"
-#include "StringHelperFunctions.h"
+#include "Core/Settings/Settings.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <vector>
 
 //-----------------------------------------------------------------------------

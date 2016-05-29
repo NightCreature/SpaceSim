@@ -3,8 +3,8 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "..\SpaceSim\GameObject.h"
-#include "..\SpaceSim\Types.h"
+#include "Gameplay/GameObject.h"
+#include "Core/Types/Types.h"
 
 class GameObjectManager
 {

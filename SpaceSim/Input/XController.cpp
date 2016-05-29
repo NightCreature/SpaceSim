@@ -4,10 +4,10 @@
 #include <XInput.h>
 #include <iostream>
 
-#include "../SpaceSim/StringHelperFunctions.h"
-#include "../SpaceSim/TypeHelpers.h"
-#include "../SpaceSim/XControllerDefines.h"
-#include "vector4.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/Types/TypeHelpers.h"
+#include "Input/XControllerDefines.h"
+#include "Math/vector4.h"
 
 HASH_ELEMENT_IMPLEMENTATION(XInputDevice)
 

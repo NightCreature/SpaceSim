@@ -1,6 +1,6 @@
-#include "XControllerDefines.h"
+#include "Input/XControllerDefines.h"
 
-#include "StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 #include <algorithm>
 

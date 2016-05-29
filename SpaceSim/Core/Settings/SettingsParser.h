@@ -1,8 +1,8 @@
 #pragma once
-#include "Settings.h"
+#include "Core/Settings/Settings.h"
 #include <map>
 #include <string>
-#include "../SpaceSim/SettingsManager.h"
+#include "Core/Settings/SettingsManager.h"
 
 namespace tinyxml2
 {
