@@ -1,8 +1,8 @@
 #ifndef BOUNDINGBOX_H
 #define BOUNDINGBOX_H
 
-#include "vector3.h"
-#include "matrix44.h"
+#include "Math/vector3.h"
+#include "Math/matrix44.h"
 #include <iostream>
 
 class Bbox

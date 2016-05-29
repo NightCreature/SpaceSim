@@ -1,5 +1,5 @@
-#include "AssimpModelLoader.h"
-#include "mesh.h"
+#include "Loader/ModelLoaders/AssimpModelLoader.h"
+#include "Graphics/mesh.h"
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags

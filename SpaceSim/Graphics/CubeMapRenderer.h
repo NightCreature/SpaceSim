@@ -1,8 +1,8 @@
 #pragma once
-#include "Types.h"
-#include "Vector3.h"
-#include "Camera.h"
-#include "DeviceManager.h"
+#include "Core/Types/Types.h"
+#include "Math/Vector3.h"
+#include "Graphics/Camera.h"
+#include "Graphics/DeviceManager.h"
 #include <d3d11.h>
 #include <string>
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "..\SpaceSim\RenderInstance.h"
-#include "..\SpaceSim\MeshGroup.h"
-#include "..\SpaceSim\Types.h"
-#include "BBox.h"
+#include "Graphics/RenderInstance.h"
+#include "Graphics/MeshGroup.h"
+#include "Core/Types\Types.h"
+#include "Gameplay/BBox.h"
 #include <list>
 #include <vector>
 

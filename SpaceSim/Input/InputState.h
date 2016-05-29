@@ -2,9 +2,9 @@
 
 #include <algorithm>
 #include <vector>
-#include "StringHelperFunctions.h"
-#include "tinyxml2.h"
-#include "InputAction.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/tinyxml2.h"
+#include "Input/InputAction.h"
 
 class InputState
 {

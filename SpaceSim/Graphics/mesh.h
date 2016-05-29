@@ -1,13 +1,13 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "vector3.h"
-#include "vector2.h"
-#include "matrix44.h"
-#include "material.h"
-#include "Model.h"
-#include "color.h"
-#include "bbox.h"
+#include "Math/vector3.h"
+#include "Math/vector2.h"
+#include "Math/matrix44.h"
+#include "Graphics/material.h"
+#include "Graphics/Model.h"
+#include "Graphics/color.h"
+#include "Gameplay/bbox.h"
 #include <string>
 #include <vector>
 #include <map>

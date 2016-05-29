@@ -1,5 +1,5 @@
-#include "vector3.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
+#include "Math/vector3.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <cmath>
 
 const float Vector3::EQUALPRECISION3 = 0.00001f;

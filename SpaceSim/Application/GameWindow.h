@@ -4,8 +4,8 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <Windows.h>
-#include "XController.h"
-#include "..\SpaceSim\Camera.h"
+#include "Input/XController.h"
+#include "Graphics/Camera.h"
 
 //-----------------------------------------------------------------------------
 //! @brief  This class represents the window in which the game is running

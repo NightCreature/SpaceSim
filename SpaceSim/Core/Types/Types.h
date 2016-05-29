@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Messages.h"
+#include "UI/Messages.h"
 #include "Core/Resource/Resourceable.h"
 #include "Core/Resource/GameResource.h"
 #include <cstddef>

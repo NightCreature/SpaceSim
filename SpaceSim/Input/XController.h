@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IController.h"
-#include "StringHelperFunctions.h"
-#include "XControllerDefines.h"
+#include "Input/IController.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Input/XControllerDefines.h"
 
 #include <map>
 #include <Windows.h>

@@ -6,16 +6,15 @@
 #include <vector>
 #include <map>
 #include <fstream>
-#include "Model.h"
-#include "texturemanager.h"
-#include "texture.h"
-#include "plane.h"
-#include "bbox.h"
-#include "player.h"
-#include "vector3.h"
-#include "player.h"
-#include "..\SpaceSim\Input.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
+#include "Graphics/Model.h"
+#include "Graphics/texturemanager.h"
+#include "Graphics/texture.h"
+#include "Gameplay/plane.h"
+#include "Gameplay/bbox.h"
+#include "Gameplay/player.h"
+#include "Math/vector3.h"
+#include "Input/Input.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <list>
 
 class RenderInstance;

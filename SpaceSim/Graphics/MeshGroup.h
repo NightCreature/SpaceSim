@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GeometryInstance.h"
-#include "ShaderInstance.h"
-#include "matrix44.h"
-#include "Types.h"
+#include "Graphics/GeometryInstance.h"
+#include "Graphics/ShaderInstance.h"
+#include "Math/matrix44.h"
+#include "Core/Types/Types.h"
 
 class DeviceManager;
 class Resource;

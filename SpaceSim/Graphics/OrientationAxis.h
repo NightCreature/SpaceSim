@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Effect.h"
-#include "..\SpaceSim\VertexBuffer.h"
+#include "Graphics/Effect.h"
+#include "Graphics/VertexBuffer.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN

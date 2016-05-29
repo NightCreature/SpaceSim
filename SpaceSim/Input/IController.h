@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ControllerDefines.h"
-#include "tinyxml2.h"
+#include "Input/ControllerDefines.h"
+#include "Core/tinyxml2.h"
 
 class InputSystem;
 

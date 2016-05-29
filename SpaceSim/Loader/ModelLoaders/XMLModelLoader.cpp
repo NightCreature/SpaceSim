@@ -1,6 +1,6 @@
-#include "XMLModelLoader.h"
-#include "mesh.h"
-#include "EffectCache.h"
+#include "Loader/ModelLoaders/XMLModelLoader.h"
+#include "Graphics/mesh.h"
+#include "Graphics/EffectCache.h"
 
 XMLModelLoader::XMLModelLoader(void)
 {

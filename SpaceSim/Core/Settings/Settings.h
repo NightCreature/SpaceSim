@@ -1,7 +1,7 @@
 #pragma once
-#include "material.h"
-#include "StringHelperFunctions.h"
-#include "vector4.h"
+#include "Graphics/material.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Math/vector4.h"
 
 #include <string>
 #include <typeinfo>

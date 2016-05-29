@@ -1,17 +1,17 @@
 #pragma once
 
-#include "GameWindow.h"
-#include "Input.h"
-#include "OrientationAxis.h"
-#include "Types.h"
+#include "Application/GameWindow.h"
+#include "Input/Input.h"
+#include "Graphics/OrientationAxis.h"
+#include "Core/Types/Types.h"
 #include <d3d11.h>
 #include <dxgi.h>
 #include <list>
 #include <directxmath.h>
-#include "DeviceManager.h"
-#include "texturemanager.h"
-#include "modelmanager.h"
-#include "CubeMapRenderer.h"
+#include "Graphics/DeviceManager.h"
+#include "Graphics/texturemanager.h"
+#include "Graphics/modelmanager.h"
+#include "Graphics/CubeMapRenderer.h"
 
 #ifdef _DEBUG
 #include <d3d11_1.h>

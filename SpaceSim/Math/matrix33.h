@@ -1,8 +1,8 @@
 #ifndef MATRIX33_H
 #define MATRIX33_H
 
-#include "..\SpaceSim\AlignMacros.h"
-#include "vector3.h"
+#include "Memory/AlignMacros.h"
+#include "Math/vector3.h"
 #include <cmath>
 
 class Matrix33
