@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vector2.h"
+#include "..\..\MatrixAndVectorMath\vector2.h"
 #include "vector4.h"
 #include "BitmapFont.h"
 #include "Material.h"

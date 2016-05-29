@@ -32,7 +32,7 @@ public:
         while (free_block != nullptr)
         {
             //Calculate adjustment needed to keep object correctly aligned
-            uint8 allocationHeaderAdjustment = PointerMath::findAdjustmentrWithSpaceForHeader(free_block, alignment, sizeof(AllocationHeader));
+            size_t allocationHeaderAdjustment = PointerMath::findAdjustmentrWithSpaceForHeader(free_block, alignment, sizeof(AllocationHeader));
 
             size_t allocationSizeNeeded = size + allocationHeaderAdjustment;
 
@@ -74,7 +74,7 @@ public:
 
             AllocationHeader* header = (AllocationHeader*)(aligned_address - sizeof(AllocationHeader));
             header->m_size = allocationSizeNeeded;
-            header->m_adjustment = allocationHeaderAdjustment;
+            header->m_adjustment = static_cast<uint8>(allocationHeaderAdjustment);
 
             m_usedMemory += allocationSizeNeeded;
             m_numAllocations++;

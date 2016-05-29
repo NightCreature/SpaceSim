@@ -79,7 +79,7 @@ template<class T> void deallocateDelete(AllocatorInterface& allocator, T& object
 
 template<class T> T* allocateArray(AllocatorInterface& allocator, size_t length)
 {
-    ASSERT(length != 0);
+    //ASSERT(length != 0);
 
     unsigned char headerSize = sizeof(size_t) / sizeof(T);
 
@@ -99,7 +99,7 @@ template<class T> T* allocateArray(AllocatorInterface& allocator, size_t length)
 
 template<class T> void deallocateArray(AllocatorInterface& allocator, T* array)
 {
-    ASSERT(array != nullptr);
+    //ASSERT(array != nullptr);
 
     size_t length = *(((size_t*)array) - 1);
 

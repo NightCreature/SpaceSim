@@ -43,7 +43,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -113,15 +113,15 @@
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</EmbedManifest>
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EmbedManifest>
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</EmbedManifest>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\include\;D:\SDK\Visual Leak Detector\2012\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\include\;D:\SDK\Visual Leak Detector\2012\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Visual Leak Detector\src;D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;D:\SDK\EAWebKit_13.3.2.0.0\;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\EAWebKit\include\;D:\SDK\Demo\SpaceSim\packages\cpprestsdk.v120.winapp.msvcstl.dyn.rt-dyn.2.7.0\build\native\include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\lib\x86;D:\SDK\Visual Leak Detector\2012\lib\Win32;D:\SDK\tinyxml\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Assimp\lib\x64;D:\SDK\Visual Leak Detector\src\bin\x64\Release-v140;D:\SDK\Visual Leak Detector\lib\Win64;D:\SDK\tinyxml\Debug;D:\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;D:\SDK\EAWebKit_13.3.2.0.0\Projects\Win64\EAWebKit\13.3.2.0.0\pc64-vc-dev-debug\lib\;D:\SDK\Demo\SpaceSim\packages\cpprestsdk.v120.winapp.msvcstl.dyn.rt-dyn.2.7.0\lib\native\v120\winapp\msvcstl\dyn\rt-dyn\x64\Debug;$(LibraryPath)</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;D:\SDK\Demo\SpaceSim\packages\cpprestsdk.v120.winapp.msvcstl.dyn.rt-dyn.2.7.0\build\native\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;D:\SDK\DirectXTK\Bin\Desktop_2015\x64\Release;D:\SDK\Assimp\lib\x64;D:\SDK\Demo\SpaceSim\packages\cpprestsdk.v120.winapp.msvcstl.dyn.rt-dyn.2.7.0\lib\native\v120\winapp\msvcstl\dyn\rt-dyn\x64\Debug;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;D:\SDK\DirectXTK\Bin\Desktop_2013\x64\Release;D:\SDK\Assimp\lib\x64;$(LibraryPath)</LibraryPath>
@@ -230,6 +230,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <AdditionalOptions>/d1reportSingleClassLayoutTestClass %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86\d3d11.lib;d3dx11.lib;d3dcompiler.lib;dxgi.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -243,6 +244,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <Profile>true</Profile>
+      <AdditionalOptions>/DEBUG:FASTLINK %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -291,7 +293,7 @@
       <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;cpprest120d_app_2_7.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -334,7 +336,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\GameEngine\MapLoader.cpp" />
-    <ClCompile Include="Allocator.cpp" />
     <ClCompile Include="AssimpModelLoader.cpp" />
     <ClCompile Include="BaseApplication.cpp" />
     <ClCompile Include="..\GameEngine\bbox.cpp" />
@@ -434,7 +435,6 @@
   <ItemGroup>
     <ClInclude Include="..\GameEngine\MapLoader.h" />
     <ClInclude Include="AlignMacros.h" />
-    <ClInclude Include="Allocator.h" />
     <ClInclude Include="applicationsetting.h" />
     <ClInclude Include="AssimpModelLoader.h" />
     <ClInclude Include="BaseApplication.h" />
@@ -444,6 +444,13 @@
     <ClInclude Include="Http Server\httpserver.h" />
     <ClInclude Include="Logging\Logger.h" />
     <ClInclude Include="Memory.h" />
+    <ClInclude Include="Memory\Allocator.h" />
+    <ClInclude Include="Memory\HeapAllocator.h" />
+    <ClInclude Include="Memory\LinearAllocator.h" />
+    <ClInclude Include="Memory\MemoryArena.h" />
+    <ClInclude Include="Memory\PointerArithmetic.h" />
+    <ClInclude Include="Memory\SlotAllocator.h" />
+    <ClInclude Include="SourceInformation\SourceInfo.h" />
     <ClInclude Include="Thread.h" />
     <ClInclude Include="UI\TextBlock.h" />
     <ClInclude Include="UI\BitmapFont.h" />

@@ -92,10 +92,13 @@ void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const
         //    m_move -= 10.0f*elapsedTime;
         //translate(m_world, 0.0f, 0.0f, m_move);
     }
-    Super::update(renderInstances, elapsedTime, input);
+    //Super::update(renderInstances, elapsedTime, input);
 #ifdef _DEBUG
     //renderInstances.back()->m_name = L"Door";
 #endif
+
+    UNUSEDPARAM(renderInstances);
+    UNUSEDPARAM(input);
 }
 
 //-------------------------------------------------------------------------

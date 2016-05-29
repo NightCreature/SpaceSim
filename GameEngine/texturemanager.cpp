@@ -92,7 +92,7 @@ void TextureManager::cleanup()
     ++numberOfTimesCalled;
     TextureMap::iterator tmit = m_textures.begin();
     while (tmit != m_textures.end())
-    {
+    { 
         tmit->second.cleanup();
         ++tmit;
     }
