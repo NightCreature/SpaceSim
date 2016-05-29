@@ -138,75 +138,76 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
 
     if (m_gamepadStatefloat.leftXAxis > 0.f)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickPositiveX], m_gamepadStatefloat.leftXAxis);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftStickPositiveX], m_gamepadStatefloat.leftXAxis);
     }
     else if (m_gamepadStatefloat.leftXAxis < 0.f)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickNegativeX], -m_gamepadStatefloat.leftXAxis);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftStickNegativeX], -m_gamepadStatefloat.leftXAxis);
     }
     else
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickPositiveX], 0.0f);
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickNegativeX], 0.0f);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftStickPositiveX], 0.0f);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftStickNegativeX], 0.0f);
     }
 
     if (m_gamepadStatefloat.leftYAxis > 0.f)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickPositiveY], m_gamepadStatefloat.leftYAxis);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftStickPositiveY], m_gamepadStatefloat.leftYAxis);
     }
     else if (m_gamepadStatefloat.leftYAxis < 0.f)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickNegativeY], -m_gamepadStatefloat.leftYAxis);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftStickNegativeY], -m_gamepadStatefloat.leftYAxis);
     }
     else
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickPositiveY], 0.0f);
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickNegativeY], 0.0f);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftStickPositiveY], 0.0f);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftStickNegativeY], 0.0f);
     }
 
     if (m_gamepadStatefloat.rightXAxis > 0.f)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickPositiveX], m_gamepadStatefloat.rightXAxis);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightStickPositiveX], m_gamepadStatefloat.rightXAxis);
     }
     else if (m_gamepadStatefloat.rightXAxis < 0.f)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickNegativeX], -m_gamepadStatefloat.rightXAxis);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightStickNegativeX], -m_gamepadStatefloat.rightXAxis);
     }
     else
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickPositiveX], 0.0f);
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickNegativeX], 0.0f);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightStickPositiveX], 0.0f);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightStickNegativeX], 0.0f);
     }
 
     if (m_gamepadStatefloat.rightYAxis > 0.f)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickPositiveY], m_gamepadStatefloat.rightYAxis);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightStickPositiveY], m_gamepadStatefloat.rightYAxis);
     }
     else if (m_gamepadStatefloat.rightYAxis < 0.f)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickNegativeY], -m_gamepadStatefloat.rightYAxis);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightStickNegativeY], -m_gamepadStatefloat.rightYAxis);
     }
     else
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickPositiveY], 0.0f);
-        m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickNegativeY], 0.0f);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightStickPositiveY], 0.0f);
+        m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightStickNegativeY], 0.0f);
     }
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftTrigger], m_gamepadStatefloat.leftTrigger);
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightTrigger], m_gamepadStatefloat.rightTrigger);
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftShoulderButton], (float)(m_gamepadState.wButtons & LB));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightShoulderButton], (float)(m_gamepadState.wButtons & RB));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::BackButton], (float)(m_gamepadState.wButtons & Back));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::StartButton], (float)(m_gamepadState.wButtons & Start));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::AButton], (float)(m_gamepadState.wButtons & A));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::BBUtton], (float)(m_gamepadState.wButtons & B));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::XButton], (float)(m_gamepadState.wButtons & X));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::YButton], (float)(m_gamepadState.wButtons & Y));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::POVLeft], (float)(m_gamepadState.wButtons & DPadLeft));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::POVRight], (float)(m_gamepadState.wButtons & DPadRight));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::POVUp], (float)(m_gamepadState.wButtons & DPadUp));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::POVDown], (float)(m_gamepadState.wButtons & DPadDown));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::LeftStickClick], (float)(m_gamepadState.wButtons & LeftThumb));
-    m_controllerState.setActionValue(m_physicalKeyToAction[Input::XControllerDefines::RightStickClick], (float)(m_gamepadState.wButtons & RightThumb));
+    
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftTrigger], m_gamepadStatefloat.leftTrigger);
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightTrigger], m_gamepadStatefloat.rightTrigger);
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftShoulderButton], (float)(m_gamepadState.wButtons & LB));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightShoulderButton], (float)(m_gamepadState.wButtons & RB));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::BackButton], (float)(m_gamepadState.wButtons & Back));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::StartButton], (float)(m_gamepadState.wButtons & Start));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::AButton], (float)(m_gamepadState.wButtons & A));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::BBUtton], (float)(m_gamepadState.wButtons & B));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::XButton], (float)(m_gamepadState.wButtons & X));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::YButton], (float)(m_gamepadState.wButtons & Y));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::POVLeft], (float)(m_gamepadState.wButtons & DPadLeft));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::POVRight], (float)(m_gamepadState.wButtons & DPadRight));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::POVUp], (float)(m_gamepadState.wButtons & DPadUp));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::POVDown], (float)(m_gamepadState.wButtons & DPadDown));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::LeftStickClick], (float)(m_gamepadState.wButtons & LeftThumb));
+    m_controllerState.setActionValue(m_PhysicalInputState[InputDefines::XControllerDefines::RightStickClick], (float)(m_gamepadState.wButtons & RightThumb));
 
     return m_controllerState;
 }
@@ -218,11 +219,11 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
 void XInputDevice::internalActionSetup(InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input)
 {
     //Setup controller specific action map so it can map it's capabilities to the input the game expects
-    Input::XControllerDefines xInputDefinitions;
+    InputDefines::XControllerDefines xInputDefinitions;
     unsigned int inputHash = hashString(input->Value());
-    Input::XControllerDefines::XControllerInput xControllerInput = xInputDefinitions.m_XInputToAction[inputHash];
+    InputDefines::XControllerDefines::XControllerInput xControllerInput = xInputDefinitions.FindControllerInputIdForHashId(inputHash);
 
-    m_physicalKeyToAction.insert(PhysicalInputPair(xControllerInput, inputAction));
+    m_PhysicalInputState[xControllerInput] = inputAction; //no need for a map just a single array is enough
 }
 
 //-----------------------------------------------------------------------------

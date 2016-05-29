@@ -1,7 +1,7 @@
+#include "..\SpaceSim\BaseApplication.h"
 #include "laser.h"
 #include "material.h"
 #include "matrix44.h"
-#include "..\SpaceSim\BaseApplication.h"
 #include "..\SpaceSim\DeviceManager.h"
 #include "..\SpaceSim\TypeHelpers.h"
 #include <sstream>

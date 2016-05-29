@@ -26,17 +26,21 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
 {
     if (m_renderInstanceDirty)
     {  
-        if ( m_renderInstance != nullptr)
-        {
-            delete m_renderInstance;
-            m_renderInstance = nullptr;
-        }
-        m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
+        //if ( m_renderInstance != nullptr)
+        //{
+        //    delete m_renderInstance;
+        //    m_renderInstance = nullptr;
+        //}
+		if (m_renderInstance == nullptr)
+		{
+			m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
 #ifdef _DEBUG
-        convertToWideString(name, m_renderInstance->m_name);
+			convertToWideString(name, m_renderInstance->m_name);
 #else
-        UNUSEDPARAM(name);
+			UNUSEDPARAM(name);
 #endif
+		}
+
         WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
         wvpConstants.m_projection = Application::m_projection;
         wvpConstants.m_view = Application::m_view;

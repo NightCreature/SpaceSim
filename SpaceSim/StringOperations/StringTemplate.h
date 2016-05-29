@@ -406,10 +406,11 @@ private:
     {
         reset();
         m_length = length >= Size ? Size - 1 : length;
-        memcpy(m_buffer, str, m_length);
+		std::copy(str, str + m_length, m_buffer);
+        
         m_buffer[m_length] = 0;
     }
-
+	
     const StaticStringType& concatenate(const T* str, size_t length)
     {
         if (length + m_length > Size)

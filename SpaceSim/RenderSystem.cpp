@@ -130,7 +130,7 @@ void RenderSystem::initialise(Resource* resource)
 
     if (!m_deviceManager.createDevice(adapter))
     {
-        ExitProcess(1);
+        ExitProcess(1); //Fix this exit cleanly
     }
 
     ID3D11Device* device = m_deviceManager.getDevice();

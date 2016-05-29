@@ -1,18 +1,10 @@
+#include "Memory.h"
 #include "BaseApplication.h"
 #include <stdio.h>
 #include <tchar.h>
 #include "Paths.h"
 #include "texture.h"
-#ifdef _DEBUG
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
 
-#ifndef DBG_NEW
-#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-#define new DBG_NEW
-#endif
-#endif
 #include <iostream>
 #include <direct.h>
 
@@ -20,12 +12,67 @@
 
 #include "StringOperations/StringTemplate.h"
 
+#include "Memory/SlotAllocator.h"
+#include "Memory/LinearAllocator.h"
+#include "Memory/HeapAllocator.h"
 
-constexpr unsigned int constantHash(const char* str, size_t index, unsigned int previousHash)
+#include "Memory/MemoryArena.h"
+
+class TestClass
+{
+private:
+
+    int m_bitfield1 : 4;
+    std::string m_string;
+    int m_bitfield2 : 4;
+    int m_int;
+};
+
+//class SingleTonTest
+//{
+//public:
+//    static SingleTonTest& getInstance() 
+//    {
+//        static SingleTonTest instance; 
+//        return instance; 
+//    }
+//
+//    void printMember()
+//    {
+//        std::cout << m_member << std::endl;
+//    }
+//
+//private:
+//    SingleTonTest() :m_intAllocator(512), m_linearAllocator(512), m_heapAllocator(512), m_arena(m_intAllocator), m_member(1)
+//    {
+//        void* floatAllocation = m_linearAllocator.allocate(sizeof(TestClass));
+//        void* shortAllocation = m_linearAllocator.allocate(sizeof(short));
+//        void* block128Size = m_linearAllocator.allocate(128);
+//        void* unAlignedAllocation = m_linearAllocator.allocate(56);
+//
+//        void* allocateSomething = m_heapAllocator.allocate(sizeof(TestClass));
+//
+//        m_heapAllocator.deallocate(allocateSomething);
+//        allocateSomething = nullptr;
+//
+//        m_linearAllocator.clear();
+//
+//        void* intAllocation = m_arena.allocate(sizeof(int), SOURCE_INFO);
+//        ALLOCATE_FROM_ARENA(m_arena, sizeof(int));
+//    }
+//    Allocator::IntPoolAllocator m_intAllocator;
+//    Allocator::Block16AlignedAllocator m_linearAllocator;
+//    Allocator::Heap16Allocator m_heapAllocator;
+//
+//    Allocator::MemoryArena m_arena;
+//    int m_member;
+//};
+
+unsigned int constantHash(const char* str, size_t index, unsigned int previousHash)
 {
 	return str[index] != '\0' ? constantHash(str, index + 1, (previousHash ^ tolower(*str)) * c_fnvHashPrime) : previousHash;
 }
-constexpr unsigned int hashString1(const char* str)
+unsigned int hashString1(const char* str)
 {
 	return constantHash(str, 0, c_fnvHashOffset);
 }
@@ -37,6 +84,10 @@ unsigned int hashString2(const std::string& sourceStr)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
+
+    //SingleTonTest& instance = SingleTonTest::getInstance();
+    //instance.printMember();
+
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 #endif
@@ -64,6 +115,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     test3.split(tokens, delimters);
     String16::iterator it1 = test3.begin();
     String16::iterator it2 = test3.end();
+
     if (it1 == it2)
     {
         MSG_TRACE("iterators are equal");

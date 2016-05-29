@@ -1,3 +1,6 @@
+
+#include <WinSock2.h>
+
 #include "DebugBox.h"
 #include "EffectCache.h"
 #include "material.h"

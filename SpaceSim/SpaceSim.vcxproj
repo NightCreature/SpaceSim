@@ -36,13 +36,14 @@
     <SccProvider>
     </SccProvider>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -112,17 +113,17 @@
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">false</EmbedManifest>
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EmbedManifest>
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">false</EmbedManifest>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\include\;D:\SDK\Visual Leak Detector\2012\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;D:\SDK\EAWebKit_13.3.2.0.0\;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\EAWebKit\include\;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\include\;D:\SDK\Visual Leak Detector\2012\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Visual Leak Detector\src;D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;D:\SDK\EAWebKit_13.3.2.0.0\;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\EAWebKit\include\;D:\SDK\Demo\SpaceSim\packages\cpprestsdk.v120.winapp.msvcstl.dyn.rt-dyn.2.7.0\build\native\include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\SDK\Assimp\lib\x86;D:\SDK\Visual Leak Detector\2012\lib\Win32;D:\SDK\tinyxml\Debug;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Assimp\lib\x64;D:\SDK\Visual Leak Detector\lib\Win64;D:\SDK\tinyxml\Debug;D:\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;D:\SDK\EAWebKit_13.3.2.0.0\Projects\Win64\EAWebKit\13.3.2.0.0\pc64-vc-dev-debug\lib\;$(LibraryPath)</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\SDK\Assimp\lib\x64;D:\SDK\Visual Leak Detector\src\bin\x64\Release-v140;D:\SDK\Visual Leak Detector\lib\Win64;D:\SDK\tinyxml\Debug;D:\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;D:\SDK\EAWebKit_13.3.2.0.0\Projects\Win64\EAWebKit\13.3.2.0.0\pc64-vc-dev-debug\lib\;D:\SDK\Demo\SpaceSim\packages\cpprestsdk.v120.winapp.msvcstl.dyn.rt-dyn.2.7.0\lib\native\v120\winapp\msvcstl\dyn\rt-dyn\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(WindowsSdkDir)\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;D:\SDK\Demo\SpaceSim\packages\cpprestsdk.v120.winapp.msvcstl.dyn.rt-dyn.2.7.0\build\native\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\SDK\Visual Leak Detector\include;D:\SDK\tinyxml;$(WindowsSdkDir)\include;D:\SDK\Assimp\include\;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;D:\SDK\DirectXTK\Bin\Desktop_2015\x64\Release;D:\SDK\Assimp\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;D:\SDK\DirectXTK\Bin\Desktop_2015\x64\Release;D:\SDK\Assimp\lib\x64;D:\SDK\Demo\SpaceSim\packages\cpprestsdk.v120.winapp.msvcstl.dyn.rt-dyn.2.7.0\lib\native\v120\winapp\msvcstl\dyn\rt-dyn\x64\Debug;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">D:\SDK\Visual Leak Detector\lib;D:\SDK\tinyxml\Release;D:\SDK\DirectXTK\Bin\Desktop_2013\x64\Release;D:\SDK\Assimp\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -151,7 +152,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -159,9 +160,10 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <DisableSpecificWarnings>4324</DisableSpecificWarnings>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <AdditionalDependencies>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86\d3d11.lib;dxgi.lib;d3dx11.lib;d3dcompiler.lib;xinput.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -178,17 +180,16 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories);D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bridge\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\page\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\cairo;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders\gif;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders\jpeg;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders\png;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders\webp;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\network\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\ea;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\EAWebKit\include;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\EAWebKit\source;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\Api\private;D:\SDK\EAWebKit_13.3.2.0.0\WebKit\ea\WebCoreSupport;D:\SDK\EAWebKit_13.3.2.0.0\WebCore;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\accessibility;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bindings;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bindings\generic;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bridge;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\css;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\dom;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\dom\default;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\editing;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\fileapi;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\history;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html\canvas;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html\parser;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html\shadow;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\html\track;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\inspector;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader\appcache;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader\archive;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader\cache;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\loader\icon;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\mathml;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\notifications;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\page;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\page\animation;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\animation;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\filters;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\filters\arm;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\texmap;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\transforms;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\image-decoders;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\leveldb;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\mock;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\network;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\sql;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\text;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\text\transcoder;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\plugins;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\rendering;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\rendering\style;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\rendering\svg;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\storage;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg\animation;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg\graphics;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg\graphics\filters;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\svg\properties;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\testing;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\webaudio;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\websockets;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\workers;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\xml;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\xml\parser;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\generated;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bridge\jsc;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bindings\js;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bindings\js\specialization;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\bridge\c;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\testing\js;D:\SDK\EAWebKit_13.3.2.0.0\include\EAWebKit;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\win;D:\SDK\EAWebKit_13.3.2.0.0\WebCore\platform\graphics\win;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EABaseEAWebKit\local-2.00.35-01\include\Common;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\coreallocatorEAWebKit\local-1.03.10-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\assembler;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\bytecode;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\bytecompiler;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\heap;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\dfg;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\debugger;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\interpreter;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\jit;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\parser;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\profiler;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\runtime;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\wtf;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\wtf\gobject;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\wtf\unicode;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\yarr;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\API;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\ForwardingHeaders;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\JavaScriptCore\local\JavaScriptCore\generated;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EASTLEAWebKit\local-1.15.03-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EAIOEAWebKit\local-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EAIOEAWebKit\local-01\include\EAIO\Wii;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EAAssertEAWebKit\local-1.03.04-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\libjpegEAWebKit\local-1.00.06-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\libpngEAWebKit\local-1.01.00-01\include\libpng;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\cairo\local-1.8.10\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\cairo\local-1.8.10\include\cairo;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\pixman\local\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\UTFXmlEAWebKit\local-3.08.01-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\SQLiteEAWebKit\local\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\DirtySDKEAWebKit\local\platform;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\DirtySDKEAWebKit\local\core\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\DirtySDKEAWebKit\local\core\include\pc64;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\EATextEAWebKit\local-1.09.01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\FreeTypeEAWebKit\local-2.4.8.02-01\freetype-2.4.8\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\PPMallocEAWebKit\local-01\include;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\PPMallocEAWebKit\local-01\Extras;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\zlibEAWebKit\local-1.2.5-7-01\install;D:\SDK\EAWebKit_13.3.2.0.0\EAWebKitSupportPackages\zlibEAWebKit\local-1.2.5-7-01\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;x64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;x64;_ATL_DISABLE_NOTHROW_NEW;VLD;_WINSOCKAPI_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -201,7 +202,7 @@
       <AdditionalUsingDirectories>C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcpackages;C:\Program Files (x86)\Microsoft Visual Studio 11.0\Blend\WinMD</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;D3DCompiler.lib;xinput.lib;assimp.lib;directxtk.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -222,12 +223,14 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <AdditionalOptions>/d1reportSingleClassLayoutTestClass %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86\d3d11.lib;d3dx11.lib;d3dcompiler.lib;dxgi.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -241,6 +244,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <Profile>true</Profile>
+      <AdditionalOptions>/DEBUG:FASTLINK %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -274,7 +278,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;x64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;x64;_WINSOCKAPI_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -284,7 +288,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <DisableSpecificWarnings>4324</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4324; 4005</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>Full</Optimization>
     </ClCompile>
@@ -304,7 +308,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\Shapes;$(SolutionDir)\MatrixAndVectorMath;$(SolutionDir)\GameEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;x64;PROFILE;CPUPROFILE=SpaceSim.prof D:\SDK\Demo\SpaceSim\ProfilerOut;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;x64;_WINSOCKAPI_;PROFILE;CPUPROFILE=SpaceSim.prof D:\SDK\Demo\SpaceSim\ProfilerOut;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -332,11 +336,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\GameEngine\MapLoader.cpp" />
-    <ClCompile Include="Allocator.cpp" />
     <ClCompile Include="AssimpModelLoader.cpp" />
     <ClCompile Include="BaseApplication.cpp" />
     <ClCompile Include="..\GameEngine\bbox.cpp" />
     <ClCompile Include="..\Shapes\box.cpp" />
+    <ClCompile Include="Http Server\httpserver.cpp" />
+    <ClCompile Include="Logging\Logger.cpp" />
+    <ClCompile Include="Thread.cpp" />
     <ClCompile Include="UI\TextBlock.cpp" />
     <ClCompile Include="UI\BitmapFont.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -429,12 +435,23 @@
   <ItemGroup>
     <ClInclude Include="..\GameEngine\MapLoader.h" />
     <ClInclude Include="AlignMacros.h" />
-    <ClInclude Include="Allocator.h" />
     <ClInclude Include="applicationsetting.h" />
     <ClInclude Include="AssimpModelLoader.h" />
     <ClInclude Include="BaseApplication.h" />
     <ClInclude Include="..\GameEngine\bbox.h" />
     <ClInclude Include="..\Shapes\box.h" />
+    <ClInclude Include="Http Server\HttpMessageBuffer.h" />
+    <ClInclude Include="Http Server\httpserver.h" />
+    <ClInclude Include="Logging\Logger.h" />
+    <ClInclude Include="Memory.h" />
+    <ClInclude Include="Memory\Allocator.h" />
+    <ClInclude Include="Memory\HeapAllocator.h" />
+    <ClInclude Include="Memory\LinearAllocator.h" />
+    <ClInclude Include="Memory\MemoryArena.h" />
+    <ClInclude Include="Memory\PointerArithmetic.h" />
+    <ClInclude Include="Memory\SlotAllocator.h" />
+    <ClInclude Include="SourceInformation\SourceInfo.h" />
+    <ClInclude Include="Thread.h" />
     <ClInclude Include="UI\TextBlock.h" />
     <ClInclude Include="UI\BitmapFont.h" />
     <ClInclude Include="Buffer.h" />
@@ -618,6 +635,5 @@
     </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

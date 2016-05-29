@@ -34,11 +34,11 @@ void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWin
     params.fillvalue = 0.0f;
     params.fillx = true;
     params.changeWindingOrder = changeWindingOrder;
-    CreatedModel face = Face::CreateFace(params);
-    m_drawableObject = face.model;
-    m_active = true;
+    //CreatedModel face = Face::CreateFace(params);
+    //m_drawableObject = face.model;
+    //m_active = true;
 
-    Super::initialise(shaderInstance);
+    //Super::initialise(shaderInstance);
 }
 
 //-------------------------------------------------------------------------

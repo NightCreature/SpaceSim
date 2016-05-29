@@ -5,7 +5,13 @@
 #include "StringHelperFunctions.h"
 
 InputSystem::AvailableActions InputSystem::m_availableActions;
-std::vector<RAWINPUT> InputSystem::m_rawInput;
+#ifdef DEBUG
+std::map < InputActions::ActionType, std::string > InputSystem::m_actionNames;
+#endif
+
+std::vector<RAWINPUT> InputSystem::m_rawKeyBoardInput;
+std::vector<RAWINPUT> InputSystem::m_rawMouseInput;
+std::vector<RAWINPUT> InputSystem::m_rawHidInput;
 
     //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
@@ -64,31 +70,15 @@ IInputDevice* InputSystem::createController(const ControllerType type)
 //-----------------------------------------------------------------------------
 void InputSystem::update( float elapsedTime, double time )
 {
-    std::vector<RAWINPUT> localKeyBoardQueue;
-    std::vector<RAWINPUT> localMouseQueue;
-    std::vector<RAWINPUT> localHidQueue;
-    for (auto input : m_rawInput)
-    {
-        if (RIM_TYPEKEYBOARD == input.header.dwType)
-        {
-            localKeyBoardQueue.push_back(input);
-        }
-        else if (RIM_TYPEMOUSE == input.header.dwType)
-        {
-            localMouseQueue.push_back(input);
-        }
-        else if (RIM_TYPEHID == input.header.dwType)
-        {
-            localHidQueue.push_back(input);
-        }
-    }
-    m_rawInput.clear();
-
     for (ControllersAndStateIt it = m_controllers.begin(); it != m_controllers.end(); ++it)
     {
         IInputDevice* controller = (*it).first;
-        (*it).second = controller->update(localKeyBoardQueue, localMouseQueue, localHidQueue);
+        (*it).second = controller->update(m_rawKeyBoardInput, m_rawMouseInput, m_rawHidInput);
     }
+
+	m_rawHidInput.clear();
+	m_rawMouseInput.clear();
+	m_rawKeyBoardInput.clear();
 
     elapsedTime = 0.0f;
     time = 0.0;
@@ -118,6 +108,9 @@ void InputSystem::initialise( const std::string& inputMapFileName, HWND hwnd )
         {
             MSG_TRACE_CHANNEL("Input SYSTEM", "adding actions for: %s with hash %u", actionNameAttribute->Value(), hashString(actionNameAttribute->Value()));
             m_availableActions.emplace_back(InputActions::ActionType(actionNameAttribute->Value(), actionLngNameAttribute != nullptr ? actionLngNameAttribute->Value() : ""));
+#ifdef DEBUG
+			m_actionNames.insert(std::make_pair(m_availableActions[m_availableActions.size() - 1],actionNameAttribute->Value()));
+#endif
         }
     }
 
@@ -180,19 +173,18 @@ ControllerType InputSystem::stringToControllerType( const std::string& controlle
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-InputActions::ActionType InputSystem::getInputActionFromName( unsigned int actionName )
+//InputActions::ActionType InputSystem::getInputActionFromName( unsigned int actionName )
+bool InputSystem::getInputActionFromName(unsigned int actionName, InputActions::ActionType& actionType)
 {
-    InputActions::ActionType returnValue;
-
     for (AvailableActions::const_iterator it = m_availableActions.begin(); it != m_availableActions.end(); ++it)
     {
         if (it->getType() == actionName)
         {
-            returnValue = *it;
-            break;
+			actionType = *it;
+			return true;
         }
     }
 
     //MSG_TRACE_CHANNEL("INPUT SYSTEM", "Failed to find action for key %u", actionName);
-    return returnValue;
+    return false;
 }

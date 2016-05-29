@@ -1,8 +1,8 @@
 #pragma once
 
-#include <map>
+#include <vector>
 
-namespace Input
+namespace InputDefines
 {
 
 class XControllerDefines
@@ -36,12 +36,14 @@ public:
         POVUp,
         POVDown,
         LeftStickClick,
-        RightStickClick
+        RightStickClick,
+
+        NumInputActions
     };
 
-    typedef std::map<unsigned int, XControllerInput> NameHashToXInput;
-    typedef std::pair<unsigned int, XControllerInput> NameHashToXInputPair;
-    NameHashToXInput m_XInputToAction;
+    XControllerInput FindControllerInputIdForHashId(unsigned int hashId) const;
+private:
+    unsigned int m_inputNameHash[NumInputActions];
 };
 
 }

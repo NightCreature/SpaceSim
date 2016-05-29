@@ -1,5 +1,6 @@
 #pragma once
 
+#include "..\..\MatrixAndVectorMath\vector2.h"
 #include "vector4.h"
 #include "BitmapFont.h"
 #include "Material.h"
@@ -23,7 +24,12 @@ enum Align
     left
 };
 
-typedef Vector4 GlyphVertex; //xy is position, zw is uv, 0 = TL, 1 = BL, 2 = BR, 3 = TR
+//typedef Vector4 GlyphVertex; //xy is position, zw is uv, 0 = TL, 1 = BL, 2 = BR, 3 = TR
+struct GlyphVertex
+{
+	Vector3 position;
+	Vector2 uv;
+};
 
 struct TextBlockInfo;
 
@@ -44,34 +50,49 @@ struct GlyphQuad
 struct TextBlockInfo
 {
 	TextBlockInfo() : m_renderInstance(nullptr) {}
-    std::vector<GlyphQuad> m_glyphQuads;
+    ~TextBlockInfo()
+    {
+        delete m_renderInstance;
+    }
+	std::vector<GlyphQuad> m_glyphQuads;
 	std::vector<GlyphVertex> m_glyphVerts;
-    std::string m_text; //We should not have this and have length of the string instead with the hash, though debug would be handy to have
-    Vector4 m_textBlockSize; //xy is top left, zw is bottom right
-    Align m_alignment;
-    size_t m_textHash;
-    size_t m_textLenght;
-    float m_size;
-    bool m_applyKerning;
-    BitmapFont* m_font;
+	std::string m_text; //We should not have this and have length of the string instead with the hash, though debug would be handy to have
+	Vector4 m_textBlockSize; //xy is top left, zw is bottom right
+	Align m_alignment;
+	size_t m_textHash;
+	size_t m_textLenght;
+	float m_size;
+	bool m_applyKerning;
+	BitmapFont* m_font;
 	VertexBuffer vb;
 	IndexBuffer ib;
 	ShaderInstance m_shaderInstance;
 	GeometryInstance m_geometryInstance;
 	RenderInstance* m_renderInstance;
 
-    void ProcessText(Resource* resource);
+	bool ProcessText(Resource* resource);
 	RenderInstance* getRenderInstance() { return m_renderInstance; }
 private:
-    void CreateVertexBuffer(Resource* resource);
+	void CreateVertexBuffer(Resource* resource);
 	void CreateShaderSetup(Resource* resource);
+
+	void ProcessTextForReals(Resource* resource) { UNUSEDPARAM(resource);  }
 };
 
 class TextBlockCache
 {
 public:
     TextBlockCache(size_t maxTextblocks, Resource* resource) : m_maxTextBlocks(maxTextblocks), m_resource(resource) { m_textBlocks.reserve(maxTextblocks); }
-    ~TextBlockCache() {}
+    ~TextBlockCache() 
+    {
+        for (size_t counter = 0; counter < m_textBlocksToRender.size(); ++counter)
+        {
+            delete m_textBlocksToRender[counter];
+        }
+
+        m_fonts.clear();
+        m_textBlocks.clear();
+    }
 
     bool addFont(const std::string& fileName);
     bool addText(const std::string& text, const Vector4& textBox, Align alignment, size_t fontHash, float size, bool applyKerning);
@@ -88,6 +109,7 @@ private:
     BitmapFont* getBitmapFont(size_t fontNameHash);
 
     std::vector<TextBlockInfo> m_textBlocks;
+	std::vector<RenderInstance*> m_textBlocksToRender;
     std::vector<BitmapFont> m_fonts;
     size_t m_maxTextBlocks;
     Resource* m_resource;

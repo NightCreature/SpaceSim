@@ -33,11 +33,11 @@ void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOr
     params.fillvalue = 0.0f;
     params.fillx = true;
     params.changeWindingOrder = changeWindingOrder;
-    CreatedModel face = Face::CreateFace(params);
-    m_drawableObject = face.model;
-    m_active = true;
+    //CreatedModel face = Face::CreateFace(params);
+    //m_drawableObject = face.model;
+    //m_active = true;
 
-    Super::initialise(shaderInstance);
+    //Super::initialise(shaderInstance);
 }
 
 //-------------------------------------------------------------------------
@@ -92,10 +92,13 @@ void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const
         //    m_move -= 10.0f*elapsedTime;
         //translate(m_world, 0.0f, 0.0f, m_move);
     }
-    Super::update(renderInstances, elapsedTime, input);
+    //Super::update(renderInstances, elapsedTime, input);
 #ifdef _DEBUG
-    renderInstances.back()->m_name = L"Door";
+    //renderInstances.back()->m_name = L"Door";
 #endif
+
+    UNUSEDPARAM(renderInstances);
+    UNUSEDPARAM(input);
 }
 
 //-------------------------------------------------------------------------

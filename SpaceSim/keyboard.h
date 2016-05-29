@@ -14,7 +14,7 @@ public:
 
 	void initialize()
 	{
-		m_leftupdown = 0.0f; m_leftlr = 0.0f; m_rightupdown = 0.0f; m_rightlr = 0.0f; setType(KeyBoard);
+		m_leftupdown = 0.0f; m_leftlr = 0.0f; m_rightupdown = 0.0f; m_rightlr = 0.0f; setType(controllertype::KeyBoard);
 		m_button1 = m_button2 = m_button3 = m_button4 = m_button5 = m_button6 = m_button7 = m_button8 = m_button9 = m_button10 = false;
 	}
 
