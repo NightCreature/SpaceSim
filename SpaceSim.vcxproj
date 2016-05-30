@@ -1,0 +1,341 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{29AE6865-AF16-4115-BD88-2EC01A84DF57}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\SDK\Demo\SpaceSim\GameEngine;D:\SDK\Demo\SpaceSim\MatrixAndVectorMath;D:\SDK\Demo\SpaceSim\Shapes;D:\SDK\Demo\SpaceSim\SpaceSim;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>D:\SDK\Demo\SpaceSim\GameEngine;D:\SDK\Demo\SpaceSim\MatrixAndVectorMath;D:\SDK\Demo\SpaceSim\Shapes;D:\SDK\Demo\SpaceSim\SpaceSim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX64</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="gameengine\bbox.cpp" />
+    <ClCompile Include="gameengine\color.cpp" />
+    <ClCompile Include="gameengine\light.cpp" />
+    <ClCompile Include="gameengine\MapLoader.cpp" />
+    <ClCompile Include="gameengine\material.cpp" />
+    <ClCompile Include="gameengine\modelmanager.cpp" />
+    <ClCompile Include="gameengine\particle.cpp" />
+    <ClCompile Include="gameengine\particleemitter.cpp" />
+    <ClCompile Include="gameengine\particlesystemmanager.cpp" />
+    <ClCompile Include="gameengine\player.cpp" />
+    <ClCompile Include="gameengine\scorchmark.cpp" />
+    <ClCompile Include="gameengine\settingsparser.cpp" />
+    <ClCompile Include="gameengine\shadermanager.cpp" />
+    <ClCompile Include="gameengine\texture.cpp" />
+    <ClCompile Include="gameengine\texturemanager.cpp" />
+    <ClCompile Include="matrixandvectormath\matrix33.cpp" />
+    <ClCompile Include="matrixandvectormath\matrix44.cpp" />
+    <ClCompile Include="matrixandvectormath\matrixmath.cpp" />
+    <ClCompile Include="matrixandvectormath\vector2.cpp" />
+    <ClCompile Include="matrixandvectormath\vector3.cpp" />
+    <ClCompile Include="matrixandvectormath\vector4.cpp" />
+    <ClCompile Include="shapes\box.cpp" />
+    <ClCompile Include="shapes\core.cpp" />
+    <ClCompile Include="shapes\door.cpp" />
+    <ClCompile Include="shapes\face.cpp" />
+    <ClCompile Include="shapes\forcefield.cpp" />
+    <ClCompile Include="shapes\gunturret.cpp" />
+    <ClCompile Include="shapes\laser.cpp" />
+    <ClCompile Include="shapes\mesh.cpp" />
+    <ClCompile Include="shapes\plane.cpp" />
+    <ClCompile Include="shapes\rotatingblades.cpp" />
+    <ClCompile Include="shapes\square.cpp" />
+    <ClCompile Include="shapes\switch.cpp" />
+    <ClCompile Include="spacesim\AssimpModelLoader.cpp" />
+    <ClCompile Include="spacesim\BaseApplication.cpp" />
+    <ClCompile Include="spacesim\Camera.cpp" />
+    <ClCompile Include="spacesim\CameraManager.cpp" />
+    <ClCompile Include="spacesim\controller.cpp" />
+    <ClCompile Include="spacesim\CubeMapRenderer.cpp" />
+    <ClCompile Include="spacesim\DebugBox.cpp" />
+    <ClCompile Include="spacesim\DeviceManager.cpp" />
+    <ClCompile Include="spacesim\displaywindow.cpp" />
+    <ClCompile Include="spacesim\DLExampleApplication.cpp" />
+    <ClCompile Include="spacesim\Effect.cpp" />
+    <ClCompile Include="spacesim\EffectCache.cpp" />
+    <ClCompile Include="spacesim\EntityManager.cpp" />
+    <ClCompile Include="spacesim\Frustum.cpp" />
+    <ClCompile Include="spacesim\GameObject.cpp" />
+    <ClCompile Include="spacesim\GameObjectManager.cpp" />
+    <ClCompile Include="spacesim\GameResource.cpp" />
+    <ClCompile Include="spacesim\GameWindow.cpp" />
+    <ClCompile Include="spacesim\GeometryCache.cpp" />
+    <ClCompile Include="spacesim\http server\httpserver.cpp" />
+    <ClCompile Include="spacesim\IController.cpp" />
+    <ClCompile Include="spacesim\IndexBuffer.cpp" />
+    <ClCompile Include="spacesim\InfinitySphere.cpp" />
+    <ClCompile Include="spacesim\Input.cpp" />
+    <ClCompile Include="spacesim\InputState.cpp" />
+    <ClCompile Include="spacesim\InputSystem.cpp" />
+    <ClCompile Include="spacesim\keyboard.cpp" />
+    <ClCompile Include="spacesim\KeyboardController.cpp" />
+    <ClCompile Include="spacesim\LaserManager.cpp" />
+    <ClCompile Include="spacesim\LightManager.cpp" />
+    <ClCompile Include="spacesim\logging\Logger.cpp" />
+    <ClCompile Include="spacesim\main.cpp" />
+    <ClCompile Include="spacesim\memory\Allocator.cpp" />
+    <ClCompile Include="spacesim\MeshGroup.cpp" />
+    <ClCompile Include="spacesim\Messages.cpp" />
+    <ClCompile Include="spacesim\ModelLoader.cpp" />
+    <ClCompile Include="spacesim\MouseControlDefines.cpp" />
+    <ClCompile Include="spacesim\MouseController.cpp" />
+    <ClCompile Include="spacesim\OrientationAxis.cpp" />
+    <ClCompile Include="spacesim\Paths.cpp" />
+    <ClCompile Include="spacesim\playbackcontroller.cpp" />
+    <ClCompile Include="spacesim\Renderable.cpp" />
+    <ClCompile Include="spacesim\RenderInstance.cpp" />
+    <ClCompile Include="spacesim\RenderSystem.cpp" />
+    <ClCompile Include="spacesim\Resourceable.cpp" />
+    <ClCompile Include="spacesim\RKIntegrator.cpp" />
+    <ClCompile Include="spacesim\Settings.cpp" />
+    <ClCompile Include="spacesim\SettingsManager.cpp" />
+    <ClCompile Include="spacesim\SettingsParser.cpp" />
+    <ClCompile Include="spacesim\ShaderCache.cpp" />
+    <ClCompile Include="spacesim\ShaderPack.cpp" />
+    <ClCompile Include="spacesim\Shaders.cpp" />
+    <ClCompile Include="spacesim\StringHelperFunctions.cpp" />
+    <ClCompile Include="spacesim\stringoperations\StringTemplate.cpp" />
+    <ClCompile Include="spacesim\TextSystem.cpp" />
+    <ClCompile Include="spacesim\Thread.cpp" />
+    <ClCompile Include="spacesim\Timer.cpp" />
+    <ClCompile Include="spacesim\tinyxml2.cpp" />
+    <ClCompile Include="spacesim\UIManger.cpp" />
+    <ClCompile Include="spacesim\ui\BitmapFont.cpp" />
+    <ClCompile Include="spacesim\ui\TextBlock.cpp" />
+    <ClCompile Include="spacesim\VertexBuffer.cpp" />
+    <ClCompile Include="spacesim\ViewManager.cpp" />
+    <ClCompile Include="spacesim\WebkitThread.cpp" />
+    <ClCompile Include="spacesim\XController.cpp" />
+    <ClCompile Include="spacesim\XControllerDefines.cpp" />
+    <ClCompile Include="spacesim\XMLModelLoader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gameengine\bbox.h" />
+    <ClInclude Include="gameengine\color.h" />
+    <ClInclude Include="gameengine\interpolatecurveRGBA.h" />
+    <ClInclude Include="gameengine\light.h" />
+    <ClInclude Include="gameengine\MapLoader.h" />
+    <ClInclude Include="gameengine\material.h" />
+    <ClInclude Include="gameengine\modelmanager.h" />
+    <ClInclude Include="gameengine\particle.h" />
+    <ClInclude Include="gameengine\particleemitter.h" />
+    <ClInclude Include="gameengine\particlesystemmanager.h" />
+    <ClInclude Include="gameengine\player.h" />
+    <ClInclude Include="gameengine\scorchmark.h" />
+    <ClInclude Include="gameengine\settingsparser.h" />
+    <ClInclude Include="gameengine\shadermanager.h" />
+    <ClInclude Include="gameengine\texture.h" />
+    <ClInclude Include="gameengine\texturemanager.h" />
+    <ClInclude Include="matrixandvectormath\matrix33.h" />
+    <ClInclude Include="matrixandvectormath\matrix44.h" />
+    <ClInclude Include="matrixandvectormath\matrixmath.h" />
+    <ClInclude Include="matrixandvectormath\vector2.h" />
+    <ClInclude Include="matrixandvectormath\vector3.h" />
+    <ClInclude Include="matrixandvectormath\vector4.h" />
+    <ClInclude Include="shapes\box.h" />
+    <ClInclude Include="shapes\core.h" />
+    <ClInclude Include="shapes\door.h" />
+    <ClInclude Include="shapes\face.h" />
+    <ClInclude Include="shapes\forcefield.h" />
+    <ClInclude Include="shapes\gunturret.h" />
+    <ClInclude Include="shapes\laser.h" />
+    <ClInclude Include="shapes\mesh.h" />
+    <ClInclude Include="shapes\Model.h" />
+    <ClInclude Include="shapes\plane.h" />
+    <ClInclude Include="shapes\rotatingblades.h" />
+    <ClInclude Include="shapes\square.h" />
+    <ClInclude Include="shapes\switch.h" />
+    <ClInclude Include="spacesim\AlignMacros.h" />
+    <ClInclude Include="spacesim\applicationsetting.h" />
+    <ClInclude Include="spacesim\AssimpModelLoader.h" />
+    <ClInclude Include="spacesim\BaseApplication.h" />
+    <ClInclude Include="spacesim\Buffer.h" />
+    <ClInclude Include="spacesim\Camera.h" />
+    <ClInclude Include="spacesim\CameraManager.h" />
+    <ClInclude Include="spacesim\controller.h" />
+    <ClInclude Include="spacesim\ControllerDefines.h" />
+    <ClInclude Include="spacesim\CubeMapRenderer.h" />
+    <ClInclude Include="spacesim\D3DDebugHelperFunctions.h" />
+    <ClInclude Include="spacesim\DebugBox.h" />
+    <ClInclude Include="spacesim\DebugHelperFunctions.h" />
+    <ClInclude Include="spacesim\DeviceManager.h" />
+    <ClInclude Include="spacesim\displaywindow.h" />
+    <ClInclude Include="spacesim\Effect.h" />
+    <ClInclude Include="spacesim\EffectCache.h" />
+    <ClInclude Include="spacesim\EntityManager.h" />
+    <ClInclude Include="spacesim\Frustum.h" />
+    <ClInclude Include="spacesim\GameObject.h" />
+    <ClInclude Include="spacesim\GameObjectManager.h" />
+    <ClInclude Include="spacesim\GameResource.h" />
+    <ClInclude Include="spacesim\GameWindow.h" />
+    <ClInclude Include="spacesim\GeometryCache.h" />
+    <ClInclude Include="spacesim\GeometryInstance.h" />
+    <ClInclude Include="spacesim\HashString.h" />
+    <ClInclude Include="spacesim\http server\HttpMessageBuffer.h" />
+    <ClInclude Include="spacesim\http server\httpserver.h" />
+    <ClInclude Include="spacesim\ICommand.h" />
+    <ClInclude Include="spacesim\IController.h" />
+    <ClInclude Include="spacesim\IndexBuffer.h" />
+    <ClInclude Include="spacesim\InfinitySphere.h" />
+    <ClInclude Include="spacesim\Input.h" />
+    <ClInclude Include="spacesim\InputAction.h" />
+    <ClInclude Include="spacesim\InputState.h" />
+    <ClInclude Include="spacesim\InputSystem.h" />
+    <ClInclude Include="spacesim\keyboard.h" />
+    <ClInclude Include="spacesim\KeyboardController.h" />
+    <ClInclude Include="spacesim\LaserManager.h" />
+    <ClInclude Include="spacesim\LightManager.h" />
+    <ClInclude Include="spacesim\logging\Logger.h" />
+    <ClInclude Include="spacesim\main.h" />
+    <ClInclude Include="spacesim\MathUtilityFunctions.h" />
+    <ClInclude Include="spacesim\memory\Allocator.h" />
+    <ClInclude Include="spacesim\memory\HeapAllocator.h" />
+    <ClInclude Include="spacesim\memory\LinearAllocator.h" />
+    <ClInclude Include="spacesim\memory\MemoryArena.h" />
+    <ClInclude Include="spacesim\memory\PointerArithmetic.h" />
+    <ClInclude Include="spacesim\memory\SlotAllocator.h" />
+    <ClInclude Include="spacesim\MeshComponentData.h" />
+    <ClInclude Include="spacesim\MeshGroup.h" />
+    <ClInclude Include="spacesim\Messages.h" />
+    <ClInclude Include="spacesim\ModelLoader.h" />
+    <ClInclude Include="spacesim\MouseControlDefines.h" />
+    <ClInclude Include="spacesim\MouseController.h" />
+    <ClInclude Include="spacesim\OrientationAxis.h" />
+    <ClInclude Include="spacesim\Paths.h" />
+    <ClInclude Include="spacesim\playbackcontroller.h" />
+    <ClInclude Include="spacesim\Renderable.h" />
+    <ClInclude Include="spacesim\RenderInstance.h" />
+    <ClInclude Include="spacesim\RenderSystem.h" />
+    <ClInclude Include="spacesim\resource.h" />
+    <ClInclude Include="spacesim\Resourceable.h" />
+    <ClInclude Include="spacesim\RKIntegrator.h" />
+    <ClInclude Include="spacesim\Settings.h" />
+    <ClInclude Include="spacesim\SettingsManager.h" />
+    <ClInclude Include="spacesim\SettingsParser.h" />
+    <ClInclude Include="spacesim\ShaderCache.h" />
+    <ClInclude Include="spacesim\ShaderInstance.h" />
+    <ClInclude Include="spacesim\ShaderPack.h" />
+    <ClInclude Include="spacesim\Shaders.h" />
+    <ClInclude Include="spacesim\sourceinformation\SourceInfo.h" />
+    <ClInclude Include="spacesim\StringHelperFunctions.h" />
+    <ClInclude Include="spacesim\stringoperations\StringTemplate.h" />
+    <ClInclude Include="spacesim\TextSystem.h" />
+    <ClInclude Include="spacesim\Thread.h" />
+    <ClInclude Include="spacesim\Timer.h" />
+    <ClInclude Include="spacesim\tinyxml2.h" />
+    <ClInclude Include="spacesim\TypeHelpers.h" />
+    <ClInclude Include="spacesim\Types.h" />
+    <ClInclude Include="spacesim\UIManger.h" />
+    <ClInclude Include="spacesim\ui\BitmapFont.h" />
+    <ClInclude Include="spacesim\ui\TextBlock.h" />
+    <ClInclude Include="spacesim\ui\WebkitCommands.h" />
+    <ClInclude Include="spacesim\VertexBuffer.h" />
+    <ClInclude Include="spacesim\ViewManager.h" />
+    <ClInclude Include="spacesim\WebkitThread.h" />
+    <ClInclude Include="spacesim\XController.h" />
+    <ClInclude Include="spacesim\XControllerDefines.h" />
+    <ClInclude Include="spacesim\XMLModelLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="spacesim\stringoperations\StringTemplate.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="spacesim\SpaceSim.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

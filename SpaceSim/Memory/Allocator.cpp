@@ -1,2 +1,2 @@
 #include "Allocator.h"
-#include "StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
