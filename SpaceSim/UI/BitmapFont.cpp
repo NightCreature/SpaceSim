@@ -1,11 +1,11 @@
 #include "BitmapFont.h"
 
-#include "..\DebugHelperFunctions.h"
-#include "..\DeviceManager.h"
-#include "..\GameResource.h"
-#include "texturemanager.h"
+#include "Graphics/DebugHelperFunctions.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/Resource/GameResource.h"
+#include "Graphics/texturemanager.h"
 
-#include "..\tinyxml2.h"
+#include "Core/tinyxml2.h"
 
 namespace Text
 {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Allocator.h"
-#include "PointerArithmetic.h"
-#include "TypeHelpers.h"
+#include "Memory/Allocator.h"
+#include "Memory/PointerArithmetic.h"
+#include "Core/Types/TypeHelpers.h"
 
 namespace Allocator
 {

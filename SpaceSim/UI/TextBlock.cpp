@@ -2,19 +2,19 @@
 
 #include "Memory.h"
 
-#include "..\StringHelperFunctions.h"
-#include "..\DebugHelperFunctions.h"
-#include "BitmapFont.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Graphics/DebugHelperFunctions.h"
+#include "UI/BitmapFont.h"
 
-#include "..\VertexBuffer.h"
+#include "Graphics/VertexBuffer.h"
 
-#include "..\GameResource.h"
-#include "..\DeviceManager.h"
-#include "..\ShaderCache.h"
-#include "..\EffectCache.h"
-#include "..\BaseApplication.h"
+#include "Core/Resource/GameResource.h"
+#include "Graphics/DeviceManager.h"
+#include "Graphics/ShaderCache.h"
+#include "Graphics/EffectCache.h"
+#include "Application/BaseApplication.h"
 
-#include "..\TypeHelpers.h"
+#include "Core/Types/TypeHelpers.h"
 
 
 namespace Text
