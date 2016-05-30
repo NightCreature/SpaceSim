@@ -54,10 +54,10 @@ struct TextBlockInfo
     {
         delete m_renderInstance;
     }
+    Vector4 m_textBlockSize; //xy is top left, zw is bottom right
 	std::vector<GlyphQuad> m_glyphQuads;
 	std::vector<GlyphVertex> m_glyphVerts;
 	std::string m_text; //We should not have this and have length of the string instead with the hash, though debug would be handy to have
-	Vector4 m_textBlockSize; //xy is top left, zw is bottom right
 	Align m_alignment;
 	size_t m_textHash;
 	size_t m_textLenght;

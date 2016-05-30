@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 bool DeviceManager::createDevice(IDXGIAdapter* adapter)
 {
+    MSG_TRACE_CHANNEL("DEVICEMANAGER", "Creating Device");
     //Figure out what the highest feature level is we support
     D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_9_1;
     HRESULT hr = D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, 0, 0, 0, 0, D3D11_SDK_VERSION, 0, &featureLevel, 0);

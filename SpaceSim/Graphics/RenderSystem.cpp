@@ -11,6 +11,10 @@
 
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 
+extern "C" {
+    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
@@ -118,7 +122,7 @@ void RenderSystem::initialise(Resource* resource)
                 convertToCString(adapterDesc.Description, str);
                 MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());
 
-                if (adapterDesc.VendorId != 0x8086)
+                if (adapterDesc.VendorId == 0x8086)
                 {
                     break;
                 }

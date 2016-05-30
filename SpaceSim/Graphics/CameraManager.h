@@ -11,8 +11,8 @@ public:
     CameraManager() {}    
     ~CameraManager() {}
 
-    virtual void update(float elapsedTime, double time);
-    virtual void update(float elapsedTime, double time, const Input& input);
+    void update(float elapsedTime, double time);
+    void update(float elapsedTime, double time, const Input& input);
 
     bool createCamera(const GameResource& resource, const std::string& name, const Vector3& position, const Vector3& lookAt, const Vector3& up);
     const Camera* getCamera(const std::string& name) const

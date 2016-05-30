@@ -160,7 +160,7 @@ Vector4 Matrix44::getTransform()
 //	return multiply(scalar);
 //}
 
-const float* Matrix44::operator [](unsigned int i) const
+const float* Matrix44::operator [](size_t i) const
 {
 	if (i > 3)
 		return 0;

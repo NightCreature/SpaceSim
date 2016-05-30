@@ -28,6 +28,7 @@ GameWindow::GameWindow()
 //-----------------------------------------------------------------------------
 bool GameWindow::createWindow( const std::string& applicationName, const std::string windowTitle )
 {
+    MSG_TRACE_CHANNEL("GAMEWINDOW", "Creating Window");
     m_hInstance = ( HINSTANCE )GetModuleHandle( NULL );
     m_windowClassExtended.cbSize        = sizeof(WNDCLASSEX);
     m_windowClassExtended.style         = CS_CLASSDC;

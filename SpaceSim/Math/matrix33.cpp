@@ -143,7 +143,7 @@ void Matrix33::minor(int row, int colom, float theminor[])
 	}
 }
 
-float* Matrix33::operator [](unsigned int i)
+float* Matrix33::operator [](size_t i)
 {
 	if (i > 2)
 		return 0;

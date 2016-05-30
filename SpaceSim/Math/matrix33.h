@@ -23,7 +23,7 @@ public:
 	void operator*= (const Matrix33& matrix);
 	void operator*= (float scalar);
 
-	float* operator[] (unsigned int i);
+	float* operator[] (size_t i);
 	void writeM() const;
 protected:
 private:
@@ -103,9 +103,13 @@ inline void rotate(Matrix33& m, const Vector3& v, float angle)
 
 inline void scale(Matrix33& m, float factorx, float factory, float factorz)
 {
-	for (int i = 0; i < 3; i++)
-		for (int j = 0; j < 3; j++)
-			m[i][j] = 0.0f;
+    for (size_t i = 0; i < 3; i++)
+    {
+        for (size_t j = 0; j < 3; j++)
+        {
+            m[i][j] = 0.0f;
+        }
+    }
 	m[0][0] = factorx;
 	m[1][1] = factory;
 	m[2][2] = factorz;

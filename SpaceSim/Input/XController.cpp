@@ -11,6 +11,9 @@
 
 HASH_ELEMENT_IMPLEMENTATION(XInputDevice)
 
+#pragma warning( push )
+#pragma warning( disable: 4995 )
+
 //!-----------------------------------------------------------------------------
 //!! @brief Constructor
 //!-----------------------------------------------------------------------------
@@ -263,3 +266,4 @@ void XInputDevice::calculateThumbStickDirectionAndMagnitude(float stickX, float 
 
     directionAndMagnitude = Vector4(normalizedLX, normalizedLY, magnitude, normalizedMagnitude);
 }
+#pragma warning( pop )

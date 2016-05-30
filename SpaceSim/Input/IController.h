@@ -13,7 +13,7 @@ class IInputDevice
 {
 public:
     IInputDevice() {}
-    ~IInputDevice() {}
+    virtual ~IInputDevice() {}
 
     //Adds actions the controller has to the inputState so we can query this object for input
     virtual void initialise(HWND hwnd) = 0;
