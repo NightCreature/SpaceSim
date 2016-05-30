@@ -232,3 +232,7 @@ bin/FE/originalArialExport.fnt.conv.tga
 bin/FE/originalArialExport_0.tga
 bin/vld.ini
 SpaceSim/NewSpaceSim/NewSpaceSim.VC.VC.opendb
+bin/SpaceSim_x64.exp
+*.iobj
+*.ipdb
+*.exp
