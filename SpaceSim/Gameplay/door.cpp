@@ -1,9 +1,8 @@
-#include "door.h"
-#include "matrix44.h"
-#include "..\SpaceSim\SettingsManager.h"
-#include "texturemanager.h"
-#include "..\SpaceSim\DeviceManager.h"
-
+#include "Gameplay/door.h"
+#include "Math/matrix44.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Graphics/texturemanager.h"
+#include "Graphics/DeviceManager.h"
 
 #include <iostream>
 #include <D3D11.h>

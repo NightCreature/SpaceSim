@@ -1,7 +1,7 @@
-#include "GameWindow.h"
-#include "BaseApplication.h"
-#include "DeviceManager.h"
-#include "SettingsManager.h"
+#include "Application/GameWindow.h"
+#include "Application/BaseApplication.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/Settings/SettingsManager.h"
 
 #include <sstream>
 

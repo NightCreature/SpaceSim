@@ -1,10 +1,10 @@
-#include "core.h"
-#include "..\SpaceSim\DeviceManager.h"
-#include "..\SpaceSim\SettingsManager.h"
-#include "ModelManager.h"
-#include "texturemanager.h"
+#include "Gameplay/core.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Graphics/ModelManager.h"
+#include "Graphics/texturemanager.h"
 #include <iostream>
-#include "..\SpaceSim\GameResource.h"
+#include "Core/Resource/GameResource.h"
 
 
 HASH_ELEMENT_IMPLEMENTATION(Core)

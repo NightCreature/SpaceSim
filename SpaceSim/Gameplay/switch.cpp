@@ -1,14 +1,14 @@
-#include "switch.h"
-#include "matrix44.h"
-#include "texturemanager.h"
-#include "modelmanager.h"
+#include "Gameplay/switch.h"
+#include "Math/matrix44.h"
+#include "Graphics/texturemanager.h"
+#include "Graphics/modelmanager.h"
 #include <string>
 #include <fstream>
 
-#include "..\SpaceSim\GameResource.h"
-#include "..\SpaceSim\GameObjectManager.h"
-#include "..\SpaceSim\TypeHelpers.h"
-#include "..\SpaceSim\DebugBox.h"
+#include "Core/Resource/GameResource.h"
+#include "Gameplay/GameObjectManager.h"
+#include "Core/Types/TypeHelpers.h"
+#include "Graphics/DebugBox.h"
 
 HASH_ELEMENT_IMPLEMENTATION(Switch)
 

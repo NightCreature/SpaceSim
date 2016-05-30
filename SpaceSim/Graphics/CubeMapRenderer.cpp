@@ -1,22 +1,22 @@
-#include "CubeMapRenderer.h"
-#include "DeviceManager.h"
-#include "Effect.h"
-#include "Settings.h"
-#include "SettingsManager.h"
+#include "Graphics/CubeMapRenderer.h"
+#include "Graphics/DeviceManager.h"
+#include "Graphics/Effect.h"
+#include "Core/Settings/Settings.h"
+#include "Core/Settings/SettingsManager.h"
 #include <assert.h>
 
-#include "BaseApplication.h"
-#include "..\SpaceSim\RenderInstance.h"
-#include "../SpaceSim/StringHelperFunctions.h"
+#include "Application/BaseApplication.h"
+#include "Graphics/RenderInstance.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
-#include "OrientationAxis.h"
-#include "Types.h"
+#include "Graphics/OrientationAxis.h"
+#include "Core/Types/Types.h"
 #include <d3d11.h>
 #include <dxgi.h>
 #include <list>
 #include <directxmath.h>
-#include "texturemanager.h"
-#include "modelmanager.h"
+#include "Graphics/texturemanager.h"
+#include "Graphics/modelmanager.h"
 
 #ifdef _DEBUG
 #include <d3d11_1.h>

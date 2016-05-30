@@ -1,7 +1,7 @@
-#include "InfinitySphere.h"
-#include "StringHelperFunctions.h"
-#include "CameraManager.h"
-#include "ModelManager.h"
+#include "Gameplay/InfinitySphere.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Graphics/CameraManager.h"
+#include "Graphics/ModelManager.h"
 
 HASH_ELEMENT_IMPLEMENTATION(InfinitySphere);
 

@@ -1,9 +1,9 @@
-#include "..\SpaceSim\BaseApplication.h"
-#include "laser.h"
-#include "material.h"
-#include "matrix44.h"
-#include "..\SpaceSim\DeviceManager.h"
-#include "..\SpaceSim\TypeHelpers.h"
+#include "Application/BaseApplication.h"
+#include "Gameplay/laser.h"
+#include "Graphics/material.h"
+#include "Math/matrix44.h"
+#include "Graphics/DeviceManager.h"
+#include "Core/Types/TypeHelpers.h"
 #include <sstream>
 
 

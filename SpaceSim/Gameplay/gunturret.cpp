@@ -1,22 +1,22 @@
-#include "gunturret.h"
-#include "..\SpaceSim\SettingsManager.h"
-#include "particleemitter.h"
-#include "particlesystemmanager.h"
-#include "matrix44.h"
-#include "box.h"
-#include "modelmanager.h"
-#include "mesh.h"
-#include "../SpaceSim/LaserManager.h"
+#include "Gameplay/gunturret.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Gameplay/particleemitter.h"
+#include "Gameplay/particlesystemmanager.h"
+#include "Math/matrix44.h"
+#include "Gameplay/box.h"
+#include "Graphics/modelmanager.h"
+#include "Graphics/mesh.h"
+#include "Gameplay/LaserManager.h"
 #include <iostream>
 #include <assert.h>
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
 #include <vector>
-#include "../SpaceSim/GameResource.h"
-#include "../SpaceSim/EffectCache.h"
-#include "../SpaceSim/StringHelperFunctions.h"
-#include "../SpaceSim/DebugBox.h"
+#include "Core/Resource/GameResource.h"
+#include "Graphics/EffectCache.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Graphics/DebugBox.h"
 
 HASH_ELEMENT_IMPLEMENTATION(GunTurret)
 

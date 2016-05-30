@@ -386,9 +386,6 @@
     <ClCompile Include="..\..\Application\displaywindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Application\DLExampleApplication.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Application\GameWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

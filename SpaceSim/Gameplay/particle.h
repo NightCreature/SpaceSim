@@ -1,9 +1,9 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
-#include "vector3.h"
-#include "color.h"
-#include "interpolatecurveRGBA.h"
+#include "Math/vector3.h"
+#include "Graphics/color.h"
+#include "Graphics/interpolatecurveRGBA.h"
 
 class Particle
 {

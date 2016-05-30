@@ -1,7 +1,7 @@
 #ifndef interpolateCurveRGBA_H
 #define interpolateCurveRGBA_H
 
-#include "matrixmath.h"
+#include "Math/matrixmath.h"
 
 class interpolateCurveRGBA
 {

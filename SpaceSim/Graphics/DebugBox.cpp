@@ -1,12 +1,10 @@
 
-#include <WinSock2.h>
-
-#include "DebugBox.h"
-#include "EffectCache.h"
-#include "material.h"
-#include "matrix44.h"
-#include "Effect.h"
-#include "BaseApplication.h"
+#include "Graphics/DebugBox.h"
+#include "Graphics/EffectCache.h"
+#include "Graphics/material.h"
+#include "Math/matrix44.h"
+#include "Graphics/Effect.h"
+#include "Application/BaseApplication.h"
 
 namespace DebugGraphics
 {

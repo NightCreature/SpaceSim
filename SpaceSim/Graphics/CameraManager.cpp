@@ -1,6 +1,6 @@
-#include "CameraManager.h"
-#include "SettingsManager.h"
-#include "GameResource.h"
+#include "Graphics/CameraManager.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Core/Resource/GameResource.h"
 
 bool CameraManager::createCamera( const GameResource& resource, const std::string& name, const Vector3& position, const Vector3& lookAt, const Vector3& up )
 {

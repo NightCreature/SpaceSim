@@ -1,23 +1,23 @@
-#include "BaseApplication.h"
-#include "DeviceManager.h"
-#include "GameObjectManager.h"
-#include "MapLoader.h"
-#include "matrixmath.h"
-#include "SettingsManager.h"
-#include "Types.h"
-#include "GameResource.h"
-#include "LaserManager.h"
-#include "ShaderPack.h"
+#include "Application/BaseApplication.h"
+#include "Graphics/DeviceManager.h"
+#include "Gameplay/GameObjectManager.h"
+#include "Loader/MapLoader.h"
+#include "Math/matrixmath.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Core/Types/Types.h"
+#include "Core/Resource/GameResource.h"
+#include "Gameplay/LaserManager.h"
+#include "Graphics/ShaderPack.h"
 #include <wbemidl.h>
 #include <oleauto.h>
 #include <wbemidl.h>
 
 #include <list>
 
-#include "CubeMapRenderer.h"
-#include "HashString.h"
+#include "Graphics/CubeMapRenderer.h"
+#include "Core/StringOperations/HashString.h"
 
-#include "EntityManager.h"
+#include "Gameplay/EntityManager.h"
 
 #include "UI/BitmapFont.h"
 #include "UI/TextBlock.h"
@@ -53,9 +53,8 @@ Text::TextBlockCache* cache;
 bool Application::initialise()
 {
     m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
-                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, &m_httpServer);
+                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, nullptr);
 
-    m_httpServer.Initialise();
 
     m_logger.addLogger(new OutputDebugLog());
     //m_logger.addLogger(new HttpDebugLog());
@@ -215,8 +214,6 @@ LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wP
 //-----------------------------------------------------------------------------
 void Application::cleanup()
 {
-    m_httpServer.killThread();
-    m_httpServer.Cleanup();
     m_gameResource->getDeviceManager().clearDeviceState();
     m_gameResource->getSettingsManager().cleanup();
     m_renderSystem.cleanup();

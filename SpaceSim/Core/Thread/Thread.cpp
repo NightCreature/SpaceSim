@@ -1,5 +1,5 @@
-#include "Thread.h"
-#include "StringHelperFunctions.h"
+#include "Core/Thread/Thread.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 
 Thread::~Thread()

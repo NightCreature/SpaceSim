@@ -1,10 +1,10 @@
-#include "box.h"
-#include "texturemanager.h"
+#include "Gameplay/box.h"
+#include "Graphics/texturemanager.h"
 #include "windows.h"
-#include "..\SpaceSim\BaseApplication.h"
-#include "..\SpaceSim\EffectCache.h"
-#include "..\SpaceSim\Types.h"
-#include "..\SpaceSim\TypeHelpers.h"
+#include "Application/BaseApplication.h"
+#include "Graphics/EffectCache.h"
+#include "Core/Types/Types.h"
+#include "Core/Types/TypeHelpers.h"
 
 namespace Box
 {

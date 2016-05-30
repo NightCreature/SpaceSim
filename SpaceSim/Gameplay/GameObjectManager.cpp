@@ -1,6 +1,6 @@
-#include "GameObjectManager.h"
-#include "StringHelperFunctions.h"
-#include "..\SpaceSim\Messages.h"
+#include "Gameplay/GameObjectManager.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "UI/Messages.h"
 
 GameObjectManager::GameObjectManager(void)
 {

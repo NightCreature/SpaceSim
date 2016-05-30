@@ -1,16 +1,16 @@
-#include "face.h"
-#include "matrixmath.h"
-#include "settingsparser.h"
-#include "..\SpaceSim\DeviceManager.h"
+#include "Gameplay/face.h"
+#include "Math/matrixmath.h"
+#include "Core/Settings/settingsparser.h"
+#include "Graphics/DeviceManager.h"
 #include <math.h>
 #include <assert.h>
 #include <Windows.h>
 #include <directxmath.h>
 
-#include "..\SpaceSim\BaseApplication.h" //Hack for now
-#include "..\SpaceSim\TypeHelpers.h" //Hack for now
-#include "..\SpaceSim\ShaderInstance.h"
-#include "..\SpaceSim\StringHelperFunctions.h"
+#include "Application/BaseApplication.h" //Hack for now
+#include "Core/Types/TypeHelpers.h" //Hack for now
+#include "Graphics/ShaderInstance.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 
 namespace Face

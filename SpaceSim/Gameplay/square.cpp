@@ -1,7 +1,7 @@
-#include "square.h"
-#include "vector4.h"
-#include "matrix44.h"
-#include "..\\SpaceSim\BaseApplication.h"
+#include "Gameplay/square.h"
+#include "Math/vector4.h"
+#include "Math/matrix44.h"
+#include "Application/BaseApplication.h"
 
 namespace Square
 {

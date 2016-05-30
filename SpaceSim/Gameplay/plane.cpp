@@ -1,11 +1,11 @@
-#include "plane.h"
-#include "box.h"
-#include "matrix44.h"
-#include "vector4.h"
+#include "Gameplay/plane.h"
+#include "Gameplay/box.h"
+#include "Math/matrix44.h"
+#include "Math/vector4.h"
 #include <cmath>
 #include "Windows.h"
 
-#include "..\SpaceSim\MeshComponentData.h"
+#include "Graphics/MeshComponentData.h"
 
 int Plane::m_planeCount = 0;
 

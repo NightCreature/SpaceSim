@@ -1,11 +1,8 @@
-#include "SettingsParser.h"
-#include "SettingsManager.h"
-#include "StringHelperFunctions.h"
-#include "..\SpaceSim\tinyxml2.h"
+#include "Core/Settings/SettingsParser.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/tinyxml2.h"
 #include <iostream>
-
-#include "../SpaceSim/StringHelperFunctions.h"
-#include "../SpaceSim/SettingsManager.h"
 
 //-----------------------------------------------------------------------------
 //! @brief   SettingsParser Constructor

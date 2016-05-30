@@ -1,6 +1,6 @@
-#include "scorchmark.h"
-#include "..\SpaceSim\SettingsManager.h"
-#include "texturemanager.h"
+#include "Gameplay/scorchmark.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Graphics/texturemanager.h"
 
 ScorchMark::ScorchMark(Resource* resource, const Vector3& position, const Vector3& normal, float lifetime):
 GameObject(resource)

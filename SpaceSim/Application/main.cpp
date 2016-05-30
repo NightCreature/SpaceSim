@@ -2,15 +2,13 @@
 #include "BaseApplication.h"
 #include <stdio.h>
 #include <tchar.h>
-#include "Paths.h"
-#include "texture.h"
+#include "Core/Paths.h"
+#include "Graphics/texture.h"
 
 #include <iostream>
 #include <direct.h>
 
-#include "main.h"
-
-#include "StringOperations/StringTemplate.h"
+#include "Core/StringOperations/StringTemplate.h"
 
 #include "Memory/SlotAllocator.h"
 #include "Memory/LinearAllocator.h"

@@ -1,8 +1,6 @@
 // DLExampleApplication.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
-#include "dl_string.h"
 
 #include "BaseApplication.h"
 #include "DeviceManager.h"

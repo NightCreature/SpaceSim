@@ -1,6 +1,6 @@
-#include "rotatingblades.h"
-#include "matrix44.h"
-#include "texturemanager.h"
+#include "Gameplay/rotatingblades.h"
+#include "Math/matrix44.h"
+#include "Graphics/texturemanager.h"
 #include "Windows.h"
 
 #include <iostream>

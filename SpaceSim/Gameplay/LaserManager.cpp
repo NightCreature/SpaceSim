@@ -1,7 +1,7 @@
-#include "LaserManager.h"
-#include "GameResource.h"
-#include "..\SpaceSim\DeviceManager.h"
-#include "EffectCache.h"
+#include "Gameplay/LaserManager.h"
+#include "Core/Resource/GameResource.h"
+#include "Graphics/DeviceManager.h"
+#include "Graphics/EffectCache.h"
 
 //-------------------------------------------------------------------------
 // @brief 

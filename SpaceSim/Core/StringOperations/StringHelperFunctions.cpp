@@ -1,7 +1,5 @@
-#include "StringHelperFunctions.h"
-#include "BaseApplication.h"
-
-
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Application/BaseApplication.h"
 
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description

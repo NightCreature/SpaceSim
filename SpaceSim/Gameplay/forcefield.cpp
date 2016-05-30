@@ -1,14 +1,14 @@
-#include "forcefield.h"
-#include "matrix44.h"
-#include "..\SpaceSim\SettingsManager.h"
-#include "texturemanager.h"
+#include "Gameplay/forcefield.h"
+#include "Math/matrix44.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Graphics/texturemanager.h"
 #include "Windows.h"
 
 
 #include <iostream>
 
 
-#include "box.h"
+#include "Gameplay/box.h"
 
 HASH_ELEMENT_IMPLEMENTATION(ForceField)
 

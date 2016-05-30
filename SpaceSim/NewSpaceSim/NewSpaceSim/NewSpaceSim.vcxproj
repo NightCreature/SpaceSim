@@ -240,7 +240,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\Application\BaseApplication.cpp" />
     <ClCompile Include="..\..\Application\displaywindow.cpp" />
-    <ClCompile Include="..\..\Application\DLExampleApplication.cpp" />
     <ClCompile Include="..\..\Application\GameWindow.cpp" />
     <ClCompile Include="..\..\Application\main.cpp" />
     <ClCompile Include="..\..\Core\Paths.cpp" />

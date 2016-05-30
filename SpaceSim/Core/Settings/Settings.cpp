@@ -1,6 +1,6 @@
-#include "Settings.h"
-#include "..\SpaceSim\tinyxml2.h"
-#include "StringHelperFunctions.h"
+#include "Core/Settings/Settings.h"
+#include "Core/tinyxml2.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description

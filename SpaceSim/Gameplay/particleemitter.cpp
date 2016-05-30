@@ -1,9 +1,9 @@
-#include "particleemitter.h"
-#include "particlesystemmanager.h"
-#include "particle.h"
-#include "square.h"
-#include "matrix33.h"
-#include "texturemanager.h"
+#include "Gameplay/particleemitter.h"
+#include "Gameplay/particlesystemmanager.h"
+#include "Gameplay/particle.h"
+#include "Gameplay/square.h"
+#include "Math/matrix33.h"
+#include "Graphics/texturemanager.h"
 #include <iostream>
 
 ParticleEmitter::ParticleEmitter(ParticleSystemManager* pfxManager) :

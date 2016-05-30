@@ -1,9 +1,9 @@
 //#include "DXUT.h"
 
-#include "Camera.h"
-#include "InputSystem.h"
-#include "matrix33.h"
-#include "HashString.h"
+#include "Graphics/Camera.h"
+#include "Input/InputSystem.h"
+#include "Math/matrix33.h"
+#include "Core/StringOperations/HashString.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
