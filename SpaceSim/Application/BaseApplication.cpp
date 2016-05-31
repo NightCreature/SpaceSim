@@ -8,6 +8,7 @@
 #include "Core/Resource/GameResource.h"
 #include "Gameplay/LaserManager.h"
 #include "Graphics/ShaderPack.h"
+#include "Logging/FileLogger.h"
 #include <wbemidl.h>
 #include <oleauto.h>
 #include <wbemidl.h>
@@ -57,6 +58,7 @@ bool Application::initialise()
 
 
     m_logger.addLogger(new OutputDebugLog());
+    m_logger.addLogger(new FileLogger(m_paths.getLogPath()));
     //m_logger.addLogger(new HttpDebugLog());
     
     //cache = new Text::TextBlockCache(1000, m_gameResource);
