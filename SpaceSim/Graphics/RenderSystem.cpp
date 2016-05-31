@@ -122,7 +122,7 @@ void RenderSystem::initialise(Resource* resource)
                 convertToCString(adapterDesc.Description, str);
                 MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());
 
-                if (adapterDesc.VendorId == 0x8086)
+                if (adapterDesc.VendorId != 0x8086)
                 {
                     break;
                 }
@@ -154,6 +154,11 @@ void RenderSystem::initialise(Resource* resource)
     {
         windowHeight = heightSetting->getData();
     }
+
+    RECT rect;
+    GetClientRect(m_window.getWindowHandle(), &rect);
+    windowWidth = rect.right - rect.left;
+    windowHeight = rect.bottom - rect.top;
 
     createSwapChain(device, windowWidth, windowHeight);
 
