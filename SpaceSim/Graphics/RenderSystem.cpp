@@ -11,10 +11,6 @@
 
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 
-extern "C" {
-    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
-}
-
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
@@ -56,15 +52,15 @@ m_totalNumberOfRenderedFrames(0)
 RenderSystem::~RenderSystem()
 {
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "Total number of rendered instances: %d", m_totalNumberOfInstancesRendered)
-        MSG_TRACE_CHANNEL("RENDERSYSTEM", "Total number of frames: %d", m_totalNumberOfRenderedFrames)
-        MSG_TRACE_CHANNEL("RENDERSYSTEM", "Average Number of instances per frame: %d", m_averageNumberOfInstancesRenderingPerFrame)
-        MSG_TRACE_CHANNEL("RENDERSYSTEM", "Number of instances rendered last frame: %d", m_numberOfInstancesRenderingThisFrame)
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Total number of frames: %d", m_totalNumberOfRenderedFrames)
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Average Number of instances per frame: %d", m_averageNumberOfInstancesRenderingPerFrame)
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Number of instances rendered last frame: %d", m_numberOfInstancesRenderingThisFrame)
 
-        if (m_lightConstantBuffer != nullptr)
-        {
-            m_lightConstantBuffer->Release();
-            m_lightConstantBuffer = nullptr;
-        }
+    if (m_lightConstantBuffer != nullptr)
+    {
+        m_lightConstantBuffer->Release();
+        m_lightConstantBuffer = nullptr;
+    }
 
     if (m_cubeMapRenderer != nullptr)
     {
