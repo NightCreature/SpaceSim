@@ -22,7 +22,7 @@
 #include <d3d11_1.h>
 #include <atlbase.h>
 
-#include "..\..\..\DirectXTK\Inc\ScreenGrab.h"
+#include "ScreenGrab.h"
 #endif
 
 

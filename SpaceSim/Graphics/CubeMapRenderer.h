@@ -7,7 +7,7 @@
 #include <string>
 
 //#ifdef _DEBUG
-#include "..\..\..\DirectXTK\Inc\ScreenGrab.h"
+#include "ScreenGrab.h"
 //#endif
 
 class DeviceManager;
