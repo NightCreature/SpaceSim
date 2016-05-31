@@ -236,3 +236,4 @@ bin/SpaceSim_x64.exp
 *.iobj
 *.ipdb
 *.exp
+*.db
