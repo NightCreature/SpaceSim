@@ -1,5 +1,6 @@
 #include "Logging/FileLogger.h"
 
+#include "Core/Resource/GameResource.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
 //-----------------------------------------------------------------------------
