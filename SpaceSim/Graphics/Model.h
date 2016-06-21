@@ -63,6 +63,14 @@ public:
             meshGroup->setDirty();
         }
     }
+
+    void setShaderInstance(const ShaderInstance& shaderInstance)
+    {
+        for (auto meshGroup : m_modelData)
+        {
+            meshGroup->setShaderInstance(shaderInstance);
+        }
+    }
 protected:
     std::vector<MeshGroup*> m_modelData;
 	Bbox m_originalBBox;

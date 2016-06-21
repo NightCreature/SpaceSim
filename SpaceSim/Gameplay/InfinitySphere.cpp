@@ -28,6 +28,8 @@ const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* nod
             {
                 //Heavily relies on the shader instance existing before we load the model, might be better to put the model construction in initialise instead
                 m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
+                m_drawableObject->getMeshData()[0]->getShaderInstance().getMaterial().addTextureReference(hashString("skybox_small.dds")); //Hacky
+                m_drawableObject->setDirty();
             }
         }
         else if (Vector3::m_hash == childElementHash)
