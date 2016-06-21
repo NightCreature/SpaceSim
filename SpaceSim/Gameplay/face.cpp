@@ -68,7 +68,8 @@ CreatedModel CreateFace(const CreationParams& params)
         size_t numberOfVerts = rows * columns;
         m_totalNumberOfVerts += numberOfVerts;
         bufferSize += sizeof(float) * 3 * numberOfVerts;
-        bufferSize += sizeof(float) * 3 * numberOfVerts;
+        bufferSize += sizeof(float) * 3 * numberOfVerts; //Normal
+        bufferSize += sizeof(float) * 3 * numberOfVerts; //Tangent
         bufferSize += sizeof(float) * 2 * numberOfTexcoords * numberOfVerts;
         byte* vertexData = new byte[bufferSize];
         byte* startOfVertexArray = vertexData;
@@ -79,6 +80,7 @@ CreatedModel CreateFace(const CreationParams& params)
         VertexDecalartionDesctriptor vertexDesc;
         vertexDesc.position = 3;
         vertexDesc.normal = true;
+        vertexDesc.tangent = true;
         vertexDesc.textureCoordinateDimensions = texCoordDimensions;
         const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
@@ -154,10 +156,25 @@ void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbo
         normal = Vector3::zAxis();
     }
 
+    Vector3 tangent;
+    if (params.fillx)
+    {
+        tangent = Vector3::yAxis();
+    }
+    else if (params.filly)
+    {
+        tangent = Vector3::xAxis();
+    }
+    else if (params.fillz)
+    {
+        tangent = Vector3::yAxis();
+    }
     if (params.invertNormal)
     {
         normal = -normal;
+        tangent = -tangent;
     }
+
 
     Vector2 texcoord;
     for (int i = 0; i < rows; i++)
@@ -179,6 +196,10 @@ void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbo
             *(float*)vertexData = normal.x(); vertexData += sizeof(float);
             *(float*)vertexData = normal.y(); vertexData += sizeof(float);
             *(float*)vertexData = normal.z(); vertexData += sizeof(float);
+
+            *(float*)vertexData = tangent.x(); vertexData += sizeof(float);
+            *(float*)vertexData = tangent.y(); vertexData += sizeof(float);
+            *(float*)vertexData = tangent.z(); vertexData += sizeof(float);
 
             float uPart = 1 / (float)(columns - 1); //Minus one as index start at zero still want one at maxEle - 1
             float vPart = 1 / (float)(rows - 1);

@@ -24,7 +24,7 @@ MeshGroup::~MeshGroup()
 //-------------------------------------------------------------------------
 void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name )
 {
-    if (m_renderInstanceDirty)
+    if (m_renderInstanceDirty || m_renderInstance == nullptr)
     {  
         //if ( m_renderInstance != nullptr)
         //{

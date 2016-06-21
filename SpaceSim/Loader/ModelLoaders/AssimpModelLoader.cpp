@@ -38,76 +38,76 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
     Mesh::CreationParams params;
     params.m_shaderInstance = const_cast<ShaderInstance*>(&shaderInstance);
     params.m_resource = resource;
-        unsigned int highestIndex = 0;
-        //Extract vertices from the mesh here and store in our own vertex buffer
-        aiMesh* subMesh = scene->mMeshes[0];
-        for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
+    unsigned int highestIndex = 0;
+    //Extract vertices from the mesh here and store in our own vertex buffer
+    aiMesh* subMesh = scene->mMeshes[0];
+    for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
+    {
+        params.m_vertices.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
+
+        if (subMesh->HasNormals())
         {
-            params.m_vertices.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
+            params.m_normals.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
+            //MSG_TRACE_CHANNEL("NORMAL DEBUG", "Normal: %f, %f, %f", subMesh->mNormals[vertCounter].x, subMesh->mNormals[vertCounter].y, subMesh->mNormals[vertCounter].z);
+        }
 
-            if (subMesh->HasNormals())
+        for (unsigned int uvChannel = 0; uvChannel < subMesh->GetNumUVChannels(); ++uvChannel)
+        {
+            if (subMesh->HasTextureCoords(uvChannel))
             {
-                params.m_normals.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
-                //MSG_TRACE_CHANNEL("NORMAL DEBUG", "Normal: %f, %f, %f", subMesh->mNormals[vertCounter].x, subMesh->mNormals[vertCounter].y, subMesh->mNormals[vertCounter].z);
-            }
-
-            for (unsigned int uvChannel = 0; uvChannel < subMesh->GetNumUVChannels(); ++uvChannel)
-            {
-                if (subMesh->HasTextureCoords(uvChannel))
+                aiVector3D* texCoordChannel = subMesh->mTextureCoords[uvChannel];
+                while (params.m_texcoords.size() <= uvChannel)
                 {
-                    aiVector3D* texCoordChannel = subMesh->mTextureCoords[uvChannel];
-                    while (params.m_texcoords.size() <= uvChannel)
-                    {
-                        params.m_texcoords.push_back(std::vector<Vector2>());
-                    }
-                    switch (subMesh->mNumUVComponents[uvChannel])
-                    {
-                    case 1:
-                        {
-                            Vector2 vec(texCoordChannel[vertCounter].x, 0.0f);
-                            std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
-                            smit.push_back(vec);
-                        }
-                        break;
-                    case 2:
-                        {
-                            Vector2 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y);
-                            std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
-                            smit.push_back(vec);
-                        }
-                        break;
-                    case 3:
-                        {
-                            Vector2 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y);
-                            std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
+                    params.m_texcoords.push_back(std::vector<Vector2>());
+                }
+                switch (subMesh->mNumUVComponents[uvChannel])
+                {
+                case 1:
+                {
+                    Vector2 vec(texCoordChannel[vertCounter].x, 0.0f);
+                    std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
+                    smit.push_back(vec);
+                }
+                break;
+                case 2:
+                {
+                    Vector2 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y);
+                    std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
+                    smit.push_back(vec);
+                }
+                break;
+                case 3:
+                {
+                    Vector2 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y);
+                    std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
 
-                            smit.push_back(vec);
+                    smit.push_back(vec);
 
-                            //    uvs.push_back(texCoordChannel[vertCounter].x);
-                            //    uvs.push_back(texCoordChannel[vertCounter].y);
-                            //    uvs.push_back(texCoordChannel[vertCounter].z);
-                        }
-                        break;
-                    default:
-                        break;
-                    }
+                    //    uvs.push_back(texCoordChannel[vertCounter].x);
+                    //    uvs.push_back(texCoordChannel[vertCounter].y);
+                    //    uvs.push_back(texCoordChannel[vertCounter].z);
+                }
+                break;
+                default:
+                    break;
                 }
             }
         }
+    }
 
-        //Need to keep track of highest index and add it to the next batch and so one sadly
-        unsigned int baseIndexOffset = highestIndex;
-        for (size_t indexCounter = 0; indexCounter < subMesh->mNumFaces; ++indexCounter)
+    //Need to keep track of highest index and add it to the next batch and so one sadly
+    unsigned int baseIndexOffset = highestIndex;
+    for (size_t indexCounter = 0; indexCounter < subMesh->mNumFaces; ++indexCounter)
+    {
+        for (size_t counterIndex = 0; counterIndex < subMesh->mFaces[indexCounter].mNumIndices; ++counterIndex)
         {
-            for (size_t counterIndex = 0; counterIndex < subMesh->mFaces[indexCounter].mNumIndices; ++counterIndex)
+            params.m_indices.push_back(subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset);
+            if (subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset > highestIndex)
             {
-                params.m_indices.push_back(subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset);
-                if (subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset > highestIndex)
-                {
-                    highestIndex = subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset;
-                }
+                highestIndex = subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset;
             }
         }
-        CreatedModel mesh = Mesh::CreateMesh(params);
+    }
+    CreatedModel mesh = Mesh::CreateMesh(params);
     return mesh.model;
 }

@@ -682,5 +682,8 @@
     <None Include="..\..\Core\StringOperations\StringTemplate.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="..\..\..\bin\Maps\Entrance.dat">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

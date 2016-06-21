@@ -277,8 +277,15 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
     const ShaderCache& shaderCache = gameResource.getGameResource().getShaderCache();
 
     size_t oldTechniqueId = 0;
+    std::vector<ID3D11ShaderResourceView*> resourceViews;
+    std::vector<ID3D11SamplerState*> samplerStates;
+    resourceViews.reserve(128);
+    samplerStates.reserve(128);
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
+        resourceViews.clear();
+        samplerStates.clear();
+
         RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 #ifdef _DEBUG
         if (!renderInstance.m_name.empty())
@@ -294,14 +301,18 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
 
         const std::vector<unsigned int>& textureHashes = material.getTextureHashes();
         //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
+
         for (unsigned int counter = 0; counter < textureHashes.size(); ++counter)
         {
             const Texture* texture = m_textureManager.getTexture(textureHashes[counter]);
             ID3D11ShaderResourceView* srv = texture->getShaderResourceView();
-            deviceContext->PSSetShaderResources(counter, 1, &srv);
             ID3D11SamplerState* const samplerState = m_textureManager.getSamplerState();
-            deviceContext->PSSetSamplers(counter, 1, &samplerState);
+            resourceViews.push_back(srv);
+            samplerStates.push_back(samplerState);
         }
+        
+        deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
+        deviceContext->PSSetSamplers(0, static_cast<uint32>(samplerStates.size()), &samplerStates[0]);
 
         if (technique->getTechniqueId() != oldTechniqueId)
         {
