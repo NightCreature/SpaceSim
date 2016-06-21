@@ -55,6 +55,14 @@ public:
 
     const std::vector<MeshGroup*>& getMeshData() const { return m_modelData; }
     std::vector<MeshGroup*>& getMeshData() { return m_modelData; }
+
+    void setDirty()
+    {
+        for (auto meshGroup : m_modelData)
+        {
+            meshGroup->setDirty();
+        }
+    }
 protected:
     std::vector<MeshGroup*> m_modelData;
 	Bbox m_originalBBox;
