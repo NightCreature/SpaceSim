@@ -1,8 +1,8 @@
 #include "Graphics/texture.h"
 #include "Graphics\DeviceManager.h"
 
-#include "..\..\..\DirectXTK\Inc\WICTextureLoader.h"
-#include "..\..\..\DirectXTK\Inc\DDSTextureLoader.h"
+#include "WICTextureLoader.h"
+#include "DDSTextureLoader.h"
 
 #include <assert.h>
 #include <iostream>
