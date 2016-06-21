@@ -122,6 +122,20 @@ const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::create
         vertexStride += 12;
     }
 
+    if (tangent)
+    {
+        D3D11_INPUT_ELEMENT_DESC layout;
+        layout.SemanticName = "TANGENT";
+        layout.SemanticIndex = 0;
+        layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+        layout.InputSlot = 0;
+        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
+        layout.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+        layout.InstanceDataStepRate = 0;
+        vertexDataLayoutElements.push_back(layout);
+        vertexStride += 12;
+    }
+
     if (vertexColor)
     {
         D3D11_INPUT_ELEMENT_DESC layout;
