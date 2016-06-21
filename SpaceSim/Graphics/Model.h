@@ -55,6 +55,22 @@ public:
 
     const std::vector<MeshGroup*>& getMeshData() const { return m_modelData; }
     std::vector<MeshGroup*>& getMeshData() { return m_modelData; }
+
+    void setDirty()
+    {
+        for (auto meshGroup : m_modelData)
+        {
+            meshGroup->setDirty();
+        }
+    }
+
+    void setShaderInstance(const ShaderInstance& shaderInstance)
+    {
+        for (auto meshGroup : m_modelData)
+        {
+            meshGroup->setShaderInstance(shaderInstance);
+        }
+    }
 protected:
     std::vector<MeshGroup*> m_modelData;
 	Bbox m_originalBBox;

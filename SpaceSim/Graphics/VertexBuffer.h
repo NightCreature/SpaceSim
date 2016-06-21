@@ -19,6 +19,7 @@ struct VertexDecalartionDesctriptor
 
     size_t position;
     bool normal;
+    bool tangent;
     bool vertexColor;
     std::vector<unsigned int> textureCoordinateDimensions;
 };

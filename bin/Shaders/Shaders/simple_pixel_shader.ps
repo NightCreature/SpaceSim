@@ -27,7 +27,7 @@ cbuffer LightParamters: register(b1)
     float3 camera_position;
 }
 
-Texture2D<float4> shaderTextures;
+Texture2D<float4> shaderTextures : register(t0);
 SamplerState SampleType
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -35,11 +35,15 @@ SamplerState SampleType
     AddressV = Wrap;
 };
 
+Texture2D<float4> normalMap : register(t1);
+
 //--------------------------------------------------------------------------------------
 struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
     float3 Nor : NORMAL0;
+    float3 Tan : TANGENT0;
+    float3 BiN : BINORMAL0;
     float2 Tex : TEXCOORD0;
     float3 WorldPos : TEXCOORD1;
 };
@@ -53,7 +57,9 @@ float4 ps_main( PS_INPUT input) : SV_Target
     float4 color;
 
     float4 texColor = shaderTextures.Sample(SampleType, input.Tex);
-    float3 nnormal = normalize(input.Nor);
+    float3 sampledNormalMap = ((2.0 * normalMap.Sample(SampleType, input.Tex).xyz) - 1.0);
+    float3 nnormal = normalize(input.Tan * sampledNormalMap.x + input.BiN * sampledNormalMap.y + input.Nor * sampledNormalMap.z);
+
     float3 nviewdirection = normalize(camera_position - vertexPos);
     color = float4(ambient.rgb, 1.0) * texColor + float4(emissive.rgb, 0.0);
     for (int counter = 0; counter < 3; ++counter)
@@ -71,7 +77,7 @@ float4 ps_main( PS_INPUT input) : SV_Target
             float rdotv = pow(saturate(dot(reflection, nviewdirection)), shininess);
             if (ndotl > 0.0)
             {
-                color = color + (m_lights[counter].m_diffuse * ndotl * (texColor * float4(diffuse.rgb, 1.0))) * attenuation;// + rdotv;
+                color = color + (m_lights[counter].m_diffuse * ndotl * (texColor * float4(diffuse.rgb, 1.0))) * attenuation + rdotv * m_lights[counter].m_specular;
             }
         }
     }
