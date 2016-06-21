@@ -72,8 +72,8 @@
     <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..;D:\SDK\DirectXTK\Inc;D:\SDK\Assimp\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>D:\SDK\Assimp\lib\x64;D:\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
   </PropertyGroup>
