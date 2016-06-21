@@ -1,0 +1,146 @@
+<xml>
+  <!--Left side of switch ccw so position normal texcoord is the format here-->
+  <MeshFace primitives="4">
+    <MeshVertex>
+      <Vector3 x="0" y="0" z="0" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="0" y="0" />
+      <Vector2 x="0" y="0" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="2.5" y="2.5" z="2.5" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="0" y="1" />
+      <Vector2 x="0" y="1" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="2.5" y="7.5" z="2.5" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="1" y="1" />
+      <Vector2 x="1" y="1" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="0" y="10" z="0" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="1" y="0" />
+      <Vector2 x="1" y="0" />
+    </MeshVertex>
+    <MeshIndices>0,1,2,0,2,3</MeshIndices>
+  </MeshFace>
+
+  <!--Right side of switch ccw-->
+  <MeshFace primitives="4">
+    <MeshVertex>
+      <Vector3 x="7.5" y="2.5" z="2.5" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="0" y="0" />
+      <Vector2 x="0" y="0" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="10" y="0" z="0" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="1" y="0" />
+      <Vector2 x="1" y="0" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="10" y="10" z="0" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="1" y="1" />
+      <Vector2 x="1" y="1" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="7.5" y="7.5" z="2.5" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="0" y="1" />
+      <Vector2 x="0" y="1" />
+    </MeshVertex>
+    <MeshIndices>4,5,6,4,6,7</MeshIndices>
+  </MeshFace>
+
+  <!--Top of switch ccw-->
+  <MeshFace primitives="4">
+    <MeshVertex>
+      <Vector3 x="0" y="10" z="0" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="0" y="0" />
+      <Vector2 x="0" y="0" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="2.5" y="7.5" z="2.5" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="0" y="1" />
+      <Vector2 x="0" y="1" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="7.5" y="7.5" z="2.5" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="1" y="1" />
+      <Vector2 x="1" y="1" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="10" y="10" z="0" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="1" y="0" />
+      <Vector2 x="1" y="0" />
+    </MeshVertex>
+    <MeshIndices>8,9,10,8,10,11</MeshIndices>
+  </MeshFace>
+
+  <!--Bottom of switch ccw-->
+  <MeshFace primitives="4">
+    <MeshVertex>
+      <Vector3 x="0" y="0" z="0" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="0" y="0" />
+      <Vector2 x="0" y="0" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="10" y="0" z="0" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="1" y="0" />
+      <Vector2 x="1" y="0" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="7.5" y="2.5" z="2.5" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="1" y="1" />
+      <Vector2 x="1" y="1" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="2.5" y="2.5" z="2.5" />
+      <Vector3 x="0" y="0" z="-1" />
+      <Vector2 x="0" y="1" />
+      <Vector2 x="0" y="1" />
+    </MeshVertex>
+    <MeshIndices>12,13,14,12,14,15</MeshIndices>
+  </MeshFace>
+
+  <!--Front of switch ccw-->
+  <MeshFace primitives="4">
+    <MeshVertex>
+      <Vector3 x="2.5" y="2.5" z="2.5" />
+      <Vector3 x="0" y="0" z="1" />
+      <Vector2 x="0" y="0" />
+      <Vector2 x="0" y="0" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="7.5" y="2.5" z="2.5" />
+      <Vector3 x="0" y="0" z="1" />
+      <Vector2 x="0" y="1" />
+      <Vector2 x="0" y="1" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="7.5" y="7.5" z="2.5" />
+      <Vector3 x="0" y="0" z="1" />
+      <Vector2 x="1" y="1" />
+      <Vector2 x="1" y="1" />
+    </MeshVertex>
+    <MeshVertex>
+      <Vector3 x="2.5" y="7.5" z="2.5" />
+      <Vector3 x="0" y="0" z="1" />
+      <Vector2 x="1" y="0" />
+      <Vector2 x="1" y="0" />
+    </MeshVertex>
+    <MeshIndices>16,17,18,16,18,19</MeshIndices>
+  </MeshFace>
+</xml>
