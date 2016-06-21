@@ -24,14 +24,14 @@ public:
     //Create and add a RenderInstance into the tree to be rendered
     void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name);
     
-    void setMaterial(const Material& material) { m_shaderInstance.setMaterial(material); m_renderInstanceDirty = true; MSG_TRACE_CHANNEL("MESHGROUP", "Calling setMaterial");  }
-    void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true;  MSG_TRACE_CHANNEL("MESHGROUP", "Calling setWorld"); }
+    void setMaterial(const Material& material) { m_shaderInstance.setMaterial(material); m_renderInstanceDirty = true; }
+    void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true; }
 
     const GeometryInstance& getGeometryInstance() const { return m_geometryInstance; }
     GeometryInstance& getGeometryInstance() { return m_geometryInstance; }
     const ShaderInstance& getShaderInstance() const { return m_shaderInstance; }
     ShaderInstance& getShaderInstance() { return m_shaderInstance; }
-    void setShaderInstance(const ShaderInstance& shaderInstance) { m_shaderInstance = shaderInstance; m_renderInstanceDirty = true; MSG_TRACE_CHANNEL("MESHGROUP", "Calling setShaderInstance"); }
+    void setShaderInstance(const ShaderInstance& shaderInstance) { m_shaderInstance = shaderInstance; m_renderInstanceDirty = true; }
 
     void setDirty() { m_renderInstanceDirty = true; }
 private:
