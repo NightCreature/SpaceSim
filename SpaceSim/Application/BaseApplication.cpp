@@ -54,11 +54,19 @@ Text::TextBlockCache* cache;
 bool Application::initialise()
 {
     m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
-                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, nullptr);
+                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, nullptr, &m_logger);
 
 
     m_logger.addLogger(new OutputDebugLog());
-    m_logger.addLogger(new FileLogger(m_paths.getLogPath()));
+    FileLogger* file_logger = new FileLogger(m_paths.getLogPath());
+    if (file_logger->is_open())
+    {
+        m_logger.addLogger(file_logger);
+    }
+    else
+    {
+        delete file_logger;
+    }
     //m_logger.addLogger(new HttpDebugLog());
     
     //cache = new Text::TextBlockCache(1000, m_gameResource);

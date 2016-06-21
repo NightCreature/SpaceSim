@@ -53,6 +53,20 @@ public:
     }
 
     void addLogger(ILog* logger) { m_logs.push_back(logger);  }
+    void removeLogger(ILog* logger) 
+    {
+        for (std::vector<ILog*>::iterator logIt = m_logs.begin();  logIt != m_logs.end(); ++logIt)
+        {
+            if (logger == *logIt)
+            {
+                ILog* instance = *logIt;
+                m_logs.erase(logIt);
+
+                delete instance;
+                break;
+            }
+        }
+    }
 
     void LogMessage(const std::string& message)
     {
