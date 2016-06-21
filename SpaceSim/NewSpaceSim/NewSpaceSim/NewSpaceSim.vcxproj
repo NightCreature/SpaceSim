@@ -356,6 +356,9 @@
     <ClCompile Include="..\..\UI\WebkitThread.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\bin\Maps\Entrance.dat">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="..\..\Core\StringOperations\StringTemplate.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
