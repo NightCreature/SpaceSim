@@ -1,5 +1,7 @@
 #include "Loader/ModelLoaders/AssimpModelLoader.h"
 #include "Graphics/mesh.h"
+#include "Graphics/texturemanager.h"
+#include "Core/Resource/GameResource.h"
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
@@ -118,6 +120,48 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
                 }
             }
         }
+
+        aiMaterial* material = scene->mMaterials[subMesh->mMaterialIndex];
+        Material shaderMaterial = params.m_shaderInstance->getMaterial();
+        aiColor4D color;
+        material->Get(AI_MATKEY_COLOR_AMBIENT, color);
+        shaderMaterial.setAmbient(Color(color.r, color.g, color.b, color.a));
+
+        material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+        shaderMaterial.setDiffuse(Color(color.r, color.g, color.b, color.a));
+
+        material->Get(AI_MATKEY_COLOR_SPECULAR, color);
+        shaderMaterial.setSpecular(Color(color.r, color.g, color.b, color.a));
+
+        material->Get(AI_MATKEY_COLOR_EMISSIVE, color);
+        shaderMaterial.setEmissive(Color(color.r, color.g, color.b, color.a));
+        
+        float shininess;
+        material->Get(AI_MATKEY_SHININESS, shininess);
+        shaderMaterial.setShininess(shininess);
+
+        //load the texture maps here
+        GameResourceHelper gameResource(resource);
+        TextureManager& tm = gameResource.getWritableGameResource().getTextureManager();
+        DeviceManager& dm = gameResource.getWritableGameResource().getDeviceManager();
+        aiString path;
+        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, 0, &path))
+        {
+            tm.addLoad(dm, path.C_Str());
+            shaderMaterial.addTextureReference(hashString(getTextureNameFromFileName(path.C_Str())));
+        }
+        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_EMISSIVE, 0, &path))
+        {
+            tm.addLoad(dm, path.C_Str());
+            shaderMaterial.addTextureReference(hashString(getTextureNameFromFileName(path.C_Str())));
+        }
+        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_NORMALS, 0, &path))
+        {
+            tm.addLoad(dm, path.C_Str());
+            shaderMaterial.addTextureReference(hashString(getTextureNameFromFileName(path.C_Str())));
+        }
+        MSG_TRACE_CHANNEL("ASSIMP LOADER","Trying to read material %d", material);
+        
     }
 
     params.m_numtangents = 0; //TODO FIX this needs to look at the model to get this.
