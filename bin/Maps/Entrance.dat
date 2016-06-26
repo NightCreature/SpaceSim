@@ -1130,6 +1130,7 @@
     <!--="525" y="-500" z="700"-->
     <Vector3 x="0" y="0" z="0"/>
     <Vector3 x="35" y="40" z="40"/>
+    <Model file_name="Models\sphere.dae" />
   </Core>
   <!--
   <Switch name="switch_1" >

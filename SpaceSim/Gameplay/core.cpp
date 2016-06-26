@@ -51,7 +51,6 @@ GameObject(resource), m_position(position), m_radius(radius), m_slices(slices), 
 //-----------------------------------------------------------------------------
 void Core::initialise(const ShaderInstance& shaderInstance)
 {
-    m_drawableObject = ((GameResource*)m_resource)->getModelManager().LoadModel(m_resource, shaderInstance, "Models\\sphere.dae");
     //m_drawableObject->dontCleanupGeometry();
     m_position = Vector3(525, -75, 175);
     m_world = scale(m_radius, m_radius, m_radius) * translate(m_position);
@@ -108,6 +107,16 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
                 {
                     m_forcefieldmatglowing.deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
                 }
+            }
+        }
+        else if (childElementHash == hashString("Model"))
+        {
+            attribute = childElement->FindAttribute("file_name");
+            if (attribute != nullptr)
+            {
+                //Heavily relies on the shader instance existing before we load the model, might be better to put the model construction in initialise instead
+                m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
+                m_drawableObject->setDirty();
             }
         }
     }
