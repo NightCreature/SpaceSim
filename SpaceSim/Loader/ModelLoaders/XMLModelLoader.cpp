@@ -40,7 +40,7 @@ Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shade
     //Mesh* mesh = new Mesh(resource);
     std::vector<Vector3>& vertices = params.m_vertices;
     std::vector<Vector3>& normals = params.m_normals;
-    std::vector< std::vector<Vector2> >& texCoords = params.m_texcoords;
+    std::vector< std::vector<Vector3> >& texCoords = params.m_texcoords;
     size_t numberOfTexCoords = 0;
     std::vector<unsigned int>& indices = params.m_indices;
 
@@ -84,10 +84,10 @@ Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shade
                             //Always see this as texture coordinate data
                             while (params.m_texcoords.size() <= texCoordSetCount)
                             {
-                                params.m_texcoords.push_back(std::vector<Vector2>());
+                                params.m_texcoords.push_back(std::vector<Vector3>());
                             }
-                            std::vector<Vector2>& smit = texCoords[texCoordSetCount];
-                            smit.push_back(vec);
+                            std::vector<Vector3>& smit = texCoords[texCoordSetCount];
+                            smit.push_back(Vector3(vec));
                             ++texCoordSetCount;
                         }
                     }
