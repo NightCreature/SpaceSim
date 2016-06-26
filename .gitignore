@@ -238,3 +238,7 @@ bin/SpaceSim_x64.exp
 *.exp
 *.db
 *.opendb
+*.3DS
+*.FBX
+*.max
+bin/Temp/
