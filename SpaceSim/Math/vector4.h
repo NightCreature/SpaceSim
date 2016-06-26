@@ -11,7 +11,9 @@ public:
 	Vector4();
     Vector4(const Vector3& v, float w);
 	Vector4(float x, float y, float z, float w);
-	Vector4(const float xyzw[]);
+    Vector4(const float xyzw[]);
+    Vector4(const Vector2& vec) : m_x(vec.x()), m_y(vec.y()), m_z(0.0f), m_w(0.0f) {}
+    Vector4(const Vector3& vec) : m_x(vec.x()), m_y(vec.y()), m_z(vec.z()), m_w(0.0f) {}
 	~Vector4() {}
 
 	float dot (const Vector4& v);
