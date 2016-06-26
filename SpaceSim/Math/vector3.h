@@ -3,6 +3,7 @@
 
 #include "Memory/AlignMacros.h"
 #include "Core/tinyxml2.h"
+#include "Math/vector2.h"
 #include <iostream>
 
 class Vector3
@@ -11,6 +12,7 @@ public:
     Vector3();
     Vector3(float x, float y, float z);
     Vector3(const float xyz[]);
+    explicit Vector3(const Vector2& vec) : m_x(vec.x()), m_y(vec.y()), m_z(0.0f) {}
     ~Vector3() {}
 
     void cross (Vector3 &out, const Vector3& v);

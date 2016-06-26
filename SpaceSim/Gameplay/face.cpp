@@ -159,7 +159,7 @@ void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbo
     Vector3 tangent;
     if (params.fillx)
     {
-        tangent = Vector3::yAxis();
+        tangent = Vector3::zAxis();
     }
     else if (params.filly)
     {

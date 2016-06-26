@@ -32,7 +32,7 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
     {    
         MSG_TRACE_CHANNEL("ASSIMPMODELLOADER", "failed to open the model file ( %s ) importer error: %s", fileName.c_str(), importer.GetErrorString() )
         return nullptr;
-    }  // Now we can access the file's contents.   
+    }  // Now we can access the file's contents.
 
     //Grab the verts here
     Mesh::CreationParams params;
@@ -40,74 +40,97 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
     params.m_resource = resource;
     unsigned int highestIndex = 0;
     //Extract vertices from the mesh here and store in our own vertex buffer
-    aiMesh* subMesh = scene->mMeshes[0];
-    for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
+    for (size_t meshCounter = 0; meshCounter < scene->mNumMeshes; ++meshCounter)
     {
-        params.m_vertices.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
-
-        if (subMesh->HasNormals())
+        aiMesh* subMesh = scene->mMeshes[meshCounter];
+        for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
         {
-            params.m_normals.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
-            //MSG_TRACE_CHANNEL("NORMAL DEBUG", "Normal: %f, %f, %f", subMesh->mNormals[vertCounter].x, subMesh->mNormals[vertCounter].y, subMesh->mNormals[vertCounter].z);
-        }
+            params.m_vertices.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
 
-        for (unsigned int uvChannel = 0; uvChannel < subMesh->GetNumUVChannels(); ++uvChannel)
-        {
-            if (subMesh->HasTextureCoords(uvChannel))
+            if (subMesh->HasNormals())
             {
-                aiVector3D* texCoordChannel = subMesh->mTextureCoords[uvChannel];
-                while (params.m_texcoords.size() <= uvChannel)
-                {
-                    params.m_texcoords.push_back(std::vector<Vector2>());
-                }
-                switch (subMesh->mNumUVComponents[uvChannel])
-                {
-                case 1:
-                {
-                    Vector2 vec(texCoordChannel[vertCounter].x, 0.0f);
-                    std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
-                    smit.push_back(vec);
-                }
-                break;
-                case 2:
-                {
-                    Vector2 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y);
-                    std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
-                    smit.push_back(vec);
-                }
-                break;
-                case 3:
-                {
-                    Vector2 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y);
-                    std::vector<Vector2>& smit = params.m_texcoords[uvChannel];
+                params.m_normals.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
+                //MSG_TRACE_CHANNEL("NORMAL DEBUG", "Normal: %f, %f, %f", subMesh->mNormals[vertCounter].x, subMesh->mNormals[vertCounter].y, subMesh->mNormals[vertCounter].z);
+            }
+            if (subMesh->mTangents != nullptr)
+            {
+                params.m_tangents.push_back(Vector3(-subMesh->mTangents[vertCounter].x, -subMesh->mTangents[vertCounter].y, -subMesh->mTangents[vertCounter].z));
+            }
+            if (subMesh->mBitangents != nullptr)
+            {
+                params.m_tangents.push_back(Vector3(-subMesh->mBitangents[vertCounter].x, -subMesh->mBitangents[vertCounter].y, -subMesh->mBitangents[vertCounter].z));
+            }
 
-                    smit.push_back(vec);
-
-                    //    uvs.push_back(texCoordChannel[vertCounter].x);
-                    //    uvs.push_back(texCoordChannel[vertCounter].y);
-                    //    uvs.push_back(texCoordChannel[vertCounter].z);
-                }
-                break;
-                default:
+            for (unsigned int uvChannel = 0; uvChannel < subMesh->GetNumUVChannels(); ++uvChannel)
+            {
+                if (subMesh->HasTextureCoords(uvChannel))
+                {
+                    aiVector3D* texCoordChannel = subMesh->mTextureCoords[uvChannel];
+                    while (params.m_texcoords.size() <= uvChannel)
+                    {
+                        params.m_texcoords.push_back(std::vector<Vector3>());
+                    }
+                    switch (subMesh->mNumUVComponents[uvChannel])
+                    {
+                    case 1:
+                    {
+                        Vector3 vec(texCoordChannel[vertCounter].x, 0.0f, 0.0f);
+                        std::vector<Vector3>& smit = params.m_texcoords[uvChannel];
+                        smit.push_back(vec);
+                    }
                     break;
+                    case 2:
+                    {
+                        Vector3 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y, 0.0f);
+                        std::vector<Vector3>& smit = params.m_texcoords[uvChannel];
+                        smit.push_back(vec);
+                    }
+                    break;
+                    case 3:
+                    {
+                        Vector3 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y, texCoordChannel[vertCounter].z);
+                        std::vector<Vector3>& smit = params.m_texcoords[uvChannel];
+
+                        smit.push_back(vec);
+
+                        //    uvs.push_back(texCoordChannel[vertCounter].x);
+                        //    uvs.push_back(texCoordChannel[vertCounter].y);
+                        //    uvs.push_back(texCoordChannel[vertCounter].z);
+                    }
+                    break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Need to keep track of highest index and add it to the next batch and so one sadly
+        unsigned int baseIndexOffset = highestIndex;
+        for (size_t indexCounter = 0; indexCounter < subMesh->mNumFaces; ++indexCounter)
+        {
+            for (size_t counterIndex = 0; counterIndex < subMesh->mFaces[indexCounter].mNumIndices; ++counterIndex)
+            {
+                params.m_indices.push_back(subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset);
+                if (subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset > highestIndex)
+                {
+                    highestIndex = subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset;
                 }
             }
         }
     }
 
-    //Need to keep track of highest index and add it to the next batch and so one sadly
-    unsigned int baseIndexOffset = highestIndex;
-    for (size_t indexCounter = 0; indexCounter < subMesh->mNumFaces; ++indexCounter)
+    params.m_numtangents = 0; //TODO FIX this needs to look at the model to get this.
+    params.m_vertexDeclaration.position = 3;
+    params.m_vertexDeclaration.normal = params.m_normals.size() > 0;
+    params.m_vertexDeclaration.tangent = params.m_tangents.size() > 0;
+    params.m_vertexDeclaration.textureCoordinateDimensions.clear();
+    for (size_t counter = 0; counter < params.m_texcoords.size(); ++counter)
     {
-        for (size_t counterIndex = 0; counterIndex < subMesh->mFaces[indexCounter].mNumIndices; ++counterIndex)
-        {
-            params.m_indices.push_back(subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset);
-            if (subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset > highestIndex)
-            {
-                highestIndex = subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset;
-            }
-        }
+        params.m_vertexDeclaration.textureCoordinateDimensions.push_back(2);
     }
-    CreatedModel mesh = Mesh::CreateMesh(params);
+    params.m_vertexDeclaration.vertexColor = false;
+
+    CreatedModel mesh = Mesh::CreateMesh(params); //Probably should create a mesh group instead of a mesh
     return mesh.model;
 }

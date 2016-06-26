@@ -88,12 +88,9 @@ CreatedModel CreateMesh(const CreationParams& params)
         }
         vertexData = vertexData - bufferSize;
         const Technique* technique = mesh.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
-        VertexDecalartionDesctriptor vertexDesc;
-        vertexDesc.normal = true;
-        vertexDesc.textureCoordinateDimensions = texCoordDimensions;
         const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
-        vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), bufferSize, vertexData, false, vertexDesc, shader->getShaderBlob());
+        vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
         //vb->createVertexInputLayout(gameResource.getDeviceManager(), mesh.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect().getVertexShaderBlob());
         delete[] vertexData;
 

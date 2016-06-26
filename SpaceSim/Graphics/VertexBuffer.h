@@ -10,6 +10,7 @@ struct VertexDecalartionDesctriptor
     VertexDecalartionDesctriptor() :
         position(3),
         normal(false),
+        tangent(false),
         vertexColor(false)
     {
         textureCoordinateDimensions.clear();
