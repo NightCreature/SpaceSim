@@ -268,11 +268,15 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
                 }
             }
         }
-        if (childElementHash == hashString("Guns"))
+        if (childElementHash == hashString("Model"))
         {
-            const char* modelString = childElement->GetText();
-            UNUSEDPARAM(modelString);
-            MSG_TRACE_CHANNEL("", "Model string for the GunTurret is: %s", modelString );
+            attribute = childElement->FindAttribute("file");
+            if (attribute != nullptr)
+            {
+                //Heavily relies on the shader instance existing before we load the model, might be better to put the model construction in initialise instead
+                m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
+                m_drawableObject->setDirty();
+            }
         }
         if (childElementHash == Material::m_hash)
         {

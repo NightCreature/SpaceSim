@@ -1,9 +1,9 @@
 <xml>
-  <Light name="light_0" type="1" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="500">
+  <Light name="light_0" type="1" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="1500">
     <Vector3 x="525" y="-75" z="-100" />
     <Vector3 x="0" y="0" z="-1" />
+    <Color r="0" g="1" b="0" a="1"/>
     <Color r="1" g="1" b="1" a="1"/>
-    <Color r="0" g="0" b="1" a="1"/>
   </Light>
   <Light name="light_1" type="1" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="500">
     <Vector3 x="525" y="-75" z="-150" />
@@ -14,7 +14,7 @@
   <Light name="light_2" type="1" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="500">
     <Vector3 x="525" y="-75" z="200" />
     <Vector3 x="0" y="0" z="-1" />
-    <Color r="1" g="1" b="1" a="1"/>
+    <Color r="0" g="0" b="1" a="1"/>
     <Color r="1" g="0" b="0" a="1"/>
   </Light>
   <Wall type="6">
@@ -1040,7 +1040,7 @@
     <Vector3 x="550" y="-600" z="1500"/>
     <Vector3 x="550" y="-550" z="1500"/>
   </Wall>
-<!--  <ForceField name="left_force_field">
+  <ForceField name="left_force_field">
     <Material>
       <Color r="0.0" g="0.0" b="0.0" a="1"/>
       <Color r="1" g="1" b="1" a="1"/>
@@ -1101,8 +1101,8 @@
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
     <Vector3 x="525" y="-300" z="375"/>
-  </RotatingBlades>-->
-  <!--<Core name="core">
+  </RotatingBlades>
+  <Core name="core">
     <Material name="CoreMaterialNormalGlow">
       <Color r="0.25" g="0.25" b="0.25" a="1"/>
       <Color r="0.25" g="1" b="0.25" a="1"/>
@@ -1122,15 +1122,16 @@
       <Color r="1" g="0.25" b="0.25" a="1"/>
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="1" g="0.75" b="0.75" a="1"/>
-      --><!--
+      -->
       <Shininess value="0"/>
       <Texture type="17" file_name="Textures\core_small.jpg"/>
       <Effect file_name="Shaders\Effects\core_Effect.xml" />
     </Material>
-    <!--="525" y="-500" z="700"--><!--
+    <!--="525" y="-500" z="700"-->
     <Vector3 x="0" y="0" z="0"/>
     <Vector3 x="35" y="40" z="40"/>
   </Core>
+  <!--
   <Switch name="switch_1" >
     <Material>
       <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
@@ -1269,7 +1270,7 @@
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
-    <Guns>Models\gun.3ds</Guns>
+    <Model file="Models\turret\gun_turret.dae" />
   </GunTurret>
   <GunTurret name="turret_7">
     <Vector3 name="position"  x="650" y="-100" z="175"/>
@@ -1277,7 +1278,7 @@
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
-    <Guns>Models\gun.3ds</Guns>
+    <Model file="Models\turret\gun_turret.dae" />
   </GunTurret>
   <GunTurret name="turret_2" >
     <Vector3 name="position"  x="175" y="-300" z="525"/>
@@ -1285,7 +1286,7 @@
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
-    <Guns>Models\gun.3ds</Guns>
+    <Model file="Models\turret\gun_turret.dae" />
   </GunTurret>
   <GunTurret name="turret_8">
     <Vector3 name="position"  x="875" y="-300" z="525"/>
@@ -1293,7 +1294,7 @@
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
-    <Guns>Models\gun.3ds</Guns>
+    <Model file="Models\turret\gun_turret.dae" />
   </GunTurret>
   <GunTurret name="turret_3" >
     <Vector3 name="position"  x="225" y="-300" z="375"/>
@@ -1301,7 +1302,7 @@
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
-    <Guns>Models\gun.3ds</Guns>
+    <Model file="Models\turret\gun_turret.dae" />
   </GunTurret>
   <GunTurret name="turret_4" >
     <Vector3 name="position" x="825" y="-300" z="375"/>
@@ -1309,7 +1310,7 @@
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
-    <Guns>Models\gun.3ds</Guns>
+    <Model file="Models\turret\gun_turret.dae" />
   </GunTurret>
   <GunTurret name="turret_5" >
     <Vector3 name="position"  x="375" y="-650" z="525"/>
@@ -1317,7 +1318,7 @@
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
-    <Guns>Models\gun.3ds</Guns>
+    <Model file="Models\turret\gun_turret.dae" />
   </GunTurret>
   <GunTurret name="turret_6" >
     <Vector3 name="position"  x="675" y="-650" z="525"/>
@@ -1325,8 +1326,8 @@
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
-    <Guns>Models\gun.3ds</Guns>
-  </GunTurret>--><!--
+    <Model file="Models\turret\gun_turret.dae" />
+  </GunTurret>
   <InfinitySphere name="skydome">
     <Model file="Models\inverted_sphere.dae" />
     <Material >
