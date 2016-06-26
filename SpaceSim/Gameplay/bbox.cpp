@@ -556,9 +556,6 @@ bool intersectBboxes(const Bbox& b1, const Bbox& b2, Bbox* intersectbox)
 
 	if (intersectbox != 0)
 	{
-#ifdef max
-#undef max
-#endif
         float x = std::max(b1.getMin().x(), b2.getMin().x());
         float y = std::max(b1.getMin().y(), b2.getMin().y());
         float z = std::max(b1.getMin().z(), b2.getMin().z());
