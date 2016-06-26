@@ -563,9 +563,9 @@ bool intersectBboxes(const Bbox& b1, const Bbox& b2, Bbox* intersectbox)
         float y = std::max(b1.getMin().y(), b2.getMin().y());
         float z = std::max(b1.getMin().z(), b2.getMin().z());
 		intersectbox->setMin(Vector3( x, y, z ));
-        float x = std::min(b1.getMax().x(), b2.getMax().x());
-        float y = std::min(b1.getMax().y(), b2.getMax().y());
-        float z = std::min(b1.getMax().z(), b2.getMax().z())
+        x = std::min(b1.getMax().x(), b2.getMax().x());
+        y = std::min(b1.getMax().y(), b2.getMax().y());
+        z = std::min(b1.getMax().z(), b2.getMax().z());
 		intersectbox->setMax(Vector3( x, y, z ));
 	}
 
