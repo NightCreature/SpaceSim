@@ -23,13 +23,12 @@ public:
         std::vector<Vector3>		 m_binormals;
         std::vector<unsigned int>	 m_indices;
         MultiTexCoords				 m_texcoords;
-        int m_numvertices;
-        int m_numindices;
-        int m_numnormals;
-        int m_numtangents;
-        int m_numtexcoords;
+        size_t m_numvertices;
+        size_t m_numindices;
+        size_t m_numnormals;
+        size_t m_numtangents;
+        size_t m_numtexcoords;
     };
 
-    CreatedMeshGroup CreateMeshGroup(const CreationParams& params);
-    void normalizeNormals(std::vector<Vector3>& normals);
+    static CreatedMeshGroup CreateMeshGroup(const CreationParams& params);
 };
