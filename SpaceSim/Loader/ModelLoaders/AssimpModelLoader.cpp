@@ -37,6 +37,8 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
         return nullptr;
     }  // Now we can access the file's contents.
 
+    MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to load model %s", fileName.c_str());
+
     //Grab the verts here
     Mesh::CreationParams params;
     params.m_shaderInstance = const_cast<ShaderInstance*>(&shaderInstance);

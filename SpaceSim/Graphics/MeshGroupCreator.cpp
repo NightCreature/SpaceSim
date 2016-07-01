@@ -75,3 +75,11 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     meshGroup.meshGroup = new MeshGroup(vb, ib, params.m_shaderInstance);
     return meshGroup;
 }
+
+void MeshGroupCreator::normalizeNormals(std::vector<Vector3>& normals)
+{
+    for (int i = 0; i < normals.size(); i++)
+    {
+        normals[i].normalize();
+    }
+}

@@ -1,5 +1,6 @@
 #include "Loader/ModelLoaders/XMLModelLoader.h"
 #include "Graphics/mesh.h"
+#include "Graphics/MeshGroupCreator.h"
 #include "Graphics/EffectCache.h"
 
 XMLModelLoader::XMLModelLoader(void)
@@ -33,9 +34,9 @@ Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shade
     unsigned int meshVertexHash = hashString("MeshVertex");
     unsigned int meshIndecisHash = hashString("MeshIndices");
 
-    Mesh::CreationParams params;
+    MeshGroupCreator::CreationParams params;
     params.m_resource = resource;
-    params.m_shaderInstance = &shaderInstance;
+    params.m_shaderInstance = shaderInstance;
 
     //Mesh* mesh = new Mesh(resource);
     std::vector<Vector3>& vertices = params.m_vertices;
@@ -123,7 +124,10 @@ Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shade
     //}
     //mesh->initialise(ShaderInstance());
 
-    CreatedModel mesh = Mesh::CreateMesh(params);
+    CreatedMeshGroup mesh = MeshGroupCreator::CreateMeshGroup(params);
 
-    return mesh.model;
+    Mesh::CreationParams meshParams;
+    meshParams.m_meshGroups.push_back(mesh);
+    CreatedModel model = Mesh::CreateMesh(meshParams);
+    return model.model;
 }

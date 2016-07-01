@@ -7,9 +7,8 @@
 
 #include <vector>
 
-class MeshGroupCreator
+namespace MeshGroupCreator
 {
-public:
     typedef std::vector<Vector3> TexCoords;
     typedef std::vector<TexCoords> MultiTexCoords;
 
@@ -30,5 +29,6 @@ public:
         size_t m_numtexcoords;
     };
 
-    static CreatedMeshGroup CreateMeshGroup(const CreationParams& params);
+    CreatedMeshGroup CreateMeshGroup(const CreationParams& params);
+    void normalizeNormals(std::vector<Vector3>& normals);
 };
