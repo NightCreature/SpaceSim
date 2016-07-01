@@ -1,4 +1,7 @@
-#include <Graphics/MeshGroupCreator.h>
+#include "Graphics/MeshGroupCreator.h"
+#include "Graphics/ShaderCache.h"
+
+#include "assert.h"
 
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
@@ -59,11 +62,10 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     }
     vertexData = vertexData - bufferSize;
     const Technique* technique = params.m_shaderInstance.getMaterial().getEffect()->getTechnique("default");
-    GameResource gameResource(params.m_resource);
+    GameResource& gameResource= GameResourceHelper(params.m_resource).getWritableGameResource();
     const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
     assert(shader);
     vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
-    //vb->createVertexInputLayout(gameResource.getDeviceManager(), mesh.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect().getVertexShaderBlob());
     delete[] vertexData;
 
     ib->setNumberOfIndecis((unsigned int)params.m_indices.size());

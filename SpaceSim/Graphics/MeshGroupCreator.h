@@ -1,5 +1,12 @@
 #pragma once
 
+#include "Math/vector3.h"
+#include "Graphics/Model.h"
+#include "Graphics/ShaderInstance.h"
+#include "Graphics/VertexBuffer.h"
+
+#include <vector>
+
 class MeshGroupCreator
 {
 public:
