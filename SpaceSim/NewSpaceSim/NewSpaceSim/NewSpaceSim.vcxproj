@@ -198,6 +198,7 @@
     <ClInclude Include="..\..\Graphics\mesh.h" />
     <ClInclude Include="..\..\Graphics\MeshComponentData.h" />
     <ClInclude Include="..\..\Graphics\MeshGroup.h" />
+    <ClInclude Include="..\..\Graphics\MeshGroupCreator.h" />
     <ClInclude Include="..\..\Graphics\Model.h" />
     <ClInclude Include="..\..\Graphics\modelmanager.h" />
     <ClInclude Include="..\..\Graphics\OrientationAxis.h" />
@@ -312,6 +313,7 @@
     <ClCompile Include="..\..\Graphics\material.cpp" />
     <ClCompile Include="..\..\Graphics\mesh.cpp" />
     <ClCompile Include="..\..\Graphics\MeshGroup.cpp" />
+    <ClCompile Include="..\..\Graphics\MeshGroupCreator.cpp" />
     <ClCompile Include="..\..\Graphics\modelmanager.cpp" />
     <ClCompile Include="..\..\Graphics\OrientationAxis.cpp" />
     <ClCompile Include="..\..\Graphics\Renderable.cpp" />
