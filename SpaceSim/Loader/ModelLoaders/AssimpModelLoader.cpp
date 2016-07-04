@@ -154,34 +154,34 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
         //SHould early out on all of these when we cant go past slots any more or we are not getting a slot
         for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_AMBIENT) && counter < Material::TextureSlotMapping::Ambient7; ++counter)
         {
-            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_AMBIENT, counter, &path, &uvMapping, &uv_index))
+            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_AMBIENT, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
                 tm.addLoad(dm, path.C_Str());
-                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Ambient0 + counter));
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Ambient0 + counter)));
             }
         }
         for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_DIFFUSE) && counter < Material::TextureSlotMapping::Diffuse7; ++counter)
         {
-            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, counter, &path, &uvMapping, &uv_index))
+            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
                 tm.addLoad(dm, path.C_Str());
-                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Diffuse0 + counter));
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Diffuse0 + counter)));
             }
         }
         for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_EMISSIVE) && counter < Material::TextureSlotMapping::Emmisive7; ++counter)
         {
-            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_EMISSIVE, counter, &path, &uvMapping, &uv_index))
+            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_EMISSIVE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
                 tm.addLoad(dm, path.C_Str());
-                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Emmisive0 + counter));
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Emmisive0 + counter)));
             }
         }
         for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_SPECULAR) && counter < Material::TextureSlotMapping::Specular7; ++counter)
         {
-            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_SPECULAR, counter, &path, &uvMapping, &uv_index))
+            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_SPECULAR, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
                 tm.addLoad(dm, path.C_Str());
-                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Specular0 + counter));
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Specular0 + counter)));
             }
         }
 
