@@ -16,9 +16,32 @@ class DeviceManager;
 class TextureManager;
 class LightManager;
 
+
 class Material
 {
 public:
+
+    struct TextureSlotMapping
+    {
+        enum TextureSlot
+        {
+            Diffuse,
+            Specular,
+            Emmisive,
+            Normals,
+
+            NumSlots,
+            Invalid = -1
+        };
+
+        static_assert(NumSlots < 128, "Defining more than 128 input texture slots, DX11 doesn't support this");
+
+        TextureSlotMapping(unsigned int textureHash, TextureSlot textureSlot) : m_textureHash(textureHash), m_textureSlot(textureSlot) {}
+
+        unsigned int m_textureHash;
+        TextureSlot m_textureSlot;
+    };
+
 	Material();
 	Material( float shininess, const Color& ambient = Color::darkgray(), const Color& specular = Color::white(), const Color& emissive = Color::black(), const Color& diffuse = Color::white());
     Material(const Material& material);
@@ -44,8 +67,8 @@ public:
     void setEmissive(const Color& emissive) { m_materialCB.m_emissive[0] = emissive.r(); m_materialCB.m_emissive[1] = emissive.g(); m_materialCB.m_emissive[2] = emissive.b(); m_materialCB.m_emissive[3] = emissive.a(); }
     void setShininess(const float shininess) { m_materialCB.m_shininess = shininess; }
     void setEffect( const Effect* effect) { m_effect = const_cast<Effect*>(effect); }
-    void addTextureReference( unsigned int textureHash) { m_texture.push_back(textureHash); }
-    const std::vector<unsigned int>& getTextureHashes() const { return m_texture; }
+    void addTextureReference( const TextureSlotMapping& textureSlot) { m_texture.push_back(textureSlot); }
+    const std::vector<TextureSlotMapping>& getTextureHashes() const { return m_texture; }
 
     static const unsigned int m_hash;
     const MaterialContent& getMaterialCB() const { return m_materialCB; }
@@ -61,7 +84,7 @@ private:
     unsigned int m_techniqueHash;
     Effect* m_effect;
     MaterialContent m_materialCB;
-    std::vector<unsigned int> m_texture;//Order is sampler order as well
+    std::vector<TextureSlotMapping> m_texture;//Order is sampler order as well
     bool m_alphaBlend;
 };
 #endif

@@ -299,13 +299,13 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         technique->setMaterialContent(m_deviceManager, material.getMaterialCB());
         technique->setWVPContent(m_deviceManager, renderInstance.getShaderInstance().getWVPConstants());
 
-        const std::vector<unsigned int>& textureHashes = material.getTextureHashes();
+        const std::vector<Material::TextureSlotMapping>& textureHashes = material.getTextureHashes();
         //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
 
-        for (unsigned int counter = 0; counter < textureHashes.size(); ++counter)
+        for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots; ++counter) //We assume these are put in as order for the slots demand
         {
-            const Texture* texture = m_textureManager.getTexture(textureHashes[counter]);
-            ID3D11ShaderResourceView* srv = texture->getShaderResourceView();
+            const Texture* texture = m_textureManager.getTexture(textureHashes[counter].m_textureHash);
+            ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
             ID3D11SamplerState* const samplerState = m_textureManager.getSamplerState();
             resourceViews.push_back(srv);
             samplerStates.push_back(samplerState);

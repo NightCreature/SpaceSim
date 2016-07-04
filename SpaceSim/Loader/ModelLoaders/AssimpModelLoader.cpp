@@ -149,20 +149,22 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
         TextureManager& tm = gameResource.getWritableGameResource().getTextureManager();
         DeviceManager& dm = gameResource.getWritableGameResource().getDeviceManager();
         aiString path;
-        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, 0, &path))
+        aiTextureMapping uvMapping;
+        unsigned int uv_index = 0xFFFFFFFF;
+        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, 0, &path, &uvMapping, &uv_index))
         {
             tm.addLoad(dm, path.C_Str());
-            shaderMaterial.addTextureReference(hashString(getTextureNameFromFileName(path.C_Str())));
+            shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Diffuse));
         }
-        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_EMISSIVE, 0, &path))
+        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_EMISSIVE, 0, &path, &uvMapping, &uv_index))
         {
             tm.addLoad(dm, path.C_Str());
-            shaderMaterial.addTextureReference(hashString(getTextureNameFromFileName(path.C_Str())));
+            shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Emmisive));
         }
-        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_NORMALS, 0, &path))
+        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_NORMALS, 0, &path, &uvMapping, &uv_index))
         {
             tm.addLoad(dm, path.C_Str());
-            shaderMaterial.addTextureReference(hashString(getTextureNameFromFileName(path.C_Str())));
+            shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Normals));
         }
         MSG_TRACE_CHANNEL("ASSIMP LOADER","Trying to read material %d", material);
         

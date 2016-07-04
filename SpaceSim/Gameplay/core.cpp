@@ -101,7 +101,7 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
                 {
                     m_forcefieldmatnormal.deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
                     shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
-                    shaderInstance.getMaterial().addTextureReference(hashString("cube_player_forcefield"));
+                    shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString("cube_player_forcefield"), Material::TextureSlotMapping::Diffuse));
                 }
                 else if( strICmp(nameAttribute->Value(), "CoreMaterialNormalGlow") )
                 {
@@ -128,13 +128,13 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
     if (textureString)
     {
         tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
-        shaderInstance.getMaterial().addTextureReference(hashString(getTextureNameFromFileName(textureString->getData())));
+        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse));
     }
     textureString = sm.getSetting<std::string>("ForceFieldCore");
     if (textureString)
     {
         tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
-        shaderInstance.getMaterial().addTextureReference(hashString(getTextureNameFromFileName(textureString->getData())));
+        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse));
     }
 
     return shaderInstance;
