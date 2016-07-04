@@ -101,7 +101,7 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
                 {
                     m_forcefieldmatnormal.deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
                     shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
-                    shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString("cube_player_forcefield"), Material::TextureSlotMapping::Diffuse));
+                    shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString("cube_player_forcefield"), Material::TextureSlotMapping::Diffuse0));
                 }
                 else if( strICmp(nameAttribute->Value(), "CoreMaterialNormalGlow") )
                 {
@@ -128,13 +128,13 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
     if (textureString)
     {
         tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
-        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse));
+        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
     }
     textureString = sm.getSetting<std::string>("ForceFieldCore");
     if (textureString)
     {
         tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
-        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse));
+        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
     }
 
     return shaderInstance;

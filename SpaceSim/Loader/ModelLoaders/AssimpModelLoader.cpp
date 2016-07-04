@@ -151,16 +151,40 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
         aiString path;
         aiTextureMapping uvMapping;
         unsigned int uv_index = 0xFFFFFFFF;
-        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, 0, &path, &uvMapping, &uv_index))
+        //SHould early out on all of these when we cant go past slots any more or we are not getting a slot
+        for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_AMBIENT) && counter < Material::TextureSlotMapping::Ambient7; ++counter)
         {
-            tm.addLoad(dm, path.C_Str());
-            shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Diffuse));
+            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_AMBIENT, counter, &path, &uvMapping, &uv_index))
+            {
+                tm.addLoad(dm, path.C_Str());
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Ambient0 + counter));
+            }
         }
-        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_EMISSIVE, 0, &path, &uvMapping, &uv_index))
+        for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_DIFFUSE) && counter < Material::TextureSlotMapping::Diffuse7; ++counter)
         {
-            tm.addLoad(dm, path.C_Str());
-            shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Emmisive));
+            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, counter, &path, &uvMapping, &uv_index))
+            {
+                tm.addLoad(dm, path.C_Str());
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Diffuse0 + counter));
+            }
         }
+        for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_EMISSIVE) && counter < Material::TextureSlotMapping::Emmisive7; ++counter)
+        {
+            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_EMISSIVE, counter, &path, &uvMapping, &uv_index))
+            {
+                tm.addLoad(dm, path.C_Str());
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Emmisive0 + counter));
+            }
+        }
+        for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_SPECULAR) && counter < Material::TextureSlotMapping::Specular7; ++counter)
+        {
+            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_SPECULAR, counter, &path, &uvMapping, &uv_index))
+            {
+                tm.addLoad(dm, path.C_Str());
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Specular0 + counter));
+            }
+        }
+
         if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_NORMALS, 0, &path, &uvMapping, &uv_index))
         {
             tm.addLoad(dm, path.C_Str());

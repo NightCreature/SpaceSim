@@ -141,7 +141,7 @@ Material::TextureSlotMapping TextureManager::deserialise( const DeviceManager& d
     if (fileName)
     {
         addLoad(deviceManager, fileName);
-        Material::TextureSlotMapping::TextureSlot textureSlot = Material::TextureSlotMapping::Diffuse;
+        Material::TextureSlotMapping::TextureSlot textureSlot = Material::TextureSlotMapping::Diffuse0;
         const tinyxml2::XMLAttribute* attribute = node->FindAttribute("texture_slot");
         if (attribute != nullptr)
         {
