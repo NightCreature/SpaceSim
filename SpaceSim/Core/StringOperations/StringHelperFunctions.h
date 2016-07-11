@@ -198,6 +198,9 @@ inline std::string extractPathFromFileName( const std::string &fileName )
     return fileName.substr(0, counter + 1);
 }
 
+std::string makeAbsolutePath(const std::string& filename);
+
+
  char* getLastErrorMessage(DWORD nErrorCode);
 
  void convertToWideString(const std::string& str, std::wstring& out);

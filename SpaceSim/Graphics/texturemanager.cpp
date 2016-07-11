@@ -42,7 +42,7 @@ void TextureManager::addLoad(const DeviceManager& deviceManager, const std::stri
 {
 	assert (!filename.empty());
 
-    //Extract filename if file name contains a path as well
+    //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
     std::string texureName = getTextureNameFromFileName(filename);
 
 	if (find(texureName))

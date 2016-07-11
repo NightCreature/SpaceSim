@@ -110,6 +110,38 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
 }
 
 //-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+bool isReletiveFileName(const std::string& file_name)
+{
+    if (file_name[0] == '.' && file_name[1] == '.')
+    {
+        return true;
+    }
+
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+std::string makeAbsolutePath(const std::string& filename)
+{
+    std::string file_name = filename;
+    if (isReletiveFileName(file_name))
+    {
+        //Get current working directory adn strip the relative stuff
+        while (file_name[0] == '.' && file_name[1] == '.')
+        {
+            file_name.erase(0, 3);
+        }
+    }
+    return file_name;
+}
+
+//-----------------------------------------------------------------------------
 //! @brief   TODO enter a 1200
 //! @remark
 //-----------------------------------------------------------------------------
