@@ -1108,7 +1108,7 @@
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
-    <Model file="Models\turret\gun_turret.dae" />
+    <Model file="Models\space_ship.mml" />
   </GunTurret>
   <Core name="core">
     <Material name="CoreMaterialNormalGlow">

@@ -5,6 +5,7 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Loader/ModelLoaders/AssimpModelLoader.h"
 #include "Loader/ModelLoaders/XMLModelLoader.h"
+#include "Loader/ModelLoaders/MmlLoader.h"
 
 ModelManager::~ModelManager()
 {
@@ -50,6 +51,12 @@ Model* ModelManager::LoadModel( Resource* resource, const ShaderInstance& shader
         XMLModelLoader loader;
         model = loader.LoadModel(resource, shaderInstance, fileName);
         //m_loadedModels.insert(GeometryTreePair(fileNameHash, model));
+    }
+    else if (strICmp(extension, "mml"))
+    {
+        //This format is a mixture between an xml and a attached model file
+        MmlLoader loader;
+        model = loader.LoadModel(resource, shaderInstance, fileName);
     }
     else
     {

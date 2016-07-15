@@ -8,5 +8,6 @@
     <Effect file_name="Shaders\Effects\simple_effect.xml" />
     <Effect file_name="Shaders\Effects\skydome.xml" />
     <Effect file_name="Shaders\Effects\sdf_font_effect.xml" />
+    <Effect file_name="Shaders\Effects\spaceship.xml" />
   </ShaderPack>
 </xml>

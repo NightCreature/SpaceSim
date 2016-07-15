@@ -1,0 +1,6 @@
+<xml>
+	<Material>
+      <Effect file_name="Shaders\Effects\spaceship.xml" />
+    </Material>
+	<Model file_name="Models/space_ship/dark_fighter6.DAE" />
+</xml>

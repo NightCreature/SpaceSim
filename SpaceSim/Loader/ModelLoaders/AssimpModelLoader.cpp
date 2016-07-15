@@ -125,6 +125,7 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
             }
         }
 
+        meshGroupParams.m_shaderInstance = shaderInstance;
         aiMaterial* material = scene->mMaterials[subMesh->mMaterialIndex];
         Material shaderMaterial = meshGroupParams.m_shaderInstance.getMaterial();
         aiColor4D color;
@@ -202,6 +203,7 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
             meshGroupParams.m_vertexDeclaration.textureCoordinateDimensions.push_back(2);
         }
         meshGroupParams.m_vertexDeclaration.vertexColor = false;
+        meshGroupParams.m_resource = resource;
 
         //Add mesh group to the mesh creator params
         params.m_meshGroups.push_back(MeshGroupCreator::CreateMeshGroup(meshGroupParams));
