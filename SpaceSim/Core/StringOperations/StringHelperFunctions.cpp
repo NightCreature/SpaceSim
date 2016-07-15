@@ -94,18 +94,18 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
     default:
     case EDEBUG:
     case ELOG:
-        outputFormatString = "[%s] : %s(%d) : %s\n";
+        outputFormatString = "%s(%d): [%s]  %s\n";
         break;
     case EWARN:
 
-        outputFormatString = "[%s] : WARNING %s(%d) : %s\n";
+        outputFormatString = "%s(%d): [%s] WARNING : %s\n";
         break;
     case EASSERT:
 
-        outputFormatString = "[%s] : ASSERT %s(%d) : %s\n";
+        outputFormatString = "%s(%d): [%s] : ASSERT : %s\n";
         break;
     }
-    sprintf_s(debugOutputStr, 3072, outputFormatString.c_str(), prefixInternal.c_str(), file, line, buf);
+    sprintf_s(debugOutputStr, 3072, outputFormatString.c_str(), file, line, prefixInternal.c_str(), buf);
     Application::m_logger.LogMessage(debugOutputStr);
 }
 
