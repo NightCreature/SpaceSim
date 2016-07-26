@@ -27,7 +27,7 @@ cbuffer LightParamters: register(b1)
     float3 camera_position;
 }
 
-Texture2D<float4> shaderTextures : register(t0);
+Texture2D<float4> shaderTextures : register(t8);
 SamplerState SampleType
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -35,7 +35,7 @@ SamplerState SampleType
     AddressV = Wrap;
 };
 
-Texture2D<float4> normalMap : register(t1);
+Texture2D<float4> normalMap : register(t32);
 
 //--------------------------------------------------------------------------------------
 struct PS_INPUT

@@ -27,7 +27,7 @@ cbuffer LightParamters: register(b1)
     float3 camera_position;
 }
 
-Texture2D<float4> shaderTextures;
+Texture2D<float4> shaderTextures : register(t8);
 SamplerState SampleType
 {
     Filter = MIN_MAG_MIP_LINEAR;
