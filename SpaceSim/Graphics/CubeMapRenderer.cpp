@@ -151,17 +151,26 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
 	        const std::vector<Material::TextureSlotMapping>& textureHashes = material.getTextureHashes();
 	        //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
 
-	        for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots; ++counter) //We assume these are put in as order for the slots demand
-	        {
-	            const Texture* texture = textureManager.getTexture(textureHashes[counter].m_textureHash);
-	            ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-	            ID3D11SamplerState* const samplerState = textureManager.getSamplerState();
-	            resourceViews.push_back(srv);
-	            samplerStates.push_back(samplerState);
-	        }
-        
-	        deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
-	        deviceContext->PSSetSamplers(0, static_cast<uint32>(samplerStates.size()), &samplerStates[0]);
+            size_t currentTextureIndex = 0;
+            for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots && currentTextureIndex < textureHashes.size(); ++counter) //We assume these are put in as order for the slots demand
+            {
+                const Texture* texture = nullptr;
+                if (static_cast<Material::TextureSlotMapping::TextureSlot>(counter) == textureHashes[currentTextureIndex].m_textureSlot)
+                {
+                    texture = textureManager.getTexture(textureHashes[currentTextureIndex].m_textureHash);
+                    ++currentTextureIndex;
+                }
+                ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
+                ID3D11SamplerState* const samplerState = textureManager.getSamplerState();
+                resourceViews.push_back(srv);
+                samplerStates.push_back(samplerState);
+            }
+
+            if (!resourceViews.empty())
+            {
+                deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
+                deviceContext->PSSetSamplers(0, 1, &samplerStates[0]); //THis shoudl not be this way
+            }
 
             if (technique->getTechniqueId() != oldTechniqueId)
             {
