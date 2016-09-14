@@ -56,7 +56,7 @@ float4 ps_main( PS_INPUT input) : SV_Target
     float3 vertexPos = input.WorldPos;
     float4 color;
 
-    float4 texColor = shaderTextures.Sample(SampleType, input.Tex);
+    float4 texColor =  shaderTextures.Sample(SampleType, input.Tex);
     float3 sampledNormalMap = ((2.0 * normalMap.Sample(SampleType, input.Tex).xyz) - 1.0);
     float3 nnormal = normalize(input.Tan * sampledNormalMap.x + input.BiN * sampledNormalMap.y + input.Nor * sampledNormalMap.z);
 
