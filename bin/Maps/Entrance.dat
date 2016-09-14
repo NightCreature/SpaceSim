@@ -20,8 +20,8 @@
   <Wall type="6">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="100" y="0" z="-350"/>
     <Vector3 x="950" y="0" z="-350"/>
@@ -31,8 +31,8 @@
   <Wall type="7">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="100" y="-700" z="-350"/>
     <Vector3 x="950" y="-700" z="-350"/>
@@ -42,8 +42,8 @@
   <Wall type="8">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="100" y="-700" z="-350"/>
     <Vector3 x="100" y="-700" z="1500"/>
@@ -53,8 +53,8 @@
   <Wall type="9">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="950" y="-700" z="-350"/>
     <Vector3 x="950" y="-700" z="1500"/>
@@ -64,8 +64,8 @@
   <Wall type="11">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="100" y="0" z="-350"/>
     <Vector3 x="100" y="-50" z="-350"/>
@@ -75,8 +75,8 @@
   <Wall type="11">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="100" y="-100" z="-350"/>
     <Vector3 x="100" y="-700" z="-350"/>
@@ -86,8 +86,8 @@
   <Wall type="11">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="100" y="-50" z="-350"/>
     <Vector3 x="100" y="-100" z="-350"/>
@@ -97,8 +97,8 @@
   <Wall type="11">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="550" y="-50" z="-350"/>
     <Vector3 x="550" y="-100" z="-350"/>
@@ -108,8 +108,8 @@
   <Wall type="10">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="100" y="0" z="1500"/>
     <Vector3 x="100" y="-550" z="1500"/>
@@ -119,8 +119,8 @@
   <Wall type="10">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="100" y="-600" z="1500"/>
     <Vector3 x="100" y="-700" z="1500"/>
@@ -130,8 +130,8 @@
   <Wall type="10">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="100" y="-550" z="1500"/>
     <Vector3 x="100" y="-600" z="1500"/>
@@ -141,8 +141,8 @@
   <Wall type="10">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-      <Texture file_name="Textures\station.jpg" texure_slot="8"/>
-      <Texture file_name="Textures\station_normal.dds" texure_slot="32"/>
+      <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+      <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
     </Material>
     <Vector3 x="550" y="-550" z="1500"/>
     <Vector3 x="550" y="-600" z="1500"/>
