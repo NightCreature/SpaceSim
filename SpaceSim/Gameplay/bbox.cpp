@@ -295,7 +295,17 @@ Bbox::sideplane Bbox::classifyPlane(const Vector3 &normal, float d) const
 	return intERSECT;
 }
 
-//Returns INF if it doesnot intersect
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void Bbox::resetToBox(const Bbox& otherBox)
+{
+    m_min = otherBox.m_min;
+    m_max = otherBox.m_max;
+}
+
+//Returns INF if it does not intersect
 float Bbox::intersectPlane(const Vector3 &normal, float planed, const Vector3 &dir) const
 {
 	assert(fabs(normal.dot(normal) - 1.0f) < normal.getEqualPrecision());

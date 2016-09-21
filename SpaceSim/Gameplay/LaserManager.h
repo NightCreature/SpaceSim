@@ -24,8 +24,8 @@ public:
     void update(RenderInstanceTree& renderInstances, float time, const DeviceManager& deviceManager);
 
     typedef std::vector<RenderInstance* > RenderInstancePool;
-    typedef std::deque< RenderInstance* > RenderInstanceQueue;
-    typedef std::deque< Laser > LaserQueue; //This should be a map or a list of pair from laser to trenderinstance so that we dont recreate everything every frame
+    typedef std::vector< RenderInstance* > RenderInstanceQueue;
+    typedef std::vector< Laser > LaserQueue; //This should be a map or a list of pair from laser to trenderinstance so that we dont recreate everything every frame
 private:
     LaserQueue m_worldEnemyTransforms;
     LaserQueue m_worldPlayerTransforms;

@@ -5,6 +5,7 @@
 #include "Graphics/RenderInstance.h"
 #ifdef _DEBUG
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "brofiler.h"
 #endif
 
 //-------------------------------------------------------------------------
@@ -24,6 +25,7 @@ MeshGroup::~MeshGroup()
 //-------------------------------------------------------------------------
 void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name )
 {
+    BROFILER_CATEGORY("MeshGroup::update", Profiler::Color::Aqua);
     if (m_renderInstanceDirty || m_renderInstance == nullptr)
     {  
         //if ( m_renderInstance != nullptr)

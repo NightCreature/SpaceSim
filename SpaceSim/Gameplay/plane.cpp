@@ -7,6 +7,8 @@
 
 #include "Graphics/MeshComponentData.h"
 
+#include "Physics/PhysicsManager.h"
+
 int Plane::m_planeCount = 0;
 
 //This needs to change so that it is a helper class that sets up a face correctly and then returns the face
@@ -95,6 +97,9 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
 
     //ModelComponentManger mcm;
     //mcm.addEntity(e, *m_drawableObject, m_world);
+
+    //Register the bounding box with the physics
+    getWriteableGameResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
 
     Super::initialise(shaderInstance);
 }

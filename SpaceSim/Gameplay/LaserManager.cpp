@@ -4,6 +4,8 @@
 #include "Graphics/EffectCache.h"
 #include "Graphics/modelmanager.h"
 
+#include "brofiler.h"
+
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
@@ -88,6 +90,8 @@ void LaserManager::addInstance( const Vector3& position, const Vector3& directio
 //-------------------------------------------------------------------------
 void LaserManager::update(RenderInstanceTree& renderInstances, float time, const DeviceManager& deviceManager)
 {
+    BROFILER_CATEGORY("LaserManager::update", Profiler::Color::PaleGreen)
+
     for (RenderInstanceQueue::iterator it = m_renderInstances.begin(); it != m_renderInstances.end(); ++it)
     {
         RenderInstance* ri = *it;
@@ -95,7 +99,7 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time, const
     }
     m_renderInstances.clear();
 
-    for (std::deque< Laser>::iterator it = m_worldPlayerTransforms.begin(); it != m_worldPlayerTransforms.end(); ++it)
+    for (std::vector< Laser>::iterator it = m_worldPlayerTransforms.begin(); it != m_worldPlayerTransforms.end(); ++it)
     {
         it->update(time, deviceManager);
         const LaserInstanceData& lid = it->getInstanceData();
@@ -107,7 +111,7 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time, const
         m_renderInstances.push_back(ri);
     }
 
-    for (std::deque< Laser>::iterator it = m_worldEnemyTransforms.begin(); it != m_worldEnemyTransforms.end(); ++it)
+    for (std::vector< Laser>::iterator it = m_worldEnemyTransforms.begin(); it != m_worldEnemyTransforms.end(); ++it)
     {
         it->update(time, deviceManager);
         const LaserInstanceData& lid = it->getInstanceData();

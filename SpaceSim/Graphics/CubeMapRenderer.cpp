@@ -23,6 +23,8 @@
 #include <atlbase.h>
 
 #include "ScreenGrab.h"
+
+#include "brofiler.h"
 #endif
 
 
@@ -98,6 +100,8 @@ void CubeMapRenderer::initialise(Vector3 position)
 
 void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, PerFrameConstants& perFrameConstants, const TextureManager& textureManager)
 {
+    BROFILER_CATEGORY("CubeMapRenderer::renderCubeMap", Profiler::Color::LightBlue);
+
     ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
     ID3D11RenderTargetView* rtView[1] = { nullptr };
     ID3D11DepthStencilView* dsView = nullptr;
@@ -120,6 +124,7 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
 
     for (size_t rtCounter = 0; rtCounter < 6; ++rtCounter)
     {
+        BROFILER_CATEGORY("CubeMapRenderer::renderFace", Profiler::Color::LightBlue);
         ID3D11RenderTargetView* aRTViews[1] = { renderTarget->getRenderTargetView(rtCounter) };
         deviceContext->OMSetRenderTargets(sizeof(aRTViews) / sizeof(aRTViews[0]), aRTViews, m_depthStencilView);
         deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0);

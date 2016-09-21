@@ -72,8 +72,8 @@
     <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
   </PropertyGroup>
@@ -100,7 +100,7 @@
       <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -248,6 +248,7 @@
     <ClInclude Include="..\..\Memory\MemoryArena.h" />
     <ClInclude Include="..\..\Memory\PointerArithmetic.h" />
     <ClInclude Include="..\..\Memory\SlotAllocator.h" />
+    <ClInclude Include="..\..\Physics\PhysicsManager.h" />
     <ClInclude Include="..\..\SourceInformation\SourceInfo.h" />
     <ClInclude Include="..\..\UI\BitmapFont.h" />
     <ClInclude Include="..\..\UI\main.h" />
@@ -353,6 +354,7 @@
     <ClCompile Include="..\..\Math\vector3.cpp" />
     <ClCompile Include="..\..\Math\vector4.cpp" />
     <ClCompile Include="..\..\Memory\Allocator.cpp" />
+    <ClCompile Include="..\..\Physics\PhysicsManager.cpp" />
     <ClCompile Include="..\..\UI\BitmapFont.cpp" />
     <ClCompile Include="..\..\UI\Messages.cpp" />
     <ClCompile Include="..\..\UI\TextBlock.cpp" />

@@ -9,6 +9,8 @@
 #include "Graphics/RenderInstance.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+#include "Brofiler.h"
+
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 
 //-------------------------------------------------------------------------
@@ -263,6 +265,8 @@ void RenderSystem::initialise(Resource* resource)
 //-----------------------------------------------------------------------------
 void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
+    BROFILER_CATEGORY("RenderSystem::Update", Profiler::Color::Blue);
+
     static const unsigned int defaultTechniqueHash = hashString("default");
     m_window.update(elapsedTime, time);
 
@@ -535,6 +539,8 @@ void RenderSystem::cleanup()
 //-------------------------------------------------------------------------
 void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* resource)
 {
+    BROFILER_CATEGORY("RenderSystem::beginDraw", Profiler::Color::Orange);
+
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
     deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
@@ -620,6 +626,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
 //-------------------------------------------------------------------------
 void RenderSystem::endDraw(Resource* resource)
 {
+    BROFILER_CATEGORY("RenderSystem::endDraw", Profiler::Color::Orange);
 #ifdef _DEBUG
     m_debugAxis->draw(m_deviceManager, resource);
 #else
