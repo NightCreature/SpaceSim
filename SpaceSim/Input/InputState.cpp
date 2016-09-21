@@ -30,17 +30,17 @@ void InputState::mergeInputState(const InputState& input)
         printState();
     }
 #endif
-    for (size_t counter = 0; counter < m_inputState.size(); ++counter)
+    for (auto standardInputAction : input.m_inputState)
     {
-        for (auto standardInputAction : input.m_inputState)
+        //Does this action exist in the current input state?
+        InputStateMap::iterator it = std::find_if(m_inputState.begin(), m_inputState.end(), [standardInputAction](const StandardInputAction& inputAction) { return inputAction.getAction().getType() == standardInputAction.getAction().getType(); });
+        if (it != m_inputState.end())
         {
-            if (standardInputAction.getAction().getType() == m_inputState[counter].getAction().getType())
-            {
-                float currentValue = m_inputState[counter].getValue();
-                float inputValue = standardInputAction.getValue();
-                //Different signs, take the difference, need to figure out which one is bigger or negative
-                currentValue = currentValue + inputValue;
-                currentValue = math::clamp(currentValue, 0.0f, 1.0f);
+            float currentValue = it->getValue();
+            float inputValue = standardInputAction.getValue();
+            //Different signs, take the difference, need to figure out which one is bigger or negative
+            currentValue = currentValue + inputValue;
+            currentValue = math::clamp(currentValue, 0.0f, 1.0f);
 #ifdef _DEBUG
             if (test)
             {
@@ -48,8 +48,12 @@ void InputState::mergeInputState(const InputState& input)
             }
 #endif
 
-                m_inputState[counter].setValue(currentValue);
-            }
+            it->setValue(currentValue);
+        }
+        else
+        {
+            //Value is not found in the current input set so we should add it to it.
+            m_inputState.push_back(standardInputAction);
         }
     }
 

@@ -42,7 +42,7 @@ void TextureManager::addLoad(const DeviceManager& deviceManager, const std::stri
 {
 	assert (!filename.empty());
 
-    //Extract filename if file name contains a path as well
+    //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
     std::string texureName = getTextureNameFromFileName(filename);
 
 	if (find(texureName))
@@ -134,17 +134,23 @@ bool TextureManager::createSamplerStates(const DeviceManager& deviceManager)
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-unsigned int TextureManager::deserialise( const DeviceManager& deviceManager, const tinyxml2::XMLElement* node )
+Material::TextureSlotMapping TextureManager::deserialise( const DeviceManager& deviceManager, const tinyxml2::XMLElement* node )
 {
     (void*)node;
     const char* fileName = node->Attribute("file_name");
     if (fileName)
     {
         addLoad(deviceManager, fileName);
-        return hashString(getTextureNameFromFileName(fileName));
+        Material::TextureSlotMapping::TextureSlot textureSlot = Material::TextureSlotMapping::Diffuse0;
+        const tinyxml2::XMLAttribute* attribute = node->FindAttribute("texture_slot");
+        if (attribute != nullptr)
+        {
+            textureSlot = static_cast<Material::TextureSlotMapping::TextureSlot>(attribute->UnsignedValue());
+        }
+        return Material::TextureSlotMapping(hashString(getTextureNameFromFileName(fileName)), textureSlot);
     }
 
-    return 0;
+    return Material::TextureSlotMapping(hashString(""), Material::TextureSlotMapping::Invalid);
 }
 
 //-------------------------------------------------------------------------

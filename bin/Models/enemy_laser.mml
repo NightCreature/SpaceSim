@@ -1,0 +1,10 @@
+<xml>
+	<Material>
+      <Color r="1" g="0" b="0" a="0.25"/>
+      <Color r="1" g="0" b="0" a="0.25"/>
+      <Color r="1" g="0" b="0" a="0.25"/>
+      <Color r="1" g="0" b="0" a="0.25"/>
+      <Effect file_name="Shaders\Effects\laser_effect.xml" />
+    </Material>
+	<Model file_name="Models\laser_bolt\laser_bolt.dae" />
+</xml>

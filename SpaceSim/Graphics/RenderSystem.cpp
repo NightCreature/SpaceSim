@@ -9,6 +9,8 @@
 #include "Graphics/RenderInstance.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+#include "Brofiler.h"
+
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 
 //-------------------------------------------------------------------------
@@ -263,6 +265,8 @@ void RenderSystem::initialise(Resource* resource)
 //-----------------------------------------------------------------------------
 void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
+    BROFILER_CATEGORY("RenderSystem::Update", Profiler::Color::Blue);
+
     static const unsigned int defaultTechniqueHash = hashString("default");
     m_window.update(elapsedTime, time);
 
@@ -299,20 +303,29 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         technique->setMaterialContent(m_deviceManager, material.getMaterialCB());
         technique->setWVPContent(m_deviceManager, renderInstance.getShaderInstance().getWVPConstants());
 
-        const std::vector<unsigned int>& textureHashes = material.getTextureHashes();
+        const std::vector<Material::TextureSlotMapping>& textureHashes = material.getTextureHashes();
         //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
 
-        for (unsigned int counter = 0; counter < textureHashes.size(); ++counter)
+        size_t currentTextureIndex = 0;
+        for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots && currentTextureIndex < textureHashes.size(); ++counter) //We assume these are put in as order for the slots demand
         {
-            const Texture* texture = m_textureManager.getTexture(textureHashes[counter]);
-            ID3D11ShaderResourceView* srv = texture->getShaderResourceView();
+            const Texture* texture = nullptr;
+            if (static_cast<Material::TextureSlotMapping::TextureSlot>(counter) == textureHashes[currentTextureIndex].m_textureSlot)
+            {
+                texture = m_textureManager.getTexture(textureHashes[currentTextureIndex].m_textureHash);
+                ++currentTextureIndex;
+            }
+            ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
             ID3D11SamplerState* const samplerState = m_textureManager.getSamplerState();
             resourceViews.push_back(srv);
             samplerStates.push_back(samplerState);
         }
         
-        deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
-        deviceContext->PSSetSamplers(0, static_cast<uint32>(samplerStates.size()), &samplerStates[0]);
+        if (!resourceViews.empty())
+        {
+            deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
+            deviceContext->PSSetSamplers(0, 1, &samplerStates[0]); //THis shoudl not be this way
+        }
 
         if (technique->getTechniqueId() != oldTechniqueId)
         {
@@ -526,6 +539,8 @@ void RenderSystem::cleanup()
 //-------------------------------------------------------------------------
 void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* resource)
 {
+    BROFILER_CATEGORY("RenderSystem::beginDraw", Profiler::Color::Orange);
+
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
     deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
@@ -611,6 +626,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
 //-------------------------------------------------------------------------
 void RenderSystem::endDraw(Resource* resource)
 {
+    BROFILER_CATEGORY("RenderSystem::endDraw", Profiler::Color::Orange);
 #ifdef _DEBUG
     m_debugAxis->draw(m_deviceManager, resource);
 #else

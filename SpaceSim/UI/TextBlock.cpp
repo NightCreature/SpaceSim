@@ -573,7 +573,7 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 	mat.setEffect(effect);
 	mat.setBlendState(true);
 	//Should fix this if we have more than one page somehow
-	mat.addTextureReference((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName));//Requires we have a texture under the font name
+	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
 	mat.setTechnique(hashString("default"));
 	m_shaderInstance.setMaterial(mat);

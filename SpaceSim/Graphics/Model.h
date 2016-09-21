@@ -82,3 +82,9 @@ struct CreatedModel
     Model* model;
     Bbox boundingBox;
 };
+
+struct CreatedMeshGroup
+{
+    MeshGroup* meshGroup;
+    Bbox boundingBox;
+};

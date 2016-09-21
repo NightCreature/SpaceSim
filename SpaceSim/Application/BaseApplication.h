@@ -21,6 +21,8 @@
 
 #include "Graphics/MeshComponentData.h"
 
+#include "Physics/PhysicsManager.h"
+
 #include <windows.h>
 #include "Memory.h"
 
@@ -65,6 +67,7 @@ private:
     ShaderCache m_shaderCache;
     EffectCache m_effectCache;
     UIManger m_uiManager;
+    PhysicsManager m_physicsManger;
     GameResource*      m_gameResource;
     bool               m_controllerConnected;
     bool               m_useController;

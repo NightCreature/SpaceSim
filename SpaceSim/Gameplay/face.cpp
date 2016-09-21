@@ -57,14 +57,14 @@ CreatedModel CreateFace(const CreationParams& params)
         size_t bufferSize = 0;
         size_t rows = params.nrVerticesInX;
         size_t columns = params.nrVerticesInY;
-        if ((params.height / corridorheight) > 1 && params.tesselate)
-        {
-            rows *= (int)(params.height / corridorheight);
-        }
-        if ((params.width / corridorwidth) > 1 && params.tesselate)
-        {
-            columns *= (int)(params.width / corridorheight);
-        }
+        //if ((params.height / corridorheight) > 1 && params.tesselate)
+        //{
+        //    rows *= (int)(params.height / corridorheight);
+        //}
+        //if ((params.width / corridorwidth) > 1 && params.tesselate)
+        //{
+        //    columns *= (int)(params.width / corridorheight);
+        //}
         size_t numberOfVerts = rows * columns;
         m_totalNumberOfVerts += numberOfVerts;
         bufferSize += sizeof(float) * 3 * numberOfVerts;

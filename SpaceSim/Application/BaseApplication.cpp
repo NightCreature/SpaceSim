@@ -23,6 +23,8 @@
 #include "UI/BitmapFont.h"
 #include "UI/TextBlock.h"
 
+#include <brofiler.h>
+
 class RenderInstance;
 
 HashString exitGame("exit_game");
@@ -54,7 +56,7 @@ Text::TextBlockCache* cache;
 bool Application::initialise()
 {
     m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
-                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, nullptr, &m_logger);
+                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
 
 
     m_logger.addLogger(new OutputDebugLog());
@@ -145,6 +147,7 @@ void Application::mainGameLoop()
 
     while ( WM_QUIT != message.message )
     {
+        
         message.message = WM_NULL;
         bool gotMessage = ( PeekMessage(&message, 0, 0, 0, PM_NOREMOVE) != 0 );
         if (gotMessage)
@@ -155,6 +158,7 @@ void Application::mainGameLoop()
         }
         else
         {
+            BROFILER_FRAME("NewSpaceSim Frame Marker");
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();

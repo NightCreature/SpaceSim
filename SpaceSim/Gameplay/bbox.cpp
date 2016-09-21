@@ -295,7 +295,17 @@ Bbox::sideplane Bbox::classifyPlane(const Vector3 &normal, float d) const
 	return intERSECT;
 }
 
-//Returns INF if it doesnot intersect
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void Bbox::resetToBox(const Bbox& otherBox)
+{
+    m_min = otherBox.m_min;
+    m_max = otherBox.m_max;
+}
+
+//Returns INF if it does not intersect
 float Bbox::intersectPlane(const Vector3 &normal, float planed, const Vector3 &dir) const
 {
 	assert(fabs(normal.dot(normal) - 1.0f) < normal.getEqualPrecision());
@@ -556,16 +566,13 @@ bool intersectBboxes(const Bbox& b1, const Bbox& b2, Bbox* intersectbox)
 
 	if (intersectbox != 0)
 	{
-#ifdef max
-#undef max
-#endif
         float x = std::max(b1.getMin().x(), b2.getMin().x());
         float y = std::max(b1.getMin().y(), b2.getMin().y());
         float z = std::max(b1.getMin().z(), b2.getMin().z());
 		intersectbox->setMin(Vector3( x, y, z ));
-        float x = std::min(b1.getMax().x(), b2.getMax().x());
-        float y = std::min(b1.getMax().y(), b2.getMax().y());
-        float z = std::min(b1.getMax().z(), b2.getMax().z())
+        x = std::min(b1.getMax().x(), b2.getMax().x());
+        y = std::min(b1.getMax().y(), b2.getMax().y());
+        z = std::min(b1.getMax().z(), b2.getMax().z());
 		intersectbox->setMax(Vector3( x, y, z ));
 	}
 

@@ -51,7 +51,6 @@ GameObject(resource), m_position(position), m_radius(radius), m_slices(slices), 
 //-----------------------------------------------------------------------------
 void Core::initialise(const ShaderInstance& shaderInstance)
 {
-    m_drawableObject = ((GameResource*)m_resource)->getModelManager().LoadModel(m_resource, shaderInstance, "Models\\sphere.dae");
     //m_drawableObject->dontCleanupGeometry();
     m_position = Vector3(525, -75, 175);
     m_world = scale(m_radius, m_radius, m_radius) * translate(m_position);
@@ -102,12 +101,22 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
                 {
                     m_forcefieldmatnormal.deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
                     shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
-                    shaderInstance.getMaterial().addTextureReference(hashString("cube_player_forcefield"));
+                    shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString("cube_player_forcefield"), Material::TextureSlotMapping::Diffuse0));
                 }
                 else if( strICmp(nameAttribute->Value(), "CoreMaterialNormalGlow") )
                 {
                     m_forcefieldmatglowing.deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
                 }
+            }
+        }
+        else if (childElementHash == hashString("Model"))
+        {
+            attribute = childElement->FindAttribute("file_name");
+            if (attribute != nullptr)
+            {
+                //Heavily relies on the shader instance existing before we load the model, might be better to put the model construction in initialise instead
+                m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
+                m_drawableObject->setDirty();
             }
         }
     }
@@ -119,13 +128,13 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
     if (textureString)
     {
         tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
-        shaderInstance.getMaterial().addTextureReference(hashString(getTextureNameFromFileName(textureString->getData())));
+        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
     }
     textureString = sm.getSetting<std::string>("ForceFieldCore");
     if (textureString)
     {
         tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
-        shaderInstance.getMaterial().addTextureReference(hashString(getTextureNameFromFileName(textureString->getData())));
+        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
     }
 
     return shaderInstance;

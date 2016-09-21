@@ -48,7 +48,6 @@ public:
     static Vector3 xAxis() {return Vector3(1.0f, 0.0f, 0.0f);}
     static Vector3 yAxis() {return Vector3(0.0f, 1.0f, 0.0f);}
     static Vector3 zAxis() {return Vector3(0.0f, 0.0f, 1.0f);}
-
 protected:
 private:
     float m_x, m_y, m_z;

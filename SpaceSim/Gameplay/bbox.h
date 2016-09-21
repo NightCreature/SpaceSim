@@ -69,6 +69,7 @@ public:
 
 	Vector3 getCenter() const {return ((m_min + m_max) * 0.5f);}
 
+    void resetToBox(const Bbox& otherBox);
 protected:
 private:
 	Vector3 m_min;

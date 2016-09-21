@@ -94,19 +94,51 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
     default:
     case EDEBUG:
     case ELOG:
-        outputFormatString = "[%s] : %s(%d) : %s\n";
+        outputFormatString = "%s(%d): [%s]  %s\n";
         break;
     case EWARN:
 
-        outputFormatString = "[%s] : WARNING %s(%d) : %s\n";
+        outputFormatString = "%s(%d): [%s] WARNING : %s\n";
         break;
     case EASSERT:
 
-        outputFormatString = "[%s] : ASSERT %s(%d) : %s\n";
+        outputFormatString = "%s(%d): [%s] : ASSERT : %s\n";
         break;
     }
-    sprintf_s(debugOutputStr, 3072, outputFormatString.c_str(), prefixInternal.c_str(), file, line, buf);
+    sprintf_s(debugOutputStr, 3072, outputFormatString.c_str(), file, line, prefixInternal.c_str(), buf);
     Application::m_logger.LogMessage(debugOutputStr);
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+bool isReletiveFileName(const std::string& file_name)
+{
+    if (file_name[0] == '.' && file_name[1] == '.')
+    {
+        return true;
+    }
+
+    return false;
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+std::string makeAbsolutePath(const std::string& filename)
+{
+    std::string file_name = filename;
+    if (isReletiveFileName(file_name))
+    {
+        //Get current working directory adn strip the relative stuff
+        while (file_name[0] == '.' && file_name[1] == '.')
+        {
+            file_name.erase(0, 3);
+        }
+    }
+    return file_name;
 }
 
 //-----------------------------------------------------------------------------

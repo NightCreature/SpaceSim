@@ -1,6 +1,7 @@
 #ifndef TEXTUREMANAGER_H
 #define TEXTUREMANAGER_H
 #include "Core/tinyxml2.h"
+#include "Graphics/material.h"
 #include "Graphics/Texture.h"
 #include <d3d11.h>
 #include <map>
@@ -15,7 +16,7 @@ public:
 	~TextureManager();
 
     void cleanup();
-    unsigned int deserialise( const DeviceManager& deviceManager, const tinyxml2::XMLElement* node );
+    Material::TextureSlotMapping deserialise( const DeviceManager& deviceManager, const tinyxml2::XMLElement* node );
 	void setMipMapSettings(const bool canautomipmap, const bool generatemipmaps);
 
 	bool find(const std::string& filename) const;

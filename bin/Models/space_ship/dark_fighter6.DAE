@@ -6,8 +6,8 @@
       <authoring_tool>FBX COLLADA exporter</authoring_tool>
       <comments></comments>
     </contributor>
-    <created>2016-06-26T00:37:31Z</created>
-    <modified>2016-06-26T00:37:31Z</modified>
+    <created>2016-06-26T16:47:46Z</created>
+    <modified>2016-06-26T16:47:46Z</modified>
     <revision></revision>
     <title></title>
     <subject></subject>
@@ -17,10 +17,10 @@
   </asset>
   <library_images>
     <image id="Map__1-image" name="Map__1">
-      <init_from>file://D:\SDK\Demo\SpaceSim\bin\Temp\dark_fighter\dark_fighter_6_color.png</init_from>
+      <init_from>file://..\..\Textures\space_ship\dark_fighter_6_color.png</init_from>
     </image>
     <image id="Map__3-image" name="Map__3">
-      <init_from>file://D:\SDK\Demo\SpaceSim\bin\Temp\dark_fighter\dark_fighter_6_illumination.png</init_from>
+      <init_from>file://..\..\Textures\space_ship\dark_fighter_6_illumination.png</init_from>
     </image>
   </library_images>
   <library_materials>

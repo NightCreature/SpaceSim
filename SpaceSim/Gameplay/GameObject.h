@@ -80,7 +80,7 @@ public:
     virtual void update(RenderInstanceTree& renderInstances,  float elapsedTime, const Input& input) 
     {
         UNUSEDPARAM(input);
-		m_drawableObject->getBoundingBox() = m_drawableObject->getOriginalBoundingBox();
+		m_drawableObject->getBoundingBox().resetToBox( m_drawableObject->getOriginalBoundingBox() );
         m_drawableObject->getBoundingBox().transformAccordingToMatrix(m_world);
         m_drawableObject->update(m_resource, renderInstances, elapsedTime, m_world, m_name);
 

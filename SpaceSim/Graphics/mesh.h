@@ -8,6 +8,7 @@
 #include "Graphics/Model.h"
 #include "Graphics/color.h"
 #include "Gameplay/bbox.h"
+#include "Graphics/MeshGroupCreator.h"
 #include "Graphics/VertexBuffer.h"
 #include <string>
 #include <vector>
@@ -29,18 +30,7 @@ namespace Mesh
 
     struct CreationParams : public Model::CreationParams
     {
-        VertexDecalartionDesctriptor m_vertexDeclaration;
-        std::vector<Vector3>		 m_vertices;
-        std::vector<Vector3>		 m_normals;
-        std::vector<Vector3>		 m_tangents;
-        std::vector<Vector3>		 m_binormals;
-        std::vector<unsigned int>	 m_indices;
-        MultiTexCoords				 m_texcoords;
-        int m_numvertices;
-        int m_numindices;
-        int m_numnormals;
-        int m_numtangents;
-        int m_numtexcoords;
+        std::vector<CreatedMeshGroup> m_meshGroups;
     };
 
     CreatedModel CreateMesh(const CreationParams& params);

@@ -17,6 +17,7 @@ class EntityManager;
 class UIManger;
 class HTTPServer;
 class Logger;
+class PhysicsManager;
 
 class GameResource : public Resource
 {
@@ -28,7 +29,8 @@ public:
             ,ResourceableParam(ParticleSystemManager, pfxManager), ResourceableParam(LightManager, lightManager)
             ,ResourceableParam(LaserManager, laserManager), ResourceableParam(ShaderCache, shaderCache)
             ,ResourceableParam(EffectCache, effectCache), ResourceableParam(Paths, paths)
-            ,ResourceableParam(UIManger, uiManager), ResourceableParam(HTTPServer, server), ResourceableParam(Logger, logger) ):
+            ,ResourceableParam(UIManger, uiManager), ResourceableParam(HTTPServer, server), ResourceableParam(Logger, logger)
+            ,ResourceableParam(PhysicsManager, physicsManager) ):
             ResourceInitialiser(EntityManager, entityManager),
             ResourceInitialiser(CameraManager, cameraManager),
             ResourceInitialiser(DeviceManager, deviceManager),
@@ -44,7 +46,8 @@ public:
         ResourceInitialiser(Paths, paths),
         ResourceInitialiser(UIManger, uiManager),
         ResourceInitialiser(HTTPServer, server),
-        ResourceInitialiser(Logger, logger)
+        ResourceInitialiser(Logger, logger),
+        ResourceInitialiser(PhysicsManager, physicsManager)
     {}
     ~GameResource() {}
 
@@ -64,6 +67,7 @@ public:
     ResourceDefinition(UIManger);
     ResourceDefinition(HTTPServer);
     ResourceDefinition(Logger);
+    ResourceDefinition(PhysicsManager);
 };
 
 //This class should contain all the accessors for the game resource, means a resource can have everthing in a list and this class is the one objects use to interfact with the systems

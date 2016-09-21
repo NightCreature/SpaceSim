@@ -2,6 +2,8 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "UI/Messages.h"
 
+#include "Brofiler.h"
+
 GameObjectManager::GameObjectManager(void)
 {
 }
@@ -79,6 +81,7 @@ const std::vector<GameObject*> GameObjectManager::getGameObjectsThatDontContain(
 
 void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime, const Input& input)
 {
+    BROFILER_CATEGORY("GameObjectManagerUpdate", Profiler::Color::Red);
     for (auto gameObject : m_gameObjects)
     {
         gameObject.second->update(renderList, elapsedTime, input);

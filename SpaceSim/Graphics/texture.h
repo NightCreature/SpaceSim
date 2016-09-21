@@ -16,7 +16,7 @@ public:
 	~Texture();
 
     void cleanup();
-	bool loadTextureFromFile(const DeviceManager& deviceManager, std::string filename);
+	bool loadTextureFromFile(const DeviceManager& deviceManager, const std::string& filename);
     void createFromShaderResourceView(ID3D11ShaderResourceView* textureShaderResourceView, ID3D11SamplerState* textureSamplerState) { m_textureShaderResourceView = textureShaderResourceView; m_textureSamplerState = textureSamplerState; }
     ID3D11ShaderResourceView* getShaderResourceView() const { return m_textureShaderResourceView; }
     ID3D11SamplerState* getSamplerState() const { return m_textureSamplerState; }
