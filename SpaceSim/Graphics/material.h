@@ -60,6 +60,7 @@ public:
             Emmisive7,
             Normals,
             ReflectionMap,
+            ShadowMap,
 
             NumSlots,
             Invalid = -1

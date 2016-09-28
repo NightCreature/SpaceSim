@@ -70,6 +70,12 @@ RenderSystem::~RenderSystem()
         m_cubeMapRenderer = nullptr;
     }
 
+    if (m_shadowMapRenderer)
+    {
+        delete m_shadowMapRenderer;
+        m_shadowMapRenderer = nullptr;
+    }
+
 #ifdef _DEBUG
     if (m_debugAxis != nullptr)
     {
@@ -256,6 +262,7 @@ void RenderSystem::initialise(Resource* resource)
 #endif
 
     initialiseCubemapRendererAndResources(resourceHelper);
+    m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
 
 }
 
@@ -266,6 +273,9 @@ void RenderSystem::initialise(Resource* resource)
 void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
     BROFILER_CATEGORY("RenderSystem::Update", Profiler::Color::Blue);
+#ifdef _DEBUG
+    pPerf->BeginEvent(L"RenderSystem::Update");
+#endif
 
     static const unsigned int defaultTechniqueHash = hashString("default");
     m_window.update(elapsedTime, time);
@@ -320,6 +330,9 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
             resourceViews.push_back(srv);
             samplerStates.push_back(samplerState);
         }
+
+        resourceViews.push_back(m_shadowMapRenderer->getShadowMap());
+        samplerStates.push_back(m_textureManager.getSamplerState());
         
         if (!resourceViews.empty())
         {
@@ -375,6 +388,10 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         }
 #endif
     }
+
+#ifdef _DEBUG
+    pPerf->EndEvent();
+#endif
 
     m_numberOfInstancesRenderingThisFrame = renderInstances.size();
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
@@ -604,16 +621,23 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
         rtCounter = (++rtCounter) % m_cubeSettings.size();
         if (m_cubeSettings[rtCounter].m_dynamic || m_cubeSettings[rtCounter].m_hasBeenRenderedTo == false)
         {
-            ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-            deviceContext->PSSetShaderResources(0, 8, srv);
+            ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+            deviceContext->PSSetShaderResources(0, 40, srv);
             m_cubeMapRenderer->initialise(m_cubeSettings[rtCounter].m_position);
             m_cubeMapRenderer->renderCubeMap(resource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), renderInstances, m_deviceManager, perFrameConstants, tm);
             m_cubeSettings[rtCounter].m_hasBeenRenderedTo = true;
-            deviceContext->PSSetShaderResources(0, 8, srv);
+            deviceContext->PSSetShaderResources(0, 40, srv);
         }
         counter = 0;
     }
     ++counter;
+
+
+    //Do shadowmap update here too to begin with
+    ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+    deviceContext->PSSetShaderResources(0, 40, srv);
+    m_shadowMapRenderer->renderShadowMap(resource, renderInstances, m_deviceManager, light0);
+    deviceContext->PSSetShaderResources(0, 40, srv);
 
     perFrameConstants.m_cameraPosition[0] = camPos.x();
     perFrameConstants.m_cameraPosition[1] = camPos.y();
