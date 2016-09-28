@@ -25,6 +25,9 @@ public:
     const ShaderInstance& getShaderInstance() const { return *m_shaderInstance; }
     const GeometryInstance& getGeometryInstance() const { return *m_geometryInstance; }
     const unsigned int getPrimitiveType() const { return m_geometryInstance->getPrimitiveType(); }
+
+    void setShaderInstance(ShaderInstance* instance) { m_shaderInstance = instance; }
+    void setGeometryInstance(GeometryInstance* instance) { m_geometryInstance = instance; }
 private:
     //RenderInstance(const RenderInstance& renderInstance) {}
     //RenderInstance& operator=(const RenderInstance& renderInstance) {}

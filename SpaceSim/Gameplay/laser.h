@@ -28,7 +28,7 @@ public:
     const Vector3& getPosition() const { return m_position; }
     const Vector3& getDirection() const { return m_direction; }
 
-    const LaserInstanceData& getInstanceData() const 
+    LaserInstanceData& getInstanceData()
     {
         return m_instanceData;
     }
