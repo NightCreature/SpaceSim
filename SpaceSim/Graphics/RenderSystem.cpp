@@ -249,7 +249,7 @@ void RenderSystem::initialise(Resource* resource)
 
     D3D11_BUFFER_DESC lightContantsDescriptor;
     ZeroMemory(&lightContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
-    lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float);
+    lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float) + 3 * 16 * sizeof(float);
     lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = device->CreateBuffer(&lightContantsDescriptor, 0, &m_lightConstantBuffer);
 
@@ -636,13 +636,16 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     //Do shadowmap update here too to begin with
     ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     deviceContext->PSSetShaderResources(0, 40, srv);
-    m_shadowMapRenderer->renderShadowMap(resource, renderInstances, m_deviceManager, light0);
+    m_shadowMapRenderer->renderShadowMap(resource, renderInstances, m_deviceManager, lm.getLight("light_1"));
     deviceContext->PSSetShaderResources(0, 40, srv);
 
     perFrameConstants.m_cameraPosition[0] = camPos.x();
     perFrameConstants.m_cameraPosition[1] = camPos.y();
     perFrameConstants.m_cameraPosition[2] = camPos.z();
+    perFrameConstants.m_shadowMVP = m_shadowMapRenderer->getShadowMapMVP();
     deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
+    deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
+
 }
 
 //-------------------------------------------------------------------------

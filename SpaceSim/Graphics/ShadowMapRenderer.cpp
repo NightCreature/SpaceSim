@@ -19,6 +19,8 @@
 #include "Graphics/modelmanager.h"
 #include "Graphics/light.h"
 
+#include <numeric>
+
 #ifdef _DEBUG
 #include <d3d11_1.h>
 #include <atlbase.h>
@@ -130,7 +132,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
      m_lightViewPort.TopLeftX = 0;
      m_lightViewPort.TopLeftY = 0;
 
-     m_lightProjection = math::createOrthoGraphicProjection(static_cast<float>(shadowMapWidhtHeight), static_cast<float>(shadowMapWidhtHeight), 0.01f, 1000.0f);
+     m_shadowMVP.m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, 1, 0.01f, 100000.0f);
 #ifdef _DEBUG
      hr = deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
 #endif
@@ -169,7 +171,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
 
     deviceContext->OMSetRenderTargets(1, &m_shadowMapView, m_depthStencilView);
 
-    float clearColor[4] = { 4.8f, 0.8f, 0.8f, 1.0f };
+    float clearColor[4] = { std::numeric_limits<float>::max(), 1.0f, 1.0f, 1.0f };
     deviceContext->ClearRenderTargetView(m_shadowMapView, clearColor);
     deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -186,15 +188,12 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
     std::vector<ID3D11SamplerState*> samplerStates;
     resourceViews.reserve(128);
     samplerStates.reserve(128);
-    WVPBufferContent wvpContent;
-    wvpContent.m_projection = m_lightProjection;
-    //wvpContent.m_projection = Application::m_projection;
 
-    //Camera cam;
-    //cam.positionCamera(light->getPosition(), light->getDirection(), Vector3::yAxis());
-    //m_lightView = cam.createCamera();
-    UNUSEDPARAM(light);
-    wvpContent.m_view = Application::m_view;
+    Camera cam;
+    cam.positionCamera(light->getPosition(), light->getPosition() + light->getDirection(), Vector3::yAxis());
+    m_shadowMVP.m_view = cam.createCamera();
+    //UNUSEDPARAM(light);
+    //wvpContent.m_view = Application::m_view;
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
         resourceViews.clear();
@@ -213,8 +212,8 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
         const Technique* technique = effect->getTechnique(shadowMapTechniqueHash);
         if (technique)
         {
-            wvpContent.m_world = renderInstance.getShaderInstance().getWVPConstants().m_world;
-            deviceManager.getDeviceContext()->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&wvpContent, 0, 0);
+            m_shadowMVP.m_world = renderInstance.getShaderInstance().getWVPConstants().m_world;
+            deviceManager.getDeviceContext()->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&m_shadowMVP, 0, 0);
 
             if (technique->getTechniqueId() != oldTechniqueId)
             {
@@ -273,13 +272,4 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
 #ifdef _DEBUG
     pPerf->EndEvent();
 #endif
-}
-
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
-Matrix44 ShadowMapRenderer::createCamera()
-{
-    return Matrix44();
 }

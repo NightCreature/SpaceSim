@@ -36,6 +36,7 @@ struct ALIGN16 PerFrameConstants
 {
     ALIGN16 LightConstants m_lightConstants[8];
     ALIGN16 float m_cameraPosition[4];
+    ALIGN16 WVPBufferContent m_shadowMVP;
 };
 
 struct MaterialContent

@@ -4,6 +4,7 @@
 #include "Math/Vector3.h"
 #include "Graphics/Camera.h"
 #include "Graphics/DeviceManager.h"
+#include "Graphics/Effect.h"
 #include <d3d11.h>
 #include <string>
 
@@ -31,13 +32,10 @@ public:
     void renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light);
 
     ID3D11ShaderResourceView* getShadowMap() { return m_shadowMapRV; }
+    WVPBufferContent getShadowMapMVP() { return m_shadowMVP; }
 private:
-    Matrix44 createCamera();
-    
-    Matrix44 m_lightView;
-    Matrix44 m_lightProjection;
+    WVPBufferContent m_shadowMVP;
     D3D11_VIEWPORT m_lightViewPort;
-    Vector3 m_position;
 
     ID3D11BlendState* m_alphaBlendState;
     ID3D11BlendState* m_blendState;
