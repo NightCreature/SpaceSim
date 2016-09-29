@@ -38,7 +38,7 @@ public:
         {
             for (size_t counter = 0; counter < m_modelData.size(); ++counter)
             {
-                m_modelData[counter]->update(resource, renderInstance, elapsedTime, world, name);
+                m_modelData[counter]->update(resource, renderInstance, elapsedTime, world, name, m_boundingBox);
             }
         }
     }

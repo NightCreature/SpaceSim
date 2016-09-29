@@ -2,6 +2,7 @@
 #define LASER_H
 
 #include "Gameplay/box.h"
+#include "Gameplay/bbox.h"
 #include "Math/matrix44.h"
 #include "Graphics/ShaderInstance.h"
 #include "Math/vector3.h"
@@ -14,6 +15,8 @@ struct LaserInstanceData
     LaserInstanceData(const ShaderInstance& shaderInstance) : m_shaderInstance(shaderInstance), world() {}
     ShaderInstance m_shaderInstance;
     Matrix44 world;
+
+    Bbox m_boundingBox;
 };
 
 class Laser

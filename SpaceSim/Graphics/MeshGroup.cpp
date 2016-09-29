@@ -3,6 +3,7 @@
 #include "Graphics/DeviceManager.h"
 #include "Core/Resource/GameResource.h"
 #include "Graphics/RenderInstance.h"
+#include "Gameplay/bbox.h"
 #ifdef _DEBUG
 #include "Core/StringOperations/StringHelperFunctions.h"
 #endif
@@ -23,7 +24,7 @@ MeshGroup::~MeshGroup()
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name )
+void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box )
 {
     BROFILER_CATEGORY("MeshGroup::update", Profiler::Color::Aqua);
     if (m_renderInstanceDirty || m_renderInstance == nullptr)
@@ -53,6 +54,7 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
     
     if (m_renderInstance != nullptr)
     {
+        m_renderInstance->setBoundingBox(box);
         renderInstance.emplace_back(m_renderInstance);
     }
 

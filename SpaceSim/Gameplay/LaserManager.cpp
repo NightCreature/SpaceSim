@@ -116,6 +116,9 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time, const
         laserPair.first.update(time, deviceManager);
         LaserInstanceData& lid = laserPair.first.getInstanceData();
         laserPair.second->setShaderInstance(&(lid.m_shaderInstance));
+        Bbox box = m_playerLaser->getOriginalBoundingBox();
+        box.transformAccordingToMatrix(lid.world);
+        laserPair.second->setBoundingBox(box);
 #ifdef _DEBUG
         laserPair.second->m_name = L"Player Laser RI";
 #endif
@@ -129,6 +132,9 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time, const
         LaserInstanceData& lid = laserPair.first.getInstanceData();
         laserPair.first.update(time, deviceManager);
         laserPair.second->setShaderInstance(&(lid.m_shaderInstance));
+        Bbox box = m_enemyLaser->getOriginalBoundingBox();
+        box.transformAccordingToMatrix(lid.world);
+        laserPair.second->setBoundingBox(box);
 #ifdef _DEBUG
         laserPair.second->m_name = L"Player Laser RI";
 #endif
