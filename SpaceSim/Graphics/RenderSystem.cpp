@@ -9,6 +9,8 @@
 #include "Graphics/RenderInstance.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+#include "Graphics/Frustum.h"
+
 #include "Brofiler.h"
 
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
@@ -653,6 +655,17 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     }
     ++counter;
 
+    //Cull the render list according to the view frustum, we happen to be able to do this for shadow and normal rendering
+    RenderInstanceTree visibleInstances;
+    Frustum frustum(Application::m_view, Application::m_projection);
+    for (auto instance : renderInstances)
+    {
+        if (frustum.IsInside(instance->getBoundingBox()))
+        {
+            visibleInstances.push_back(instance);
+        }
+    }
+
 
     //Do shadowmap update here too to begin with
     ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
@@ -666,7 +679,6 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     perFrameConstants.m_shadowMVP = m_shadowMapRenderer->getShadowMapMVP();
     deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
     deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
-
 }
 
 //-------------------------------------------------------------------------

@@ -4,12 +4,15 @@
 #include "Math/vector3.h"
 #include "Math/matrix44.h"
 
+class Bbox;
+
 class Frustum
 {
 public:
     Frustum( const Matrix44& viewMatrix, const Matrix44& projectionMatrix);
     ~Frustum();
 
+    bool IsInside(const Bbox& boundingBox);
     //bool CheckPoint(float, float, float);
     //bool CheckCube(float, float, float, float);
     //bool CheckSphere(float, float, float, float);
