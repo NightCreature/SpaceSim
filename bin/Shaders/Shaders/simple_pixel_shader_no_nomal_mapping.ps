@@ -57,7 +57,7 @@ float4 ps_main( PS_INPUT input) : SV_Target
 
     float3 nviewdirection = normalize(camera_position - vertexPos);
     color = float4(ambient.rgb, 1.0) * texColor + float4(emissive.rgb, 0.0);
-    for (int counter = 0; counter < 3; ++counter)
+    for (int counter = 0; counter < 8; ++counter)
     {
         float3 lightDir = m_lights[counter].m_position.xyz - vertexPos;
         float distance = length(lightDir);

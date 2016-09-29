@@ -70,6 +70,12 @@ RenderSystem::~RenderSystem()
         m_cubeMapRenderer = nullptr;
     }
 
+    if (m_shadowMapRenderer)
+    {
+        delete m_shadowMapRenderer;
+        m_shadowMapRenderer = nullptr;
+    }
+
 #ifdef _DEBUG
     if (m_debugAxis != nullptr)
     {
@@ -243,9 +249,29 @@ void RenderSystem::initialise(Resource* resource)
 
     D3D11_BUFFER_DESC lightContantsDescriptor;
     ZeroMemory(&lightContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
-    lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float);
+    lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float) + 3 * 16 * sizeof(float);
     lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = device->CreateBuffer(&lightContantsDescriptor, 0, &m_lightConstantBuffer);
+
+    D3D11_SAMPLER_DESC samplerStateDesc;
+    samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    samplerStateDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerStateDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerStateDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerStateDesc.MipLODBias = 0.0f;
+    samplerStateDesc.MaxAnisotropy = 16;
+    samplerStateDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    samplerStateDesc.BorderColor[0] = 0.0f;
+    samplerStateDesc.BorderColor[1] = 0.0f;
+    samplerStateDesc.BorderColor[2] = 0.0f;
+    samplerStateDesc.BorderColor[3] = 0.0f;
+    samplerStateDesc.MinLOD = -3.402823466e+38F;
+    samplerStateDesc.MaxLOD = 3.402823466e+38F;
+    hr = device->CreateSamplerState(&samplerStateDesc, &m_samplerState);
+    if (FAILED(hr))
+    {
+        MSG_TRACE_CHANNEL("RENDER SYSTEM", "Failed to create sampler state: 0x%x", hr)
+    }
 
 #ifdef _DEBUG
     m_debugAxis = new OrientationAxis();
@@ -256,6 +282,7 @@ void RenderSystem::initialise(Resource* resource)
 #endif
 
     initialiseCubemapRendererAndResources(resourceHelper);
+    m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
 
 }
 
@@ -266,6 +293,9 @@ void RenderSystem::initialise(Resource* resource)
 void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
     BROFILER_CATEGORY("RenderSystem::Update", Profiler::Color::Blue);
+#ifdef _DEBUG
+    pPerf->BeginEvent(L"RenderSystem::Update");
+#endif
 
     static const unsigned int defaultTechniqueHash = hashString("default");
     m_window.update(elapsedTime, time);
@@ -284,11 +314,15 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
     std::vector<ID3D11ShaderResourceView*> resourceViews;
     std::vector<ID3D11SamplerState*> samplerStates;
     resourceViews.reserve(128);
-    samplerStates.reserve(128);
+    samplerStates.reserve(2);
+
+    samplerStates.push_back(m_textureManager.getSamplerState());
+    samplerStates.push_back(m_samplerState);
+    deviceContext->PSSetSamplers(0, 2, &samplerStates[0]);
+
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
         resourceViews.clear();
-        samplerStates.clear();
 
         RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 #ifdef _DEBUG
@@ -316,15 +350,15 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
                 ++currentTextureIndex;
             }
             ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-            ID3D11SamplerState* const samplerState = m_textureManager.getSamplerState();
             resourceViews.push_back(srv);
-            samplerStates.push_back(samplerState);
         }
+
+        resourceViews.push_back(m_shadowMapRenderer->getShadowMap());
         
         if (!resourceViews.empty())
         {
             deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
-            deviceContext->PSSetSamplers(0, 1, &samplerStates[0]); //THis shoudl not be this way
+            
         }
 
         if (technique->getTechniqueId() != oldTechniqueId)
@@ -375,6 +409,10 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
         }
 #endif
     }
+
+#ifdef _DEBUG
+    pPerf->EndEvent();
+#endif
 
     m_numberOfInstancesRenderingThisFrame = renderInstances.size();
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
@@ -604,21 +642,31 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
         rtCounter = (++rtCounter) % m_cubeSettings.size();
         if (m_cubeSettings[rtCounter].m_dynamic || m_cubeSettings[rtCounter].m_hasBeenRenderedTo == false)
         {
-            ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-            deviceContext->PSSetShaderResources(0, 8, srv);
+            ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+            deviceContext->PSSetShaderResources(0, 40, srv);
             m_cubeMapRenderer->initialise(m_cubeSettings[rtCounter].m_position);
             m_cubeMapRenderer->renderCubeMap(resource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), renderInstances, m_deviceManager, perFrameConstants, tm);
             m_cubeSettings[rtCounter].m_hasBeenRenderedTo = true;
-            deviceContext->PSSetShaderResources(0, 8, srv);
+            deviceContext->PSSetShaderResources(0, 40, srv);
         }
         counter = 0;
     }
     ++counter;
 
+
+    //Do shadowmap update here too to begin with
+    ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+    deviceContext->PSSetShaderResources(0, 40, srv);
+    m_shadowMapRenderer->renderShadowMap(resource, renderInstances, m_deviceManager, lm.getLight("light_1"));
+    deviceContext->PSSetShaderResources(0, 40, srv);
+
     perFrameConstants.m_cameraPosition[0] = camPos.x();
     perFrameConstants.m_cameraPosition[1] = camPos.y();
     perFrameConstants.m_cameraPosition[2] = camPos.z();
+    perFrameConstants.m_shadowMVP = m_shadowMapRenderer->getShadowMapMVP();
     deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
+    deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
+
 }
 
 //-------------------------------------------------------------------------

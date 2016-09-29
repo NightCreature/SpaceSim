@@ -4,5 +4,9 @@
       <VertexShader entry_point="vs_main" file_name="Shaders\Shaders\simple_vertex_shader.vs" />
       <PixelShader entry_point="ps_main" file_name="Shaders\Shaders\simple_pixel_shader.ps" />
   	</Technique>
+    <Technique name="shadow_map">
+      <VertexShader entry_point="vs_main" file_name="Shaders\Shaders\simple_shadow_vertex_shader.vs" />
+      <PixelShader entry_point="ps_main" file_name="Shaders\Shaders\simple_shadow_pixel_shader.ps" />
+  	</Technique>
   </Effect>
 </xml>

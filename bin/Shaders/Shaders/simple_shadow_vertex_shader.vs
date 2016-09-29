@@ -8,26 +8,6 @@ cbuffer WVPConstants : register(b0)
     float4x4 Projection;
 };
 
-struct LightConstants
-{
-    float4 m_position;
-    float4 m_direction;
-    float4 m_diffuse;
-    float4 m_specular;
-    float4 m_attenuationFallOff;
-    float4 m_range;
-};
-
-cbuffer LightParamters: register(b1)
-{
-    //float3 eyePosition;
-    LightConstants m_lights[8];
-    float3 camera_position;
-    float4x4 ShadowWorld;
-    float4x4 ShadowView;
-    float4x4 ShadowProjection;
-}
-
 //--------------------------------------------------------------------------------------
 struct VS_INPUT
 {
@@ -45,7 +25,6 @@ struct PS_INPUT
     float3 BiN : BINORMAL0;
     float2 Tex : TEXCOORD0;
     float3 WorldPos : TEXCOORD1;
-    float4 LightToPixel : TEXCOORD2;
 };
 
 //--------------------------------------------------------------------------------------
@@ -55,20 +34,15 @@ PS_INPUT vs_main( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;
     output.Pos = mul( input.Pos, World );
-    output.WorldPos = output.Pos.xyz;
     output.Pos = mul( output.Pos, View );
     output.Pos = mul( output.Pos, Projection );
+    output.WorldPos = output.Pos.xyz;
 
     float3 biNormal = cross(input.Nor, input.Tan);
 
     output.Nor = input.Nor;
     output.Tan = input.Tan;
     output.BiN = biNormal;
-
-    float4 pos = float4(input.Pos.xyz, 1.0);
-    output.LightToPixel = mul( pos, World );
-    output.LightToPixel = mul( output.LightToPixel, ShadowView );
-    output.LightToPixel = mul( output.LightToPixel, ShadowProjection );
 
     //output.inpos = input.Tex1;
     //output.Pos = input.Pos;

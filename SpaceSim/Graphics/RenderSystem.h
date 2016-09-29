@@ -12,6 +12,7 @@
 #include "Graphics/texturemanager.h"
 #include "Graphics/modelmanager.h"
 #include "Graphics/CubeMapRenderer.h"
+#include "Graphics/ShadowMapRenderer.h"
 
 #ifdef _DEBUG
 #include <d3d11_1.h>
@@ -102,4 +103,6 @@ private:
 
     std::vector<CubeRendererInitialiseData> m_cubeSettings;
     CubeMapRenderer* m_cubeMapRenderer;
+    ShadowMapRenderer* m_shadowMapRenderer;
+    ID3D11SamplerState* m_samplerState;
 };

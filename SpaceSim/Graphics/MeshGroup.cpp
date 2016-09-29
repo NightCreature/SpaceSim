@@ -35,6 +35,7 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
         //}
 		if (m_renderInstance == nullptr)
 		{
+            BROFILER_CATEGORY("MeshGroup::update::Allocation", Profiler::Color::Black);
 			m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
 #ifdef _DEBUG
 			convertToWideString(name, m_renderInstance->m_name);

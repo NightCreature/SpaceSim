@@ -25,7 +25,8 @@ public:
 
     typedef std::vector<RenderInstance* > RenderInstancePool;
     typedef std::vector< RenderInstance* > RenderInstanceQueue;
-    typedef std::vector< Laser > LaserQueue; //This should be a map or a list of pair from laser to trenderinstance so that we dont recreate everything every frame
+    typedef std::pair< Laser, RenderInstance*> LasterRenderPair;
+    typedef std::vector< LasterRenderPair > LaserQueue; //This should be a map or a list of pair from laser to trenderinstance so that we dont recreate everything every frame
 private:
     LaserQueue m_worldEnemyTransforms;
     LaserQueue m_worldPlayerTransforms;
