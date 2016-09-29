@@ -253,6 +253,26 @@ void RenderSystem::initialise(Resource* resource)
     lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = device->CreateBuffer(&lightContantsDescriptor, 0, &m_lightConstantBuffer);
 
+    D3D11_SAMPLER_DESC samplerStateDesc;
+    samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    samplerStateDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerStateDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerStateDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+    samplerStateDesc.MipLODBias = 0.0f;
+    samplerStateDesc.MaxAnisotropy = 16;
+    samplerStateDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    samplerStateDesc.BorderColor[0] = 0.0f;
+    samplerStateDesc.BorderColor[1] = 0.0f;
+    samplerStateDesc.BorderColor[2] = 0.0f;
+    samplerStateDesc.BorderColor[3] = 0.0f;
+    samplerStateDesc.MinLOD = -3.402823466e+38F;
+    samplerStateDesc.MaxLOD = 3.402823466e+38F;
+    hr = device->CreateSamplerState(&samplerStateDesc, &m_samplerState);
+    if (FAILED(hr))
+    {
+        MSG_TRACE_CHANNEL("RENDER SYSTEM", "Failed to create sampler state: 0x%x", hr)
+    }
+
 #ifdef _DEBUG
     m_debugAxis = new OrientationAxis();
     m_debugAxis->initialise(resource, m_deviceManager);
@@ -294,11 +314,15 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
     std::vector<ID3D11ShaderResourceView*> resourceViews;
     std::vector<ID3D11SamplerState*> samplerStates;
     resourceViews.reserve(128);
-    samplerStates.reserve(128);
+    samplerStates.reserve(2);
+
+    samplerStates.push_back(m_textureManager.getSamplerState());
+    samplerStates.push_back(m_samplerState);
+    deviceContext->PSSetSamplers(0, 2, &samplerStates[0]);
+
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
         resourceViews.clear();
-        samplerStates.clear();
 
         RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 #ifdef _DEBUG
@@ -326,18 +350,15 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
                 ++currentTextureIndex;
             }
             ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-            ID3D11SamplerState* const samplerState = m_textureManager.getSamplerState();
             resourceViews.push_back(srv);
-            samplerStates.push_back(samplerState);
         }
 
         resourceViews.push_back(m_shadowMapRenderer->getShadowMap());
-        samplerStates.push_back(m_textureManager.getSamplerState());
         
         if (!resourceViews.empty())
         {
             deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
-            deviceContext->PSSetSamplers(0, 1, &samplerStates[0]); //THis shoudl not be this way
+            
         }
 
         if (technique->getTechniqueId() != oldTechniqueId)

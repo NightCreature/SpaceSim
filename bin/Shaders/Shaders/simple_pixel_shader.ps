@@ -28,15 +28,12 @@ cbuffer LightParamters: register(b1)
 }
 
 Texture2D<float4> shaderTextures : register(t8);
-SamplerState SampleType
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
+SamplerState SampleType : register (s0);
 
 Texture2D<float4> normalMap : register(t32);
 Texture2D<float4> shadowMap : register(t33);
+SamplerState ShadowSampleType : register (s1);
+
 
 //--------------------------------------------------------------------------------------
 struct PS_INPUT
@@ -50,6 +47,22 @@ struct PS_INPUT
     float4 LightToPixel : TEXCOORD2;
 };
 
+float4 doLightCalculation(LightConstants light, float3 lightDir, float3 nnormal, float3 nviewdirection, float distance, float shininess, float4 color, float texColor)
+{
+    float attenuation = clamp(0.0, 1.0, 1.0 / (light.m_attenuationFallOff.x + light.m_attenuationFallOff.y * distance + light.m_attenuationFallOff.z * distance * distance));
+
+    lightDir = normalize(lightDir);
+    float ndotl = dot(nnormal, -lightDir);
+    float3 reflection = normalize(((2.0 * nnormal) * ndotl) - lightDir);
+    float rdotv = pow(saturate(dot(reflection, nviewdirection)), shininess);
+    if (ndotl > 0.0)
+    {
+        color = color + (light.m_diffuse * ndotl * (texColor * float4(diffuse.rgb, 1.0))) * attenuation + rdotv * light.m_specular;
+    }
+
+    return color;
+}
+
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
@@ -58,18 +71,11 @@ float4 ps_main( PS_INPUT input) : SV_Target
     float3 vertexPos = input.WorldPos;
     float4 color;
 
-    float2 shadowMapTex;
-    shadowMapTex.x =  input.LightToPixel.x / input.LightToPixel.w / 2.0f + 0.5f;
-    shadowMapTex.y = -input.LightToPixel.y / input.LightToPixel.w / 2.0f + 0.5f;
-    float pixelDepth = input.LightToPixel.z / input.LightToPixel.w ;//- 0.005;
-
-    float4 shadow = shadowMap.Sample(SampleType, shadowMapTex);
-
     float4 texColor =  shaderTextures.Sample(SampleType, input.Tex);
     texColor = float4(1,1,1,1);
     float3 sampledNormalMap = ((2.0 * normalMap.Sample(SampleType, input.Tex).xyz) - 1.0);
-    float3 nnormal = normalize(input.Nor);// normalize(input.Tan * sampledNormalMap.x + input.BiN * sampledNormalMap.y + input.Nor * sampledNormalMap.z);
-    
+    float3 nnormal = normalize(input.Tan * sampledNormalMap.x + input.BiN * sampledNormalMap.y + input.Nor * sampledNormalMap.z);
+    nnormal = normalize(input.Nor);
 
     float3 nviewdirection = normalize(camera_position - vertexPos);
     color = float4(ambient.rgb, 1.0) * texColor + float4(emissive.rgb, 0.0);
@@ -80,23 +86,23 @@ float4 ps_main( PS_INPUT input) : SV_Target
         float distance = length(lightDir);
         if (distance <= m_lights[counter].m_range.x )
         {
-            if((saturate(shadowMapTex.x) == shadowMapTex.x) && (saturate(shadowMapTex.y) == shadowMapTex.y))
-            {
-                if (pixelDepth < shadow.r)
+                if (counter == 1)
                 {
-                    m_lights[counter].m_attenuationFallOff.x;
-                    float attenuation = clamp(0.0, 1.0, 1.0 / (m_lights[counter].m_attenuationFallOff.x + m_lights[counter].m_attenuationFallOff.y * distance + m_lights[counter].m_attenuationFallOff.z * distance * distance));
+                    float2 shadowMapTex;
+                    shadowMapTex.x =  input.LightToPixel.x / input.LightToPixel.w / 2.0f + 0.5f;
+                    shadowMapTex.y = -input.LightToPixel.y / input.LightToPixel.w / 2.0f + 0.5f;
+                    float pixelDepth = input.LightToPixel.z - 0.0025;// / input.LightToPixel.w ;//- 0.005;
 
-                    lightDir = normalize(lightDir);
-                    float ndotl = dot(nnormal, -lightDir);
-                    float3 reflection = normalize(((2.0 * nnormal) * ndotl) - lightDir);
-                    float rdotv = pow(saturate(dot(reflection, nviewdirection)), shininess);
-                    if (ndotl > 0.0)
+                    float4 shadow = shadowMap.Sample(ShadowSampleType, shadowMapTex);
+                    if (pixelDepth < shadow.r)
                     {
-                        color = color + (m_lights[counter].m_diffuse * ndotl * (texColor * float4(diffuse.rgb, 1.0))) * attenuation + rdotv * m_lights[counter].m_specular;
+                        color = doLightCalculation(m_lights[counter], lightDir, nnormal, nviewdirection, distance, shininess, color, texColor);
                     }
                 }
-            }
+                else
+                {
+                    color = doLightCalculation(m_lights[counter], lightDir, nnormal, nviewdirection, distance, shininess, color, texColor);
+                }
         }
     }
     //color.rgb = nnormal;

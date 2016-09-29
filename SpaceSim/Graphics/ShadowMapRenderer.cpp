@@ -41,6 +41,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
     m_alphaBlendState(alphaBlendState)
  {
      m_shadowMapWidthHeight = shadowMapWidhtHeight;
+     m_shadowMapWidthHeight = 2048;
 
      D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
      depthStencilTextureDesc.Width = m_shadowMapWidthHeight;
@@ -132,7 +133,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
      m_lightViewPort.TopLeftX = 0;
      m_lightViewPort.TopLeftY = 0;
 
-     m_shadowMVP.m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, 1, 0.01f, 100000.0f);
+     m_shadowMVP.m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI * 0.5f, 1.0f, 0.1f, 500.0f);
 #ifdef _DEBUG
      hr = deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
 #endif

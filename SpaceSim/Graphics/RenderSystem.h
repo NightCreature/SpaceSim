@@ -104,4 +104,5 @@ private:
     std::vector<CubeRendererInitialiseData> m_cubeSettings;
     CubeMapRenderer* m_cubeMapRenderer;
     ShadowMapRenderer* m_shadowMapRenderer;
+    ID3D11SamplerState* m_samplerState;
 };
