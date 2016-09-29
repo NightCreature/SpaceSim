@@ -5,8 +5,8 @@
 #include "Graphics/RenderInstance.h"
 #ifdef _DEBUG
 #include "Core/StringOperations/StringHelperFunctions.h"
-#include "brofiler.h"
 #endif
+#include "brofiler.h"
 
 //-------------------------------------------------------------------------
 // @brief 

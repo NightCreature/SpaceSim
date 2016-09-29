@@ -18,6 +18,7 @@
 #include "Graphics/texturemanager.h"
 #include "Graphics/modelmanager.h"
 #include "Graphics/light.h"
+#include "brofiler.h"
 
 #include <numeric>
 
@@ -26,8 +27,6 @@
 #include <atlbase.h>
 
 #include "ScreenGrab.h"
-
-#include "brofiler.h"
 #endif
 
 static const unsigned int shadowMapTechniqueHash = hashString("shadow_map");

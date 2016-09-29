@@ -23,9 +23,9 @@
 #include <atlbase.h>
 
 #include "ScreenGrab.h"
+#endif
 
 #include "brofiler.h"
-#endif
 
 
 //-------------------------------------------------------------------------
