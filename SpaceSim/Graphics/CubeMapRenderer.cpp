@@ -27,6 +27,8 @@
 
 #include "brofiler.h"
 
+#include <Graphics/Frustum.h>
+
 
 //-------------------------------------------------------------------------
 // @brief 
@@ -96,7 +98,24 @@ void CubeMapRenderer::initialise(Vector3 position)
     createViewArray(position);
 }
 
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void CubeMapRenderer::CheckVisibility(RenderInstanceTree& visibleRenderInstances, const RenderInstanceTree& renderInstances, const Matrix44& viewMatrix)
+{
 
+    BROFILER_CATEGORY("CubeMapRenderer::CheckVisibility", Profiler::Color::Yellow);
+    Frustum frustum(viewMatrix, m_cubeProjection);
+    for (auto instance : renderInstances)
+    {
+        if (frustum.IsInside(instance->getBoundingBox()))
+        {
+            visibleRenderInstances.push_back(instance);
+        }
+    }
+
+}
 
 void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, PerFrameConstants& perFrameConstants, const TextureManager& textureManager)
 {
@@ -122,26 +141,35 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
 
     const ShaderCache& shaderCache = GameResourceHelper(resource).getGameResource().getShaderCache();
 
+    std::vector<ID3D11SamplerState*> samplerStates;
+    samplerStates.reserve(1);
+    samplerStates.push_back(textureManager.getSamplerState());
+    deviceContext->PSSetSamplers(0, 1, &samplerStates[0]);
+    RenderInstanceTree visibleRenderInstances;
+    visibleRenderInstances.reserve(renderInstances.size());
+
     for (size_t rtCounter = 0; rtCounter < 6; ++rtCounter)
     {
         BROFILER_CATEGORY("CubeMapRenderer::renderFace", Profiler::Color::LightBlue);
+
+        visibleRenderInstances.clear();
+        CheckVisibility(visibleRenderInstances, renderInstances, m_viewArray[rtCounter]);
+
         ID3D11RenderTargetView* aRTViews[1] = { renderTarget->getRenderTargetView(rtCounter) };
         deviceContext->OMSetRenderTargets(sizeof(aRTViews) / sizeof(aRTViews[0]), aRTViews, m_depthStencilView);
         deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0);
 
-        RenderInstanceTree::const_iterator renderInstanceIt = renderInstances.begin();
-        RenderInstanceTree::const_iterator renderInstanceEnd = renderInstances.end();
+        RenderInstanceTree::const_iterator renderInstanceIt = visibleRenderInstances.begin();
+        RenderInstanceTree::const_iterator renderInstanceEnd = visibleRenderInstances.end();
         unsigned int stride = 0;
         unsigned int offset = 0;
         size_t oldTechniqueId = 0;
         std::vector<ID3D11ShaderResourceView*> resourceViews;
-        std::vector<ID3D11SamplerState*> samplerStates;
         resourceViews.reserve(128);
-        samplerStates.reserve(128);
+
         for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
         {
             resourceViews.clear();
-            samplerStates.clear();
             RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 
             const Material& material = renderInstance.getShaderInstance().getMaterial();
@@ -166,15 +194,12 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
                     ++currentTextureIndex;
                 }
                 ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-                ID3D11SamplerState* const samplerState = textureManager.getSamplerState();
                 resourceViews.push_back(srv);
-                samplerStates.push_back(samplerState);
             }
 
             if (!resourceViews.empty())
             {
                 deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
-                deviceContext->PSSetSamplers(0, 1, &samplerStates[0]); //THis shoudl not be this way
             }
 
             if (technique->getTechniqueId() != oldTechniqueId)

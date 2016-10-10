@@ -295,6 +295,7 @@ void RenderSystem::initialise(Resource* resource)
 void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
     BROFILER_CATEGORY("RenderSystem::Update", Profiler::Color::Blue);
+    UNUSEDPARAM(renderInstances);
 #ifdef _DEBUG
     pPerf->BeginEvent(L"RenderSystem::Update");
 #endif
@@ -304,8 +305,8 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
 
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
 
-    RenderInstanceTree::iterator renderInstanceIt = renderInstances.begin();
-    RenderInstanceTree::iterator renderInstanceEnd = renderInstances.end();
+    RenderInstanceTree::iterator renderInstanceIt = visibleInstances.begin();
+    RenderInstanceTree::iterator renderInstanceEnd = visibleInstances.end();
     unsigned int stride = 0;
     unsigned int offset = 0;
 
@@ -416,7 +417,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
     pPerf->EndEvent();
 #endif
 
-    m_numberOfInstancesRenderingThisFrame = renderInstances.size();
+    m_numberOfInstancesRenderingThisFrame = visibleInstances.size();
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
 }
 
@@ -655,18 +656,6 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     }
     ++counter;
 
-    //Cull the render list according to the view frustum, we happen to be able to do this for shadow and normal rendering
-    RenderInstanceTree visibleInstances;
-    Frustum frustum(Application::m_view, Application::m_projection);
-    for (auto instance : renderInstances)
-    {
-        if (frustum.IsInside(instance->getBoundingBox()))
-        {
-            visibleInstances.push_back(instance);
-        }
-    }
-
-
     //Do shadowmap update here too to begin with
     ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     deviceContext->PSSetShaderResources(0, 40, srv);
@@ -679,6 +668,30 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     perFrameConstants.m_shadowMVP = m_shadowMapRenderer->getShadowMapMVP();
     deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
     deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
+
+    CheckVisibility(renderInstances);
+
+
+
+
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
+{
+    BROFILER_CATEGORY("RenderSystem::CheckVisibility", Profiler::Color::Yellow);
+    visibleInstances.clear();
+    Frustum frustum(Application::m_view, Application::m_projection);
+    for (auto instance : renderInstances)
+    {
+        if (frustum.IsInside(instance->getBoundingBox()))
+        {
+            visibleInstances.push_back(instance);
+        }
+    }
 }
 
 //-------------------------------------------------------------------------

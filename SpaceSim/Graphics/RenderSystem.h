@@ -47,6 +47,8 @@ public:
 
     void beginDraw(RenderInstanceTree& renderInstances, Resource* resource);
 
+    void CheckVisibility(RenderInstanceTree& renderInstances);
+
     void update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time);
 
     void endDraw( Resource* resource );
@@ -105,4 +107,7 @@ private:
     CubeMapRenderer* m_cubeMapRenderer;
     ShadowMapRenderer* m_shadowMapRenderer;
     ID3D11SamplerState* m_samplerState;
+
+
+    RenderInstanceTree visibleInstances;
 };

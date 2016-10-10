@@ -49,6 +49,7 @@ public:
 	const Bbox& getOriginalBoundingBox() const { return m_originalBBox; }
     Bbox& getOriginalBoundingBox() { return m_originalBBox; }
     void setOriginalBoundingBox(const Bbox& boundingBox) { m_originalBBox = boundingBox; }
+    void setBoundingBox(const Bbox& boundingBox) { m_boundingBox = boundingBox; }
 
     //This should indicate which mesh group it wants to set this material on
     void setMaterial( const Material& material) { m_modelData[0]->setMaterial( material ); }

@@ -22,9 +22,20 @@ private:
 
     struct ViewPlane
     {
-       Vector3 m_normal;
-       float m_distanceFromOrigin;
+       //Vector3 m_normal;
+       //float m_distanceFromOrigin;
+        float a, b, c, d;
 
+       void NormalizePlane();
+
+       enum Halfspace
+       {
+           NEGATIVE = -1,
+           ON_PLANE = 0,
+           POSITIVE = 1,
+       };
+       float ClassifyPoint(const Vector3& pt);
+/*
        void normalize()
        {
            float length = m_normal.length();
@@ -34,7 +45,7 @@ private:
                m_normal = m_normal * invLength;
                m_distanceFromOrigin *= invLength;
            }
-       }
+       }*/
     };
     ViewPlane m_planes[6];
 };
