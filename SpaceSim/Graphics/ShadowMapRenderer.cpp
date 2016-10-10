@@ -22,6 +22,8 @@
 
 #include <numeric>
 
+#include "Graphics/Frustum.h"
+
 #ifdef _DEBUG
 #include <d3d11_1.h>
 #include <atlbase.h>
@@ -152,6 +154,24 @@ ShadowMapRenderer::~ShadowMapRenderer()
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
+void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, const RenderInstanceTree& renderInstances)
+{
+    BROFILER_CATEGORY("RenderSystem::CheckVisibility", Profiler::Color::Yellow);
+    visibileInstances.clear();
+    Frustum frustum(m_shadowMVP.m_view, m_shadowMVP.m_projection);
+    for (auto instance : renderInstances)
+    {
+        if (frustum.IsInside(instance->getBoundingBox()))
+        {
+            visibileInstances.push_back(instance);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
 void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light)
 {
     BROFILER_CATEGORY("ShadowMapRenderer::renderShadowMap", Profiler::Color::Blue);
@@ -175,8 +195,12 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
     deviceContext->ClearRenderTargetView(m_shadowMapView, clearColor);
     deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    RenderInstanceTree::const_iterator renderInstanceIt = renderInstances.begin();
-    RenderInstanceTree::const_iterator renderInstanceEnd = renderInstances.end();
+    RenderInstanceTree visibleRenderInstances;
+    visibleRenderInstances.reserve(renderInstances.size());
+    CheckVisibility(visibleRenderInstances, renderInstances);
+
+    RenderInstanceTree::const_iterator renderInstanceIt = visibleRenderInstances.begin();
+    RenderInstanceTree::const_iterator renderInstanceEnd = visibleRenderInstances.end();
     unsigned int stride = 0;
     unsigned int offset = 0;
 
@@ -192,6 +216,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
     Camera cam;
     cam.positionCamera(light->getPosition(), light->getPosition() + light->getDirection(), Vector3::yAxis());
     m_shadowMVP.m_view = cam.createCamera();
+
     //UNUSEDPARAM(light);
     //wvpContent.m_view = Application::m_view;
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)

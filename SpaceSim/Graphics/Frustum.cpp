@@ -78,12 +78,12 @@ Frustum::Frustum( const Matrix44& viewMatrix, const Matrix44& projectionMatrix)
     m_planes[5].c = ViewProjection[2][3] - ViewProjection[2][2];
     m_planes[5].d = ViewProjection[3][3] - ViewProjection[3][2];
     
-    //m_planes[0].NormalizePlane();
-    //m_planes[1].NormalizePlane();
-    //m_planes[2].NormalizePlane();
-    //m_planes[3].NormalizePlane();
-    //m_planes[4].NormalizePlane();
-    //m_planes[5].NormalizePlane();
+    m_planes[0].NormalizePlane();
+    m_planes[1].NormalizePlane();
+    m_planes[2].NormalizePlane();
+    m_planes[3].NormalizePlane();
+    m_planes[4].NormalizePlane();
+    m_planes[5].NormalizePlane();
 }
 
 //-----------------------------------------------------------------------------

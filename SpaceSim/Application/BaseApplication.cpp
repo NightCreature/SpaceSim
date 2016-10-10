@@ -87,7 +87,7 @@ bool Application::initialise()
     {
         windowHeight = heightSetting->getData();     
     }
-    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 500.0f);
+    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1000.0f);
 
     SettingsParser settings(&m_settingsManager);
     if (!settings.loadFile(m_paths.getSettingsPath() + "settings.cfg"))

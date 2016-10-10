@@ -26,6 +26,59 @@ private:
     int m_int;
 };
 
+int ConvertStringToInt(const char* string)
+{
+    //assert(string, "Input string is not a valid string") :
+    //We need to check whether we have a minus sign in the first part of the string
+    char whitespaces[] = { ' ','\t' ,'\n' ,'\v' ,'\f' ,'\r' };
+    bool isNegative = false;
+    int currentIndex = 0;
+    bool isWhitespace = true;
+    while (string[currentIndex] != '\0' && isWhitespace)
+    {
+        isWhitespace = false;
+        for (int counter = 0; counter < 6; ++counter)
+        {
+            if (string[currentIndex] == whitespaces[counter])
+            {
+                isWhitespace = true;
+            }
+        }
+
+        if (isWhitespace)
+        {
+            ++currentIndex;
+        }
+    }
+
+    if (string[currentIndex] == '-')
+    {
+        isNegative = true;
+        ++currentIndex;
+    }
+
+    int value = 0;
+
+    while (string[currentIndex] != '\0')
+    {
+        int digit = string[currentIndex] - '0';
+        if (digit < 0 || digit > 9)
+        {
+            printf("input string contains a non numerical value!"); //Indicate an error to standard console and return the value found up untill the error note however that the value is incorrect but the program won't crash
+            return value;
+        }
+
+        value *= 10;
+        value += digit;
+        ++currentIndex;
+    }
+
+    if (isNegative)
+        value = -value;
+
+    return value;
+}
+
 //class SingleTonTest
 //{
 //public:
@@ -82,6 +135,10 @@ unsigned int hashString2(const std::string& sourceStr)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
+    const char* buffer = "\n-2147483649";
+    int x = ConvertStringToInt(buffer);
+    x = atoi(buffer);
+    x = x;
 
     //SingleTonTest& instance = SingleTonTest::getInstance();
     //instance.printMember();
