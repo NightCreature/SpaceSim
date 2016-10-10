@@ -94,6 +94,7 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
     CreatedModel face = Face::CreateFace(params);
     m_drawableObject = face.model;
     m_drawableObject->setOriginalBoundingBox(face.boundingBox);
+    m_drawableObject->setBoundingBox(face.boundingBox);
 
     //ModelComponentManger mcm;
     //mcm.addEntity(e, *m_drawableObject, m_world);

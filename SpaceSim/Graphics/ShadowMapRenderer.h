@@ -34,6 +34,9 @@ public:
     ID3D11ShaderResourceView* getShadowMap() { return m_shadowMapRV; }
     WVPBufferContent getShadowMapMVP() { return m_shadowMVP; }
 private:
+
+    void CheckVisibility(RenderInstanceTree& visibileInstances, const RenderInstanceTree& renderInstances);
+
     WVPBufferContent m_shadowMVP;
     D3D11_VIEWPORT m_lightViewPort;
 

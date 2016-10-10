@@ -709,5 +709,6 @@
     <None Include="..\..\..\bin\Maps\Entrance.dat">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
