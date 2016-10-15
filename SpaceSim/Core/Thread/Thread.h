@@ -1,6 +1,5 @@
 #pragma once
 
-#include <WinSock2.h>
 #include "windows.h"
 
 //Implement termination of the thread in the destructor

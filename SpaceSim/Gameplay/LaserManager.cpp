@@ -99,7 +99,7 @@ void LaserManager::addInstance( const Vector3& position, const Vector3& directio
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void LaserManager::update(RenderInstanceTree& renderInstances, float time, const DeviceManager& deviceManager)
+void LaserManager::update(RenderInstanceTree& renderInstances, float time)
 {
     BROFILER_CATEGORY("LaserManager::update", Profiler::Color::PaleGreen)
 
@@ -113,7 +113,7 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time, const
     for (std::vector< LasterRenderPair >::iterator it = m_worldPlayerTransforms.begin(); it != m_worldPlayerTransforms.end(); ++it)
     {
         LasterRenderPair& laserPair = *it;
-        laserPair.first.update(time, deviceManager);
+        laserPair.first.update(time);
         LaserInstanceData& lid = laserPair.first.getInstanceData();
         laserPair.second->setShaderInstance(&(lid.m_shaderInstance));
         Bbox box = m_playerLaser->getOriginalBoundingBox();
@@ -128,9 +128,8 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time, const
     for (std::vector< LasterRenderPair >::iterator it = m_worldEnemyTransforms.begin(); it != m_worldEnemyTransforms.end(); ++it)
     {
         LasterRenderPair& laserPair = *it;
-        laserPair.first.update(time, deviceManager);
+        laserPair.first.update(time);
         LaserInstanceData& lid = laserPair.first.getInstanceData();
-        laserPair.first.update(time, deviceManager);
         laserPair.second->setShaderInstance(&(lid.m_shaderInstance));
         Bbox box = m_enemyLaser->getOriginalBoundingBox();
         box.transformAccordingToMatrix(lid.world);

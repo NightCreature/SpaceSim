@@ -105,7 +105,6 @@ void GameWindow::showWindow()
 void GameWindow::update( float elapsedTime, double time )
 {
     calculateFPS(elapsedTime);
-    setFpsInWindowTitle(elapsedTime);
     
     time = 0.0;
 }
@@ -123,6 +122,7 @@ void GameWindow::calculateFPS(float elapsedTime)
     else
     {
         m_fps = m_framesCounter;
+        setFpsInWindowTitle(elapsedTime);
         m_framesCounter = 0;
         m_timeAmount = 0.0f;
     }
@@ -133,9 +133,16 @@ void GameWindow::calculateFPS(float elapsedTime)
 //-----------------------------------------------------------------------------
 void GameWindow::setFpsInWindowTitle(float elpasedTime)
 {
+    BROFILER_CATEGORY("GameWindow::setFpsInWindowTitle", Profiler::Color::Brown);
     std::stringstream strStream;
-    strStream << m_windowTitle.c_str() << " - fps: " << m_fps << " frame time: " << elpasedTime * 1000 << "ms";
-    SetWindowText(m_windowHandle, strStream.str().c_str());
+    {
+        BROFILER_CATEGORY("StringStreamUpdate", Profiler::Color::Brown);
+        strStream << m_windowTitle.c_str() << " - fps: " << m_fps << " frame time: " << elpasedTime * 1000 << "ms";
+    }
+    {
+        BROFILER_CATEGORY("WindowTitleUpdate", Profiler::Color::Brown);
+        SetWindowText(m_windowHandle, strStream.str().c_str());
+    }
 }
 
 //-----------------------------------------------------------------------------

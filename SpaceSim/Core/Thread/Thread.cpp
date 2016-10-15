@@ -31,9 +31,11 @@ void Thread::stopThread()
 {
     if (m_thread)
     {
+        m_kill = true;
         WaitForSingleObject(m_thread, INFINITE);
         CloseHandle(m_thread);
         m_thread = 0;
+       
     }
     MSG_TRACE("Thread is destroyed");
 }

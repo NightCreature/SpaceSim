@@ -324,6 +324,7 @@ void Player::createScorchMark(const Vector3 &pos, const Vector3 &normal)
 //-------------------------------------------------------------------------
 void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
+    BROFILER_CATEGORY("Player::update", Profiler::Color::Green);
     //Should do move update and render list creation here
     UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(elapsedTime);
@@ -334,7 +335,7 @@ void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, con
 
 	InputActions::ActionType inputAction;
 	InputSystem::getInputActionFromName(fire.getHash(), inputAction);
-	if (input.getInput(0)->getActionValue(inputAction) > 0.0f)
+	if (input.getInput(0) && input.getInput(0)->getActionValue(inputAction) > 0.0f)
 	{
 		if (m_lasergentime > 0.25)
 		{

@@ -87,7 +87,7 @@ bool Application::initialise()
     {
         windowHeight = heightSetting->getData();     
     }
-    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1000.0f);
+    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1500.0f);
 
     SettingsParser settings(&m_settingsManager);
     if (!settings.loadFile(m_paths.getSettingsPath() + "settings.cfg"))
@@ -132,6 +132,14 @@ bool Application::initialise()
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts);
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons);
 
+    m_UpdateThread.m_cameraSystem = &m_cameraSystem;
+    m_UpdateThread.m_entityManager = &m_entityManager;
+    m_UpdateThread.m_gameObjectManager = &m_gameObjectManager;
+    m_UpdateThread.m_laserManager = &m_laserManager;
+    m_UpdateThread.m_settingsManager = &m_settingsManager;
+
+    m_UpdateThread.createThread(1024 * 1024); //1MB stack space. this also kicks the first frame of simulation
+
     return returnValue;
 }
 
@@ -162,41 +170,41 @@ void Application::mainGameLoop()
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();
-
-            m_inputSystem.update(m_elapsedTime, m_time);
-            Input input = m_inputSystem.getInput();
-            m_cameraSystem.update(m_elapsedTime, m_time, input);
-            const Camera* cam = m_cameraSystem.getCamera("global");
-            m_view = cam->getCamera();
-            
             RenderInstanceTree renderList;
-            //renderList.reserve(m_previousRenderInstanceListSize); //Upfront reserve as much space as the last frame used, it should at max from once or twice a frame this way, ignoring the first one
-            m_gameObjectManager.update(renderList, m_elapsedTime, input);
-            m_gameResource->getLaserManager().update(renderList, m_elapsedTime, m_renderSystem.getDeviceMananger());
-			//cache->ProvideRenderInstances(renderList);
+            Input input = m_inputSystem.getInput();
+            //THis needs to happen in single threaded update
+            {
+                BROFILER_CATEGORY("SingleThreadedUpdate", Profiler::Color::Green);
+                m_UpdateThread.LockCriticalSection();
+                const Camera* cam = m_cameraSystem.getCamera("global");
+                m_view = cam->getCamera();
+
+                m_UpdateThread.setInput(input);
+
+                renderList = m_UpdateThread.GetRenderInstanceList();
+                m_UpdateThread.SetElapsedTime(m_elapsedTime, m_time);
+
+                m_UpdateThread.UnblockThread();
+                m_UpdateThread.UnLockCriticalSection();
+            }
+            //Unblock simulation here
+            m_inputSystem.update(m_elapsedTime, m_time);
 
             m_renderSystem.beginDraw(renderList, m_gameResource);
             m_renderSystem.update(m_gameResource, renderList, m_elapsedTime, m_time);
             m_renderSystem.endDraw(m_gameResource);
             m_previousRenderInstanceListSize = renderList.size();
 
-            //if (input.getInput(0)->getActionValue(InputActions::eAButton))
-            //{
-            //    m_renderSystem.flipWireFrameMod();
-            //}
-            //if (input.getInput(1)->getActionValue(m_inputSystem.getInputActionFromName("exit_game")))
-            //{
-            //    PostQuitMessage(0);
-            //}
-
-			InputActions::ActionType inputAction;
-			InputSystem::getInputActionFromName(exitGame, inputAction);
-            if (input.getInput(0)->getActionValue(inputAction))
+            InputActions::ActionType inputAction;
+            InputSystem::getInputActionFromName(exitGame, inputAction);
+            if (input.getInput(0) && input.getInput(0)->getActionValue(inputAction))
             {
                 PostQuitMessage(0);
             }
         }
     }
+
+    m_UpdateThread.stopThread();
 }
 
 //-----------------------------------------------------------------------------

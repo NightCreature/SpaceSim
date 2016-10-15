@@ -138,6 +138,7 @@
     <ClInclude Include="..\..\Application\BaseApplication.h" />
     <ClInclude Include="..\..\Application\displaywindow.h" />
     <ClInclude Include="..\..\Application\GameWindow.h" />
+    <ClInclude Include="..\..\Application\UpdateThread.h" />
     <ClInclude Include="..\..\Core\ICommand.h" />
     <ClInclude Include="..\..\Core\Paths.h" />
     <ClInclude Include="..\..\Core\Resource\GameResource.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="..\..\Application\displaywindow.cpp" />
     <ClCompile Include="..\..\Application\GameWindow.cpp" />
     <ClCompile Include="..\..\Application\main.cpp" />
+    <ClCompile Include="..\..\Application\UpdateThread.cpp" />
     <ClCompile Include="..\..\Core\Paths.cpp" />
     <ClCompile Include="..\..\Core\Resource\GameResource.cpp" />
     <ClCompile Include="..\..\Core\Resource\Resourceable.cpp" />

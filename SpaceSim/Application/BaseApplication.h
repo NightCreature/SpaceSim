@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Application/UpdateThread.h"
 #include "Graphics/CameraManager.h"
 #include "Graphics/RenderSystem.h"
 #include "Application/GameWindow.h"
@@ -27,6 +28,7 @@
 #include "Memory.h"
 
 #include "Logging/Logger.h"
+
 
 
 //-----------------------------------------------------------------------------
@@ -80,6 +82,7 @@ private:
 
     size_t m_previousRenderInstanceListSize;
 
+    UpdateThread m_UpdateThread;
 
     //ModelComponentManger m_modelManager;
 public:
