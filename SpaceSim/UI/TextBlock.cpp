@@ -528,7 +528,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
 	GameResourceHelper gameResource(resource);
-	VertexDecalartionDesctriptor descriptor;
+	VertexDeclarationDescriptor descriptor;
 	descriptor.position = 3;
 	descriptor.textureCoordinateDimensions.push_back(2);
 	unsigned int vertexShaderHash = hashString("simple_2d_vertex_shader.vs");

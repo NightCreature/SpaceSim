@@ -241,7 +241,7 @@ CreatedModel CreateBox(const CreationParams& params)
             *(float*)data = 1.0f; data += sizeof(float);
         }
 
-        VertexDecalartionDesctriptor vertexDesc;
+        VertexDeclarationDescriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
         static unsigned int defaultHash = hashString("default");
         const Technique* technique = effect->getTechnique(defaultHash);

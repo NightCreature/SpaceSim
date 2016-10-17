@@ -9,7 +9,7 @@
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDecalartionDesctriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob)
+bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDeclarationDescriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob)
 {
     D3D11_BUFFER_DESC bufferDescriptor;
     ZeroMemory(&bufferDescriptor, sizeof(D3D11_BUFFER_DESC));
@@ -63,7 +63,7 @@ bool VertexBuffer::createVertexInputLayout( const DeviceManager& deviceManager, 
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::createInputElementLayout(size_t& vertexStride) const
+const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDeclarationDescriptor::createInputElementLayout(size_t& vertexStride) const
 {
     std::vector<D3D11_INPUT_ELEMENT_DESC> vertexDataLayoutElements;
     //Create the buffer layout elements
