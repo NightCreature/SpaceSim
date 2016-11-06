@@ -9,12 +9,15 @@ Thread::~Thread()
     DeleteCriticalSection(&m_criticalSection);
 }
 
-void Thread::createThread(int stacksize)
+void Thread::createThread(int stacksize, const std::string& name)
 {
-    m_thread = CreateThread(NULL, stacksize, (unsigned long(__stdcall *)(void *))this->run, (void *)this, 0, NULL);
+#ifdef _DEBUG
+    m_threadName = name;
+#endif
+    m_thread = CreateThread(NULL, stacksize, (unsigned long(__stdcall *)(void *))this->run, (void *)this, 0, nullptr);
     if (m_thread != 0)
     {
-        MSG_TRACE("Thread is created, with stacksize: %d", stacksize);
+        MSG_TRACE("Thread(%s) is created, with stacksize: %d", m_threadName.c_str(), stacksize);
         m_kill = false;
     }
 }
