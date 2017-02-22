@@ -1,17 +1,18 @@
 #pragma once
 
-#include <WinSock2.h>
 #include "windows.h"
+
+#include <string>
 
 //Implement termination of the thread in the destructor
 class Thread
 {
 public:
-    Thread() { m_kill = false; InitializeCriticalSection(&m_criticalSection); }
+    Thread() { m_kill = false; InitializeCriticalSection(&m_criticalSection); m_thread = nullptr; }
     virtual ~Thread();
 
     //Thread management
-    void createThread(int stacksize);
+    void createThread(int stacksize, const std::string& name);
     void killThread() { m_kill = true; }
     void stopThread();
     void pauzeThread();
@@ -25,5 +26,8 @@ protected:
     CRITICAL_SECTION m_criticalSection;
 private:
     HANDLE m_thread;
+#ifdef _DEBUG
+    std::string m_threadName;
+#endif
     bool m_kill;
 };

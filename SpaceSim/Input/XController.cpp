@@ -67,6 +67,7 @@ void XInputDevice::initialise(HWND hwnd)
 //!-----------------------------------------------------------------------------
 const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput)
 {
+    BROFILER_CATEGORY("XInputDevice::update", Profiler::Color::LightGoldenRodYellow)
     if (!m_enabled)
     {
         return m_controllerState;

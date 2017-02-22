@@ -48,7 +48,7 @@ CreatedModel CreateSquare(const SquareCreationParams& params)
 
         VertexBuffer* vb = new VertexBuffer();
         const Technique* technique = square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
-        VertexDecalartionDesctriptor vertexDesc;
+        VertexDeclarationDescriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
         const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);

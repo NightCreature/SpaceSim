@@ -1,6 +1,8 @@
 #pragma once
 #include "resourceable.h"
 
+#include "Brofiler.h"
+
 class CameraManager;
 class DeviceManager;
 class SettingsManager;
@@ -74,7 +76,7 @@ public:
 class GameResourceHelper
 {
 public:
-    GameResourceHelper(Resource* resource) : m_resource(resource) {}
+    GameResourceHelper(Resource* resource) : m_resource(resource) { BROFILER_CATEGORY("GameResourceHelper", Profiler::Color::Cyan); }
     GameResourceHelper(const Resource* resource) : m_resource((Resource*)resource) {}
     ~GameResourceHelper() {}
 

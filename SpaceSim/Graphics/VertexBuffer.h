@@ -5,9 +5,9 @@
 
 class DeviceManager;
 
-struct VertexDecalartionDesctriptor
+struct VertexDeclarationDescriptor
 {
-    VertexDecalartionDesctriptor() :
+    VertexDeclarationDescriptor() :
         position(3),
         normal(false),
         tangent(false),
@@ -49,7 +49,7 @@ public:
         }
     }
 
-bool createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDecalartionDesctriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob);
+bool createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDeclarationDescriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob);
 
     ID3D11Buffer* getBuffer() const { return m_buffer; }
     size_t getVertexStride() const { return m_vertexStride; }

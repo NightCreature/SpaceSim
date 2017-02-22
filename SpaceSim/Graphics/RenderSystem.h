@@ -108,6 +108,6 @@ private:
     ShadowMapRenderer* m_shadowMapRenderer;
     ID3D11SamplerState* m_samplerState;
 
-
+    Matrix44 m_CullingProjectionMatrix;
     RenderInstanceTree visibleInstances;
 };

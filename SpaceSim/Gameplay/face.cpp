@@ -77,7 +77,7 @@ CreatedModel CreateFace(const CreationParams& params)
 
         //Move pointer to start of vertex array  
         const Technique* technique = face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
-        VertexDecalartionDesctriptor vertexDesc;
+        VertexDeclarationDescriptor vertexDesc;
         vertexDesc.position = 3;
         vertexDesc.normal = true;
         vertexDesc.tangent = true;

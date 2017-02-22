@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Application/UpdateThread.h"
 #include "Graphics/CameraManager.h"
 #include "Graphics/RenderSystem.h"
 #include "Application/GameWindow.h"

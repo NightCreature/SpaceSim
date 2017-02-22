@@ -161,6 +161,8 @@ void RenderSystem::initialise(Resource* resource)
         windowHeight = heightSetting->getData();
     }
 
+    m_CullingProjectionMatrix = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1000.0f);
+
     RECT rect;
     GetClientRect(m_window.getWindowHandle(), &rect);
     windowWidth = rect.right - rect.left;
@@ -316,101 +318,107 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
     size_t oldTechniqueId = 0;
     std::vector<ID3D11ShaderResourceView*> resourceViews;
     std::vector<ID3D11SamplerState*> samplerStates;
-    resourceViews.reserve(128);
-    samplerStates.reserve(2);
+    {
+        BROFILER_CATEGORY("RenderSystem::ReserveVectors", Profiler::Color::OrangeRed);
+        resourceViews.reserve(128);
+        samplerStates.reserve(2);
 
-    samplerStates.push_back(m_textureManager.getSamplerState());
-    samplerStates.push_back(m_samplerState);
-    deviceContext->PSSetSamplers(0, 2, &samplerStates[0]);
+        samplerStates.push_back(m_textureManager.getSamplerState());
+        samplerStates.push_back(m_samplerState);
+        deviceContext->PSSetSamplers(0, 2, &samplerStates[0]);
+    }
 
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
-        resourceViews.clear();
+        {
+            BROFILER_CATEGORY("RenderSystem::SubmitInstance", Profiler::Color::DarkBlue);
+            resourceViews.clear();
 
-        RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
+            RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 #ifdef _DEBUG
-        if (!renderInstance.m_name.empty())
-        {
-            pPerf->BeginEvent(renderInstance.m_name.c_str());
-        }
-#endif
-        const Material& material = renderInstance.getShaderInstance().getMaterial();
-        const Effect* effect = material.getEffect();
-        const Technique* technique = effect->getTechnique(material.getTechnique());
-        technique->setMaterialContent(m_deviceManager, material.getMaterialCB());
-        technique->setWVPContent(m_deviceManager, renderInstance.getShaderInstance().getWVPConstants());
-
-        const std::vector<Material::TextureSlotMapping>& textureHashes = material.getTextureHashes();
-        //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
-
-        size_t currentTextureIndex = 0;
-        for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots && currentTextureIndex < textureHashes.size(); ++counter) //We assume these are put in as order for the slots demand
-        {
-            const Texture* texture = nullptr;
-            if (static_cast<Material::TextureSlotMapping::TextureSlot>(counter) == textureHashes[currentTextureIndex].m_textureSlot)
+            if (!renderInstance.m_name.empty())
             {
-                texture = m_textureManager.getTexture(textureHashes[currentTextureIndex].m_textureHash);
-                ++currentTextureIndex;
+                pPerf->BeginEvent(renderInstance.m_name.c_str());
             }
-            ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-            resourceViews.push_back(srv);
-        }
-
-        resourceViews.push_back(m_shadowMapRenderer->getShadowMap());
-        
-        if (!resourceViews.empty())
-        {
-            deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
-            
-        }
-
-        if (technique->getTechniqueId() != oldTechniqueId)
-        {
-            //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-            deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-            deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-            deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-            deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-            deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
-            oldTechniqueId = technique->getTechniqueId();
-        }
-        technique->setupTechnique();
-
-        deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
-        if (material.getBlendState())
-        {
-            deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
-        }
-        else
-        {
-            deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
-        }
-
-        // Set vertex buffer stride and offset.
-        const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
-        ID3D11Buffer* buffer = vb->getBuffer();
-        stride = static_cast<unsigned int>(vb->getVertexStride()); 
-        if (renderInstance.getGeometryInstance().getIB() != nullptr)
-        {
-            deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-            deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-            deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
-            deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-            deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
-        }
-        else
-        {
-            deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-            deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-            deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-            deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
-        }
-#ifdef _DEBUG
-        if (!renderInstance.m_name.empty())
-        {
-            pPerf->EndEvent();
-        }
 #endif
+            const Material& material = renderInstance.getShaderInstance().getMaterial();
+            const Effect* effect = material.getEffect();
+            const Technique* technique = effect->getTechnique(material.getTechnique());
+            technique->setMaterialContent(m_deviceManager, material.getMaterialCB());
+            technique->setWVPContent(m_deviceManager, renderInstance.getShaderInstance().getWVPConstants());
+
+            const std::vector<Material::TextureSlotMapping>& textureHashes = material.getTextureHashes();
+            //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
+
+            size_t currentTextureIndex = 0;
+            for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots && currentTextureIndex < textureHashes.size(); ++counter) //We assume these are put in as order for the slots demand
+            {
+                const Texture* texture = nullptr;
+                if (static_cast<Material::TextureSlotMapping::TextureSlot>(counter) == textureHashes[currentTextureIndex].m_textureSlot)
+                {
+                    texture = m_textureManager.getTexture(textureHashes[currentTextureIndex].m_textureHash);
+                    ++currentTextureIndex;
+                }
+                ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
+                resourceViews.push_back(srv);
+            }
+
+            resourceViews.push_back(m_shadowMapRenderer->getShadowMap());
+
+            if (!resourceViews.empty())
+            {
+                deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
+
+            }
+
+            if (technique->getTechniqueId() != oldTechniqueId)
+            {
+                //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
+                deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+                deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+                deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+                deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+                deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+                oldTechniqueId = technique->getTechniqueId();
+            }
+            technique->setupTechnique();
+
+            deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
+            if (material.getBlendState())
+            {
+                deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
+            }
+            else
+            {
+                deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
+            }
+
+            // Set vertex buffer stride and offset.
+            const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
+            ID3D11Buffer* buffer = vb->getBuffer();
+            stride = static_cast<unsigned int>(vb->getVertexStride());
+            if (renderInstance.getGeometryInstance().getIB() != nullptr)
+            {
+                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
+                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
+            }
+            else
+            {
+                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
+            }
+#ifdef _DEBUG
+            if (!renderInstance.m_name.empty())
+            {
+                pPerf->EndEvent();
+            }
+#endif
+        }
     }
 
 #ifdef _DEBUG
@@ -597,43 +605,50 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
     deviceContext->OMSetDepthStencilState(m_depthStencilState, 0xffffffff);
 
-    std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
     {
-        const Material& lhsMaterial = lhs->getShaderInstance().getMaterial();
-        const Material& rhsMaterial = rhs->getShaderInstance().getMaterial();
-        //This might not be the most effiecient material/sahder id combo
-        return lhsMaterial.getEffect()->getTechnique(lhsMaterial.getTechnique())->getTechniqueId() < rhsMaterial.getEffect()->getTechnique(rhsMaterial.getTechnique())->getTechniqueId();
-    });
+        BROFILER_CATEGORY("RenderSystem::beginDraw::MaterialSorting", Profiler::Color::DarkRed);
+        std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
+        {
+            const Material& lhsMaterial = lhs->getShaderInstance().getMaterial();
+            const Material& rhsMaterial = rhs->getShaderInstance().getMaterial();
+            //This might not be the most effiecient material/sahder id combo
+            return lhsMaterial.getEffect()->getTechnique(lhsMaterial.getTechnique())->getTechniqueId() < rhsMaterial.getEffect()->getTechnique(rhsMaterial.getTechnique())->getTechniqueId();
+        });
 
-    std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
-    {
-        return lhs->getShaderInstance().getMaterial().getBlendState() < rhs->getShaderInstance().getMaterial().getBlendState();
-    });
-
-    //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
-    GameResourceHelper helper(resource);
-    const CameraManager& cm = helper.getGameResource().getCameraManager();
-    LightManager& lm = helper.getWritableGameResource().getLightManager();
-
-    const Camera* cam = cm.getCamera("global");
-    Vector3 camPos;
-    if (cam != nullptr)
-    {
-        camPos = cam->getEye();
+        std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
+        {
+            return lhs->getShaderInstance().getMaterial().getBlendState() < rhs->getShaderInstance().getMaterial().getBlendState();
+        });
     }
+    
+    GameResourceHelper helper(resource);
+    Vector3 camPos;
     PerFrameConstants perFrameConstants;
     ZeroMemory(&perFrameConstants.m_lightConstants, sizeof(LightConstants) * 8);
-    Light* light0 = lm.getLight("light_0");
-    if (light0 != nullptr)
-    {
-        light0->setPosition(camPos);
-    }
+    LightManager& lm = helper.getWritableGameResource().getLightManager();
+    const CameraManager& cm = helper.getGameResource().getCameraManager();
+    const Camera* cam = cm.getCamera("global");
 
-    unsigned int lightCounter = 0;
-    for (auto light : lm.getLights())
     {
-        perFrameConstants.m_lightConstants[lightCounter] = light->getLightConstants();
-        ++lightCounter;
+        BROFILER_CATEGORY("RenderSystem::beginDraw::LightUpdate", Profiler::Color::DarkRed);
+        //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
+        if (cam != nullptr)
+        {
+            camPos = cam->getEye();
+        }
+
+        Light* light0 = lm.getLight("light_0");
+        if (light0 != nullptr)
+        {
+            light0->setPosition(camPos);
+        }
+
+        unsigned int lightCounter = 0;
+        for (auto light : lm.getLights())
+        {
+            perFrameConstants.m_lightConstants[lightCounter] = light->getLightConstants();
+            ++lightCounter;
+        }
     }
 
     static int counter = 0;
@@ -684,7 +699,7 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 {
     BROFILER_CATEGORY("RenderSystem::CheckVisibility", Profiler::Color::Yellow);
     visibleInstances.clear();
-    Frustum frustum(Application::m_view, Application::m_projection);
+    Frustum frustum(Application::m_view, m_CullingProjectionMatrix);
     for (auto instance : renderInstances)
     {
         if (frustum.IsInside(instance->getBoundingBox()))

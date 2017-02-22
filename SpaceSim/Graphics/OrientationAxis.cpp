@@ -38,7 +38,7 @@ void OrientationAxis::initialise(Resource* resource, const DeviceManager& device
 
     //Move pointer to start of vertex array
     const Technique* technique = m_effect->getTechnique("default");
-    VertexDecalartionDesctriptor vertexDesc;
+    VertexDeclarationDescriptor vertexDesc;
     const VertexShader* shader = GameResourceHelper(resource).getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
     assert(shader);
     m_vertexBuffer.createBufferAndLayoutElements(deviceManger, bufferSize, m_vertices, false, vertexDesc, shader->getShaderBlob());
