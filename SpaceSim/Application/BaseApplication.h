@@ -28,6 +28,7 @@
 
 #include "Logging/Logger.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
 
 //-----------------------------------------------------------------------------
 //! @brief   Base class for an application object
@@ -80,7 +81,7 @@ private:
 
     size_t m_previousRenderInstanceListSize;
 
-
+    MessageSystem::MessageQueue m_messageQueue[2]; //Pass pointers for current and previous to other systems, just swap the render one to update and reset and pass update to render
     //ModelComponentManger m_modelManager;
 public:
     static Matrix44 m_view;

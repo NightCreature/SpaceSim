@@ -139,6 +139,7 @@
     <ClInclude Include="..\..\Application\displaywindow.h" />
     <ClInclude Include="..\..\Application\GameWindow.h" />
     <ClInclude Include="..\..\Core\ICommand.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\MessageQueue.h" />
     <ClInclude Include="..\..\Core\Paths.h" />
     <ClInclude Include="..\..\Core\Resource\GameResource.h" />
     <ClInclude Include="..\..\Core\Resource\resource.h" />
