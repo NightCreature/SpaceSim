@@ -105,8 +105,8 @@ bool Application::initialise()
     ShaderPack shaderPack(m_gameResource);
     shaderPack.loadShaderPack("shader_pack.xml");
     m_laserManager.initialise(m_gameResource);
-	returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-	returnValue &= m_cameraSystem.createCamera(*m_gameResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    returnValue &= m_cameraSystem.createCamera(*m_gameResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
     returnValue &= m_cameraSystem.createCamera(*m_gameResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
     Player* player = new Player(m_gameResource);
     player->initialize(m_cameraSystem);
@@ -114,9 +114,9 @@ bool Application::initialise()
 
 
     //Test Code
-	m_cameraSystem.update(m_elapsedTime, m_time);
-	const Camera* cam = m_cameraSystem.getCamera("global");
-	m_view = cam->getCamera();
+    m_cameraSystem.update(m_elapsedTime, m_time);
+    const Camera* cam = m_cameraSystem.getCamera("global");
+    m_view = cam->getCamera();
 
     //Text::BitmapFont bitmapFont;
     //bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt", m_gameResource);
@@ -138,7 +138,7 @@ bool Application::initialise()
     m_UpdateThread.m_laserManager = &m_laserManager;
     m_UpdateThread.m_settingsManager = &m_settingsManager;
 
-    m_UpdateThread.createThread(1024 * 1024); //1MB stack space. this also kicks the first frame of simulation
+    m_UpdateThread.createThread(1024 * 1024, "UpdateThread"); //1MB stack space. this also kicks the first frame of simulation
 
     return returnValue;
 }

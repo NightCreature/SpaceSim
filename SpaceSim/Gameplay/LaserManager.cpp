@@ -13,10 +13,11 @@ const size_t maxNumberRenderInstances = 1024;
 //-------------------------------------------------------------------------
 LaserManager::LaserManager() : m_enemyLaser(nullptr), m_playerLaser(nullptr), m_currentNumberOfEnemyLasers(0), m_currentNumberOfPlayerLasers(0)
 {
+    ShaderInstance instance;
     m_renderInstancePool.reserve(maxNumberRenderInstances);
     for (size_t counter = 0; counter < maxNumberRenderInstances; ++counter)
     {
-        m_renderInstancePool.push_back( new RenderInstance(nullptr, nullptr) );
+        m_renderInstancePool.push_back( new RenderInstance(nullptr, &instance) ); //Breaks horribly and should generate a render resource request
     }
 }
 
