@@ -84,6 +84,8 @@ private:
 
     UpdateThread m_UpdateThread;
     MessageSystem::MessageQueue m_messageQueue[2]; //Pass pointers for current and previous to other systems, just swap the render one to update and reset and pass update to render
+    MessageSystem::MessageQueue* m_updateQueue;
+    MessageSystem::MessageQueue* m_renderQueue;
     //ModelComponentManger m_modelManager;
 public:
     static Matrix44 m_view;

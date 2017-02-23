@@ -8,6 +8,7 @@
 #include "Graphics/CameraManager.h"
 #include "Input/InputSystem.h"
 #include "Core/StringOperations/HashString.h"
+#include "Core/MessageSystem/MessageQueue.h"
 
 #include "Brofiler.h"
 
@@ -44,4 +45,13 @@ int UpdateThread::workerFunction()
     }
 
     return 0;
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void UpdateThread::SetMessageQueue(MessageSystem::MessageQueue* messageQueue)
+{
+    m_messageQueue = messageQueue;
 }

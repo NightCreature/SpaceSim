@@ -20,6 +20,10 @@
 #endif
 
 class RenderInstance;
+namespace MessageSystem
+{
+class MessageQueue;
+}
 
 struct CubeRendererInitialiseData
 {
@@ -63,13 +67,15 @@ public:
     ModelManager& getModelManger() { return m_modelManger; }
 
     CubeMapRenderer* getCubeMapRenderer() { return m_cubeMapRenderer; }
+
+    void SetMessageQueue(MessageSystem::MessageQueue* messageQueue);
 protected:
 private:
     bool createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight);
     void patchUpDXGIFactory(ID3D11Device* device);
     void setupSwapChainForRendering( ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight );
     void initialiseCubemapRendererAndResources( GameResourceHelper &resourceHelper );
-
+    
     DeviceManager m_deviceManager;
     TextureManager m_textureManager;
     ModelManager m_modelManger;
@@ -110,4 +116,6 @@ private:
 
     Matrix44 m_CullingProjectionMatrix;
     RenderInstanceTree visibleInstances;
+
+    MessageSystem::MessageQueue* m_messageQueue;
 };

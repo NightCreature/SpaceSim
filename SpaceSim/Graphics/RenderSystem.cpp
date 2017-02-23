@@ -8,6 +8,7 @@
 #include "Application/BaseApplication.h"
 #include "Graphics/RenderInstance.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/MessageSystem/MessageQueue.h"
 
 #include "Graphics/Frustum.h"
 
@@ -590,6 +591,8 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
 {
     BROFILER_CATEGORY("RenderSystem::beginDraw", Profiler::Color::Orange);
 
+    
+
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
     deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
@@ -840,4 +843,13 @@ void RenderSystem::initialiseCubemapRendererAndResources(GameResourceHelper &res
         cubeMap.createRenderTarget(textureResource, rtView, srView);
         tm.addTexture(m_cubeSettings[counter].m_texutureResourceName, cubeMap);
     }
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void RenderSystem::SetMessageQueue(MessageSystem::MessageQueue* messageQueue)
+{
+    m_messageQueue = messageQueue;
 }

@@ -12,6 +12,11 @@ class LaserManager;
 class InputSystem;
 class RenderInstance;
 
+namespace MessageSystem
+{
+class MessageQueue;
+}
+
 class UpdateThread : public Thread
 {
 public:
@@ -27,6 +32,7 @@ public:
     void UnLockCriticalSection() { LeaveCriticalSection(&m_criticalSection); }
 
     void setInput(Input input) { m_input = input; }
+    void SetMessageQueue(MessageSystem::MessageQueue* messageQueue);
     std::vector<RenderInstance*> m_renderList;
 
     EntityManager* m_entityManager;
@@ -34,6 +40,7 @@ public:
     SettingsManager* m_settingsManager;
     GameObjectManager* m_gameObjectManager;
     LaserManager* m_laserManager;
+    MessageSystem::MessageQueue* m_messageQueue;
 
     Input m_input;
 
