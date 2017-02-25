@@ -96,6 +96,15 @@ void GameObjectManager::handleMessage( const Message& message ) const
     std::for_each(m_gameObjects.begin(), m_gameObjects.end(), DispatchFunctor(message));
 }
 
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void GameObjectManager::addMessage(const Message& message)
+{
+    UNUSEDPARAM(message);
+}
+
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------

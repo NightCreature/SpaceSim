@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/MessageSystem/MessageObserver.h"
 #include "Core/Thread/Thread.h"
 #include "Input/Input.h"
 #include <vector>
@@ -21,6 +22,8 @@ class UpdateThread : public Thread
 {
 public:
 
+    void Initialise();
+
     virtual int workerFunction() override;
 
     void SetElapsedTime(float elapsedTime, double time) { m_elapsedTime = elapsedTime; m_time = time; }
@@ -41,6 +44,8 @@ public:
     GameObjectManager* m_gameObjectManager;
     LaserManager* m_laserManager;
     MessageSystem::MessageQueue* m_messageQueue;
+
+    MessageSystem::MessageObserver m_messageObservers;
 
     Input m_input;
 

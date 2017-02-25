@@ -72,7 +72,7 @@
     <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
@@ -80,7 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>SpaceSim_x64</TargetName>
     <OutDir>$(SolutionDir)..\..\bin</OutDir>
-    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -98,6 +98,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4324;4820;4061;4365</DisableSpecificWarnings>
       <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -134,15 +135,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegate.h" />
+    <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegateBind.h" />
     <ClInclude Include="..\..\Application\applicationsetting.h" />
     <ClInclude Include="..\..\Application\BaseApplication.h" />
     <ClInclude Include="..\..\Application\displaywindow.h" />
     <ClInclude Include="..\..\Application\GameWindow.h" />
     <ClInclude Include="..\..\Application\UpdateThread.h" />
     <ClInclude Include="..\..\Core\ICommand.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\MessageObserver.h" />
     <ClInclude Include="..\..\Core\MessageSystem\MessageQueue.h" />
     <ClInclude Include="..\..\Core\Paths.h" />
     <ClInclude Include="..\..\Core\Resource\GameResource.h" />
+    <ClInclude Include="..\..\Core\Resource\GameResources.h" />
+    <ClInclude Include="..\..\Core\Resource\RenderResource.h" />
+    <ClInclude Include="..\..\Core\Resource\RenderResources.h" />
     <ClInclude Include="..\..\Core\Resource\resource.h" />
     <ClInclude Include="..\..\Core\Resource\Resourceable.h" />
     <ClInclude Include="..\..\Core\Settings\Settings.h" />
@@ -269,6 +276,7 @@
     <ClCompile Include="..\..\Application\GameWindow.cpp" />
     <ClCompile Include="..\..\Application\main.cpp" />
     <ClCompile Include="..\..\Application\UpdateThread.cpp" />
+    <ClCompile Include="..\..\Core\MessageSystem\MessageObserver.cpp" />
     <ClCompile Include="..\..\Core\Paths.cpp" />
     <ClCompile Include="..\..\Core\Resource\GameResource.cpp" />
     <ClCompile Include="..\..\Core\Resource\Resourceable.cpp" />

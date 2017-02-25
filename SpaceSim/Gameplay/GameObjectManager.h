@@ -23,6 +23,7 @@ public:
     void update(RenderInstanceTree& renderList, float elapsedTime, const Input& input);
 
     void handleMessage( const Message& message ) const;
+    void addMessage(const Message& message);
 private:
     typedef std::pair<unsigned int, GameObject*> ModelPair;
     typedef std::map<unsigned int, GameObject*> GameObjectMap;

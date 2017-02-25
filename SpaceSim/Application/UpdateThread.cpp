@@ -17,6 +17,15 @@
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
+void UpdateThread::Initialise()
+{
+
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
 int UpdateThread::workerFunction()
 {
     while (isAlive())
@@ -25,10 +34,13 @@ int UpdateThread::workerFunction()
         if (!m_done)
         {
             EnterCriticalSection(&m_criticalSection);
+
+            m_messageObservers.DispatchMessages(*m_messageQueue); //Dispatch the messages
+            m_messageQueue->reset(); //Reset the queue so we can track new message in it
+
             m_renderList.clear();
 
             m_cameraSystem->update(m_elapsedTime, m_time, m_input);
-
 
             m_gameObjectManager->update(m_renderList, m_elapsedTime, m_input);
             m_laserManager->update(m_renderList, m_elapsedTime);

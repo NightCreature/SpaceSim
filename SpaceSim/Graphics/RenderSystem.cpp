@@ -591,7 +591,12 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
 {
     BROFILER_CATEGORY("RenderSystem::beginDraw", Profiler::Color::Orange);
 
-    
+    const MessageSystem::MessageQueue::Messages& messages = m_messageQueue->getMessages();
+    for (size_t counter = 0; counter < m_messageQueue->numberOfMessagages(); ++counter)
+    {
+        //dispatch messages here
+        UNUSEDPARAM(messages);//We dont have the render resource system yet in which these messages should go
+    }
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
