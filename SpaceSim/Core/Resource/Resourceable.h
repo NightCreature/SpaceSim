@@ -49,6 +49,16 @@ public:
     //std::map<unsigned int, void*> m_objects; //Contains hash of Type and a pointer to the resource
 };
 
+#define RESOURCE_CLASS_BEGIN(name)\
+class name : public Resource\
+{\
+public: \
+    name(
+
+#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : 
+#define RESOURCE_CLASS_CONSTRUCTOR_BODY(name) {}
+#define RESOURCE_CLASS_END(name) };
+
 #define ResourceDefinition(ResourceObject)\
     public:\
     const ResourceObject& get##ResourceObject() const { return *m_##ResourceObject; } \
