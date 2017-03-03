@@ -1,8 +1,6 @@
 FIRST_RESOURCE(EntityManager)
-RESOURCE(SettingsManager)
 RESOURCE(GameObjectManager)
 RESOURCE(LaserManager)
-RESOURCE(Paths)
 RESOURCE(UIManger)
 RESOURCE(HTTPServer)
 RESOURCE(Logger)

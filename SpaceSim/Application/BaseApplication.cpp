@@ -55,8 +55,8 @@ Text::TextBlockCache* cache;
 //-----------------------------------------------------------------------------
 bool Application::initialise()
 {
-    m_gameResource = new GameResource(&m_entityManager, &m_settingsManager, &m_gameObjectManager,
-                                      &m_laserManager, &m_paths, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
+    m_gameResource = new GameResource(&m_entityManager, &m_gameObjectManager,
+                                      &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
 
 
     m_logger.addLogger(new OutputDebugLog());

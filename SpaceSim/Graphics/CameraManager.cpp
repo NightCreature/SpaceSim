@@ -7,7 +7,7 @@ bool CameraManager::createCamera( const GameResource& resource, const std::strin
     std::map<std::string, Camera>::iterator it = m_cameras.find(name);
     if (it == m_cameras.end() || m_cameras.empty())
     {
-        const SettingsManager& sm = resource.getSettingsManager();
+        const SettingsManager& sm = resource.m_settingsManager;
         const ISetting<float>* cameMoveSpeed = sm.getSetting<float>("CameraMovementSpeed");
         const ISetting<float>* cameRotationSpeed = sm.getSetting<float>("CameraRotationSpeed");
         Camera camera(cameMoveSpeed->getData(), cameRotationSpeed->getData());

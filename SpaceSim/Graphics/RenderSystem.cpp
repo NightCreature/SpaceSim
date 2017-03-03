@@ -152,13 +152,12 @@ void RenderSystem::initialise(Resource* resource)
 
     int windowWidth = 1280;
     int windowHeight = 720;
-    GameResourceHelper resourceHelper(resource);
-    const ISetting<int>* widthSetting = resourceHelper.getResource().getSettingsManager().getSetting<int>("WindowWidth");
+    const ISetting<int>* widthSetting = resource->m_settingsManager.getSetting<int>("WindowWidth");
     if (widthSetting)
     {
         windowWidth = widthSetting->getData();
     }
-    const ISetting<int>* heightSetting = resourceHelper.getResource().getSettingsManager().getSetting<int>("WindowHeight");
+    const ISetting<int>* heightSetting = resource->m_settingsManager.getSetting<int>("WindowHeight");
     if (heightSetting)
     {
         windowHeight = heightSetting->getData();
