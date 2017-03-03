@@ -56,7 +56,8 @@ void Core::initialise(const ShaderInstance& shaderInstance)
     m_world = scale(m_radius, m_radius, m_radius) * translate(m_position);
     //m_drawableObject->setWorld(m_world);
 
-    m_drawableObject->setDirty();
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND create Render Object message to render system");
+
     Super::initialise(shaderInstance);
 }
 

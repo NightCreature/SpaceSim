@@ -34,9 +34,11 @@ void ScorchMark::initialise(const ShaderInstance& shaderInstance)
     params.m_shaderInstance = &shaderInstance;
     params.m_lowerleft = Vector2(-0.5f, -0.5f);
     params.m_lowerleft = Vector2(0.5f, 0.5f);
-    CreatedModel square = Square::CreateSquare(params);
-    m_drawableObject = square.model;
-    m_drawableObject->setOriginalBoundingBox(square.boundingBox);
+
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND create Render Object message to render system");
+    //CreatedModel square = Square::CreateSquare(params);
+    //m_drawableObject = square.model;
+    //m_drawableObject->setOriginalBoundingBox(square.boundingBox);
     Super::initialise(shaderInstance);
 }
 
