@@ -10,6 +10,7 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Core/MessageSystem/MessageQueue.h"
 
+#include "Graphics/ShaderPack.h"
 #include "Graphics/Frustum.h"
 
 #include "Brofiler.h"
@@ -286,6 +287,9 @@ void RenderSystem::initialise(Resource* resource)
 
     hr = m_deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
 #endif
+
+    ShaderPack shaderPack(m_renderResource);
+    shaderPack.loadShaderPack("shader_pack.xml");
 
     initialiseCubemapRendererAndResources(m_renderResource);
     m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);

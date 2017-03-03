@@ -102,8 +102,7 @@ bool Application::initialise()
     //m_inputSystem.createController(Gamepad);
     m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml", m_renderSystem.getWindowHandle());
     m_inputDispatch = &InputSystem::SetRawInput;
-    ShaderPack shaderPack(m_gameResource);
-    shaderPack.loadShaderPack("shader_pack.xml");
+
     m_laserManager.initialise(m_gameResource);
     MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
     //returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());

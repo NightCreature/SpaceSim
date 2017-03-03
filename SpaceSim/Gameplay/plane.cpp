@@ -91,16 +91,17 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
         params.tesselate = true;
     }
 
-    CreatedModel face = Face::CreateFace(params);
-    m_drawableObject = face.model;
-    m_drawableObject->setOriginalBoundingBox(face.boundingBox);
-    m_drawableObject->setBoundingBox(face.boundingBox);
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND CREATE RENDER RESOURCE MESSAGE");
+    //CreatedModel face = Face::CreateFace(params);
+    //m_drawableObject = face.model;
+    //m_drawableObject->setOriginalBoundingBox(face.boundingBox);
+    //m_drawableObject->setBoundingBox(face.boundingBox);
 
     //ModelComponentManger mcm;
     //mcm.addEntity(e, *m_drawableObject, m_world);
 
     //Register the bounding box with the physics
-    GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
+    //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
 
     Super::initialise(shaderInstance);
 }
