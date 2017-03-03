@@ -39,7 +39,6 @@ public:
     std::vector<RenderInstance*> m_renderList;
 
     EntityManager* m_entityManager;
-    CameraManager* m_cameraSystem;
     SettingsManager* m_settingsManager;
     GameObjectManager* m_gameObjectManager;
     LaserManager* m_laserManager;

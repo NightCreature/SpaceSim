@@ -40,8 +40,6 @@ int UpdateThread::workerFunction()
 
             m_renderList.clear();
 
-            m_cameraSystem->update(m_elapsedTime, m_time, m_input);
-
             m_gameObjectManager->update(m_renderList, m_elapsedTime, m_input);
             m_laserManager->update(m_renderList, m_elapsedTime);
 
