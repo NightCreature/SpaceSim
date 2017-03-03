@@ -35,8 +35,10 @@ const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* el
         unsigned int typeHash = hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
-            shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), element);
-            shaderInstance.getMaterial().setBlendState(true);
+            //This all needs to be a message to the renderer to create a render object
+            MSG_TRACE_CHANNEL("REFACTOR", "CREATE RENDER RESOURCE HERE THROUGH A MESSAGE");
+            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
+            //shaderInstance.getMaterial().setBlendState(true);
         }
         else if (Vector3::m_hash == typeHash)
         {

@@ -95,6 +95,8 @@ RenderSystem::~RenderSystem()
 //-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource)
 {
+	m_renderResource = new RenderResource(&m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
+
     m_appName = "Demo app";
     m_windowName = "Demo app";
 
@@ -151,12 +153,12 @@ void RenderSystem::initialise(Resource* resource)
     int windowWidth = 1280;
     int windowHeight = 720;
     GameResourceHelper resourceHelper(resource);
-    const ISetting<int>* widthSetting = resourceHelper.getGameResource().getSettingsManager().getSetting<int>("WindowWidth");
+    const ISetting<int>* widthSetting = resourceHelper.getResource().getSettingsManager().getSetting<int>("WindowWidth");
     if (widthSetting)
     {
         windowWidth = widthSetting->getData();
     }
-    const ISetting<int>* heightSetting = resourceHelper.getGameResource().getSettingsManager().getSetting<int>("WindowHeight");
+    const ISetting<int>* heightSetting = resourceHelper.getResource().getSettingsManager().getSetting<int>("WindowHeight");
     if (heightSetting)
     {
         windowHeight = heightSetting->getData();
@@ -280,13 +282,13 @@ void RenderSystem::initialise(Resource* resource)
 
 #ifdef _DEBUG
     m_debugAxis = new OrientationAxis();
-    m_debugAxis->initialise(resource, m_deviceManager);
+    m_debugAxis->initialise(m_renderResource, m_deviceManager);
 
 
     hr = m_deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
 #endif
 
-    initialiseCubemapRendererAndResources(resourceHelper);
+    initialiseCubemapRendererAndResources(m_renderResource);
     m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
 
 }
@@ -313,9 +315,9 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
     unsigned int stride = 0;
     unsigned int offset = 0;
 
-    GameResourceHelper gameResource = GameResourceHelper(resource);
-    const ShaderCache& shaderCache = gameResource.getGameResource().getShaderCache();
-
+    RenderResourceHelper gameResource = { resource };
+    const ShaderCache& shaderCache = gameResource.getResource().getShaderCache();
+    
     size_t oldTechniqueId = 0;
     std::vector<ID3D11ShaderResourceView*> resourceViews;
     std::vector<ID3D11SamplerState*> samplerStates;
@@ -629,12 +631,12 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
         });
     }
     
-    GameResourceHelper helper(resource);
+    RenderResourceHelper helper(resource);
     Vector3 camPos;
     PerFrameConstants perFrameConstants;
     ZeroMemory(&perFrameConstants.m_lightConstants, sizeof(LightConstants) * 8);
-    LightManager& lm = helper.getWritableGameResource().getLightManager();
-    const CameraManager& cm = helper.getGameResource().getCameraManager();
+    LightManager& lm = helper.getWriteableResource().getLightManager();
+    const CameraManager& cm = helper.getResource().getCameraManager();
     const Camera* cam = cm.getCamera("global");
 
     {
@@ -663,7 +665,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     if (counter > 15)
     {
         //Loop over rts here and render to all of them
-        TextureManager& tm = helper.getWritableGameResource().getTextureManager();
+        TextureManager& tm = helper.getWriteableResource().getTextureManager();
         static size_t rtCounter = 0;
         rtCounter = (++rtCounter) % m_cubeSettings.size();
         if (m_cubeSettings[rtCounter].m_dynamic || m_cubeSettings[rtCounter].m_hasBeenRenderedTo == false)
@@ -743,11 +745,11 @@ void RenderSystem::endDraw(Resource* resource)
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void RenderSystem::initialiseCubemapRendererAndResources(GameResourceHelper &resourceHelper)
+void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
 {
     m_cubeMapRenderer = new CubeMapRenderer(m_deviceManager, m_alphaBlendState, m_blendState);
 
-    const Paths& path = resourceHelper.getGameResource().getPaths();
+    const Paths& path = resource->m_paths;
     std::string cubeRenderSettingsFileName = path.getSettingsPath() + "cube_map_renderers.xml";
     tinyxml2::XMLDocument doc;
     if (tinyxml2::XML_NO_ERROR != doc.LoadFile(cubeRenderSettingsFileName.c_str()))
@@ -808,7 +810,8 @@ void RenderSystem::initialiseCubemapRendererAndResources(GameResourceHelper &res
     srvDesc.TextureCube.MipLevels = 1;
     srvDesc.TextureCube.MostDetailedMip = 0;
 
-    TextureManager& tm = resourceHelper.getWritableGameResource().getTextureManager();
+    RenderResourceHelper resourceHelper = { resource };
+    TextureManager& tm = resourceHelper.getWriteableResource().getTextureManager();
 
     for (size_t counter = 0; counter < m_cubeSettings.size(); ++counter)
     {

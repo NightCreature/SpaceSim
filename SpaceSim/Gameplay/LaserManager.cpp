@@ -58,10 +58,12 @@ LaserManager::~LaserManager()
 //-------------------------------------------------------------------------
 void LaserManager::initialise(Resource* resource)
 {
-    GameResourceHelper helper(resource);
-    ShaderInstance enemyShaderInstance, playerShaderInstance;
-    m_enemyLaser = helper.getGameResource().getModelManager().LoadModel(resource, enemyShaderInstance, "Models\\enemy_laser.mml");
-    m_playerLaser = helper.getGameResource().getModelManager().LoadModel(resource, playerShaderInstance, "Models\\player_laser.mml");
+    UNUSEDPARAM(resource);
+    //GameResourceHelper helper(resource);
+    //ShaderInstance enemyShaderInstance, playerShaderInstance;
+    //m_enemyLaser = helper.getResource().getModelManager().LoadModel(resource, enemyShaderInstance, "Models\\enemy_laser.mml");
+    //m_playerLaser = helper.getResource().getModelManager().LoadModel(resource, playerShaderInstance, "Models\\player_laser.mml");
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
     //m_geometry->initialise(shaderInstance);
 }
 

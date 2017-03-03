@@ -46,16 +46,4 @@ RESOURCE_CLASS_CONSTRUCTOR_BODY(GameResource)
 
 RESOURCE_CLASS_END(GameResource)
 
-//This class should contain all the accessors for the game resource, means a resource can have everthing in a list and this class is the one objects use to interfact with the systems
-class GameResourceHelper
-{
-public:
-    GameResourceHelper(Resource* resource) : m_resource(resource) { BROFILER_CATEGORY("GameResourceHelper", Profiler::Color::Cyan); }
-    GameResourceHelper(const Resource* resource) : m_resource((Resource*)resource) {}
-    ~GameResourceHelper() {}
-
-    const GameResource& getGameResource() const { return *(GameResource*)m_resource; }
-    GameResource& getWritableGameResource() const { return *(GameResource*)m_resource; }
-private:
-    Resource* m_resource;
-};
+RESOURCE_HELPER(GameResourceHelper, GameResource)

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Core/Paths.h"
+#include "Core/Settings/SettingsManager.h"
+
 class Resourceable;
 
 //Should be rewritten as an aggregation object 
@@ -8,6 +11,9 @@ class Resource
 public:
     Resource() {}
     virtual ~Resource() {}
+
+    SettingsManager m_settingsManager;
+    Paths m_paths;
 };
 
 class Resourceable
@@ -76,3 +82,16 @@ public: \
         const ResourceType& get##ResourceType() const { return *getResource().getResource<#ResourceType>(hashString(#ResourceType)); } \
         ResourceType* get##ResourceType() const { return getResource().getResource<#ResourceType>(hashString(#ResourceType)); }
     
+#define RESOURCE_HELPER(name, resource_type)\
+class name\
+{\
+public:\
+    name(Resource* resource) : m_resource(resource) { BROFILER_CATEGORY(#name, Profiler::Color::Cyan); }\
+    name(const Resource* resource) : m_resource(const_cast<Resource*>(resource)) {}\
+    ~name() {}\
+\
+    const resource_type& getResource() const { return *(static_cast<resource_type*>(m_resource)); }\
+    resource_type& getWriteableResource() const { return *(static_cast<resource_type*>(m_resource)); }\
+private:\
+    Resource* m_resource;\
+};

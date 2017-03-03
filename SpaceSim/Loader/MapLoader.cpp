@@ -59,8 +59,7 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
 
     element = element->FirstChildElement();
     GameResourceHelper gameResourceHelper(resource);
-    GameObjectManager& gameObjectManager = gameResourceHelper.getWritableGameResource().getGameObjectManager();
-    LightManager& lightManager = gameResourceHelper.getWritableGameResource().getLightManager();
+    GameObjectManager& gameObjectManager = gameResourceHelper.getWriteableResource().getGameObjectManager();
 
     MapContainer map;
 
@@ -130,7 +129,8 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
             }
             Light light;
             light.deserialise(element);
-            lightManager.addLight(lightName, light);
+            MSG_TRACE_CHANNEL("REFACTOR", "SEND message to add a light to the render side");
+            //lightManager.addLight(lightName, light); //This needs to change to add a message to the message system to add a light in the render scene
         }
         else if (InfinitySphere::m_hash == elementHash)
         {
@@ -383,7 +383,7 @@ void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement*
     }
     p->initialise(shaderInstance);
     GameResourceHelper gameResourceHelper(resource);
-    GameObjectManager& gameObjectManager = gameResourceHelper.getWritableGameResource().getGameObjectManager();
+    GameObjectManager& gameObjectManager = gameResourceHelper.getWriteableResource().getGameObjectManager();
     gameObjectManager.addGameObject(p);
 }
 

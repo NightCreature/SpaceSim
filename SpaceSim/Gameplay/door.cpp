@@ -57,7 +57,8 @@ const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
         unsigned int typeHash = hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
-            shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), element);
+            MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
             //shaderInstance.getMaterial().setBlendState(true);
         }
         else if (Vector3::m_hash == typeHash)

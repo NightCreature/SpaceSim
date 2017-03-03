@@ -62,14 +62,14 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     }
     vertexData = vertexData - bufferSize;
     const Technique* technique = params.m_shaderInstance.getMaterial().getEffect()->getTechnique("default");
-    GameResource& gameResource= GameResourceHelper(params.m_resource).getWritableGameResource();
-    const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
+    RenderResource& renderResource= RenderResourceHelper(params.m_resource).getWriteableResource();
+    const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
     assert(shader);
-    vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
+    vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
     delete[] vertexData;
 
     ib->setNumberOfIndecis((unsigned int)params.m_indices.size());
-    ib->createBuffer(gameResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false, D3D11_BIND_INDEX_BUFFER);
+    ib->createBuffer(renderResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false, D3D11_BIND_INDEX_BUFFER);
 
     
     meshGroup.meshGroup = new MeshGroup(vb, ib, params.m_shaderInstance);

@@ -8,7 +8,7 @@
 
 #include "Graphics/VertexBuffer.h"
 
-#include "Core/Resource/GameResource.h"
+#include "Core/Resource/RenderResource.h"
 #include "Graphics/DeviceManager.h"
 #include "Graphics/ShaderCache.h"
 #include "Graphics/EffectCache.h"
@@ -527,14 +527,14 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 //-----------------------------------------------------------------------------
 void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
-	GameResourceHelper gameResource(resource);
+	RenderResourceHelper gameResource(resource);
 	VertexDeclarationDescriptor descriptor;
 	descriptor.position = 3;
 	descriptor.textureCoordinateDimensions.push_back(2);
 	unsigned int vertexShaderHash = hashString("simple_2d_vertex_shader.vs");
-	const VertexShader* sdfVertexShader = gameResource.getGameResource().getShaderCache().getVertexShader(vertexShaderHash);
+	const VertexShader* sdfVertexShader = gameResource.getResource().getShaderCache().getVertexShader(vertexShaderHash);
 	
-	vb.createBufferAndLayoutElements(gameResource.getGameResource().getDeviceManager(), sizeof(GlyphVertex) * m_glyphVerts.size(), &m_glyphVerts[0], false, descriptor, sdfVertexShader->getShaderBlob());
+	vb.createBufferAndLayoutElements(gameResource.getResource().getDeviceManager(), sizeof(GlyphVertex) * m_glyphVerts.size(), &m_glyphVerts[0], false, descriptor, sdfVertexShader->getShaderBlob());
 	m_geometryInstance.setPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	unsigned int glyphIndexBufer[] = 
@@ -552,7 +552,7 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 			indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
 		}
 	}
-	ib.createBuffer(gameResource.getGameResource().getDeviceManager(), static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer, false, D3D11_BIND_INDEX_BUFFER);
+	ib.createBuffer(gameResource.getResource().getDeviceManager(), static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer, false, D3D11_BIND_INDEX_BUFFER);
 	ib.setNumberOfIndecis(static_cast<unsigned int>(numberIndecis));
 
 	m_geometryInstance.setVB(&vb);
@@ -568,8 +568,8 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 void TextBlockInfo::CreateShaderSetup(Resource* resource)
 {
 	Material mat;
-	GameResourceHelper gameResource(resource);
-	const Effect* effect = gameResource.getGameResource().getEffectCache().getEffect("sdf_font_effect.xml");
+	RenderResourceHelper gameResource(resource);
+	const Effect* effect = gameResource.getResource().getEffectCache().getEffect("sdf_font_effect.xml");
 	mat.setEffect(effect);
 	mat.setBlendState(true);
 	//Should fix this if we have more than one page somehow
@@ -579,7 +579,7 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 	m_shaderInstance.setMaterial(mat);
 	WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
 	wvpConstants.m_projection = Application::m_projection; //math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
-	wvpConstants.m_view = Application::m_view; //gameResource.getGameResource().getCameraManager().getCamera("text_block_camera")->getCamera();
+	wvpConstants.m_view = Application::m_view; //gameResource.getResource().getCameraManager().getCamera("text_block_camera")->getCamera();
 	wvpConstants.m_world.identity();
 }
 

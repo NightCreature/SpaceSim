@@ -204,8 +204,8 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
     unsigned int stride = 0;
     unsigned int offset = 0;
 
-    GameResourceHelper gameResource = GameResourceHelper(resource);
-    const ShaderCache& shaderCache = gameResource.getGameResource().getShaderCache();
+    RenderResourceHelper gameResource = { resource };
+    const ShaderCache& shaderCache = gameResource.getResource().getShaderCache();
 
     size_t oldTechniqueId = 0;
     std::vector<ID3D11ShaderResourceView*> resourceViews;

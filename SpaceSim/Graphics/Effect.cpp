@@ -10,7 +10,7 @@
 #include "Graphics/DeviceManager.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/D3DDebugHelperFunctions.h"
-#include "Core/Resource/GameResource.h"
+#include "Core/Resource/RenderResource.h"
 #include "Graphics/ShaderCache.h"
 #include <stdio.h>
 
@@ -75,9 +75,9 @@ const Technique* Effect::getTechnique(const unsigned int techniqueName) const
 //-------------------------------------------------------------------------
 void Technique::deserialise(const tinyxml2::XMLElement* element)
 {
-    GameResource* gameResource = (GameResource*)m_resource;
-    ShaderCache& shaderCache = gameResource->getShaderCache();
-    const DeviceManager& deviceManager = gameResource->getDeviceManager();
+    RenderResourceHelper renderResource = { m_resource };
+    ShaderCache& shaderCache = renderResource.getWriteableResource().getShaderCache();
+    const DeviceManager& deviceManager = renderResource.getResource().getDeviceManager();
 
     std::string techniqueName = "default_technique";
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");

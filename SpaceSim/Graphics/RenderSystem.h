@@ -14,6 +14,13 @@
 #include "Graphics/CubeMapRenderer.h"
 #include "Graphics/ShadowMapRenderer.h"
 
+#include "Graphics/CameraManager.h"
+
+#include "Gameplay/particlesystemmanager.h" //This should move away from the gameplay directory
+#include "Graphics/LightManager.h"
+#include "Graphics/EffectCache.h"
+#include "Graphics/ShaderCache.h"
+
 #include "Core/Resource/RenderResource.h"
 
 #ifdef _DEBUG
@@ -76,11 +83,18 @@ private:
     bool createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight);
     void patchUpDXGIFactory(ID3D11Device* device);
     void setupSwapChainForRendering( ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight );
-    void initialiseCubemapRendererAndResources( GameResourceHelper &resourceHelper );
+    void initialiseCubemapRendererAndResources( Resource* resource );
     
+    RenderResource* m_renderResource;
+
+    CameraManager      m_cameraSystem;
     DeviceManager m_deviceManager;
     TextureManager m_textureManager;
     ModelManager m_modelManger;
+    LightManager m_lightManager;
+    ParticleSystemManager m_pfxManager;
+    ShaderCache m_shaderCache;
+    EffectCache m_effectCache;
     GameWindow m_window;
     std::string m_appName;
 	std::string m_windowName;

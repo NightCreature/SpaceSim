@@ -205,9 +205,10 @@ tinyxml2::XMLElement* SettingsParser::readDataSections( tinyxml2::XMLElement* el
         }
         else if (strICmp(element->Value(), "material") == 0 && element->FirstChildElement())
         {
-            MaterialSetting* materialSetting = new MaterialSetting();
-            materialSetting->deserialise(element->FirstChildElement());
-            m_settingsMananger->setSetting(materialSetting);
+            //MaterialSetting* materialSetting = new MaterialSetting();
+            //materialSetting->deserialise(element->FirstChildElement());
+            //m_settingsMananger->setSetting(materialSetting);
+            MSG_TRACE_CHANNEL("SettingsReader", "TURNED OFF MATERIAL SETTINGS READING DUE TO INCLUDE ISSUES");
         }
         else if (strICmp(element->Value(), "vector") == 0 && element->FirstChildElement())
         {

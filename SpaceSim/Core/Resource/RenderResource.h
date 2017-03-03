@@ -43,3 +43,6 @@ RESOURCE_CLASS_CONSTRUCTOR_BODY(RenderResource)
 RESOURCE_CLASS_END(RenderResource)
 
 #undef RESOURCE
+
+//This class should contain all the accessors for the game resource, means a resource can have everthing in a list and this class is the one objects use to interfact with the systems
+RESOURCE_HELPER(RenderResourceHelper, RenderResource)

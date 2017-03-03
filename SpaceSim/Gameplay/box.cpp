@@ -16,7 +16,7 @@ CreatedModel CreateBox(const CreationParams& params)
 {
     CreatedModel box;
 
-    GameResource& gameResource = *(GameResource*)params.resource;
+    RenderResource& renderResource = *(RenderResource*)params.resource;
     ShaderInstance& shaderInstance = *(params.shaderInstance);
 
     box.model = new Model();
@@ -29,7 +29,7 @@ CreatedModel CreateBox(const CreationParams& params)
         const Effect* effect = box.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect();
         if (effect == nullptr)
         {
-            effect = gameResource.getEffectCache().getEffect("laser_effect.xml");
+            effect = renderResource.getEffectCache().getEffect("laser_effect.xml");
             box.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(effect);
         }
 
@@ -249,9 +249,9 @@ CreatedModel CreateBox(const CreationParams& params)
         {
             MSG_TRACE_CHANNEL("BOX", "FAILED TO GET THE TECHNIQUE DEFAULT PASS");
         }
-        const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader()); //Technique pointer is 0!
+        const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader()); //Technique pointer is 0!
         assert(shader);
-        vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), numberOfBytes, (void*)startOfData, params.m_dynamic, vertexDesc, shader->getShaderBlob());
+        vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), numberOfBytes, (void*)startOfData, params.m_dynamic, vertexDesc, shader->getShaderBlob());
         delete[] startOfData;
         data = nullptr;
         startOfData = nullptr;
@@ -265,14 +265,14 @@ CreatedModel CreateBox(const CreationParams& params)
             20, 21, 22, 22, 23, 20 //VF2
         };
 
-        ib->createBuffer(gameResource.getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(renderResource.getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
         ib->setNumberOfIndecis(36);
     }
     else
     {
         if (box.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            box.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("laser_effect.xml"));
+            box.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("laser_effect.xml"));
         }
     }
 

@@ -21,7 +21,7 @@ public:
         m_name = str.str();
         m_invertNormal = false;
 
-       // e = getWriteableGameResource().getEntityManager().create();
+       // e = getWriteableResource().getEntityManager().create();
 
     }
 	Plane(Resource* resource, const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4, bool changeWindingOrder);

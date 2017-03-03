@@ -5,7 +5,7 @@
 #include <string>
 #include <fstream>
 
-#include "Core/Resource/GameResource.h"
+#include "Core/Resource/renderResource.h"
 #include "Gameplay/GameObjectManager.h"
 #include "Core/Types/TypeHelpers.h"
 #include "Graphics/DebugBox.h"
@@ -59,7 +59,8 @@ const ShaderInstance Switch::deserialise( const tinyxml2::XMLElement* element)
         unsigned int typeHash = hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
-            shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), element);
+            MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
         }
         else if (Vector3::m_hash == typeHash)
         {
@@ -76,7 +77,7 @@ const ShaderInstance Switch::deserialise( const tinyxml2::XMLElement* element)
         {
             const char* linkedSpecial = element->Attribute("link");
             MSG_TRACE_CHANNEL( "SWITCH", "Hash this name to get a link to the object from the object manager: %s, %d", linkedSpecial, hashString(linkedSpecial) );
-            const GameObject* linkedGameObject = getGameResource().getGameObjectManager().getGameObject(linkedSpecial);
+            const GameObject* linkedGameObject = GameResourceHelper(m_resource).getResource().getGameObjectManager().getGameObject(linkedSpecial);
             if (linkedGameObject)
             {
                 m_special = const_cast<GameObject*>(linkedGameObject); //Need to cast const away here as we need to be able to call a function on the model that is not a const function, should be implemented as a message or event to the actual game object
@@ -161,8 +162,10 @@ void Switch::initialise( const ShaderInstance& shaderInstance )
     if (data.empty())
         return;
     
-    m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, data);
-    Material mat = Material(0.0f, Color::white(), Color(0.0f, 0.0f, 0.0f, 0.75f), Color(0.0f, 5.0f, 0.0f, 0.75f), Color(0.0f, 1.0f, 0.0f, 0.75f));
+    //This all needs to be a message to the renderer to create a render object
+    MSG_TRACE_CHANNEL("REFACTOR", "CREATE RENDER RESOURCE HERE THROUGH A MESSAGE");
+    //m_drawableObject = GameResourceHelper(m_resource).getWriteableResource().getModelManager().LoadModel(m_resource, shaderInstance, data);
+    //Material mat = Material(0.0f, Color::white(), Color(0.0f, 0.0f, 0.0f, 0.75f), Color(0.0f, 5.0f, 0.0f, 0.75f), Color(0.0f, 1.0f, 0.0f, 0.75f));
     ////mat.setBlendState(true);
     //m_drawableObject->setMaterial(mat);
 

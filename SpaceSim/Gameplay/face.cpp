@@ -24,7 +24,7 @@ const size_t numberOfTexcoords = 1;
 //-----------------------------------------------------------------------------
 CreatedModel CreateFace(const CreationParams& params)
 {
-    GameResource& gameResource = *(GameResource*)params.resource;
+    RenderResource& renderResource = *(RenderResource*)params.resource;
     const ShaderInstance& shaderInstance = *(params.shaderInstance);
 
     CreatedModel face;
@@ -42,7 +42,7 @@ CreatedModel CreateFace(const CreationParams& params)
         face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
         if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.xml"));
+            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.xml"));
         }
 
         VertexBuffer* vb = face.model->getMeshData()[0]->getGeometryInstance().getVB();
@@ -82,9 +82,9 @@ CreatedModel CreateFace(const CreationParams& params)
         vertexDesc.normal = true;
         vertexDesc.tangent = true;
         vertexDesc.textureCoordinateDimensions = texCoordDimensions;
-        const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
+        const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
-        if (!vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), static_cast<unsigned int>(bufferSize), startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
+        if (!vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), static_cast<unsigned int>(bufferSize), startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
         {
             MSG_TRACE_CHANNEL("VERTEXBUFFER_ERROR", "Failed to create VB!");
             assert(false);
@@ -100,7 +100,7 @@ CreatedModel CreateFace(const CreationParams& params)
         unsigned int* startOfIndexData = indecis;
         createIndexData(indecis, params.changeWindingOrder, rows, columns);
 
-        ib->createBuffer(gameResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(renderResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
         delete[] startOfIndexData; //cleanup
         indecis = nullptr;
         startOfIndexData = nullptr;
@@ -114,7 +114,7 @@ CreatedModel CreateFace(const CreationParams& params)
         face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
         if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.fx"));
+            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.fx"));
         }
     }
 

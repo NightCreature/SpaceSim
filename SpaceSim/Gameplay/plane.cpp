@@ -100,7 +100,7 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
     //mcm.addEntity(e, *m_drawableObject, m_world);
 
     //Register the bounding box with the physics
-    getWriteableGameResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
+    GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
 
     Super::initialise(shaderInstance);
 }
@@ -139,7 +139,8 @@ const ShaderInstance Plane::deserialise( const tinyxml2::XMLElement* node )
         unsigned int childElementHash = hashString(childElement->Value());
         if (Material::m_hash == childElementHash)
         {
-            shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
+            MSG_TRACE_CHANNEL("REFACTOR", "SEND A MESSAGE TO CREATE A RENDER RESOURCE");
+            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), childElement);
         }
     }
     return shaderInstance;

@@ -31,15 +31,15 @@ OrientationAxis::LineVertex OrientationAxis::m_vertices[] =
 //-----------------------------------------------------------------------------
 void OrientationAxis::initialise(Resource* resource, const DeviceManager& deviceManger)
 {
-    GameResourceHelper helper(resource);
-    m_effect = const_cast<Effect*>(helper.getWritableGameResource().getEffectCache().createEffect(resource, "Shaders\\Effects\\Debug_Color_Shader.xml"));
+    RenderResourceHelper helper(resource);
+    m_effect = const_cast<Effect*>(helper.getWriteableResource().getEffectCache().createEffect(resource, "Shaders\\Effects\\Debug_Color_Shader.xml"));
 
     unsigned int bufferSize = 12 * sizeof(LineVertex);
 
     //Move pointer to start of vertex array
     const Technique* technique = m_effect->getTechnique("default");
     VertexDeclarationDescriptor vertexDesc;
-    const VertexShader* shader = GameResourceHelper(resource).getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
+    const VertexShader* shader = helper.getResource().getShaderCache().getVertexShader(technique->getVertexShader());
     assert(shader);
     m_vertexBuffer.createBufferAndLayoutElements(deviceManger, bufferSize, m_vertices, false, vertexDesc, shader->getShaderBlob());
 }
@@ -55,8 +55,8 @@ void OrientationAxis::draw( const DeviceManager& deviceManager, Resource* resour
     const Technique* technique = m_effect->getTechnique("default");
     technique->setWVPContent(deviceManager, m_wvpConstants);
 
-    GameResourceHelper gameResource = GameResourceHelper(resource);
-    const ShaderCache& shaderCache = gameResource.getGameResource().getShaderCache();
+    RenderResourceHelper renderResource = RenderResourceHelper(resource);
+    const ShaderCache& shaderCache = renderResource.getResource().getShaderCache();
     //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
     deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
     deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);

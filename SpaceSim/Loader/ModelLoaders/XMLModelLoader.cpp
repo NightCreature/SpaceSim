@@ -115,8 +115,8 @@ Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shade
     Mesh::normalizeNormals(params.m_normals); //Avoid read in errors so that all the normals are actually unit vectors
     //if (mesh->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
     //{
-    //    GameResourceHelper helper(resource);
-    //    mesh->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getGameResource().getEffectCache().getEffect("simple_effect.fx"));
+    //    renderResourceHelper helper(resource);
+    //    mesh->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("simple_effect.fx"));
     //}
     //if (mesh->getRenderInstance().getMaterial().getEffect().getVertexShaderBlob() == 0 )
     //{

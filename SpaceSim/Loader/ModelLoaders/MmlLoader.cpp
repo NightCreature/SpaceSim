@@ -29,7 +29,7 @@ Model* MmlLoader::LoadModel(Resource* resource, const ShaderInstance& shaderInst
         return model;
     }
 
-    const GameResource& gameResource = GameResourceHelper(resource).getGameResource();
+    const RenderResource& gameResource = RenderResourceHelper(resource).getResource();
 
     const tinyxml2::XMLElement* element;
     element = document.FirstChildElement();

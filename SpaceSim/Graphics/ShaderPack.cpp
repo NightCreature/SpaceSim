@@ -8,9 +8,9 @@
 //-------------------------------------------------------------------------
 bool ShaderPack::loadShaderPack( std::string shaderPack )
 {
-    GameResourceHelper helper(m_resource);
-    const Paths& paths = helper.getGameResource().getPaths();
-    EffectCache& effectCache = helper.getWritableGameResource().getEffectCache();
+    RenderResourceHelper helper(m_resource);
+    const Paths& paths = helper.getResource().m_paths;
+    EffectCache& effectCache = helper.getWriteableResource().getEffectCache();
 
     tinyxml2::XMLDocument doc;
     std::string fileName = paths.getEffectShaderPath() + shaderPack;

@@ -55,8 +55,8 @@ Text::TextBlockCache* cache;
 //-----------------------------------------------------------------------------
 bool Application::initialise()
 {
-    m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
-                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
+    m_gameResource = new GameResource(&m_entityManager, &m_settingsManager, &m_gameObjectManager,
+                                      &m_laserManager, &m_paths, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
 
 
     m_logger.addLogger(new OutputDebugLog());
@@ -105,18 +105,19 @@ bool Application::initialise()
     ShaderPack shaderPack(m_gameResource);
     shaderPack.loadShaderPack("shader_pack.xml");
     m_laserManager.initialise(m_gameResource);
-    returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-    returnValue &= m_cameraSystem.createCamera(*m_gameResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-    returnValue &= m_cameraSystem.createCamera(*m_gameResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+    //returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    //returnValue &= m_cameraSystem.createCamera(*m_gameResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    //returnValue &= m_cameraSystem.createCamera(*m_gameResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
     Player* player = new Player(m_gameResource);
-    player->initialize(m_cameraSystem);
+    //player->initialize(m_cameraSystem);
     m_gameObjectManager.addGameObject(player);
 
 
     //Test Code
-    m_cameraSystem.update(m_elapsedTime, m_time);
-    const Camera* cam = m_cameraSystem.getCamera("global");
-    m_view = cam->getCamera();
+    //m_cameraSystem.update(m_elapsedTime, m_time);
+    //const Camera* cam = m_cameraSystem.getCamera("global");
+    //m_view = cam->getCamera();
 
     //Text::BitmapFont bitmapFont;
     //bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt", m_gameResource);
@@ -132,7 +133,7 @@ bool Application::initialise()
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts);
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons);
 
-    m_UpdateThread.m_cameraSystem = &m_cameraSystem;
+    //m_UpdateThread.m_cameraSystem = &m_cameraSystem;
     m_UpdateThread.m_entityManager = &m_entityManager;
     m_UpdateThread.m_gameObjectManager = &m_gameObjectManager;
     m_UpdateThread.m_laserManager = &m_laserManager;
@@ -182,8 +183,8 @@ void Application::mainGameLoop()
             {
                 BROFILER_CATEGORY("SingleThreadedUpdate", Profiler::Color::Green);
                 m_UpdateThread.LockCriticalSection();
-                const Camera* cam = m_cameraSystem.getCamera("global");
-                m_view = cam->getCamera();
+                //const Camera* cam = m_cameraSystem.getCamera("global");
+                //m_view = cam->getCamera();
 
                 m_UpdateThread.setInput(input);
 
@@ -249,12 +250,7 @@ LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wP
 //-----------------------------------------------------------------------------
 void Application::cleanup()
 {
-    m_gameResource->getDeviceManager().clearDeviceState();
-    m_gameResource->getSettingsManager().cleanup();
     m_renderSystem.cleanup();
-    m_gameResource->getTextureManager().cleanup();
-    m_gameResource->getDeviceManager().cleanup();
-    m_gameResource->getModelManager().cleanup();
     m_gameResource->getGameObjectManager().cleanup();
 
     //Need to add a cleanup call to the cache

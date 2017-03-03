@@ -2,6 +2,7 @@
 #include "Math/matrix44.h"
 #include "Graphics/DeviceManager.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/Resource/RenderResource.h"
 #include "Graphics/Shaders.h"
 #include <d3d11.h>
 #include <D3Dcompiler.h>
@@ -109,8 +110,8 @@ public:
 
     void setupTechnique(bool alsoUseOnGS = false) const
     {
-        GameResourceHelper helper(m_resource);
-        ID3D11DeviceContext* deviceContext = helper.getGameResource().getDeviceManager().getDeviceContext();
+        RenderResourceHelper helper(m_resource);
+        ID3D11DeviceContext* deviceContext = helper.getResource().getDeviceManager().getDeviceContext();
         deviceContext->VSSetConstantBuffers(0, 1, &m_constantBuffers[0]);
         if (alsoUseOnGS == true)
         {

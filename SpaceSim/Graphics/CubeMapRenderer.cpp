@@ -139,7 +139,7 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
 
     deviceContext->PSSetConstantBuffers(1, 1, &m_perFrameConstants);
 
-    const ShaderCache& shaderCache = GameResourceHelper(resource).getGameResource().getShaderCache();
+    const ShaderCache& shaderCache = RenderResourceHelper(resource).getResource().getShaderCache();
 
     std::vector<ID3D11SamplerState*> samplerStates;
     samplerStates.reserve(1);

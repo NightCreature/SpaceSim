@@ -107,8 +107,6 @@ public:
 
     const std::string& getName() const { return m_name; }
     const Resource& getResource() const { return *m_resource; }
-    const GameResource& getGameResource() const { return *(GameResource*)m_resource; }
-    GameResource& getWriteableGameResource() const { return *(GameResource*)m_resource; } //This should return a reference
 
     bool collision(const Bbox& bbox, const Vector3& dir)
     {
@@ -121,7 +119,7 @@ public:
         return m_drawableObject->getBoundingBox().rayintersect(position, dir, normal);
     }
 
-    //void setMaterial(const Material& mat) { m_drawableObject ? m_drawableObject->getRenderInstance()->getShaderInstance().setMaterial(getGameResource().getDeviceManager(), mat) : MSG_TRACE_CHANNEL("MODEL", "Trying to set the material on shape without a drawable object" ) assert(m_drawableObject); }
+    //void setMaterial(const Material& mat) { m_drawableObject ? m_drawableObject->getRenderInstance()->getShaderInstance().setMaterial(getResource().getDeviceManager(), mat) : MSG_TRACE_CHANNEL("MODEL", "Trying to set the material on shape without a drawable object" ) assert(m_drawableObject); }
     //const Material* getMaterial() const { return m_drawableObject ? &m_drawableObject->getRenderInstance()->getShaderInstance().getMaterial() : 0; }
     const Bbox& getBbox() const {return m_drawableObject->getBoundingBox();}
     Matrix44 getWorld() {return m_world;}

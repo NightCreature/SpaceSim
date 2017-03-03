@@ -13,7 +13,7 @@ namespace Square
 CreatedModel CreateSquare(const SquareCreationParams& params)
 {
     CreatedModel square;
-    GameResource& gameResource = *(GameResource*)params.m_resource;
+    RenderResource& renderResource = *(RenderResource*)params.m_resource;
     square.boundingBox = Bbox(Vector3(params.m_lowerleft.x(), params.m_lowerleft.y(), 0.0f), Vector3(params.m_upperright.x(), params.m_upperright.y(), 0.0f));
 
     square.model = new Model();
@@ -50,13 +50,13 @@ CreatedModel CreateSquare(const SquareCreationParams& params)
         const Technique* technique = square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
-        const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
+        const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
-        vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
+        vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
         square.model->getMeshData().push_back(new MeshGroup(vb, 0, *(params.m_shaderInstance)));
         if (square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.fx"));
+            square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.fx"));
         }
         data = nullptr;
     }
@@ -65,7 +65,7 @@ CreatedModel CreateSquare(const SquareCreationParams& params)
         square.model->getMeshData()[0]->setShaderInstance(*(params.m_shaderInstance));
         if (square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.fx"));
+            square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.fx"));
         }
     }
 
