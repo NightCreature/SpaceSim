@@ -305,7 +305,7 @@ void RenderSystem::initialise(Resource* resource)
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time)
+void RenderSystem::update(RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
     BROFILER_CATEGORY("RenderSystem::Update", Profiler::Color::Blue);
     UNUSEDPARAM(renderInstances);
@@ -323,7 +323,7 @@ void RenderSystem::update(Resource* resource, RenderInstanceTree& renderInstance
     unsigned int stride = 0;
     unsigned int offset = 0;
 
-    RenderResourceHelper gameResource = { resource };
+    RenderResourceHelper gameResource = { m_renderResource };
     const ShaderCache& shaderCache = gameResource.getResource().getShaderCache();
     
     size_t oldTechniqueId = 0;
@@ -597,7 +597,7 @@ void RenderSystem::cleanup()
 //-------------------------------------------------------------------------
 // @brief Takes a renderlist to do ordering on the render list before actually rendering it
 //-------------------------------------------------------------------------
-void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* resource)
+void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
 {
     BROFILER_CATEGORY("RenderSystem::beginDraw", Profiler::Color::Orange);
 
@@ -639,7 +639,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
         });
     }
     
-    RenderResourceHelper helper(resource);
+    RenderResourceHelper helper(m_renderResource);
     Vector3 camPos;
     PerFrameConstants perFrameConstants;
     ZeroMemory(&perFrameConstants.m_lightConstants, sizeof(LightConstants) * 8);
@@ -681,7 +681,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
             ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
             deviceContext->PSSetShaderResources(0, 40, srv);
             m_cubeMapRenderer->initialise(m_cubeSettings[rtCounter].m_position);
-            m_cubeMapRenderer->renderCubeMap(resource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), renderInstances, m_deviceManager, perFrameConstants, tm);
+            m_cubeMapRenderer->renderCubeMap(m_renderResource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), renderInstances, m_deviceManager, perFrameConstants, tm);
             m_cubeSettings[rtCounter].m_hasBeenRenderedTo = true;
             deviceContext->PSSetShaderResources(0, 40, srv);
         }
@@ -692,7 +692,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances, Resource* reso
     //Do shadowmap update here too to begin with
     ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     deviceContext->PSSetShaderResources(0, 40, srv);
-    m_shadowMapRenderer->renderShadowMap(resource, renderInstances, m_deviceManager, lm.getLight("light_1"));
+    m_shadowMapRenderer->renderShadowMap(m_renderResource, renderInstances, m_deviceManager, lm.getLight("light_1"));
     deviceContext->PSSetShaderResources(0, 40, srv);
 
     perFrameConstants.m_cameraPosition[0] = camPos.x();
@@ -730,11 +730,11 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void RenderSystem::endDraw(Resource* resource)
+void RenderSystem::endDraw()
 {
     BROFILER_CATEGORY("RenderSystem::endDraw", Profiler::Color::Orange);
 #ifdef _DEBUG
-    m_debugAxis->draw(m_deviceManager, resource);
+    m_debugAxis->draw(m_deviceManager, m_renderResource);
 #else
     UNUSEDPARAM(resource);
 #endif
