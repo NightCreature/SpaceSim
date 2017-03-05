@@ -4,16 +4,20 @@
 #include "Core/Settings/SettingsManager.h"
 
 class Resourceable;
+class Logger;
+
+#define RESOURCE_PARAMETER_LIST Logger* logger, Paths* paths, SettingsManager* settings
 
 //Should be rewritten as an aggregation object 
 class Resource
 {
 public:
-    Resource() {}
+    Resource(RESOURCE_PARAMETER_LIST) : m_settingsManager(settings), m_paths(paths), m_logger(logger) {}
     virtual ~Resource() {}
 
-    SettingsManager m_settingsManager;
-    Paths m_paths;
+    SettingsManager* m_settingsManager;
+    Paths* m_paths;
+    Logger* m_logger;
 };
 
 class Resourceable
@@ -59,9 +63,9 @@ public:
 class name : public Resource\
 {\
 public: \
-    name(
+    name(RESOURCE_PARAMETER_LIST,
 
-#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : 
+#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : Resource(logger, paths, settings),
 #define RESOURCE_CLASS_CONSTRUCTOR_BODY(name) {}
 #define RESOURCE_CLASS_END(name) };
 

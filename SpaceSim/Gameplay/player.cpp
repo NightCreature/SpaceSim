@@ -31,7 +31,7 @@ void Player::initialize(const CameraManager& cameraManager)
     m_hit = false;
     m_camstate = firstperson;
     m_ffangle = 0.0f;
-    const ISetting<std::string>* fileNameSettings = m_resource->m_settingsManager.getSetting<std::string>("PlayerSettingsFile");
+    const ISetting<std::string>* fileNameSettings = m_resource->m_settingsManager->getSetting<std::string>("PlayerSettingsFile");
     if (fileNameSettings != nullptr)
     {
         std::string playerSettingsFileName = fileNameSettings->getData();
@@ -331,8 +331,9 @@ void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, con
     UNUSEDPARAM(elapsedTime);
     UNUSEDPARAM(input);
 
-    m_position = m_camera->getEye();
-    m_direction = m_camera->getLookAt();
+    MSG_TRACE_CHANNEL("REFACTOR", "NEED A CAMERA ON THE UPDATE THREAD SOMEHOW FOR THIS");
+    //m_position = m_camera->getEye();
+    //m_direction = m_camera->getLookAt();
 
 	InputActions::ActionType inputAction;
 	InputSystem::getInputActionFromName(fire.getHash(), inputAction);

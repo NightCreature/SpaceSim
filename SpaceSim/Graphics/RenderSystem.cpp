@@ -96,7 +96,7 @@ RenderSystem::~RenderSystem()
 //-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource)
 {
-	m_renderResource = new RenderResource(&m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
+	m_renderResource = new RenderResource(resource->m_logger, resource->m_paths, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
 
     m_appName = "Demo app";
     m_windowName = "Demo app";
@@ -153,12 +153,12 @@ void RenderSystem::initialise(Resource* resource)
 
     int windowWidth = 1280;
     int windowHeight = 720;
-    const ISetting<int>* widthSetting = resource->m_settingsManager.getSetting<int>("WindowWidth");
+    const ISetting<int>* widthSetting = resource->m_settingsManager->getSetting<int>("WindowWidth");
     if (widthSetting)
     {
         windowWidth = widthSetting->getData();
     }
-    const ISetting<int>* heightSetting = resource->m_settingsManager.getSetting<int>("WindowHeight");
+    const ISetting<int>* heightSetting = resource->m_settingsManager->getSetting<int>("WindowHeight");
     if (heightSetting)
     {
         windowHeight = heightSetting->getData();
@@ -290,6 +290,11 @@ void RenderSystem::initialise(Resource* resource)
 
     ShaderPack shaderPack(m_renderResource);
     shaderPack.loadShaderPack("shader_pack.xml");
+
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "HARDCODED CAMERAS IN USE THESE SHOULD BE CREATED THROUGH MESSAGES");
+    m_cameraSystem.createCamera(*m_renderResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    m_cameraSystem.createCamera(*m_renderResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    m_cameraSystem.createCamera(*m_renderResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
 
     initialiseCubemapRendererAndResources(m_renderResource);
     m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
@@ -752,8 +757,8 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
 {
     m_cubeMapRenderer = new CubeMapRenderer(m_deviceManager, m_alphaBlendState, m_blendState);
 
-    const Paths& path = resource->m_paths;
-    std::string cubeRenderSettingsFileName = path.getSettingsPath() + "cube_map_renderers.xml";
+    const Paths* path = resource->m_paths;
+    std::string cubeRenderSettingsFileName = path->getSettingsPath() + "cube_map_renderers.xml";
     tinyxml2::XMLDocument doc;
     if (tinyxml2::XML_NO_ERROR != doc.LoadFile(cubeRenderSettingsFileName.c_str()))
     {

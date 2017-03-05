@@ -126,15 +126,15 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
     }
 
     //Get texture strings and load textures
-    const SettingsManager& sm = m_resource->m_settingsManager;
-    const ISetting<std::string>* textureString = sm.getSetting<std::string>("Core");
+    const SettingsManager* sm = m_resource->m_settingsManager;
+    const ISetting<std::string>* textureString = sm->getSetting<std::string>("Core");
     if (textureString)
     {
         MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
         //tm.addLoad(getResource().getDeviceManager(), textureString->getData());
         //shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
     }
-    textureString = sm.getSetting<std::string>("ForceFieldCore");
+    textureString = sm->getSetting<std::string>("ForceFieldCore");
     if (textureString)
     {
         MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");

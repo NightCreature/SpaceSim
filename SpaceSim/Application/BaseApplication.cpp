@@ -55,10 +55,6 @@ Text::TextBlockCache* cache;
 //-----------------------------------------------------------------------------
 bool Application::initialise()
 {
-    m_gameResource = new GameResource(&m_entityManager, &m_gameObjectManager,
-                                      &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
-
-
     m_logger.addLogger(new OutputDebugLog());
     FileLogger* file_logger = new FileLogger(m_paths.getLogPath());
     if (file_logger->is_open())
@@ -72,6 +68,9 @@ bool Application::initialise()
     //m_logger.addLogger(new HttpDebugLog());
     
     //cache = new Text::TextBlockCache(1000, m_gameResource);
+
+    m_gameResource = new GameResource(&m_logger, &m_paths, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
+        &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
     
     bool returnValue = true;
 
@@ -104,10 +103,8 @@ bool Application::initialise()
     m_inputDispatch = &InputSystem::SetRawInput;
 
     m_laserManager.initialise(m_gameResource);
-    MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
-    //returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-    //returnValue &= m_cameraSystem.createCamera(*m_gameResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-    //returnValue &= m_cameraSystem.createCamera(*m_gameResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND create Camera message to render system");
+
     Player* player = new Player(m_gameResource);
     //player->initialize(m_cameraSystem);
     m_gameObjectManager.addGameObject(player);
@@ -203,9 +200,9 @@ void Application::mainGameLoop()
             //Unblock simulation here
             m_inputSystem.update(m_elapsedTime, m_time);
 
-            m_renderSystem.beginDraw(renderList, m_gameResource);
-            m_renderSystem.update(m_gameResource, renderList, m_elapsedTime, m_time);
-            m_renderSystem.endDraw(m_gameResource);
+            m_renderSystem.beginDraw(renderList);
+            m_renderSystem.update(renderList, m_elapsedTime, m_time);
+            m_renderSystem.endDraw();
             m_previousRenderInstanceListSize = renderList.size();
 
             InputActions::ActionType inputAction;

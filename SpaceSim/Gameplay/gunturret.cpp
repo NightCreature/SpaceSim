@@ -46,8 +46,8 @@ void GunTurret::initialise(const ShaderInstance& shaderInstance)
 {
     UNUSEDPARAM(shaderInstance);
 
-    const SettingsManager& sm = m_resource->m_settingsManager;
-    const ISetting<std::string>* modelString = sm.getSetting<std::string>("Guns");
+    const SettingsManager* sm = m_resource->m_settingsManager;
+    const ISetting<std::string>* modelString = sm->getSetting<std::string>("Guns");
     if (modelString)
     {
         MSG_TRACE_CHANNEL("REFACTOR", "SEND A MESSAGE TO LOAD A MODEL TO THE RENDERER");

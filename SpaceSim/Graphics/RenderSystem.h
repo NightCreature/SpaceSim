@@ -58,13 +58,13 @@ public:
     
     void cleanup();
 
-    void beginDraw(RenderInstanceTree& renderInstances, Resource* resource);
+    void beginDraw(RenderInstanceTree& renderInstances);
 
     void CheckVisibility(RenderInstanceTree& renderInstances);
 
-    void update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time);
+    void update(RenderInstanceTree& renderInstances, float elapsedTime, double time);
 
-    void endDraw( Resource* resource );
+    void endDraw();
 
     HWND getWindowHandle() const { return m_window.getWindowHandle(); }
     const IDXGIFactory* getDXGIFactory() const { return m_dxgiFactory; }
