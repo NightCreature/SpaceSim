@@ -860,12 +860,3 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
         tm.addTexture(m_cubeSettings[counter].m_texutureResourceName, cubeMap);
     }
 }
-
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
-void RenderSystem::SetMessageQueue(MessageSystem::MessageQueue* messageQueue)
-{
-    m_messageQueue = messageQueue;
-}

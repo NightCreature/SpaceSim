@@ -76,8 +76,6 @@ public:
     ModelManager& getModelManger() { return m_modelManger; }
 
     CubeMapRenderer* getCubeMapRenderer() { return m_cubeMapRenderer; }
-
-    void SetMessageQueue(MessageSystem::MessageQueue* messageQueue);
 protected:
 private:
     bool createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight);
@@ -132,6 +130,4 @@ private:
 
     Matrix44 m_CullingProjectionMatrix;
     RenderInstanceTree visibleInstances;
-
-    MessageSystem::MessageQueue* m_messageQueue;
 };

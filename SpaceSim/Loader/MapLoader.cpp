@@ -21,6 +21,7 @@
 #include "Graphics/LightManager.h"
 #include "Gameplay/InfinitySphere.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/RenderMessages.h"
 
 const unsigned int MapLoader::m_wallHash = hashString("Wall");
@@ -134,7 +135,7 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
             lightMessage.m_light.deserialise(element);
             lightMessage.m_lightName = lightName;
 
-            resource->m_messageQueue.AddMessage(CreateLightMessage);
+            resource->m_messageQueues->getRenderMessageQueue()->addMessage(lightMessage);
             //lightManager.addLight(lightName, light); //This needs to change to add a message to the message system to add a light in the render scene
         }
         else if (InfinitySphere::m_hash == elementHash)

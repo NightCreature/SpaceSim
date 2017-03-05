@@ -5,9 +5,12 @@
 
 class Resourceable;
 class Logger;
+namespace MessageSystem
+{
 class MessageQueues;
+}
 
-#define RESOURCE_PARAMETER_LIST Logger* logger, MessageQueues* messageQueues, Paths* paths, SettingsManager* settings
+#define RESOURCE_PARAMETER_LIST Logger* logger, MessageSystem::MessageQueues* messageQueues, Paths* paths, SettingsManager* settings
 
 //Should be rewritten as an aggregation object 
 class Resource
@@ -17,7 +20,7 @@ public:
     virtual ~Resource() {}
 
     Logger* m_logger;
-    MessageQueues* m_messageQueues;
+    MessageSystem::MessageQueues* m_messageQueues;
     Paths* m_paths;
     SettingsManager* m_settingsManager;
 };

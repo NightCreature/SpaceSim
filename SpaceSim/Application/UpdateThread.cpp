@@ -56,12 +56,3 @@ int UpdateThread::workerFunction()
 
     return 0;
 }
-
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
-void UpdateThread::SetMessageQueue(MessageSystem::MessageQueue* messageQueue)
-{
-    m_messageQueue = messageQueue;
-}
