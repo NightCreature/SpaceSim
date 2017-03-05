@@ -69,7 +69,7 @@ bool Application::initialise()
     
     //cache = new Text::TextBlockCache(1000, m_gameResource);
 
-    m_gameResource = new GameResource(&m_logger, &m_paths, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
+    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
         &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
     
     bool returnValue = true;
@@ -135,9 +135,6 @@ bool Application::initialise()
     m_UpdateThread.m_laserManager = &m_laserManager;
     m_UpdateThread.m_settingsManager = &m_settingsManager;
 
-    m_updateQueue = &m_messageQueue[0];
-    m_renderQueue = &m_messageQueue[1];
-
     m_UpdateThread.SetMessageQueue(m_updateQueue);
     m_renderSystem.SetMessageQueue(m_renderQueue);
 
@@ -187,12 +184,7 @@ void Application::mainGameLoop()
                 renderList = m_UpdateThread.GetRenderInstanceList();
                 m_UpdateThread.SetElapsedTime(m_elapsedTime, m_time);
 
-                //Swap message queues here
-                MessageSystem::MessageQueue* temp = m_renderQueue;
-                m_renderQueue = m_updateQueue;
-                m_renderQueue = temp;
-                m_UpdateThread.SetMessageQueue(m_updateQueue);
-                m_renderSystem.SetMessageQueue(m_renderQueue);
+                m_messageQueues.swapQueues();
 
                 m_UpdateThread.UnblockThread();
                 m_UpdateThread.UnLockCriticalSection();

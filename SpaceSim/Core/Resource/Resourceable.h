@@ -5,19 +5,21 @@
 
 class Resourceable;
 class Logger;
+class MessageQueues;
 
-#define RESOURCE_PARAMETER_LIST Logger* logger, Paths* paths, SettingsManager* settings
+#define RESOURCE_PARAMETER_LIST Logger* logger, MessageQueues* messageQueues, Paths* paths, SettingsManager* settings
 
 //Should be rewritten as an aggregation object 
 class Resource
 {
 public:
-    Resource(RESOURCE_PARAMETER_LIST) : m_settingsManager(settings), m_paths(paths), m_logger(logger) {}
+    Resource(RESOURCE_PARAMETER_LIST) : m_logger(logger), m_messageQueues(messageQueues), m_paths(paths), m_settingsManager(settings) {}
     virtual ~Resource() {}
 
-    SettingsManager* m_settingsManager;
-    Paths* m_paths;
     Logger* m_logger;
+    MessageQueues* m_messageQueues;
+    Paths* m_paths;
+    SettingsManager* m_settingsManager;
 };
 
 class Resourceable
@@ -65,7 +67,7 @@ class name : public Resource\
 public: \
     name(RESOURCE_PARAMETER_LIST,
 
-#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : Resource(logger, paths, settings),
+#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : Resource(logger, messageQueues, paths, settings),
 #define RESOURCE_CLASS_CONSTRUCTOR_BODY(name) {}
 #define RESOURCE_CLASS_END(name) };
 

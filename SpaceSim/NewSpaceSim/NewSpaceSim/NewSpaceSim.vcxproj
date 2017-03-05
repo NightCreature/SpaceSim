@@ -143,8 +143,11 @@
     <ClInclude Include="..\..\Application\GameWindow.h" />
     <ClInclude Include="..\..\Application\UpdateThread.h" />
     <ClInclude Include="..\..\Core\ICommand.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\GameMessages.h" />
     <ClInclude Include="..\..\Core\MessageSystem\MessageObserver.h" />
     <ClInclude Include="..\..\Core\MessageSystem\MessageQueue.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\Messages.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\RenderMessages.h" />
     <ClInclude Include="..\..\Core\Paths.h" />
     <ClInclude Include="..\..\Core\Resource\GameResource.h" />
     <ClInclude Include="..\..\Core\Resource\GameResources.h" />

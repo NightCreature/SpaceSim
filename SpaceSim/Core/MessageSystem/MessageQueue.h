@@ -1,19 +1,12 @@
 #pragma once
 
+#include "Core/MessageSystem/Messages.h"
+
 #include <array>
 #include <vector>
 
 namespace MessageSystem
 {
-
-class Message
-{
-public:
-    typedef size_t MessageId;
-    MessageId getMessageId() const { return m_MessageId; }
-protected:
-    MessageId m_MessageId;
-};
 
 class MessageQueue
 {
@@ -30,5 +23,32 @@ public:
 private:
     Messages m_messages;
     size_t m_numberOfMessages;
+};
+
+class MessageQueues
+{
+public:
+    MessageQueues() 
+    {
+        m_updateQueue = &m_messageQueue[0];
+        m_renderQueue = &m_messageQueue[1];
+    }
+    ~MessageQueues() {}
+
+    MessageQueue* getRenderMessageQueue() { return m_renderQueue; }
+    MessageQueue* getUpdateMessageQueue() { return m_updateQueue; }
+
+    void swapQueues()
+    {
+        MessageSystem::MessageQueue* temp = m_renderQueue;
+        m_renderQueue = m_updateQueue;
+        m_renderQueue = temp;
+    }
+
+
+private:
+    MessageQueue m_messageQueue[2]; //Pass pointers for current and previous to other systems, just swap the render one to update and reset and pass update to render
+    MessageQueue* m_updateQueue;
+    MessageQueue* m_renderQueue;
 };
 }

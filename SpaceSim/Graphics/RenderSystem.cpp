@@ -96,7 +96,7 @@ RenderSystem::~RenderSystem()
 //-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource)
 {
-	m_renderResource = new RenderResource(resource->m_logger, resource->m_paths, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
+	m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
 
     m_appName = "Demo app";
     m_windowName = "Demo app";

@@ -21,6 +21,7 @@
 #include "Graphics/LightManager.h"
 #include "Gameplay/InfinitySphere.h"
 
+#include "Core/MessageSystem/RenderMessages.h"
 
 const unsigned int MapLoader::m_wallHash = hashString("Wall");
 const unsigned int MapLoader::m_doorHash = hashString("Door");
@@ -127,9 +128,13 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
             {
                 lightName = attribute->Value();
             }
-            Light light;
-            light.deserialise(element);
+
             MSG_TRACE_CHANNEL("REFACTOR", "SEND message to add a light to the render side");
+            MessageSystem::CreateLightMessage lightMessage;
+            lightMessage.m_light.deserialise(element);
+            lightMessage.m_lightName = lightName;
+
+            resource->m_messageQueue.AddMessage(CreateLightMessage);
             //lightManager.addLight(lightName, light); //This needs to change to add a message to the message system to add a light in the render scene
         }
         else if (InfinitySphere::m_hash == elementHash)
