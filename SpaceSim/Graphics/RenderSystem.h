@@ -22,6 +22,7 @@
 #include "Graphics/ShaderCache.h"
 
 #include "Core/Resource/RenderResource.h"
+#include "Core/MessageSystem/MessageObserver.h"
 
 #ifdef _DEBUG
 #include <d3d11_1.h>
@@ -130,4 +131,6 @@ private:
 
     Matrix44 m_CullingProjectionMatrix;
     RenderInstanceTree visibleInstances;
+
+    MessageSystem::MessageObserver m_messageObservers;
 };

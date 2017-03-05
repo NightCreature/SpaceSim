@@ -10,7 +10,7 @@ namespace MessageSystem
 class CreateLightMessage : public Message
 {
 public:
-    CreateLightMessage() { m_MessageId = hashString("CreateLightMessage"); }
+    CreateLightMessage() { m_MessageId = MESSAGE_ID(CreateLightMessage); }
 
     Light m_light;
     std::string m_lightName;

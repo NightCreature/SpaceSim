@@ -299,6 +299,8 @@ void RenderSystem::initialise(Resource* resource)
     initialiseCubemapRendererAndResources(m_renderResource);
     m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
 
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -601,13 +603,15 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
 {
     BROFILER_CATEGORY("RenderSystem::beginDraw", Profiler::Color::Orange);
 
-    const MessageSystem::MessageQueue::Messages& messages = m_renderResource->m_messageQueues->getRenderMessageQueue()->getMessages();
-    size_t numberOfMessages = m_renderResource->m_messageQueues->getRenderMessageQueue()->numberOfMessagages();
-    for (size_t counter = 0; counter < numberOfMessages; ++counter)
-    {
+    //const MessageSystem::MessageQueue::Messages& messages = m_renderResource->m_messageQueues->getRenderMessageQueue()->getMessages();
+    //size_t numberOfMessages = m_renderResource->m_messageQueues->getRenderMessageQueue()->numberOfMessagages();
+    //for (size_t counter = 0; counter < numberOfMessages; ++counter)
+    //{
+        m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
         //dispatch messages here
-        UNUSEDPARAM(messages);//We dont have the render resource system yet in which these messages should go
-    }
+        //UNUSEDPARAM(messages);//We dont have the render resource system yet in which these messages should go
+
+    //}
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();

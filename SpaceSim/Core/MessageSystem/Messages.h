@@ -4,6 +4,8 @@
 
 #include <string>
 
+#define MESSAGE_ID(message_name) hashString(#message_name)
+
 namespace MessageSystem
 {
 
