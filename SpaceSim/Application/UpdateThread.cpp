@@ -35,8 +35,8 @@ int UpdateThread::workerFunction()
         {
             EnterCriticalSection(&m_criticalSection);
 
-            m_messageObservers.DispatchMessages(*m_messageQueue); //Dispatch the messages
-            m_messageQueue->reset(); //Reset the queue so we can track new message in it
+            //m_messageObservers.DispatchMessages(); //Dispatch the messages
+            //m_messageQueue->reset(); //Reset the queue so we can track new message in it
 
             m_renderList.clear();
 

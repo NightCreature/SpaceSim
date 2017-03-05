@@ -133,10 +133,6 @@ bool Application::initialise()
     m_UpdateThread.m_entityManager = &m_entityManager;
     m_UpdateThread.m_gameObjectManager = &m_gameObjectManager;
     m_UpdateThread.m_laserManager = &m_laserManager;
-    m_UpdateThread.m_settingsManager = &m_settingsManager;
-
-    m_UpdateThread.SetMessageQueue(m_updateQueue);
-    m_renderSystem.SetMessageQueue(m_renderQueue);
 
     m_UpdateThread.createThread(1024 * 1024, "UpdateThread"); //1MB stack space. this also kicks the first frame of simulation
 

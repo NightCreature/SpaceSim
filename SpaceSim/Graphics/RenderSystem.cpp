@@ -601,8 +601,9 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
 {
     BROFILER_CATEGORY("RenderSystem::beginDraw", Profiler::Color::Orange);
 
-    const MessageSystem::MessageQueue::Messages& messages = m_messageQueue->getMessages();
-    for (size_t counter = 0; counter < m_messageQueue->numberOfMessagages(); ++counter)
+    const MessageSystem::MessageQueue::Messages& messages = m_renderResource->m_messageQueues->getRenderMessageQueue()->getMessages();
+    size_t numberOfMessages = m_renderResource->m_messageQueues->getRenderMessageQueue()->numberOfMessagages();
+    for (size_t counter = 0; counter < numberOfMessages; ++counter)
     {
         //dispatch messages here
         UNUSEDPARAM(messages);//We dont have the render resource system yet in which these messages should go
