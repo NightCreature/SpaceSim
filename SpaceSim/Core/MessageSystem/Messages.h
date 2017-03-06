@@ -14,8 +14,11 @@ class Message
 public:
     typedef size_t MessageId;
     MessageId getMessageId() const { return m_MessageId; }
+
+    virtual void CleanupImplementationData() {}
 protected:
     MessageId m_MessageId;
+    void* m_implementationData;
 };
 
 }

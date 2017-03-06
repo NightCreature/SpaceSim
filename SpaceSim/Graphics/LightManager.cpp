@@ -55,5 +55,6 @@ void LightManager::dispatchMessage(const MessageSystem::Message& message)
     ASSERT(message.getMessageId() == MESSAGE_ID(CreateLightMessage), "Message is not a create light message should be handled elsewhere. Message id: %d", message.getMessageId());
 
     const MessageSystem::CreateLightMessage& lightMessage = static_cast<const MessageSystem::CreateLightMessage&>(message);
-    addLight(lightMessage.m_lightName, lightMessage.m_light);
+    const MessageSystem::CreateLightMessage::LightMessageData* lightData = lightMessage.getLightData();
+    addLight(lightData->m_lightName, lightData->m_light);
 }

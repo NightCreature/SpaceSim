@@ -12,10 +12,18 @@ class MessageQueue
 {
 public:
     MessageQueue() : m_numberOfMessages(0) {}
-    ~MessageQueue() {}
+    ~MessageQueue() { reset(); }
 
     void addMessage(const Message& msg) { m_messages[m_numberOfMessages] = msg; ++m_numberOfMessages; }
-    void reset() { m_numberOfMessages = 0; }
+    void reset() 
+    { 
+        //Cleanup the allocated data of the messages, should probably come from a linear allocator instead so we can just reset the memory, complicates message creation
+        for (size_t counter = 0; counter < m_numberOfMessages; ++counter)
+        {
+            m_messages[counter].CleanupImplementationData();
+        }
+        m_numberOfMessages = 0;
+    }
 
     typedef std::array<Message, 1024> Messages; //This cant be a straight up message because we will lose the internal data of the message
     const Messages& getMessages() const { return m_messages; }

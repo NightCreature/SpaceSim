@@ -613,6 +613,8 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
 
     //}
 
+        m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
+
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
     deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);

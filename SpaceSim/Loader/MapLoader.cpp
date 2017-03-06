@@ -132,8 +132,9 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
 
             MSG_TRACE_CHANNEL("REFACTOR", "SEND message to add a light to the render side");
             MessageSystem::CreateLightMessage lightMessage;
-            lightMessage.m_light.deserialise(element);
-            lightMessage.m_lightName = lightName;
+            Light light;
+            light.deserialise(element);
+            lightMessage.SetupLightData(light, lightName);
 
             resource->m_messageQueues->getUpdateMessageQueue()->addMessage(lightMessage);
             //lightManager.addLight(lightName, light); //This needs to change to add a message to the message system to add a light in the render scene
