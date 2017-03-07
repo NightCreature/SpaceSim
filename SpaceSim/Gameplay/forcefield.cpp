@@ -97,8 +97,9 @@ void ForceField::update( RenderInstanceTree& renderInstances, float elapsedTime,
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void ForceField::handleMessage( const Message& msg )
+void ForceField::handleMessage( const MessageSystem::Message& msg )
 {
-    const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    setActive(activateMsg.shouldActivate());
+    UNUSEDPARAM(msg);
+    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
+    //setActive(activateMsg.shouldActivate());
 }

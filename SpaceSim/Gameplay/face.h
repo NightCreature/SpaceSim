@@ -11,7 +11,7 @@ class Matrix44;
 namespace Face
 {
 
-    struct CreationParams
+    struct CreationParams //Needs potential modification
     {
         CreationParams() :
             shaderInstance(nullptr),

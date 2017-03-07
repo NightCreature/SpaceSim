@@ -391,8 +391,9 @@ void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, 
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void GunTurret::handleMessage( const Message& msg )
+void GunTurret::handleMessage( const MessageSystem::Message& msg )
 {
-    const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    setActive(activateMsg.shouldActivate());
+    UNUSEDPARAM(msg);
+    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
+    //setActive(activateMsg.shouldActivate());
 }

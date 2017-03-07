@@ -148,7 +148,7 @@ void Switch::update( RenderInstanceTree& renderInstances, float elapsedTime, con
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Switch::handleMessage( const Message& msg )
+void Switch::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);
 }

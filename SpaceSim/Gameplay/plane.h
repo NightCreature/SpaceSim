@@ -41,10 +41,7 @@ private:
 	void translateBbox(float xt, float yt, float zt);
 	void rotateBbox(float angle, float xr, float yr, float zr);
 
-    //-------------------------------------------------------------------------
-    // @brief 
-    //-------------------------------------------------------------------------
-    virtual void handleMessage( const Message& msg );
+    virtual void handleMessage( const MessageSystem::Message& msg );
     
 	float m_widthstartpos;
 	float m_widthendpos;

@@ -231,8 +231,9 @@ void Core::update( RenderInstanceTree& renderInstances, float elapsedTime, const
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Core::handleMessage( const Message& msg )
+void Core::handleMessage( const MessageSystem::Message& msg )
 {
-    const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    setActive(activateMsg.shouldActivate());
+    UNUSEDPARAM(msg);
+    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
+    //setActive(activateMsg.shouldActivate());
 }

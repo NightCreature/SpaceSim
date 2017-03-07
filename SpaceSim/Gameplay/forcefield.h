@@ -21,7 +21,7 @@ public:
 	int getNumVertices() const {return 0;}
     const ShaderInstance deserialise( const tinyxml2::XMLElement* element );
     virtual void update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input );
-    virtual void handleMessage( const Message& msg );
+    virtual void handleMessage( const MessageSystem::Message& msg );
 
     HASH_ELEMENT_DEFINITION
 protected:

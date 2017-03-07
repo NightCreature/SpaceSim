@@ -26,7 +26,7 @@ private:
     //-------------------------------------------------------------------------
     // @brief 
     //-------------------------------------------------------------------------
-    virtual void handleMessage( const Message& msg );
+    virtual void handleMessage( const MessageSystem::Message& msg );
 
 	Vector3 m_position;
 	Vector3 m_normal;

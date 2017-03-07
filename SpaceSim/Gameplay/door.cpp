@@ -104,8 +104,9 @@ void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Door::handleMessage( const Message& msg )
+void Door::handleMessage( const MessageSystem::Message& msg )
 {
-    const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    setActive(activateMsg.shouldActivate());
+    UNUSEDPARAM(msg);
+    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
+    //setActive(activateMsg.shouldActivate());
 }

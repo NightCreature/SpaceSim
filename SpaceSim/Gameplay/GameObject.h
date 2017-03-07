@@ -17,7 +17,7 @@
 #include <Core/tinyxml2.h>
 #include <list>
 #include "Graphics/DebugBox.h"
-#include "UI/Messages.h"
+#include "Core/MessageSystem//Messages.h"
 #include "Core/Types/Types.h"
 #include "Core/Types/TypeHelpers.h"
 #include "Graphics/Model.h"
@@ -40,7 +40,7 @@ class GameObject
 public:
     typedef GameObject Super;
 
-    GameObject(Resource* resource) : m_name(""), m_resource(resource), m_nameHash(0), m_active(false), m_worldhaschanged(false)
+    GameObject(Resource* resource) : m_name(""), m_resource(resource), m_nameHash(0), m_active(false), m_worldhaschanged(false), m_initialisationDone(false)
     { m_world.identity(); }
     virtual ~GameObject(void) 
     {
@@ -58,12 +58,9 @@ public:
         UNUSEDPARAM(input);
     }
 
-    void dispatchMessage( const Message& msg)
+    void dispatchMessage( const MessageSystem::Message& msg)
     {
-        if (m_name == msg.getTarget())
-        {
-            handleMessage(msg);
-        }
+        handleMessage(msg);
     }
 
     bool getActive() const {return m_active;}
@@ -94,8 +91,10 @@ public:
     const Bbox& getBbox() const {return Bbox();}
     Matrix44 getWorld() {return m_world;}
     void setWorld(const Matrix44& m) {m_worldhaschanged = true; m_world = m;}
+
+    bool IsInitialising() const { return !m_initialisationDone; }
 protected:
-    virtual void handleMessage( const Message& msg) = 0;
+    virtual void handleMessage( const MessageSystem::Message& msg) = 0;
 
     Matrix44 m_world;
     std::string m_name;
@@ -103,4 +102,5 @@ protected:
     unsigned int m_nameHash;
     bool m_active;
     bool m_worldhaschanged;
+    bool m_initialisationDone;
 };

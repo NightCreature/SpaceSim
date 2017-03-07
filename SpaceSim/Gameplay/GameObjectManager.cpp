@@ -91,9 +91,10 @@ void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void GameObjectManager::handleMessage( const Message& message ) const
+void GameObjectManager::handleMessage( const MessageSystem::Message& message ) const
 {
-    std::for_each(m_gameObjects.begin(), m_gameObjects.end(), DispatchFunctor(message));
+    UNUSEDPARAM(msg);
+    //std::for_each(m_gameObjects.begin(), m_gameObjects.end(), DispatchFunctor(message));
 }
 
 //-----------------------------------------------------------------------------

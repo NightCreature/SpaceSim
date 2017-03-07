@@ -73,7 +73,7 @@ void InfinitySphere::update(RenderInstanceTree& renderInstances, float elapsedTi
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void InfinitySphere::handleMessage(const Message& msg)
+void InfinitySphere::handleMessage(const MessageSystem::Message& msg)
 {
     UNUSEDPARAM(msg);
 }

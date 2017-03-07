@@ -9,6 +9,9 @@
 
 #include "Physics/PhysicsManager.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/MessageSystem/GameMessages.h"
+
 int Plane::m_planeCount = 0;
 
 //This needs to change so that it is a helper class that sets up a face correctly and then returns the face
@@ -102,6 +105,8 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
 
     //Register the bounding box with the physics
     //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
+    MessageSystem::CreatePlaneMessage createPlaneModel(params);
+    GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
 
     Super::initialise(shaderInstance);
 }
@@ -188,9 +193,13 @@ void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, cons
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Plane::handleMessage( const Message& msg )
+void Plane::handleMessage( const MessageSystem::Message& msg )
 {
-    UNUSEDPARAM(msg);
+    if (msg.getMessageId() == MESSAGE_ID(RenderResourceCreated))
+    {
+        //Store the render object reference we get back and the things it can do
+        m_initialisationDone = true;
+    }
 }
 
 //-------------------------------------------------------------------------

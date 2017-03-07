@@ -416,7 +416,7 @@ float Player::collision( const Vector3& position, const Vector3& dir, Vector3& n
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Player::handleMessage( const Message& msg )
+void Player::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);
 }

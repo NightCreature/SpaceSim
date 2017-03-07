@@ -127,7 +127,7 @@ void ScorchMark::update( RenderInstanceTree& renderInstances, float elapsedTime,
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void ScorchMark::handleMessage( const Message& msg )
+void ScorchMark::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);
 }

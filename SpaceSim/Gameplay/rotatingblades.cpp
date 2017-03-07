@@ -125,8 +125,9 @@ void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedT
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void RotatingBlades::handleMessage( const Message& msg )
+void RotatingBlades::handleMessage( const MessageSystem::Message& msg )
 {
-    const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    setActive(activateMsg.shouldActivate());
+    UNUSEDPARAM(msg);
+    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
+    //setActive(activateMsg.shouldActivate());
 }
