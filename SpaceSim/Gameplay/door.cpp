@@ -26,9 +26,11 @@ GameObject(resource)
 //-----------------------------------------------------------------------------
 void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder)
 {
+    UNUSEDPARAM(shaderInstance);
+
     Face::CreationParams params;
-    params.shaderInstance = &shaderInstance;
-    params.resource = m_resource;
+//    params.shaderInstance = &shaderInstance;
+//    params.resource = m_resource;
     params.fillvalue = 0.0f;
     params.fillx = true;
     params.changeWindingOrder = changeWindingOrder;

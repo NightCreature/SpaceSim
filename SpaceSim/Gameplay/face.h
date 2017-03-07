@@ -14,8 +14,8 @@ namespace Face
     struct CreationParams //Needs potential modification
     {
         CreationParams() :
-            shaderInstance(nullptr),
-            resource(nullptr),
+            //shaderInstance(nullptr),
+            //resource(nullptr),
             fillvalue(0.0f),
             width(50),
             height(50),
@@ -30,8 +30,8 @@ namespace Face
         {
         }
 
-        const ShaderInstance* shaderInstance;
-        Resource* resource;
+        //const ShaderInstance* shaderInstance;
+        //Resource* resource;
         float fillvalue;
         float width;
         float height;

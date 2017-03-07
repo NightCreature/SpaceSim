@@ -14,11 +14,16 @@ private:
 class CreatePlaneMessage : public CreateRenderResourceMessage
 {
 public:
-    CreatePlaneMessage(const Face::CreationParams& planeData) 
+    CreatePlaneMessage() 
     { 
         m_MessageId = MESSAGE_ID(CreatePlaneMessage);
         m_implementationData = static_cast<void*>(new Face::CreationParams()); 
-        memcpy(&m_implementationData, &planeData, sizeof(Face::CreationParams));
+    }
+
+    void SetData(const Face::CreationParams& params)
+    {
+        Face::CreationParams* implementatioParams = static_cast<Face::CreationParams*>(m_implementationData);
+        (*implementatioParams) = params;
     }
 };
 

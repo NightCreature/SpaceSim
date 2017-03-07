@@ -73,8 +73,8 @@ m_changeWindingOrder(changeWindingOrder)
 void Plane::initialise(const ShaderInstance& shaderInstance)
 {
     Face::CreationParams params;
-    params.resource = m_resource;
-    params.shaderInstance = &shaderInstance;
+//    params.resource = m_resource;
+//    params.shaderInstance = &shaderInstance;
     params.nrVerticesInX = m_rows;
     params.nrVerticesInY = m_coloms;
     params.width = m_widthendpos - m_widthstartpos;
@@ -105,7 +105,8 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
 
     //Register the bounding box with the physics
     //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
-    MessageSystem::CreatePlaneMessage createPlaneModel(params);
+    MessageSystem::CreatePlaneMessage createPlaneModel;
+    createPlaneModel.SetData(params);
     GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
 
     Super::initialise(shaderInstance);

@@ -126,7 +126,7 @@ inline float strTofloat(const std::string& str, bool hex = false)
 inline std::string toLowerCase(const std::string& str)
 {
     std::string result = str;
-    std::transform(str.begin(), str.end(), result.begin(), std::tolower);
+    std::transform(str.begin(), str.end(), result.begin(), [](char c) { return static_cast<char>(::tolower(c)); });
     return result;
 }
 
