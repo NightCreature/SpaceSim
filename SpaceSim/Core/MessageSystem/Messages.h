@@ -9,6 +9,15 @@
 namespace MessageSystem
 {
 
+class Message;
+
+class IMessageDispatcher
+{
+public:
+    virtual ~IMessageDispatcher() {}
+    virtual void dispatchMessage(const Message& msg) = 0;
+};
+
 class Message
 {
 public:

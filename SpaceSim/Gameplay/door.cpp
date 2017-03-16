@@ -4,6 +4,9 @@
 #include "Graphics/texturemanager.h"
 #include "Graphics/DeviceManager.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/MessageSystem/GameMessages.h"
+
 #include <iostream>
 #include <D3D11.h>
 
@@ -13,11 +16,11 @@ HASH_ELEMENT_IMPLEMENTATION(Door)
 Door::Door(Resource* resource, const Vector3& position):
 GameObject(resource)
 {
-	//position is the middle of a corridor
-	m_position = position;
-	m_move = 0.0f;
-	m_plus = true;
-	m_active = true;
+    //position is the middle of a corridor
+    m_position = position;
+    m_move = 0.0f;
+    m_plus = true;
+    m_active = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -39,6 +42,10 @@ void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOr
     //m_active = true;
 
     //Super::initialise(shaderInstance);
+
+    MessageSystem::CreateFixedModelResource<Face::CreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Face::CreationParams);
+    createPlaneModel.SetData(params);
+    GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
 }
 
 //-------------------------------------------------------------------------

@@ -11,6 +11,7 @@
 
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/RenderMessages.h"
 
 int Plane::m_planeCount = 0;
 
@@ -105,7 +106,7 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
 
     //Register the bounding box with the physics
     //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
-    MessageSystem::CreatePlaneMessage createPlaneModel;
+    MessageSystem::CreateFixedModelResource<Face::CreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Face::CreationParams);
     createPlaneModel.SetData(params);
     GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
 
@@ -196,8 +197,10 @@ void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, cons
 //-------------------------------------------------------------------------
 void Plane::handleMessage( const MessageSystem::Message& msg )
 {
-    if (msg.getMessageId() == MESSAGE_ID(RenderResourceCreated))
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
     {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
         //Store the render object reference we get back and the things it can do
         m_initialisationDone = true;
     }

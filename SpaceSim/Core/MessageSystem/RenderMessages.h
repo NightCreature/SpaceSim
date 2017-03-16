@@ -34,4 +34,23 @@ public:
 
 };
 
+class CreatedRenderResourceMessage : public Message
+{
+public:
+    struct CreatedRenderResource
+    {
+        size_t m_gameObjectId;
+        size_t m_renderResourceHandle;
+    };
+
+    CreatedRenderResourceMessage() 
+    {
+        m_MessageId = MESSAGE_ID(CreatedRenderResourceMessage);
+        m_implementationData = static_cast<void*>(new CreatedRenderResource());
+    }
+
+    void SetData(const CreatedRenderResource& data) { (*static_cast<CreatedRenderResource*>(m_implementationData)) = data; }
+    const CreatedRenderResource* GetData() const { return static_cast<CreatedRenderResource*>(m_implementationData); }
+};
+
 }

@@ -4,6 +4,8 @@
 #include "Graphics/texturemanager.h"
 #include "Windows.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/MessageSystem/GameMessages.h"
 
 #include <iostream>
 
@@ -38,7 +40,9 @@ void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWin
     //m_drawableObject = face.model;
     //m_active = true;
 
-    MSG_TRACE_CHANNEL("REFACTOR", "SEND create Render Object message to render system");
+    MessageSystem::CreateFixedModelResource<Face::CreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Face::CreationParams);
+    createPlaneModel.SetData(params);
+    GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
 
     //Super::initialise(shaderInstance);
 }

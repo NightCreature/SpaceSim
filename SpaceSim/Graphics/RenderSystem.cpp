@@ -96,7 +96,9 @@ RenderSystem::~RenderSystem()
 //-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource)
 {
-	m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
+    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
+
+    m_modelManger.initialise(m_renderResource);
 
     m_appName = "Demo app";
     m_windowName = "Demo app";
@@ -299,7 +301,9 @@ void RenderSystem::initialise(Resource* resource)
     initialiseCubemapRendererAndResources(m_renderResource);
     m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
 
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
+	m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedModel), fastdelegate::MakeDelegate(&m_modelManger, &ModelManager::dispatchMessage));
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateFixedModelResource), fastdelegate::MakeDelegate(&m_modelManger, &ModelManager::dispatchMessage));
 
 }
 

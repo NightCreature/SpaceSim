@@ -57,6 +57,21 @@ inline unsigned int hashString(const std::string& sourceStr)
     return returnHash;
 }
 
+inline size_t hashBinaryData(const char* data, size_t size)
+{
+    BROFILER_CATEGORY("hashBinaryData", Profiler::Color::Brown);
+    unsigned int returnHash = c_fnvHashOffset;
+    for (unsigned int counter = 0; counter < size; ++counter)
+    {
+        returnHash = returnHash ^ data[counter];
+        returnHash = returnHash * c_fnvHashPrime;
+    }
+
+    return returnHash;
+}
+
+#define HASH_STRING(x) hashString(#x)
+#define HASH_BINARY(x) hashBinaryData(reinterpret_cast<const char*>(x), sizeof(x))
 //-------------------------------------------------------------------------
 // @brief Safe string copy
 //-------------------------------------------------------------------------

@@ -5,26 +5,46 @@
 namespace MessageSystem
 {
 
+//This has to be inside of the implementation details
 class CreateRenderResourceMessage : public Message
 {
-private:
-    size_t m_gameObjectHandle;
+public:
+    struct CreateResourceData
+    {
+        size_t m_gameObjectHandle;
+        size_t m_resourceType;
+    };
+
+    size_t GetResourceType() const { return static_cast<CreateResourceData*>(m_implementationData)->m_resourceType; }
+    size_t GetGameObjectId() const { return static_cast<CreateResourceData*>(m_implementationData)->m_gameObjectHandle; }
+protected:
+
 };
 
-class CreatePlaneMessage : public CreateRenderResourceMessage
+template<class T>
+class CreateFixedModelResource : public CreateRenderResourceMessage
 {
 public:
-    CreatePlaneMessage() 
-    { 
-        m_MessageId = MESSAGE_ID(CreatePlaneMessage);
-        m_implementationData = static_cast<void*>(new Face::CreationParams()); 
+    template<class T>
+    struct FixedModelResourceData : public CreateRenderResourceMessage::CreateResourceData
+    {
+        T m_fixedData;
+    };
+
+    CreateFixedModelResource(const char* typeName)
+    {
+        m_MessageId = MESSAGE_ID(CreateFixedModelResource);
+        m_implementationData = static_cast<void*>(new FixedModelResourceData<T>());
+        static_cast<FixedModelResourceData<T>*>(m_implementationData)->m_resourceType = hashString(typeName);
+        
+
+        UNUSEDPARAM(typeName); //work arround for compile error parameter is used
     }
 
-    void SetData(const Face::CreationParams& params)
-    {
-        Face::CreationParams* implementatioParams = static_cast<Face::CreationParams*>(m_implementationData);
-        (*implementatioParams) = params;
-    }
-};
+    void SetData(const T& data) { FixedModelResourceData<T>* dataPtr = static_cast<FixedModelResourceData<T>*>(m_implementationData); (*dataPtr).m_fixedData = data; }
+    const FixedModelResourceData<T>* GetData() const { return static_cast<FixedModelResourceData<T>*>(m_implementationData); }
+}; 
 
 }
+
+#define CREATEFIXEDMODELRESOURCEMESSAGE(type) MessageSystem::CreateFixedModelResource<type>(#type);

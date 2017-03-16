@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{61BFD15B-55F2-4621-B9DF-5CC9D2BAA035}</ProjectGuid>
     <RootNamespace>NewSpaceSim</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,6 +76,7 @@
     <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
+    <EnableCppCoreCheck>true</EnableCppCoreCheck>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>SpaceSim_x64</TargetName>
@@ -99,6 +100,7 @@
       <DisableSpecificWarnings>4324;4820;4061;4365</DisableSpecificWarnings>
       <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;%(AdditionalDependencies)</AdditionalDependencies>

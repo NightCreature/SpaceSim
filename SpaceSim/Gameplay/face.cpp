@@ -22,9 +22,8 @@ const size_t numberOfTexcoords = 1;
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-CreatedModel CreateFace(const CreationParams& params)
+CreatedModel CreateFace(const CreationParams& params, Resource* resource)
 {
-    Resource* resource = nullptr;
     RenderResourceHelper renderResourceHelper(resource);
     const RenderResource& renderResource = renderResourceHelper.getResource();
     //const ShaderInstance& shaderInstance = *(params.shaderInstance);
@@ -44,10 +43,10 @@ CreatedModel CreateFace(const CreationParams& params)
         MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), shaderInstance);
         face.model->getMeshData().push_back(group);
         face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
-        if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
+        //if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
+        //{
             face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.xml"));
-        }
+        //}
 
         VertexBuffer* vb = face.model->getMeshData()[0]->getGeometryInstance().getVB();
         IndexBuffer* ib = face.model->getMeshData()[0]->getGeometryInstance().getIB();
