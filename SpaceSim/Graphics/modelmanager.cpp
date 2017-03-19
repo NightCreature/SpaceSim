@@ -71,36 +71,25 @@ Model* ModelManager::LoadModel( Resource* resource, const ShaderInstance& shader
     return model; //These should probably also register
 }
 
-void ModelManager::dispatchMessage(const MessageSystem::Message& msg)
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+size_t ModelManager::AddFace(void* data)
 {
-    const MessageSystem::CreateRenderResourceMessage& crrmsg = static_cast<const MessageSystem::CreateRenderResourceMessage&>(msg);
-    if (msg.getMessageId() == MESSAGE_ID(CreateFixedModelResource)) //Probably gonna need to something special about this message id since it is in heriting and we are subscribing to the base version
+    auto creationParams = static_cast<MessageSystem::CreateFixedModelResource<Face::CreationParams>::FixedModelResourceData<Face::CreationParams>*>(data);
+    size_t renderResourceId = HASH_BINARY(creationParams);
+    if (!HasRenderResource(renderResourceId))
     {
-        //we might want to queue this command
-        if (crrmsg.GetResourceType() == hashString("Face::CreationParams"))
-        {
-            const MessageSystem::CreateFixedModelResource<Face::CreationParams>& faceMsg = static_cast<const MessageSystem::CreateFixedModelResource<Face::CreationParams>&>(msg);
-            auto creationParams = faceMsg.GetData();
-            size_t renderResourceId = HASH_BINARY(creationParams);
-            if (!HasRenderResource(renderResourceId))
-            {
-                //register face with model manager
-                RegisterCreatedModel(Face::CreateFace(creationParams->m_fixedData, m_resource), renderResourceId);
-            }
-            else
-            {
-                //const CreatedModel* model = GetRenderResource(renderResourceId);                
-            }
-            //Create Retrun message giving GO link to this render resource, Need to delay add this to the queue again or message is lost
-            MessageSystem::CreatedRenderResourceMessage returnMessage;
-            MessageSystem::CreatedRenderResourceMessage::CreatedRenderResource data;
-            data.m_gameObjectId = faceMsg.GetGameObjectId();
-            data.m_renderResourceHandle = renderResourceId;
-            returnMessage.SetData(data);
-            //Send this message
-            RenderResourceHelper(m_resource).getWriteableResource().m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage); //This will be deleted sadly
-        }
+        //register face with model manager
+        RegisterCreatedModel(Face::CreateFace((creationParams->m_fixedData), m_resource), renderResourceId);
     }
+    else
+    {
+        //const CreatedModel* model = GetRenderResource(renderResourceId);                
+    }
+
+    return renderResourceId;
 }
 
 //-----------------------------------------------------------------------------

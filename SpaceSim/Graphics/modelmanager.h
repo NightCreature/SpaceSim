@@ -13,7 +13,7 @@ class Model;
 class Resource;
 class ShaderInstance;
 
-class ModelManager : public MessageSystem::IMessageDispatcher
+class ModelManager 
 {
 public:
     ModelManager() {}
@@ -23,8 +23,7 @@ public:
     void initialise(Resource* resource) { m_resource = resource; }
 
     Model* LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName) const;
-
-    virtual void dispatchMessage(const MessageSystem::Message& msg);
+    size_t AddFace(void* data);
 
     bool HasRenderResource(size_t resource_id) const;
     void RegisterCreatedModel(CreatedModel model, size_t renderResourceId);

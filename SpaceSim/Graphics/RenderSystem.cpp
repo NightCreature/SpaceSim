@@ -99,6 +99,7 @@ void RenderSystem::initialise(Resource* resource)
     m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
 
     m_modelManger.initialise(m_renderResource);
+    m_resourceLoader.initialise(m_renderResource);
 
     m_appName = "Demo app";
     m_windowName = "Demo app";
@@ -302,9 +303,7 @@ void RenderSystem::initialise(Resource* resource)
     m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
 
 	m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedModel), fastdelegate::MakeDelegate(&m_modelManger, &ModelManager::dispatchMessage));
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateFixedModelResource), fastdelegate::MakeDelegate(&m_modelManger, &ModelManager::dispatchMessage));
-
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
 }
 
 //-----------------------------------------------------------------------------
@@ -607,17 +606,11 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
 {
     BROFILER_CATEGORY("RenderSystem::beginDraw", Profiler::Color::Orange);
 
-    //const MessageSystem::MessageQueue::Messages& messages = m_renderResource->m_messageQueues->getRenderMessageQueue()->getMessages();
-    //size_t numberOfMessages = m_renderResource->m_messageQueues->getRenderMessageQueue()->numberOfMessagages();
-    //for (size_t counter = 0; counter < numberOfMessages; ++counter)
-    //{
-        m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
-        //dispatch messages here
-        //UNUSEDPARAM(messages);//We dont have the render resource system yet in which these messages should go
+    m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
+    m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
 
-    //}
-
-        m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
+    //Kick resource loading, potentially this needs to move to its own low priority thread too.
+    m_resourceLoader.update();
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();

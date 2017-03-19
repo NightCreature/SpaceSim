@@ -24,6 +24,8 @@
 #include "Core/Resource/RenderResource.h"
 #include "Core/MessageSystem/MessageObserver.h"
 
+#include "Loader/ResourceLoader.h"
+
 #ifdef _DEBUG
 #include <d3d11_1.h>
 #include <atlbase.h>
@@ -95,6 +97,7 @@ private:
     ShaderCache m_shaderCache;
     EffectCache m_effectCache;
     GameWindow m_window;
+    ResourceLoader m_resourceLoader;
     std::string m_appName;
 	std::string m_windowName;
 
