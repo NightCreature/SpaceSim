@@ -4,6 +4,8 @@
 
 #include "Brofiler.h"
 
+#include "Core/MessageSystem/RenderMessages.h"
+
 GameObjectManager::GameObjectManager(void)
 {
 }
@@ -91,10 +93,19 @@ void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void GameObjectManager::handleMessage( const MessageSystem::Message& message ) const
+void GameObjectManager::handleMessage( const MessageSystem::Message& message )
 {
     UNUSEDPARAM(message);
     //std::for_each(m_gameObjects.begin(), m_gameObjects.end(), DispatchFunctor(message));
+    if (MESSAGE_ID(CreatedRenderResourceMessage) == message.getMessageId())
+    { 
+        auto msg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(message);
+        auto data = msg.GetData();
+        if (m_gameObjects[static_cast<unsigned int>(data->m_gameObjectId)] != nullptr)
+        {
+            m_gameObjects[static_cast<unsigned int>(data->m_gameObjectId)]->SetRenderHandle(data->m_renderResourceHandle);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------

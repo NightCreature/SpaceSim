@@ -18,11 +18,13 @@ namespace MessageSystem
 class MessageQueue;
 }
 
+class Resource;
+
 class UpdateThread : public Thread
 {
 public:
 
-    void Initialise();
+    void Initialise(Resource* resource);
 
     virtual int workerFunction() override;
 
@@ -44,6 +46,8 @@ public:
     MessageSystem::MessageObserver m_messageObservers;
 
     Input m_input;
+
+    Resource* m_resource;
 
     double m_time;
     float m_elapsedTime;

@@ -93,12 +93,15 @@ public:
     void setWorld(const Matrix44& m) {m_worldhaschanged = true; m_world = m;}
 
     bool IsInitialising() const { return !m_initialisationDone; }
+
+    void SetRenderHandle(size_t renderId) { m_renderHandle = renderId; }
 protected:
     virtual void handleMessage( const MessageSystem::Message& msg) = 0;
 
     Matrix44 m_world;
     std::string m_name;
     Resource* m_resource;
+    size_t m_renderHandle;
     unsigned int m_nameHash;
     bool m_active;
     bool m_worldhaschanged;

@@ -10,6 +10,8 @@
 #include "Core/StringOperations/HashString.h"
 #include "Core/MessageSystem/MessageQueue.h"
 
+#include "Core/Resource/GameResource.h"
+
 #include "Brofiler.h"
 
 
@@ -17,10 +19,10 @@
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void UpdateThread::Initialise()
+void UpdateThread::Initialise(Resource* resource)
 {
-
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderRessourceCreated), fastdelegate::MakeDelegate(m_gameObjectManager, &GameObjectManager::handleMessage));
+    m_resource = resource;
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedRenderResourceMessage), fastdelegate::MakeDelegate(m_gameObjectManager, &GameObjectManager::handleMessage));
 }
 
 //-----------------------------------------------------------------------------
@@ -36,8 +38,8 @@ int UpdateThread::workerFunction()
         {
             EnterCriticalSection(&m_criticalSection);
 
-            //m_messageObservers.DispatchMessages(); //Dispatch the messages
-            //m_messageQueue->reset(); //Reset the queue so we can track new message in it
+            m_messageObservers.DispatchMessages(*(m_resource->m_messageQueues->getUpdateMessageQueue())); //Dispatch the messages
+            m_resource->m_messageQueues->getUpdateMessageQueue()->reset();//m_messageQueue->reset(); //Reset the queue so we can track new message in it
 
             m_renderList.clear();
 

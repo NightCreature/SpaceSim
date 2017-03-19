@@ -96,6 +96,8 @@ bool Application::initialise()
         returnValue &= false;
     }
 
+    m_UpdateThread.Initialise(m_gameResource);
+
     //m_uiManager.initialise();
     m_renderSystem.initialise(m_gameResource);
     //m_inputSystem.createController(Gamepad);

@@ -19,6 +19,7 @@ public:
 
     size_t GetResourceType() const { return static_cast<LoadResourceData*>(m_implementationData)->m_resourceType; }
     size_t GetGameObjectId() const { return static_cast<LoadResourceData*>(m_implementationData)->m_gameObjectHandle; }
+    void SetGameObjectId(const size_t gameObjectId) { auto requestData = static_cast<LoadResourceData*>(m_implementationData); requestData->m_gameObjectHandle = gameObjectId; }
 protected:
 
 };
