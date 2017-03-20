@@ -19,6 +19,7 @@ public:
 public:
     struct LoadRequest
     {
+        ~LoadRequest() { delete[] m_loadData; }
         size_t m_resourceType;
         size_t m_gameObjectId;
         void* m_loadData;

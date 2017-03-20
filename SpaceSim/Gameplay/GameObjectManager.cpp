@@ -86,7 +86,10 @@ void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime
     BROFILER_CATEGORY("GameObjectManagerUpdate", Profiler::Color::Red);
     for (auto gameObject : m_gameObjects)
     {
-        gameObject.second->update(renderList, elapsedTime, input);
+        if (gameObject.second != nullptr)
+        {
+            gameObject.second->update(renderList, elapsedTime, input);
+        }
     }
 }
 

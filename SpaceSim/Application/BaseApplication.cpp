@@ -96,8 +96,6 @@ bool Application::initialise()
         returnValue &= false;
     }
 
-    m_UpdateThread.Initialise(m_gameResource);
-
     //m_uiManager.initialise();
     m_renderSystem.initialise(m_gameResource);
     //m_inputSystem.createController(Gamepad);
@@ -122,11 +120,13 @@ bool Application::initialise()
     //cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt");
     //cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 48.0f, true);
 
+    //!!This needs to move
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");
     if (mapFileName)
     {
         returnValue &= m_map.loadMap(m_gameResource, mapFileName->getData());
     }
+    //!!
 
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts);
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons);
@@ -135,6 +135,8 @@ bool Application::initialise()
     m_UpdateThread.m_entityManager = &m_entityManager;
     m_UpdateThread.m_gameObjectManager = &m_gameObjectManager;
     m_UpdateThread.m_laserManager = &m_laserManager;
+
+    m_UpdateThread.Initialise(m_gameResource);
 
     m_UpdateThread.createThread(1024 * 1024, "UpdateThread"); //1MB stack space. this also kicks the first frame of simulation
 

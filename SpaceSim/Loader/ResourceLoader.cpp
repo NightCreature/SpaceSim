@@ -30,6 +30,8 @@ void ResourceLoader::update()
             renderResource.m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage);
         }
     }
+
+    m_requests.clear();
 }
 
 //-----------------------------------------------------------------------------

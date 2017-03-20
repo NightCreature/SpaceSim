@@ -24,6 +24,7 @@ m_changeWindingOrder(changeWindingOrder)
     str << "plane_" << m_planeCount;
     ++m_planeCount;
     m_name = str.str();
+    m_nameHash = hashString(m_name);
 	m_fillx = false;
 	m_filly = false;
 	m_fillz = false;

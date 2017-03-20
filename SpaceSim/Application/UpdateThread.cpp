@@ -23,6 +23,7 @@ void UpdateThread::Initialise(Resource* resource)
 {
     m_resource = resource;
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedRenderResourceMessage), fastdelegate::MakeDelegate(m_gameObjectManager, &GameObjectManager::handleMessage));
+    m_done = true;
 }
 
 //-----------------------------------------------------------------------------
