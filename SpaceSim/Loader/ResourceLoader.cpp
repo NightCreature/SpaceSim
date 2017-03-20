@@ -29,6 +29,8 @@ void ResourceLoader::update()
             
             renderResource.m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage);
         }
+
+        delete [] request.m_loadData;
     }
 
     m_requests.clear();
