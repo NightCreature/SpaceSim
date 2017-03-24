@@ -4,7 +4,7 @@
 #include "Graphics/EffectCache.h"
 #include "Graphics/modelmanager.h"
 
-#include "brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 const size_t maxNumberRenderInstances = 1024;
 
@@ -104,7 +104,7 @@ void LaserManager::addInstance( const Vector3& position, const Vector3& directio
 //-------------------------------------------------------------------------
 void LaserManager::update(RenderInstanceTree& renderInstances, float time)
 {
-    BROFILER_CATEGORY("LaserManager::update", Profiler::Color::PaleGreen)
+    PROFILE_EVENT("LaserManager::update", PaleGreen)
 
     //for (RenderInstanceQueue::iterator it = m_renderInstances.begin(); it != m_renderInstances.end(); ++it)
     //{

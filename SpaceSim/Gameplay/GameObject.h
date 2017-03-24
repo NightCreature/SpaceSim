@@ -56,6 +56,8 @@ public:
         UNUSEDPARAM(renderInstances);
         UNUSEDPARAM(elapsedTime);
         UNUSEDPARAM(input);
+
+        //This should genrate a render message to the render thread so it can be rendered
     }
 
     void dispatchMessage( const MessageSystem::Message& msg)
@@ -95,8 +97,9 @@ public:
     bool IsInitialising() const { return !m_initialisationDone; }
 
     void SetRenderHandle(size_t renderId) { m_renderHandle = renderId; }
+
+    virtual void handleMessage(const MessageSystem::Message& msg) = 0;
 protected:
-    virtual void handleMessage( const MessageSystem::Message& msg) = 0;
 
     Matrix44 m_world;
     std::string m_name;

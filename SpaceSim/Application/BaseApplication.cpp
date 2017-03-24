@@ -23,7 +23,9 @@
 #include "UI/BitmapFont.h"
 #include "UI/TextBlock.h"
 
-#include <brofiler.h>
+#include "Core/Profiler/ProfilerMacros.h" 
+
+#include "D:/Visual Leak Detector/include/vld.h"
 
 class RenderInstance;
 
@@ -166,7 +168,7 @@ void Application::mainGameLoop()
         }
         else
         {
-            BROFILER_FRAME("NewSpaceSim Frame Marker");
+            PROFILE_FRAME("NewSpaceSim Frame Marker");
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();
@@ -174,7 +176,7 @@ void Application::mainGameLoop()
             Input input = m_inputSystem.getInput();
             //THis needs to happen in single threaded update
             {
-                BROFILER_CATEGORY("SingleThreadedUpdate", Profiler::Color::Green);
+                PROFILE_EVENT("SingleThreadedUpdate", Green);
                 m_UpdateThread.LockCriticalSection();
                 //const Camera* cam = m_cameraSystem.getCamera("global");
                 //m_view = cam->getCamera();

@@ -6,6 +6,7 @@
 
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/RenderMessages.h"
 
 #include <iostream>
 #include <D3D11.h>
@@ -119,4 +120,13 @@ void Door::handleMessage( const MessageSystem::Message& msg )
     UNUSEDPARAM(msg);
     //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
     //setActive(activateMsg.shouldActivate());
+
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
+    {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
+        m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
+        //Store the render object reference we get back and the things it can do
+        m_initialisationDone = true;
+    }
 }

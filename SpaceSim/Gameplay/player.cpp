@@ -325,7 +325,7 @@ void Player::createScorchMark(const Vector3 &pos, const Vector3 &normal)
 //-------------------------------------------------------------------------
 void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
-    BROFILER_CATEGORY("Player::update", Profiler::Color::Green);
+    PROFILE_EVENT("Player::update", Green);
     //Should do move update and render list creation here
     UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(elapsedTime);

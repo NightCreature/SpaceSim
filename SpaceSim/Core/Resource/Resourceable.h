@@ -95,7 +95,7 @@ public: \
 class name\
 {\
 public:\
-    name(Resource* resource) : m_resource(resource) { BROFILER_CATEGORY(#name, Profiler::Color::Cyan); }\
+    name(Resource* resource) : m_resource(resource) { PROFILE_EVENT(#name, Cyan); }\
     name(const Resource* resource) : m_resource(const_cast<Resource*>(resource)) {}\
     ~name() {}\
 \

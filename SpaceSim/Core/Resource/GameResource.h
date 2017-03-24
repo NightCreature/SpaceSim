@@ -1,7 +1,7 @@
 #pragma once
 #include "resourceable.h"
 
-#include "Brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 //Following macros generate a class and a predeclarion list of the reource objects that should be in the resource defined below
 

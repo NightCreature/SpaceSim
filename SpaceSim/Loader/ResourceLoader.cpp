@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 void ResourceLoader::update()
 {
-    BROFILER_CATEGORY("ResourceLoader::update", Profiler::Color::Crimson);
+    PROFILE_EVENT("ResourceLoader::update", Crimson);
 
     RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
 

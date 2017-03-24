@@ -4,6 +4,7 @@
 
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/RenderMessages.h"
 
 ScorchMark::ScorchMark(Resource* resource, const Vector3& position, const Vector3& normal, float lifetime):
 GameObject(resource)
@@ -136,4 +137,12 @@ void ScorchMark::update( RenderInstanceTree& renderInstances, float elapsedTime,
 void ScorchMark::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
+    {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
+        m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
+        //Store the render object reference we get back and the things it can do
+        m_initialisationDone = true;
+    }
 }

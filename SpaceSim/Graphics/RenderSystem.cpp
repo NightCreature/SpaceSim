@@ -13,7 +13,7 @@
 #include "Graphics/ShaderPack.h"
 #include "Graphics/Frustum.h"
 
-#include "Brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 
@@ -312,7 +312,7 @@ void RenderSystem::initialise(Resource* resource)
 //-----------------------------------------------------------------------------
 void RenderSystem::update(RenderInstanceTree& renderInstances, float elapsedTime, double time)
 {
-    BROFILER_CATEGORY("RenderSystem::Update", Profiler::Color::Blue);
+    PROFILE_EVENT("RenderSystem::Update", Blue);
     UNUSEDPARAM(renderInstances);
 #ifdef _DEBUG
     pPerf->BeginEvent(L"RenderSystem::Update");
@@ -335,7 +335,7 @@ void RenderSystem::update(RenderInstanceTree& renderInstances, float elapsedTime
     std::vector<ID3D11ShaderResourceView*> resourceViews;
     std::vector<ID3D11SamplerState*> samplerStates;
     {
-        BROFILER_CATEGORY("RenderSystem::ReserveVectors", Profiler::Color::OrangeRed);
+        PROFILE_EVENT("RenderSystem::ReserveVectors", OrangeRed);
         resourceViews.reserve(128);
         samplerStates.reserve(2);
 
@@ -347,7 +347,7 @@ void RenderSystem::update(RenderInstanceTree& renderInstances, float elapsedTime
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
         {
-            BROFILER_CATEGORY("RenderSystem::SubmitInstance", Profiler::Color::DarkBlue);
+            PROFILE_EVENT("RenderSystem::SubmitInstance", DarkBlue);
             resourceViews.clear();
 
             RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
@@ -604,7 +604,7 @@ void RenderSystem::cleanup()
 //-------------------------------------------------------------------------
 void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
 {
-    BROFILER_CATEGORY("RenderSystem::beginDraw", Profiler::Color::Orange);
+    PROFILE_EVENT("RenderSystem::beginDraw", Orange);
 
     m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
     m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
@@ -628,7 +628,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
     deviceContext->OMSetDepthStencilState(m_depthStencilState, 0xffffffff);
 
     {
-        BROFILER_CATEGORY("RenderSystem::beginDraw::MaterialSorting", Profiler::Color::DarkRed);
+        PROFILE_EVENT("RenderSystem::beginDraw::MaterialSorting", DarkRed);
         std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
         {
             const Material& lhsMaterial = lhs->getShaderInstance().getMaterial();
@@ -652,7 +652,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
     const Camera* cam = cm.getCamera("global");
 
     {
-        BROFILER_CATEGORY("RenderSystem::beginDraw::LightUpdate", Profiler::Color::DarkRed);
+        PROFILE_EVENT("RenderSystem::beginDraw::LightUpdate", DarkRed);
         //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
         if (cam != nullptr)
         {
@@ -719,7 +719,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
 //-----------------------------------------------------------------------------
 void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 {
-    BROFILER_CATEGORY("RenderSystem::CheckVisibility", Profiler::Color::Yellow);
+    PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
     visibleInstances.clear();
     Frustum frustum(Application::m_view, m_CullingProjectionMatrix);
     for (auto instance : renderInstances)
@@ -736,7 +736,7 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 //-------------------------------------------------------------------------
 void RenderSystem::endDraw()
 {
-    BROFILER_CATEGORY("RenderSystem::endDraw", Profiler::Color::Orange);
+    PROFILE_EVENT("RenderSystem::endDraw", Orange);
 #ifdef _DEBUG
     m_debugAxis->draw(m_deviceManager, m_renderResource);
 #else

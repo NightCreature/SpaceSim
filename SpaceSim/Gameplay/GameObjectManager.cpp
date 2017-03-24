@@ -2,7 +2,7 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "UI/Messages.h"
 
-#include "Brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 #include "Core/MessageSystem/RenderMessages.h"
 
@@ -83,10 +83,10 @@ const std::vector<GameObject*> GameObjectManager::getGameObjectsThatDontContain(
 
 void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime, const Input& input)
 {
-    BROFILER_CATEGORY("GameObjectManagerUpdate", Profiler::Color::Red);
+    PROFILE_EVENT("GameObjectManagerUpdate", Red);
     for (auto gameObject : m_gameObjects)
     {
-        if (gameObject.second != nullptr)
+        if (gameObject.second != nullptr && !gameObject.second->IsInitialising())
         {
             gameObject.second->update(renderList, elapsedTime, input);
         }
@@ -106,7 +106,7 @@ void GameObjectManager::handleMessage( const MessageSystem::Message& message )
         auto data = msg.GetData();
         if (m_gameObjects[static_cast<unsigned int>(data->m_gameObjectId)] != nullptr)
         {
-            m_gameObjects[static_cast<unsigned int>(data->m_gameObjectId)]->SetRenderHandle(data->m_renderResourceHandle);
+            m_gameObjects[static_cast<unsigned int>(data->m_gameObjectId)]->handleMessage(message);
         }
     }
 }

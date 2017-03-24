@@ -18,7 +18,7 @@
 #include "Graphics/texturemanager.h"
 #include "Graphics/modelmanager.h"
 #include "Graphics/light.h"
-#include "brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 #include <numeric>
 
@@ -156,7 +156,7 @@ ShadowMapRenderer::~ShadowMapRenderer()
 //-----------------------------------------------------------------------------
 void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, const RenderInstanceTree& renderInstances)
 {
-    BROFILER_CATEGORY("RenderSystem::CheckVisibility", Profiler::Color::Yellow);
+    PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
     visibileInstances.clear();
     Frustum frustum(m_shadowMVP.m_view, m_shadowMVP.m_projection);
     for (auto instance : renderInstances)
@@ -174,7 +174,7 @@ void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, c
 //-----------------------------------------------------------------------------
 void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light)
 {
-    BROFILER_CATEGORY("ShadowMapRenderer::renderShadowMap", Profiler::Color::Blue);
+    PROFILE_EVENT("ShadowMapRenderer::renderShadowMap", Blue);
     if (light != nullptr)
     {
 #ifdef _DEBUG

@@ -25,7 +25,7 @@
 #include "ScreenGrab.h"
 #endif
 
-#include "brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 #include <Graphics/Frustum.h>
 
@@ -105,7 +105,7 @@ void CubeMapRenderer::initialise(Vector3 position)
 void CubeMapRenderer::CheckVisibility(RenderInstanceTree& visibleRenderInstances, const RenderInstanceTree& renderInstances, const Matrix44& viewMatrix)
 {
 
-    BROFILER_CATEGORY("CubeMapRenderer::CheckVisibility", Profiler::Color::Yellow);
+    PROFILE_EVENT("CubeMapRenderer::CheckVisibility", Yellow);
     Frustum frustum(viewMatrix, m_cubeProjection);
     for (auto instance : renderInstances)
     {
@@ -119,7 +119,7 @@ void CubeMapRenderer::CheckVisibility(RenderInstanceTree& visibleRenderInstances
 
 void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, PerFrameConstants& perFrameConstants, const TextureManager& textureManager)
 {
-    BROFILER_CATEGORY("CubeMapRenderer::renderCubeMap", Profiler::Color::LightBlue);
+    PROFILE_EVENT("CubeMapRenderer::renderCubeMap", LightBlue);
 
     ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
     ID3D11RenderTargetView* rtView[1] = { nullptr };
@@ -150,7 +150,7 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
 
     for (size_t rtCounter = 0; rtCounter < 6; ++rtCounter)
     {
-        BROFILER_CATEGORY("CubeMapRenderer::renderFace", Profiler::Color::LightBlue);
+        PROFILE_EVENT("CubeMapRenderer::renderFace", LightBlue);
 
         visibleRenderInstances.clear();
         CheckVisibility(visibleRenderInstances, renderInstances, m_viewArray[rtCounter]);

@@ -1,6 +1,7 @@
 #include "Application/GameWindow.h"
 #include "Application/BaseApplication.h"
 #include "Graphics/DeviceManager.h"
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core/Settings/SettingsManager.h"
 
 #include <sstream>
@@ -133,14 +134,14 @@ void GameWindow::calculateFPS(float elapsedTime)
 //-----------------------------------------------------------------------------
 void GameWindow::setFpsInWindowTitle(float elpasedTime)
 {
-    BROFILER_CATEGORY("GameWindow::setFpsInWindowTitle", Profiler::Color::Brown);
+    PROFILE_EVENT("GameWindow::setFpsInWindowTitle", Brown);
     std::stringstream strStream;
     {
-        BROFILER_CATEGORY("StringStreamUpdate", Profiler::Color::Brown);
+        PROFILE_EVENT("StringStreamUpdate", Brown);
         strStream << m_windowTitle.c_str() << " - fps: " << m_fps << " frame time: " << elpasedTime * 1000 << "ms";
     }
     {
-        BROFILER_CATEGORY("WindowTitleUpdate", Profiler::Color::Brown);
+        PROFILE_EVENT("WindowTitleUpdate", Brown);
         SetWindowText(m_windowHandle, strStream.str().c_str());
     }
 }

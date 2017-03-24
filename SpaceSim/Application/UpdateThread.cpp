@@ -12,7 +12,7 @@
 
 #include "Core/Resource/GameResource.h"
 
-#include "Brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 
 //-----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ int UpdateThread::workerFunction()
 {
     while (isAlive())
     {
-        BROFILER_THREAD("UpdateThread");
+        PROFILE_THREAD("UpdateThread");
         if (!m_done)
         {
             EnterCriticalSection(&m_criticalSection);

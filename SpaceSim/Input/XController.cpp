@@ -9,6 +9,8 @@
 #include "Input/XControllerDefines.h"
 #include "Math/vector4.h"
 
+#include "../Core/Profiler/ProfilerMacros.h"
+
 HASH_ELEMENT_IMPLEMENTATION(XInputDevice)
 
 #pragma warning( push )
@@ -67,7 +69,7 @@ void XInputDevice::initialise(HWND hwnd)
 //!-----------------------------------------------------------------------------
 const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput)
 {
-    BROFILER_CATEGORY("XInputDevice::update", Profiler::Color::LightGoldenRodYellow)
+    PROFILE_EVENT("XInputDevice::update", LightGoldenRodYellow)
     if (!m_enabled)
     {
         return m_controllerState;

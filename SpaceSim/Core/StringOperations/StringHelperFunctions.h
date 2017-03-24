@@ -9,7 +9,7 @@
 #include <Windows.h>
 #include <Stringapiset.h>
 
-#include "Brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 const unsigned int c_fnvHashOffset = 2166136261;
 const unsigned int c_fnvHashPrime = 16777619;
@@ -46,7 +46,7 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
 //-----------------------------------------------------------------------------
 inline unsigned int hashString(const std::string& sourceStr)
 {
-    BROFILER_CATEGORY("HashString", Profiler::Color::Brown);
+    PROFILE_EVENT("HashString", Brown);
     unsigned int returnHash = c_fnvHashOffset;
     for(unsigned int counter = 0; counter < sourceStr.size(); ++ counter)
     {
@@ -59,7 +59,7 @@ inline unsigned int hashString(const std::string& sourceStr)
 
 inline size_t hashBinaryData(const char* data, size_t size)
 {
-    BROFILER_CATEGORY("hashBinaryData", Profiler::Color::Brown);
+    PROFILE_EVENT("hashBinaryData", Brown);
     unsigned int returnHash = c_fnvHashOffset;
     for (unsigned int counter = 0; counter < size; ++counter)
     {

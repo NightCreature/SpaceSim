@@ -72,8 +72,8 @@
     <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath);D:\Visual Leak Detector\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;D:\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
@@ -103,7 +103,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -151,6 +151,7 @@
     <ClInclude Include="..\..\Core\MessageSystem\Messages.h" />
     <ClInclude Include="..\..\Core\MessageSystem\RenderMessages.h" />
     <ClInclude Include="..\..\Core\Paths.h" />
+    <ClInclude Include="..\..\Core\Profiler\ProfilerMacros.h" />
     <ClInclude Include="..\..\Core\Resource\GameResource.h" />
     <ClInclude Include="..\..\Core\Resource\GameResources.h" />
     <ClInclude Include="..\..\Core\Resource\RenderResource.h" />

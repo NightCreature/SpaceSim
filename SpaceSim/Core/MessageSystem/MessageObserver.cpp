@@ -1,6 +1,6 @@
 #include "Core\MessageSystem\MessageObserver.h"
 
-#include <Brofiler.h>
+#include "Core/Profiler/ProfilerMacros.h"
 
 namespace MessageSystem
 {
@@ -46,7 +46,7 @@ void MessageObserver::RemoveDispatchFunction(const fastdelegate::FastDelegate1<c
 //-----------------------------------------------------------------------------
 void MessageObserver::DispatchMessages(const MessageQueue& messageQueue)
 {
-    BROFILER_CATEGORY("DispatchMessages", Profiler::Color::Gray);
+    PROFILE_EVENT("DispatchMessages", Gray);
     const MessageQueue::Messages& messages = messageQueue.getMessages();
     for (size_t counter = 0; counter < messageQueue.numberOfMessagages(); ++counter)
     {
