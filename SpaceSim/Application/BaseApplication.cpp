@@ -9,9 +9,9 @@
 #include "Gameplay/LaserManager.h"
 #include "Graphics/ShaderPack.h"
 #include "Logging/FileLogger.h"
-#include <wbemidl.h>
-#include <oleauto.h>
-#include <wbemidl.h>
+//#include <wbemidl.h>
+//#include <oleauto.h>
+//#include <wbemidl.h>
 
 #include <list>
 
