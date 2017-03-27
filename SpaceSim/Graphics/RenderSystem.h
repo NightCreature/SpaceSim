@@ -62,11 +62,11 @@ public:
     
     void cleanup();
 
-    void beginDraw(RenderInstanceTree& renderInstances);
+    void beginDraw();
 
     void CheckVisibility(RenderInstanceTree& renderInstances);
 
-    void update(RenderInstanceTree& renderInstances, float elapsedTime, double time);
+    void update(float elapsedTime, double time);
 
     void endDraw();
 

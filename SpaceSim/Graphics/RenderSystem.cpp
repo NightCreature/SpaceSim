@@ -313,10 +313,9 @@ void RenderSystem::initialise(Resource* resource)
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void RenderSystem::update(RenderInstanceTree& renderInstances, float elapsedTime, double time)
+void RenderSystem::update(float elapsedTime, double time)
 {
     PROFILE_EVENT("RenderSystem::Update", Blue);
-    UNUSEDPARAM(renderInstances);
 
 #ifdef _DEBUG
     pPerf->BeginEvent(L"RenderSystem::Update");
@@ -606,7 +605,7 @@ void RenderSystem::cleanup()
 //-------------------------------------------------------------------------
 // @brief Takes a renderlist to do ordering on the render list before actually rendering it
 //-------------------------------------------------------------------------
-void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
+void RenderSystem::beginDraw()
 {
     PROFILE_EVENT("RenderSystem::beginDraw", Orange);
 
@@ -618,7 +617,6 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
     //Kick resource loading, potentially this needs to move to its own low priority thread too.
     m_resourceLoader.update();
 
-    renderInstances = m_renderInstances;
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
@@ -637,7 +635,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
 
     {
         PROFILE_EVENT("RenderSystem::beginDraw::MaterialSorting", DarkRed);
-        std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
+        std::sort(begin(m_renderInstances), end(m_renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
         {
             const Material& lhsMaterial = lhs->getShaderInstance().getMaterial();
             const Material& rhsMaterial = rhs->getShaderInstance().getMaterial();
@@ -645,7 +643,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
             return lhsMaterial.getEffect()->getTechnique(lhsMaterial.getTechnique())->getTechniqueId() < rhsMaterial.getEffect()->getTechnique(rhsMaterial.getTechnique())->getTechniqueId();
         });
 
-        std::sort(begin(renderInstances), end(renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
+        std::sort(begin(m_renderInstances), end(m_renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
         {
             return lhs->getShaderInstance().getMaterial().getBlendState() < rhs->getShaderInstance().getMaterial().getBlendState();
         });
@@ -693,7 +691,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
             ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
             deviceContext->PSSetShaderResources(0, 40, srv);
             m_cubeMapRenderer->initialise(m_cubeSettings[rtCounter].m_position);
-            m_cubeMapRenderer->renderCubeMap(m_renderResource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), renderInstances, m_deviceManager, perFrameConstants, tm);
+            m_cubeMapRenderer->renderCubeMap(m_renderResource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), m_renderInstances, m_deviceManager, perFrameConstants, tm);
             m_cubeSettings[rtCounter].m_hasBeenRenderedTo = true;
             deviceContext->PSSetShaderResources(0, 40, srv);
         }
@@ -704,7 +702,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
     //Do shadowmap update here too to begin with
     ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     deviceContext->PSSetShaderResources(0, 40, srv);
-    m_shadowMapRenderer->renderShadowMap(m_renderResource, renderInstances, m_deviceManager, lm.getLight("light_1"));
+    m_shadowMapRenderer->renderShadowMap(m_renderResource, m_renderInstances, m_deviceManager, lm.getLight("light_1"));
     deviceContext->PSSetShaderResources(0, 40, srv);
 
     perFrameConstants.m_cameraPosition[0] = camPos.x();
@@ -714,7 +712,7 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
     deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
     deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
 
-    CheckVisibility(renderInstances);
+    CheckVisibility(m_renderInstances);
 
 
 

@@ -172,7 +172,6 @@ void Application::mainGameLoop()
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();
-            RenderInstanceTree renderList;
             Input input = m_inputSystem.getInput();
             //THis needs to happen in single threaded update
             {
@@ -183,7 +182,6 @@ void Application::mainGameLoop()
 
                 m_UpdateThread.setInput(input);
 
-                renderList = m_UpdateThread.GetRenderInstanceList();
                 m_UpdateThread.SetElapsedTime(m_elapsedTime, m_time);
 
                 m_messageQueues.swapQueues();
@@ -194,10 +192,9 @@ void Application::mainGameLoop()
             //Unblock simulation here
             m_inputSystem.update(m_elapsedTime, m_time);
 
-            m_renderSystem.beginDraw(renderList);
-            m_renderSystem.update(renderList, m_elapsedTime, m_time);
+            m_renderSystem.beginDraw();
+            m_renderSystem.update(m_elapsedTime, m_time);
             m_renderSystem.endDraw();
-            m_previousRenderInstanceListSize = renderList.size();
 
             InputActions::ActionType inputAction;
             InputSystem::getInputActionFromName(exitGame, inputAction);
