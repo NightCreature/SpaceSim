@@ -536,7 +536,9 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
         MSG_TRACE_CHANNEL("ERROR", "Failed to Create the render target view")
             return;
     }
+    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem BackBuffer Texture for Swap Chain");
     m_backBuffer->Release();
+    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem RTV for Swap Chain");
 
     // Create depth stencil texture
     D3D11_TEXTURE2D_DESC depthBufferDescriptor;

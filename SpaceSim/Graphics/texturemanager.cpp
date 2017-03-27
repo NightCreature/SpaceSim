@@ -1,4 +1,5 @@
 #include "Graphics/texturemanager.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
 #include "Graphics/texture.h"
 #include "assert.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
@@ -98,6 +99,8 @@ void TextureManager::cleanup()
     }
 
     m_textures.clear();
+
+    m_samplerState->Release();
 }
 
 //-------------------------------------------------------------------------
@@ -127,6 +130,8 @@ bool TextureManager::createSamplerStates(const DeviceManager& deviceManager)
         MSG_TRACE_CHANNEL("TEXTUREMANAGER", "Failed to create sampler state: 0x%x", hr )
         return false;
     }
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_samplerState, "TextureManger Sampler State");
 
     return true;
 }

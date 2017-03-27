@@ -1,4 +1,5 @@
 #include "Graphics/DeviceManager.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
 #include <iostream>
 
 #include "Core/StringOperations/StringHelperFunctions.h"
@@ -34,6 +35,12 @@ bool DeviceManager::createDevice(IDXGIAdapter* adapter)
         MSG_TRACE_CHANNEL("DEVICEMANAGER", "Failed to create a D3D device with error code: 0x%x", hr )
         return false;
     }
+
+#ifdef _DEBUG
+    m_device->SetPrivateData(WKPDID_D3DDebugObjectName, 13, "Render Device");
+#endif
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_deviceContext, "Render Device Context");
 
     return true;
 }
