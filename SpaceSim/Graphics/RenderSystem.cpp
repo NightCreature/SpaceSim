@@ -98,8 +98,6 @@ RenderSystem::~RenderSystem()
     m_debugAxis->cleanup();
 #endif
 
-    m_deviceManager.cleanup();
-
 #ifdef _DEBUG
     if (m_debugAxis != nullptr)
     {
@@ -169,6 +167,7 @@ void RenderSystem::initialise(Resource* resource)
     {
         ExitProcess(1); //Fix this exit cleanly
     }
+    adapter->Release();
 
     ID3D11Device* device = m_deviceManager.getDevice();
     //Patch up the factory

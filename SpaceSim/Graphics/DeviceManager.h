@@ -15,7 +15,7 @@ class DeviceManager
 {
 public:
     DeviceManager() {};
-    ~DeviceManager() {}
+    ~DeviceManager() { cleanup();  }
     void clearDeviceState()
     {
         if( m_deviceContext )
