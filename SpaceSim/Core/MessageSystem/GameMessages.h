@@ -3,7 +3,6 @@
 #include "Core/MessageSystem/Messages.h"
 
 #include "Math/matrix44.h"
-#include "Graphics/material.h" //This will likely slim down as we only need the values to set.
 
 namespace MessageSystem
 {
@@ -60,7 +59,6 @@ public:
         size_t m_renderObjectid;
         size_t m_gameobjectid;
         Matrix44 m_world;
-        Material m_material;
     };
 
     RenderInformation()

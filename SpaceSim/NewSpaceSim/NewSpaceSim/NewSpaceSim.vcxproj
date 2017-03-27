@@ -104,7 +104,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

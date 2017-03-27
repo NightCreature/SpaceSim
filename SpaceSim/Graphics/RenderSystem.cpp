@@ -98,7 +98,7 @@ RenderSystem::~RenderSystem()
 //-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource)
 {
-    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
+    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
 
     m_modelManger.initialise(m_renderResource);
     m_resourceLoader.initialise(m_renderResource);
@@ -616,7 +616,7 @@ void RenderSystem::beginDraw()
 
     //Kick resource loading, potentially this needs to move to its own low priority thread too.
     m_resourceLoader.update();
-
+    m_cameraSystem.update(m_renderResource->m_performanceTimer->getElapsedTime(), m_renderResource->m_performanceTimer->getTime());
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();

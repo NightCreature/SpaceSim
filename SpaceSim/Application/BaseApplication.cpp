@@ -71,7 +71,7 @@ bool Application::initialise()
     
     //cache = new Text::TextBlockCache(1000, m_gameResource);
 
-    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
+    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
         &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
     
     bool returnValue = true;
@@ -239,6 +239,7 @@ void Application::cleanup()
 {
     m_renderSystem.cleanup();
     m_gameResource->getGameObjectManager().cleanup();
+    m_settingsManager.cleanup();
 
     //Need to add a cleanup call to the cache
     //delete cache;

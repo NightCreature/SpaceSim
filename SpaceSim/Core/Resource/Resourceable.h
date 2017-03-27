@@ -11,20 +11,20 @@ namespace MessageSystem
 class MessageQueues;
 }
 
-#define RESOURCE_PARAMETER_LIST Logger* logger, MessageSystem::MessageQueues* messageQueues, Paths* paths, SettingsManager* settings
+#define RESOURCE_PARAMETER_LIST Logger* logger, MessageSystem::MessageQueues* messageQueues, Paths* paths, PerformanceTimer* timer, SettingsManager* settings
 
 //Should be rewritten as an aggregation object 
 class Resource
 {
 public:
-    Resource(RESOURCE_PARAMETER_LIST) : m_logger(logger), m_messageQueues(messageQueues), m_paths(paths), m_settingsManager(settings) {}
+    Resource(RESOURCE_PARAMETER_LIST) : m_logger(logger), m_messageQueues(messageQueues), m_paths(paths), m_performanceTimer(timer), m_settingsManager(settings) {}
     virtual ~Resource() {}
 
     Logger* m_logger;
     MessageSystem::MessageQueues* m_messageQueues;
     Paths* m_paths;
-    SettingsManager* m_settingsManager;
     PerformanceTimer* m_performanceTimer;
+    SettingsManager* m_settingsManager;
 };
 
 class Resourceable
@@ -72,7 +72,7 @@ class name : public Resource\
 public: \
     name(RESOURCE_PARAMETER_LIST,
 
-#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : Resource(logger, messageQueues, paths, settings),
+#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : Resource(logger, messageQueues, paths, timer, settings),
 #define RESOURCE_CLASS_CONSTRUCTOR_BODY(name) {}
 #define RESOURCE_CLASS_END(name) };
 
