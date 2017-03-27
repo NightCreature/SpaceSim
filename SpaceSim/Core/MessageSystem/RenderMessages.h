@@ -49,6 +49,8 @@ public:
         m_implementationData = static_cast<void*>(new CreatedRenderResource());
     }
 
+    virtual void CleanupImplementationData() { delete static_cast<CreatedRenderResource*>(m_implementationData); }
+
     void SetData(const CreatedRenderResource& data) { (*static_cast<CreatedRenderResource*>(m_implementationData)) = data; }
     const CreatedRenderResource* GetData() const { return static_cast<CreatedRenderResource*>(m_implementationData); }
 };

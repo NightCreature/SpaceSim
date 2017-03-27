@@ -35,6 +35,7 @@ class RenderInstance;
 namespace MessageSystem
 {
 class MessageQueue;
+class Message;
 }
 
 struct CubeRendererInitialiseData
@@ -79,6 +80,8 @@ public:
     ModelManager& getModelManger() { return m_modelManger; }
 
     CubeMapRenderer* getCubeMapRenderer() { return m_cubeMapRenderer; }
+
+    void CreateRenderList(const MessageSystem::Message& msg);
 protected:
 private:
     bool createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight);
@@ -136,4 +139,8 @@ private:
     RenderInstanceTree visibleInstances;
 
     MessageSystem::MessageObserver m_messageObservers;
+
+
+    //TEMP HACK
+    RenderInstanceTree m_renderInstances;
 };

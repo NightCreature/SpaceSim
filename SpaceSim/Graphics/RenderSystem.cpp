@@ -15,6 +15,8 @@
 
 #include "Core/Profiler/ProfilerMacros.h"
 
+#include "Core/MessageSystem/GameMessages.h"
+
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 
 //-------------------------------------------------------------------------
@@ -304,6 +306,7 @@ void RenderSystem::initialise(Resource* resource)
 
 	m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(this, &RenderSystem::CreateRenderList));
 }
 
 //-----------------------------------------------------------------------------
@@ -314,6 +317,7 @@ void RenderSystem::update(RenderInstanceTree& renderInstances, float elapsedTime
 {
     PROFILE_EVENT("RenderSystem::Update", Blue);
     UNUSEDPARAM(renderInstances);
+
 #ifdef _DEBUG
     pPerf->BeginEvent(L"RenderSystem::Update");
 #endif
@@ -606,11 +610,15 @@ void RenderSystem::beginDraw(RenderInstanceTree& renderInstances)
 {
     PROFILE_EVENT("RenderSystem::beginDraw", Orange);
 
+    m_renderInstances.clear();
+
     m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
     m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
 
     //Kick resource loading, potentially this needs to move to its own low priority thread too.
     m_resourceLoader.update();
+
+    renderInstances = m_renderInstances;
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
@@ -751,6 +759,23 @@ void RenderSystem::endDraw()
         MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr)
             MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason())
             assert(false);
+    }
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   Match and extract all render instances that need to be rendered
+//! @remark
+//-----------------------------------------------------------------------------
+void RenderSystem::CreateRenderList(const MessageSystem::Message& msg)
+{
+    UNUSEDPARAM(msg);
+    const ModelManager& mm = RenderResourceHelper(m_renderResource).getResource().getModelManager();
+    const MessageSystem::RenderInformation::RenderInfo* info = static_cast<const MessageSystem::RenderInformation&>(msg).GetData();
+
+    const CreatedModel* model = mm.GetRenderResource(info->m_renderObjectid);
+    if (model)
+    {
+        model->model->update(m_renderResource, m_renderInstances, 0.0f, info->m_world, "temp name");
     }
 }
 

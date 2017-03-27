@@ -2,6 +2,9 @@
 
 #include "Core/MessageSystem/Messages.h"
 
+#include "Math/matrix44.h"
+#include "Graphics/material.h" //This will likely slim down as we only need the values to set.
+
 namespace MessageSystem
 {
 
@@ -43,9 +46,35 @@ public:
         UNUSEDPARAM(typeName); //work arround for compile error parameter is used
     }
 
+    virtual void CleanupImplementationData() { delete static_cast<FixedModelResourceData<T>*>(m_implementationData); }
+
     void SetData(const T& data) { FixedModelResourceData<T>* dataPtr = static_cast<FixedModelResourceData<T>*>(m_implementationData); (*dataPtr).m_fixedData = data; }
     const FixedModelResourceData<T>* GetData() const { return static_cast<FixedModelResourceData<T>*>(m_implementationData); }
 }; 
+
+class RenderInformation : public Message
+{
+public:
+    struct RenderInfo
+    {
+        size_t m_renderObjectid;
+        size_t m_gameobjectid;
+        Matrix44 m_world;
+        Material m_material;
+    };
+
+    RenderInformation()
+    {
+        m_MessageId = MESSAGE_ID(RenderInformation);
+        m_implementationData = static_cast<void*>(new RenderInfo());
+        m_implementationDataSize = sizeof(RenderInfo);
+    }
+
+    virtual void CleanupImplementationData() { delete static_cast<RenderInfo*>(m_implementationData); }
+
+    const RenderInfo* GetData() const { return static_cast<RenderInfo*>(m_implementationData); }
+    void SetData(const RenderInfo& data) { (*static_cast<RenderInfo*>(m_implementationData)) = data; }
+};
 
 }
 

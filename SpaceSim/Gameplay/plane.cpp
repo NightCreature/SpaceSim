@@ -96,22 +96,11 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
         params.tesselate = true;
     }
 
-    MSG_TRACE_CHANNEL("REFACTOR", "SEND CREATE RENDER RESOURCE MESSAGE");
-    //CreatedModel face = Face::CreateFace(params);
-    //m_drawableObject = face.model;
-    //m_drawableObject->setOriginalBoundingBox(face.boundingBox);
-    //m_drawableObject->setBoundingBox(face.boundingBox);
-
-    //ModelComponentManger mcm;
-    //mcm.addEntity(e, *m_drawableObject, m_world);
-
-    //Register the bounding box with the physics
-    //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
     auto resource = GameResourceHelper(m_resource).getWriteableResource();
     MessageSystem::CreateFixedModelResource<Face::CreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Face::CreationParams);
     createPlaneModel.SetData(params);
     createPlaneModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
-    resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
+    resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); 
 
     Super::initialise(shaderInstance);
 }
@@ -193,6 +182,13 @@ void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, cons
     //	(lowerleft.x() , upperright.y(), lowerleft.z());
     //	glEnd();
     //}
+    MessageSystem::RenderInformation renderInfo;
+    MessageSystem::RenderInformation::RenderInfo data;
+    data.m_renderObjectid = m_renderHandle;
+    data.m_gameobjectid = m_nameHash;
+    data.m_world = m_world;
+    renderInfo.SetData(data);
+    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
 }
 
 //-------------------------------------------------------------------------
@@ -206,6 +202,10 @@ void Plane::handleMessage( const MessageSystem::Message& msg )
         renderResourceMsg.GetData();
         m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
         //Store the render object reference we get back and the things it can do
+
+        //Register the bounding box with the physics
+        //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
+
         m_initialisationDone = true;
     }
 }
