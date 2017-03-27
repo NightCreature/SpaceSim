@@ -894,7 +894,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
             return;
         }
 
-        D3DDebugHelperFunctions::SetDebugChildName(textureResource, FormatString("RenderSystem CubeMap Render Target"));
+        D3DDebugHelperFunctions::SetDebugChildName(textureResource, FormatString("RenderSystem CubeMap Render Target for cubemap no. %d", counter));
 
         rtDesc.Texture2DArray.ArraySize = 1;
         for (size_t rtCounter = 0; rtCounter < 6; ++rtCounter)
@@ -907,7 +907,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
                 MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create render target view for the cubemap renderer: 0x%x", hr);
                 return;
             }
-            D3DDebugHelperFunctions::SetDebugChildName(rtView[rtCounter], FormatString("RenderSystem CubeMap Render Target View no. %d", counter));
+            D3DDebugHelperFunctions::SetDebugChildName(rtView[rtCounter], FormatString("RenderSystem CubeMap Render Target View no. %d", rtCounter));
         }
 
         hr = m_deviceManager.getDevice()->CreateShaderResourceView(textureResource, &srvDesc, &srView);
@@ -917,7 +917,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
             return;
         }
 
-        D3DDebugHelperFunctions::SetDebugChildName(srView, FormatString("RenderSystem CubeMap SRV"));
+        D3DDebugHelperFunctions::SetDebugChildName(srView, FormatString("RenderSystem CubeMap SRV for cubemap no. %d", counter));
 
         cubeMap.createRenderTarget(textureResource, rtView, srView);
         tm.addTexture(m_cubeSettings[counter].m_texutureResourceName, cubeMap);
