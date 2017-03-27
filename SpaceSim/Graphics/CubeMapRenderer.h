@@ -21,6 +21,8 @@ public:
     CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState* alphaBlendState, ID3D11BlendState* blendState, unsigned int cubeMapWidhtHeight = 1024);
     ~CubeMapRenderer();
 
+    void cleanup();
+
     void initialise(Vector3 position);
     void CheckVisibility(RenderInstanceTree& visibleRenderInstances, const RenderInstanceTree& renderInstances, const Matrix44& viewMatrix);
     void createViewArray(Vector3 position);

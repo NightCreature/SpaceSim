@@ -243,5 +243,6 @@ void Application::cleanup()
 
     //Need to add a cleanup call to the cache
     //delete cache;
+
 }
 

@@ -11,7 +11,7 @@ namespace MessageSystem
 class LoadResourceRequest : public Message
 {
 public:
-    struct LoadResourceData
+    struct LoadResourceData : public MessageData
     {
         size_t m_gameObjectHandle;
         size_t m_resourceType;
@@ -38,7 +38,7 @@ public:
 
     CreateFixedModelResource(const char* typeName)
     {
-        m_implementationData = static_cast<void*>(new FixedModelResourceData<T>());
+        m_implementationData = new FixedModelResourceData<T>();
         static_cast<FixedModelResourceData<T>*>(m_implementationData)->m_resourceType = hashString(typeName);
         m_implementationDataSize = sizeof(FixedModelResourceData<T>);
 
@@ -54,7 +54,7 @@ public:
 class RenderInformation : public Message
 {
 public:
-    struct RenderInfo
+    struct RenderInfo : public MessageData
     {
         size_t m_renderObjectid;
         size_t m_gameobjectid;
@@ -64,7 +64,7 @@ public:
     RenderInformation()
     {
         m_MessageId = MESSAGE_ID(RenderInformation);
-        m_implementationData = static_cast<void*>(new RenderInfo());
+        m_implementationData = new RenderInfo();
         m_implementationDataSize = sizeof(RenderInfo);
     }
 

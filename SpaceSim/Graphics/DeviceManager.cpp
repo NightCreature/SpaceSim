@@ -3,6 +3,9 @@
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+
+#include <atlbase.h>
+
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
@@ -41,6 +44,15 @@ bool DeviceManager::createDevice(IDXGIAdapter* adapter)
 //-----------------------------------------------------------------------------
 void DeviceManager::cleanup()
 {
+    CComPtr<ID3D11Debug> pDebug = nullptr;
+    HRESULT hr = m_device->QueryInterface(IID_PPV_ARGS(&pDebug));
+    hr = hr;
+
+    if (pDebug != nullptr)
+    {
+        pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+    }
+
     if (m_device)
     {
         m_device->Release();

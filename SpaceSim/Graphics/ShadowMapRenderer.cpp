@@ -151,6 +151,20 @@ ShadowMapRenderer::~ShadowMapRenderer()
 }
 
 //-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void ShadowMapRenderer::cleanup()
+{
+    m_depthStencil->Release();
+    m_shadowMap->Release();
+    m_depthStencilView->Release();
+    m_shadowMapView->Release();
+    m_shadowMapRV->Release();
+    m_perFrameConstants->Release();
+}
+
+//-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------

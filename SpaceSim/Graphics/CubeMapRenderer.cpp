@@ -28,7 +28,7 @@
 #include "Core/Profiler/ProfilerMacros.h"
 
 #include <Graphics/Frustum.h>
-
+#include "Graphics/D3DDebugHelperFunctions.h"
 
 //-------------------------------------------------------------------------
 // @brief 
@@ -57,6 +57,8 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
         MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create depth stencil for the cubemap renderer: 0x%x", hr);
     }
 
+    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencil, "CubemapRenderer DepthStencil Texture");
+
     // Create the depth stencil view for the entire cube
     D3D11_DEPTH_STENCIL_VIEW_DESC cubeDepthStencilDescriptor;
     cubeDepthStencilDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
@@ -70,6 +72,8 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
     {
         MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create depth stencil view for the cubemap renderer: 0x%x", hr);
     }
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencil, "CubemapRenderer DepthStencilView");
 
     ZeroMemory(&m_cubeViewPort, sizeof(D3D11_VIEWPORT));
     m_cubeViewPort.Height = (float)m_cubeMapWidthHeight;
@@ -86,10 +90,23 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
     lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float);
     lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = deviceManager.getDevice()->CreateBuffer(&lightContantsDescriptor, 0, &m_perFrameConstants);
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencil, "CubemapRenderer Per Frame Constant Buffer");
 }
 
 CubeMapRenderer::~CubeMapRenderer()
 {
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void CubeMapRenderer::cleanup()
+{
+    m_depthStencil->Release();
+    m_depthStencilView->Release();
+    m_perFrameConstants->Release();
 }
 
 void CubeMapRenderer::initialise(Vector3 position)

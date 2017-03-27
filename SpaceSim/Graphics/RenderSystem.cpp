@@ -64,6 +64,9 @@ RenderSystem::~RenderSystem()
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "Average Number of instances per frame: %d", m_averageNumberOfInstancesRenderingPerFrame)
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "Number of instances rendered last frame: %d", m_numberOfInstancesRenderingThisFrame)
 
+    m_shadowMapRenderer->cleanup();
+    m_cubeMapRenderer->cleanup();
+
     if (m_lightConstantBuffer != nullptr)
     {
         m_lightConstantBuffer->Release();
@@ -81,6 +84,12 @@ RenderSystem::~RenderSystem()
         delete m_shadowMapRenderer;
         m_shadowMapRenderer = nullptr;
     }
+
+    m_textureManager.cleanup();
+    m_modelManger.cleanup(); //just to see if it matters in the live objects list
+    m_shaderCache.cleanup();
+
+    m_deviceManager.cleanup();
 
 #ifdef _DEBUG
     if (m_debugAxis != nullptr)
@@ -206,7 +215,7 @@ void RenderSystem::initialise(Resource* resource)
     rasterizerWireStateDesc.SlopeScaledDepthBias = 0.0f;
     rasterizerWireStateDesc.DepthClipEnable = false;
     hr = device->CreateRasterizerState(&rasterizerWireStateDesc, &m_rasteriserWireFrameModeState);
-
+    
     D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
     depthStencilStateDesc.DepthEnable = true;
     depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -256,7 +265,7 @@ void RenderSystem::initialise(Resource* resource)
     }
 
     hr = device->CreateBlendState(&blendDescriptor, &m_alphaBlendState);
-
+    
     m_textureManager.createSamplerStates(m_deviceManager);
 
     D3D11_BUFFER_DESC lightContantsDescriptor;
@@ -600,6 +609,15 @@ void RenderSystem::cleanup()
     {
         m_depthStencilView->Release();
     }
+
+    m_rasteriserState->Release();
+    m_rasteriserWireFrameModeState->Release();
+    m_depthStencilState->Release();
+    m_blendState->Release();
+    m_alphaBlendState->Release();
+    m_samplerState->Release();
+
+    delete m_renderResource;
 }
 
 //-------------------------------------------------------------------------

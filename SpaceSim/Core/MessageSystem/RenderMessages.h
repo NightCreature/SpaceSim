@@ -10,15 +10,14 @@ namespace MessageSystem
 class CreateLightMessage : public Message
 {
 public:
-    struct LightMessageData
+    struct LightMessageData : public MessageData
     {
         Light m_light;
         std::string m_lightName;
     };
 
-    CreateLightMessage() { m_MessageId = MESSAGE_ID(CreateLightMessage); m_implementationData = static_cast<void*>(new LightMessageData()); }
+    CreateLightMessage() { m_MessageId = MESSAGE_ID(CreateLightMessage); m_implementationData = new LightMessageData(); }
 
-    virtual void CleanupImplementationData() { delete static_cast<LightMessageData*>(m_implementationData); }
     void SetupLightData(const Light& light, const std::string& str) 
     {
         LightMessageData* data = static_cast<LightMessageData*>(m_implementationData);
@@ -37,7 +36,7 @@ public:
 class CreatedRenderResourceMessage : public Message
 {
 public:
-    struct CreatedRenderResource
+    struct CreatedRenderResource : public MessageData
     {
         size_t m_gameObjectId;
         size_t m_renderResourceHandle;
@@ -46,10 +45,8 @@ public:
     CreatedRenderResourceMessage() 
     {
         m_MessageId = MESSAGE_ID(CreatedRenderResourceMessage);
-        m_implementationData = static_cast<void*>(new CreatedRenderResource());
+        m_implementationData = new CreatedRenderResource();
     }
-
-    virtual void CleanupImplementationData() { delete static_cast<CreatedRenderResource*>(m_implementationData); }
 
     void SetData(const CreatedRenderResource& data) { (*static_cast<CreatedRenderResource*>(m_implementationData)) = data; }
     const CreatedRenderResource* GetData() const { return static_cast<CreatedRenderResource*>(m_implementationData); }

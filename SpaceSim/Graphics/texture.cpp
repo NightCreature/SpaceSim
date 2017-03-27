@@ -59,6 +59,13 @@ bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, const std:
         MSG_TRACE_CHANNEL("ERROR", "Failed to create Sampler State" )
     }
 
+#ifdef _DEBUG
+    if (m_textureSamplerState != nullptr)
+    {
+        m_textureSamplerState->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(wfilename.size()), wfilename.c_str());
+    }
+#endif
+
 	return true;
 }
 
@@ -68,11 +75,6 @@ bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, const std:
 //-----------------------------------------------------------------------------
 void Texture::cleanup()
 {
-    if (m_texture)
-    {
-        //m_texture->Release();
-        //m_texture = nullptr;
-    }
     //if (!m_renderTargetViews.empty())
     //{
     //for (ID3D11RenderTargetView* rt: m_renderTargetViews)
@@ -101,4 +103,9 @@ void Texture::cleanup()
         }
     }
 
+    if (m_texture)
+    {
+        m_texture->Release();
+        m_texture = nullptr;
+    }
 }

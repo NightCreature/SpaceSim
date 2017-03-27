@@ -18,18 +18,26 @@ public:
     virtual void dispatchMessage(const Message& msg) = 0;
 };
 
+class MessageData
+{
+public:
+    MessageData() {}
+    virtual ~MessageData() {}
+};
+
 class Message
 {
 public:
+    virtual ~Message() {}
     typedef size_t MessageId;
     MessageId getMessageId() const { return m_MessageId; }
     void* GetImplementationData() const { return m_implementationData; }
     size_t GetImplementationDataSize() const { return m_implementationDataSize; }
 
-    virtual void CleanupImplementationData() {}
+    void CleanupImplementationData() { delete m_implementationData; }
 protected:
     MessageId m_MessageId;
-    void* m_implementationData;
+    MessageData* m_implementationData;
     size_t m_implementationDataSize;
 };
 

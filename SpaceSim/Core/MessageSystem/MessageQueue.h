@@ -15,6 +15,7 @@ public:
     ~MessageQueue() { reset(); }
 
     void addMessage(const Message& msg) { m_messages[m_numberOfMessages] = msg; ++m_numberOfMessages; }
+
     void reset() 
     { 
         //Cleanup the allocated data of the messages, should probably come from a linear allocator instead so we can just reset the memory, complicates message creation

@@ -13,6 +13,46 @@ ShaderCache::ShaderCache()
 //-------------------------------------------------------------------------
 ShaderCache::~ShaderCache()
 {
+    cleanup();
+
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void ShaderCache::cleanup()
+{
+    for (auto shader : m_vertexShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_vertexShaders.clear();
+    for (auto shader : m_domainShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_domainShaders.clear();
+    for (auto shader : m_hullShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_hullShaders.clear();
+    for (auto shader : m_geometryShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_geometryShaders.clear();
+    for (auto shader : m_pixelShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_pixelShaders.clear();
+    for (auto shader : m_computeShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_computeShaders.clear();
 }
 
 //-------------------------------------------------------------------------

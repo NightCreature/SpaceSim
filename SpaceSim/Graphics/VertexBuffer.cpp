@@ -5,6 +5,8 @@
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+#include "Graphics/D3DDebugHelperFunctions.h"
+
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
@@ -38,8 +40,12 @@ bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceMana
         return false;
     }
     
+
     m_vertexCount = bufferSize / m_vertexStride;
     dynamic = false;
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_buffer, FormatString("Vertex Buffer with size: %d, no. vertices: %d", bufferSize, m_vertexCount));
+    D3DDebugHelperFunctions::SetDebugChildName(m_inputLayout, FormatString("Vertex InputLayout for buffer with size: %d, no. vertices: %d", bufferSize, m_vertexCount));
 
     return true;
 }
