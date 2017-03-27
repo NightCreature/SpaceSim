@@ -25,6 +25,16 @@ OrientationAxis::LineVertex OrientationAxis::m_vertices[] =
     {0.0f,  0.0f, 1.0f},//, 0xFFFFFFFF
     {0.0f, 0.25f, 1.0f} //, 0xFFFFFFFF
 };
+
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void OrientationAxis::cleanup()
+{
+    m_vertexBuffer.cleanup();
+}
+
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark

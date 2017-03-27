@@ -33,6 +33,8 @@ public:
     }
     ~OrientationAxis() {}
 
+    void cleanup();
+
     void initialise(Resource* resource, const DeviceManager& deviceManager);
     void draw(const DeviceManager& deviceManager, Resource* resource);
 private:

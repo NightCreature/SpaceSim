@@ -90,6 +90,9 @@ RenderSystem::~RenderSystem()
     m_modelManger.cleanup(); //just to see if it matters in the live objects list
     m_shaderCache.cleanup();
     m_effectCache.cleanup();
+#ifdef _DEBUG
+    m_debugAxis->cleanup();
+#endif
 
     m_deviceManager.cleanup();
 
