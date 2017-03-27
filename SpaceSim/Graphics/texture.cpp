@@ -1,5 +1,6 @@
 #include "Graphics/texture.h"
-#include "Graphics\DeviceManager.h"
+#include "Graphics/DeviceManager.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
 #include "Core/Paths.h"
 
 #include "WICTextureLoader.h"
