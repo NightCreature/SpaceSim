@@ -27,7 +27,6 @@
 
 #ifdef _DEBUG
 #include <d3d11_1.h>
-#include <atlbase.h>
 
 #include "ScreenGrab.h"
 #endif
@@ -170,6 +169,8 @@ void ShadowMapRenderer::cleanup()
     m_shadowMapView->Release();
     m_shadowMapRV->Release();
     m_perFrameConstants->Release();
+
+    pPerf->Release();
 }
 
 //-----------------------------------------------------------------------------

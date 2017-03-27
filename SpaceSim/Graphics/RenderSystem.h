@@ -28,7 +28,6 @@
 
 #ifdef _DEBUG
 #include <d3d11_1.h>
-#include <atlbase.h>
 #endif
 
 class RenderInstance;
@@ -127,7 +126,7 @@ private:
     size_t m_totalNumberOfRenderedFrames;
 #ifdef _DEBUG
     OrientationAxis* m_debugAxis;
-    CComPtr<ID3DUserDefinedAnnotation> pPerf;
+    ID3DUserDefinedAnnotation* pPerf;
 #endif
 
     std::vector<CubeRendererInitialiseData> m_cubeSettings;
