@@ -3,8 +3,9 @@
 #include "Core/Paths.h"
 #include "Core/Settings/SettingsManager.h"
 
-class Resourceable;
 class Logger;
+class PerformanceTimer;
+class Resourceable;
 namespace MessageSystem
 {
 class MessageQueues;
@@ -23,6 +24,7 @@ public:
     MessageSystem::MessageQueues* m_messageQueues;
     Paths* m_paths;
     SettingsManager* m_settingsManager;
+    PerformanceTimer* m_performanceTimer;
 };
 
 class Resourceable
