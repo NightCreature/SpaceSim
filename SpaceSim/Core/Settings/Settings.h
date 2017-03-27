@@ -1,5 +1,5 @@
 #pragma once
-#include "Graphics/material.h"
+//#include "Graphics/material.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Math/vector4.h"
 
@@ -112,18 +112,18 @@ private:
     std::string m_windowName;
 };
 
-class MaterialSetting : public DeserialisableSetting
-{
-public:
-    MaterialSetting() {}
-    ~MaterialSetting() {}
-
-    void deserialise( const tinyxml2::XMLElement* element);
-    const Material& getMaterial() const { return m_material; }
-protected:
-private:
-    Material m_material;
-};
+//class MaterialSetting : public DeserialisableSetting
+//{
+//public:
+//    MaterialSetting() {}
+//    ~MaterialSetting() {}
+//
+//    void deserialise( const tinyxml2::XMLElement* element);
+//    const Material& getMaterial() const { return m_material; }
+//protected:
+//private:
+//    Material m_material;
+//};
 
 class VectorSetting : public DeserialisableSetting
 {

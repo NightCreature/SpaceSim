@@ -12,7 +12,7 @@ void InputState::printState() const
     MSG_TRACE_CHANNEL("Input State", "/**********************INPUT STATE DATA*********************************/");
     for (auto inputAction : m_inputState)
     {
-        MSG_TRACE_CHANNEL( "Input State", "Input state for action %s is value %f ", InputSystem::m_actionNames[inputAction.getAction()], inputAction.getValue());
+        MSG_TRACE_CHANNEL( "Input State", "Input state for action %s is value %f ", InputSystem::m_actionNames[inputAction.getAction()].c_str(), inputAction.getValue());
     }
 }
 #endif
@@ -44,7 +44,7 @@ void InputState::mergeInputState(const InputState& input)
 #ifdef _DEBUG
             if (test)
             {
-                MSG_TRACE_CHANNEL("Input State", "During merging %s value will change to %f", InputSystem::m_actionNames[standardInputAction.getAction()], currentValue);
+                MSG_TRACE_CHANNEL("Input State", "During merging %s value will change to %f", InputSystem::m_actionNames[standardInputAction.getAction()].c_str(), currentValue);
             }
 #endif
 

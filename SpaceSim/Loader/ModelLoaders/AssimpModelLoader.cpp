@@ -2,7 +2,7 @@
 #include "Graphics/mesh.h"
 #include "Graphics/MeshGroupCreator.h"
 #include "Graphics/texturemanager.h"
-#include "Core/Resource/GameResource.h"
+#include "Core/Resource/RenderResource.h"
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
@@ -146,9 +146,9 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& sh
         shaderMaterial.setShininess(shininess);
 
         //load the texture maps here
-        GameResourceHelper gameResource(resource);
-        TextureManager& tm = gameResource.getWritableGameResource().getTextureManager();
-        DeviceManager& dm = gameResource.getWritableGameResource().getDeviceManager();
+        RenderResourceHelper gameResource(resource);
+        TextureManager& tm = gameResource.getWriteableResource().getTextureManager();
+        DeviceManager& dm = gameResource.getWriteableResource().getDeviceManager();
         aiString path;
         aiTextureMapping uvMapping;
         unsigned int uv_index = 0xFFFFFFFF;

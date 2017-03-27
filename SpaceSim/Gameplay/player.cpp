@@ -12,7 +12,7 @@
 #include "Core/Settings/settingsparser.h"
 
 #include "Graphics/CameraManager.h"
-#include "Core/Resource/GameResource.h"
+#include "Core/Resource/renderResource.h"
 #include "Gameplay/LaserManager.h"
 #include "Graphics/EffectCache.h"
 #include "Core/StringOperations/HashString.h"
@@ -31,7 +31,7 @@ void Player::initialize(const CameraManager& cameraManager)
     m_hit = false;
     m_camstate = firstperson;
     m_ffangle = 0.0f;
-    const ISetting<std::string>* fileNameSettings = getGameResource().getSettingsManager().getSetting<std::string>("PlayerSettingsFile");
+    const ISetting<std::string>* fileNameSettings = m_resource->m_settingsManager->getSetting<std::string>("PlayerSettingsFile");
     if (fileNameSettings != nullptr)
     {
         std::string playerSettingsFileName = fileNameSettings->getData();
@@ -230,12 +230,13 @@ void Player::fireLaser()
 
     //if (m_count < m_maxlasers)
     //{
-    ShaderInstance shaderInstance;
-    shaderInstance.setMaterial(Material(0.0f, Color::black(), Color::black(), Color::green(), Color::green()));
-    shaderInstance.getMaterial().setBlendState(true);
-    shaderInstance.getMaterial().setEffect(getGameResource().getEffectCache().getEffect("laser_effect.xml"));
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND A MESSAGE TO CREATE A RENDER RESOURCE OR REFACTOR THE LASERMANAGER TO DO THIS FOR US");
+    //ShaderInstance shaderInstance;
+    //shaderInstance.setMaterial(Material(0.0f, Color::black(), Color::black(), Color::green(), Color::green()));
+    //shaderInstance.getMaterial().setBlendState(true);
+    //shaderInstance.getMaterial().setEffect(getResource().getEffectCache().getEffect("laser_effect.xml"));
 
-    getWriteableGameResource().getLaserManager().addInstance(m_position, m_direction * 10, shaderInstance);
+    //GameResourceHelper(m_resource).getWriteableResource().getLaserManager().addInstance(m_position, m_direction * 10, ShaderInstance);
     //}
 }
 
@@ -263,7 +264,7 @@ void Player::updateLasers(float elapsedtime, MapLoader& m_map)
                     //    {
                     //        createScorchMark(l->getPosition(), -planenormal);
                     //    }
-                    //    ParticleSystemManager* psm = getWriteableGameResource()->getParticleSystemManager();
+                    //    ParticleSystemManager* psm = getWriteableResource()->getParticleSystemManager();
                     //    ParticleEmitter* pe = psm->createEmitter(l->getPosition(), planenormal);
                     //    pe->setMaxParticles(5.0f);
                     //    pe->setEmissionRate(5.0f);
@@ -324,17 +325,19 @@ void Player::createScorchMark(const Vector3 &pos, const Vector3 &normal)
 //-------------------------------------------------------------------------
 void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
+    PROFILE_EVENT("Player::update", Green);
     //Should do move update and render list creation here
     UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(elapsedTime);
     UNUSEDPARAM(input);
 
-    m_position = m_camera->getEye();
-    m_direction = m_camera->getLookAt();
+    MSG_TRACE_CHANNEL("REFACTOR", "NEED A CAMERA ON THE UPDATE THREAD SOMEHOW FOR THIS");
+    //m_position = m_camera->getEye();
+    //m_direction = m_camera->getLookAt();
 
 	InputActions::ActionType inputAction;
 	InputSystem::getInputActionFromName(fire.getHash(), inputAction);
-	if (input.getInput(0)->getActionValue(inputAction) > 0.0f)
+	if (input.getInput(0) && input.getInput(0)->getActionValue(inputAction) > 0.0f)
 	{
 		if (m_lasergentime > 0.25)
 		{
@@ -413,7 +416,7 @@ float Player::collision( const Vector3& position, const Vector3& dir, Vector3& n
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Player::handleMessage( const Message& msg )
+void Player::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);
 }

@@ -4,6 +4,10 @@
 #include "Graphics/texturemanager.h"
 #include "Graphics/DeviceManager.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/RenderMessages.h"
+
 #include <iostream>
 #include <D3D11.h>
 
@@ -13,11 +17,11 @@ HASH_ELEMENT_IMPLEMENTATION(Door)
 Door::Door(Resource* resource, const Vector3& position):
 GameObject(resource)
 {
-	//position is the middle of a corridor
-	m_position = position;
-	m_move = 0.0f;
-	m_plus = true;
-	m_active = true;
+    //position is the middle of a corridor
+    m_position = position;
+    m_move = 0.0f;
+    m_plus = true;
+    m_active = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -26,9 +30,11 @@ GameObject(resource)
 //-----------------------------------------------------------------------------
 void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder)
 {
+    UNUSEDPARAM(shaderInstance);
+
     Face::CreationParams params;
-    params.shaderInstance = &shaderInstance;
-    params.resource = m_resource;
+//    params.shaderInstance = &shaderInstance;
+//    params.resource = m_resource;
     params.fillvalue = 0.0f;
     params.fillx = true;
     params.changeWindingOrder = changeWindingOrder;
@@ -37,6 +43,11 @@ void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOr
     //m_active = true;
 
     //Super::initialise(shaderInstance);
+
+    MessageSystem::CreateFixedModelResource<Face::CreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Face::CreationParams);
+    createPlaneModel.SetData(params);
+    createPlaneModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
+    GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
 }
 
 //-------------------------------------------------------------------------
@@ -57,7 +68,8 @@ const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
         unsigned int typeHash = hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
-            shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), element);
+            MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
             //shaderInstance.getMaterial().setBlendState(true);
         }
         else if (Vector3::m_hash == typeHash)
@@ -103,8 +115,18 @@ void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Door::handleMessage( const Message& msg )
+void Door::handleMessage( const MessageSystem::Message& msg )
 {
-    const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    setActive(activateMsg.shouldActivate());
+    UNUSEDPARAM(msg);
+    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
+    //setActive(activateMsg.shouldActivate());
+
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
+    {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
+        m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
+        //Store the render object reference we get back and the things it can do
+        m_initialisationDone = true;
+    }
 }

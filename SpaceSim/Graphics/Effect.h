@@ -2,6 +2,7 @@
 #include "Math/matrix44.h"
 #include "Graphics/DeviceManager.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/Resource/RenderResource.h"
 #include "Graphics/Shaders.h"
 #include <d3d11.h>
 #include <D3Dcompiler.h>
@@ -86,6 +87,8 @@ public:
         {}
     ~Technique() {}
 
+    void cleanup() { m_constantBuffers[0]->Release(); m_constantBuffers[1]->Release(); }
+
     void deserialise(const tinyxml2::XMLElement* element);
 
     unsigned int getNameHash() const { return m_nameHash; }
@@ -109,8 +112,8 @@ public:
 
     void setupTechnique(bool alsoUseOnGS = false) const
     {
-        GameResourceHelper helper(m_resource);
-        ID3D11DeviceContext* deviceContext = helper.getGameResource().getDeviceManager().getDeviceContext();
+        RenderResourceHelper helper(m_resource);
+        ID3D11DeviceContext* deviceContext = helper.getResource().getDeviceManager().getDeviceContext();
         deviceContext->VSSetConstantBuffers(0, 1, &m_constantBuffers[0]);
         if (alsoUseOnGS == true)
         {
@@ -168,6 +171,8 @@ public:
         //    m_wvpBuffer = 0;
         //}
     }
+
+    void cleanup() { for (auto technique : m_techniques) { technique.second.cleanup(); } }
 
     void deserialise(const tinyxml2::XMLElement* node, Resource* resource);
     void setupEffect() const;

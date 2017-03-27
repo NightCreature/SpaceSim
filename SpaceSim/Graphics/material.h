@@ -114,7 +114,7 @@ public:
 protected:
 private:
     unsigned int m_techniqueHash;
-    Effect* m_effect;
+    Effect* m_effect; //Could be a resource Id now seeing that the model and shaders only live on the render side, would make the material a sharable state object :)
     MaterialContent m_materialCB;
     std::vector<TextureSlotMapping> m_texture;//Order is sampler order as well
     bool m_alphaBlend;

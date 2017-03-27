@@ -4,7 +4,7 @@
 #include "Graphics/ModelManager.h"
 #include "Graphics/texturemanager.h"
 #include <iostream>
-#include "Core/Resource/GameResource.h"
+#include "Core/Resource/renderResource.h"
 
 
 HASH_ELEMENT_IMPLEMENTATION(Core)
@@ -56,7 +56,8 @@ void Core::initialise(const ShaderInstance& shaderInstance)
     m_world = scale(m_radius, m_radius, m_radius) * translate(m_position);
     //m_drawableObject->setWorld(m_world);
 
-    m_drawableObject->setDirty();
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND create Render Object message to render system");
+
     Super::initialise(shaderInstance);
 }
 
@@ -99,13 +100,15 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
             {
                 if (strICmp(nameAttribute->Value(), "CoreMaterialNormal"))
                 {
-                    m_forcefieldmatnormal.deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
-                    shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
-                    shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString("cube_player_forcefield"), Material::TextureSlotMapping::Diffuse0));
+                    MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+                    //m_forcefieldmatnormal.deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), childElement);
+                    //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), childElement);
+                    //shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString("cube_player_forcefield"), Material::TextureSlotMapping::Diffuse0));
                 }
                 else if( strICmp(nameAttribute->Value(), "CoreMaterialNormalGlow") )
                 {
-                    m_forcefieldmatglowing.deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
+                    MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+                    //m_forcefieldmatglowing.deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), childElement);
                 }
             }
         }
@@ -114,27 +117,29 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
             attribute = childElement->FindAttribute("file_name");
             if (attribute != nullptr)
             {
+                MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
                 //Heavily relies on the shader instance existing before we load the model, might be better to put the model construction in initialise instead
-                m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
-                m_drawableObject->setDirty();
+                //m_drawableObject = getWriteableResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
+                //m_drawableObject->setDirty();
             }
         }
     }
 
     //Get texture strings and load textures
-    const SettingsManager& sm = getGameResource().getSettingsManager();
-    TextureManager& tm = getWriteableGameResource().getTextureManager();
-    const ISetting<std::string>* textureString = sm.getSetting<std::string>("Core");
+    const SettingsManager* sm = m_resource->m_settingsManager;
+    const ISetting<std::string>* textureString = sm->getSetting<std::string>("Core");
     if (textureString)
     {
-        tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
-        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
+        MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+        //tm.addLoad(getResource().getDeviceManager(), textureString->getData());
+        //shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
     }
-    textureString = sm.getSetting<std::string>("ForceFieldCore");
+    textureString = sm->getSetting<std::string>("ForceFieldCore");
     if (textureString)
     {
-        tm.addLoad(getGameResource().getDeviceManager(), textureString->getData());
-        shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
+        MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+        //tm.addLoad(getResource().getDeviceManager(), textureString->getData());
+        //shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
     }
 
     return shaderInstance;
@@ -226,8 +231,9 @@ void Core::update( RenderInstanceTree& renderInstances, float elapsedTime, const
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Core::handleMessage( const Message& msg )
+void Core::handleMessage( const MessageSystem::Message& msg )
 {
-    const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    setActive(activateMsg.shouldActivate());
+    UNUSEDPARAM(msg);
+    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
+    //setActive(activateMsg.shouldActivate());
 }

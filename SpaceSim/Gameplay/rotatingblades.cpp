@@ -3,6 +3,10 @@
 #include "Graphics/texturemanager.h"
 #include "Windows.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/RenderMessages.h"
+
 #include <iostream>
 
 
@@ -35,8 +39,10 @@ const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* el
         unsigned int typeHash = hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
-            shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), element);
-            shaderInstance.getMaterial().setBlendState(true);
+            //This all needs to be a message to the renderer to create a render object
+            MSG_TRACE_CHANNEL("REFACTOR", "CREATE RENDER RESOURCE HERE THROUGH A MESSAGE");
+            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
+            //shaderInstance.getMaterial().setBlendState(true);
         }
         else if (Vector3::m_hash == typeHash)
         {
@@ -123,8 +129,17 @@ void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedT
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void RotatingBlades::handleMessage( const Message& msg )
+void RotatingBlades::handleMessage( const MessageSystem::Message& msg )
 {
-    const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    setActive(activateMsg.shouldActivate());
+    UNUSEDPARAM(msg);
+    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
+    //setActive(activateMsg.shouldActivate());
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
+    {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
+        m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
+        //Store the render object reference we get back and the things it can do
+        m_initialisationDone = true;
+    }
 }

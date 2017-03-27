@@ -9,9 +9,9 @@
 #include "Gameplay/LaserManager.h"
 #include "Graphics/ShaderPack.h"
 #include "Logging/FileLogger.h"
-#include <wbemidl.h>
-#include <oleauto.h>
-#include <wbemidl.h>
+//#include <wbemidl.h>
+//#include <oleauto.h>
+//#include <wbemidl.h>
 
 #include <list>
 
@@ -23,7 +23,9 @@
 #include "UI/BitmapFont.h"
 #include "UI/TextBlock.h"
 
-#include <brofiler.h>
+#include "Core/Profiler/ProfilerMacros.h" 
+
+#include "D:/Visual Leak Detector/include/vld.h"
 
 class RenderInstance;
 
@@ -55,10 +57,6 @@ Text::TextBlockCache* cache;
 //-----------------------------------------------------------------------------
 bool Application::initialise()
 {
-    m_gameResource = new GameResource(&m_entityManager, &m_cameraSystem, &m_renderSystem.getDeviceMananger(), &m_settingsManager, &m_renderSystem.getTextureManager(), &m_gameObjectManager, &m_renderSystem.getModelManger(),
-                                      &m_pfxManager, &m_lightManager, &m_laserManager, &m_shaderCache, &m_effectCache, &m_paths, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
-
-
     m_logger.addLogger(new OutputDebugLog());
     FileLogger* file_logger = new FileLogger(m_paths.getLogPath());
     if (file_logger->is_open())
@@ -72,6 +70,9 @@ bool Application::initialise()
     //m_logger.addLogger(new HttpDebugLog());
     
     //cache = new Text::TextBlockCache(1000, m_gameResource);
+
+    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
+        &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
     
     bool returnValue = true;
 
@@ -87,7 +88,7 @@ bool Application::initialise()
     {
         windowHeight = heightSetting->getData();     
     }
-    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1000.0f);
+    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1500.0f);
 
     SettingsParser settings(&m_settingsManager);
     if (!settings.loadFile(m_paths.getSettingsPath() + "settings.cfg"))
@@ -102,35 +103,44 @@ bool Application::initialise()
     //m_inputSystem.createController(Gamepad);
     m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml", m_renderSystem.getWindowHandle());
     m_inputDispatch = &InputSystem::SetRawInput;
-    ShaderPack shaderPack(m_gameResource);
-    shaderPack.loadShaderPack("shader_pack.xml");
+
     m_laserManager.initialise(m_gameResource);
-	returnValue &= m_cameraSystem.createCamera(*m_gameResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-	returnValue &= m_cameraSystem.createCamera(*m_gameResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-    returnValue &= m_cameraSystem.createCamera(*m_gameResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND create Camera message to render system");
+
     Player* player = new Player(m_gameResource);
-    player->initialize(m_cameraSystem);
+    //player->initialize(m_cameraSystem);
     m_gameObjectManager.addGameObject(player);
 
 
     //Test Code
-	m_cameraSystem.update(m_elapsedTime, m_time);
-	const Camera* cam = m_cameraSystem.getCamera("global");
-	m_view = cam->getCamera();
+    //m_cameraSystem.update(m_elapsedTime, m_time);
+    //const Camera* cam = m_cameraSystem.getCamera("global");
+    //m_view = cam->getCamera();
 
     //Text::BitmapFont bitmapFont;
     //bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt", m_gameResource);
     //cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt");
     //cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 48.0f, true);
 
+    //!!This needs to move
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");
     if (mapFileName)
     {
         returnValue &= m_map.loadMap(m_gameResource, mapFileName->getData());
     }
+    //!!
 
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts);
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons);
+
+    //m_UpdateThread.m_cameraSystem = &m_cameraSystem;
+    m_UpdateThread.m_entityManager = &m_entityManager;
+    m_UpdateThread.m_gameObjectManager = &m_gameObjectManager;
+    m_UpdateThread.m_laserManager = &m_laserManager;
+
+    m_UpdateThread.Initialise(m_gameResource);
+
+    m_UpdateThread.createThread(1024 * 1024, "UpdateThread"); //1MB stack space. this also kicks the first frame of simulation
 
     return returnValue;
 }
@@ -158,45 +168,44 @@ void Application::mainGameLoop()
         }
         else
         {
-            BROFILER_FRAME("NewSpaceSim Frame Marker");
+            PROFILE_FRAME("NewSpaceSim Frame Marker");
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();
-
-            m_inputSystem.update(m_elapsedTime, m_time);
             Input input = m_inputSystem.getInput();
-            m_cameraSystem.update(m_elapsedTime, m_time, input);
-            const Camera* cam = m_cameraSystem.getCamera("global");
-            m_view = cam->getCamera();
-            
-            RenderInstanceTree renderList;
-            //renderList.reserve(m_previousRenderInstanceListSize); //Upfront reserve as much space as the last frame used, it should at max from once or twice a frame this way, ignoring the first one
-            m_gameObjectManager.update(renderList, m_elapsedTime, input);
-            m_gameResource->getLaserManager().update(renderList, m_elapsedTime, m_renderSystem.getDeviceMananger());
-			//cache->ProvideRenderInstances(renderList);
+            //THis needs to happen in single threaded update
+            {
+                PROFILE_EVENT("SingleThreadedUpdate", Green);
+                m_UpdateThread.LockCriticalSection();
+                //const Camera* cam = m_cameraSystem.getCamera("global");
+                //m_view = cam->getCamera();
 
-            m_renderSystem.beginDraw(renderList, m_gameResource);
-            m_renderSystem.update(m_gameResource, renderList, m_elapsedTime, m_time);
-            m_renderSystem.endDraw(m_gameResource);
-            m_previousRenderInstanceListSize = renderList.size();
+                m_UpdateThread.setInput(input);
 
-            //if (input.getInput(0)->getActionValue(InputActions::eAButton))
-            //{
-            //    m_renderSystem.flipWireFrameMod();
-            //}
-            //if (input.getInput(1)->getActionValue(m_inputSystem.getInputActionFromName("exit_game")))
-            //{
-            //    PostQuitMessage(0);
-            //}
+                m_UpdateThread.SetElapsedTime(m_elapsedTime, m_time);
 
-			InputActions::ActionType inputAction;
-			InputSystem::getInputActionFromName(exitGame, inputAction);
-            if (input.getInput(0)->getActionValue(inputAction))
+                m_messageQueues.swapQueues();
+
+                m_UpdateThread.UnblockThread();
+                m_UpdateThread.UnLockCriticalSection();
+            }
+            //Unblock simulation here
+            m_inputSystem.update(m_elapsedTime, m_time);
+
+            m_renderSystem.beginDraw();
+            m_renderSystem.update(m_elapsedTime, m_time);
+            m_renderSystem.endDraw();
+
+            InputActions::ActionType inputAction;
+            InputSystem::getInputActionFromName(exitGame, inputAction);
+            if (input.getInput(0) && input.getInput(0)->getActionValue(inputAction))
             {
                 PostQuitMessage(0);
             }
         }
     }
+
+    m_UpdateThread.stopThread();
 }
 
 //-----------------------------------------------------------------------------
@@ -228,15 +237,12 @@ LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wP
 //-----------------------------------------------------------------------------
 void Application::cleanup()
 {
-    m_gameResource->getDeviceManager().clearDeviceState();
-    m_gameResource->getSettingsManager().cleanup();
     m_renderSystem.cleanup();
-    m_gameResource->getTextureManager().cleanup();
-    m_gameResource->getDeviceManager().cleanup();
-    m_gameResource->getModelManager().cleanup();
     m_gameResource->getGameObjectManager().cleanup();
+    m_settingsManager.cleanup();
 
     //Need to add a cleanup call to the cache
     //delete cache;
+
 }
 

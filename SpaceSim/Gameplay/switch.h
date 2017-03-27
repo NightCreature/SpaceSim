@@ -40,7 +40,7 @@ public:
     //-------------------------------------------------------------------------
     // @brief 
     //-------------------------------------------------------------------------
-    virtual void handleMessage( const Message& msg );
+    virtual void handleMessage( const MessageSystem::Message& msg );
 
     HASH_ELEMENT_DEFINITION
 protected:

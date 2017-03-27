@@ -10,13 +10,13 @@
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Laser::update(float elapsedTime, const DeviceManager& deviceManager)
+void Laser::update(float elapsedTime)
 {
     m_position += m_direction * elapsedTime;
-    updateInstanceData(deviceManager);
+    updateInstanceData();
 }
 
-void Laser::updateInstanceData(const DeviceManager& deviceManager)
+void Laser::updateInstanceData()
 {
     Vector3 direction = m_direction;
     direction.normalize();
@@ -26,5 +26,4 @@ void Laser::updateInstanceData(const DeviceManager& deviceManager)
     wvpConstants.m_view = Application::m_view;
     wvpConstants.m_world = m_instanceData.world;
     //m_instanceData.m_shaderInstance.getMaterial().getEffect()->setWVPContent(deviceManager, wvpConstants);
-    UNUSEDPARAM(deviceManager);
 }

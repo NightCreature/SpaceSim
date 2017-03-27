@@ -7,7 +7,7 @@
 #ifdef _DEBUG
 #include "Core/StringOperations/StringHelperFunctions.h"
 #endif
-#include "brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 //-------------------------------------------------------------------------
 // @brief 
@@ -26,7 +26,7 @@ MeshGroup::~MeshGroup()
 //-------------------------------------------------------------------------
 void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box )
 {
-    BROFILER_CATEGORY("MeshGroup::update", Profiler::Color::Aqua);
+    PROFILE_EVENT("MeshGroup::update", Aqua);
     if (m_renderInstanceDirty || m_renderInstance == nullptr)
     {  
         //if ( m_renderInstance != nullptr)
@@ -36,7 +36,7 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
         //}
 		if (m_renderInstance == nullptr)
 		{
-            BROFILER_CATEGORY("MeshGroup::update::Allocation", Profiler::Color::Black);
+            PROFILE_EVENT("MeshGroup::update::Allocation", Black);
 			m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
 #ifdef _DEBUG
 			convertToWideString(name, m_renderInstance->m_name);

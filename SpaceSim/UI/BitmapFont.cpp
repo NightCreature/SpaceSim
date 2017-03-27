@@ -59,7 +59,7 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
     using namespace tinyxml2;
 
     std::string currentPath = extractPathFromFileName(bmpFile);
-    GameResourceHelper gameResource(resource);
+    RenderResourceHelper gameResource(resource);
 
     tinyxml2::XMLDocument document;
     tinyxml2::XMLError error = document.LoadFile(bmpFile.c_str());
@@ -200,7 +200,7 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
                 else if (Pages::PageInfo::fileHash == hashAttribute)
                 {
                     pageInfo.m_fileName = attribute->Value();
-                    gameResource.getWritableGameResource().getTextureManager().addLoad(gameResource.getGameResource().getDeviceManager(), currentPath + pageInfo.m_fileName);
+                    gameResource.getWriteableResource().getTextureManager().addLoad(gameResource.getResource().getDeviceManager(), currentPath + pageInfo.m_fileName);
                 }
             }
             m_pagesInformation.m_pages.push_back(pageInfo);

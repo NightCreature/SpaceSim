@@ -242,3 +242,7 @@ bin/SpaceSim_x64.exp
 *.FBX
 *.max
 bin/Temp/
+SDK/FastDelegate/Demo.cpp
+SpaceSim/NewSpaceSim/NewSpaceSim/
+.vs/ProjectSettings.json
+.vs/slnx.sqlite

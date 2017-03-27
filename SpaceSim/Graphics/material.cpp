@@ -116,8 +116,8 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
             const tinyxml2::XMLAttribute* attribute = node->FindAttribute("file_name");
             if (attribute)
             {
-                GameResourceHelper helper(resource);
-                m_effect = const_cast<Effect*>(helper.getWritableGameResource().getEffectCache().createEffect(resource, attribute->Value()));
+                RenderResourceHelper helper(resource);
+                m_effect = const_cast<Effect*>(helper.getWriteableResource().getEffectCache().createEffect(resource, attribute->Value()));
             }
             attribute = node->FindAttribute("technique_name");
             if (attribute)

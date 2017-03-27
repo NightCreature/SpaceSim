@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{61BFD15B-55F2-4621-B9DF-5CC9D2BAA035}</ProjectGuid>
     <RootNamespace>NewSpaceSim</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -72,15 +72,16 @@
     <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath);D:\Visual Leak Detector\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;D:\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
+    <EnableCppCoreCheck>true</EnableCppCoreCheck>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>SpaceSim_x64</TargetName>
     <OutDir>$(SolutionDir)..\..\bin</OutDir>
-    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -98,9 +99,12 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4324;4820;4061;4365</DisableSpecificWarnings>
       <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -134,13 +138,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegate.h" />
+    <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegateBind.h" />
     <ClInclude Include="..\..\Application\applicationsetting.h" />
     <ClInclude Include="..\..\Application\BaseApplication.h" />
     <ClInclude Include="..\..\Application\displaywindow.h" />
     <ClInclude Include="..\..\Application\GameWindow.h" />
+    <ClInclude Include="..\..\Application\UpdateThread.h" />
     <ClInclude Include="..\..\Core\ICommand.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\GameMessages.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\MessageObserver.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\MessageQueue.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\Messages.h" />
+    <ClInclude Include="..\..\Core\MessageSystem\RenderMessages.h" />
     <ClInclude Include="..\..\Core\Paths.h" />
+    <ClInclude Include="..\..\Core\Profiler\ProfilerMacros.h" />
     <ClInclude Include="..\..\Core\Resource\GameResource.h" />
+    <ClInclude Include="..\..\Core\Resource\GameResources.h" />
+    <ClInclude Include="..\..\Core\Resource\RenderResource.h" />
+    <ClInclude Include="..\..\Core\Resource\RenderResources.h" />
     <ClInclude Include="..\..\Core\Resource\resource.h" />
     <ClInclude Include="..\..\Core\Resource\Resourceable.h" />
     <ClInclude Include="..\..\Core\Settings\Settings.h" />
@@ -233,6 +249,7 @@
     <ClInclude Include="..\..\Loader\ModelLoaders\MmlLoader.h" />
     <ClInclude Include="..\..\Loader\ModelLoaders\ModelLoader.h" />
     <ClInclude Include="..\..\Loader\ModelLoaders\XMLModelLoader.h" />
+    <ClInclude Include="..\..\Loader\ResourceLoader.h" />
     <ClInclude Include="..\..\Logging\FileLogger.h" />
     <ClInclude Include="..\..\Logging\Logger.h" />
     <ClInclude Include="..\..\Math\MathUtilityFunctions.h" />
@@ -266,6 +283,8 @@
     <ClCompile Include="..\..\Application\displaywindow.cpp" />
     <ClCompile Include="..\..\Application\GameWindow.cpp" />
     <ClCompile Include="..\..\Application\main.cpp" />
+    <ClCompile Include="..\..\Application\UpdateThread.cpp" />
+    <ClCompile Include="..\..\Core\MessageSystem\MessageObserver.cpp" />
     <ClCompile Include="..\..\Core\Paths.cpp" />
     <ClCompile Include="..\..\Core\Resource\GameResource.cpp" />
     <ClCompile Include="..\..\Core\Resource\Resourceable.cpp" />
@@ -347,6 +366,7 @@
     <ClCompile Include="..\..\Loader\ModelLoaders\MmlLoader.cpp" />
     <ClCompile Include="..\..\Loader\ModelLoaders\ModelLoader.cpp" />
     <ClCompile Include="..\..\Loader\ModelLoaders\XMLModelLoader.cpp" />
+    <ClCompile Include="..\..\Loader\ResourceLoader.cpp" />
     <ClCompile Include="..\..\Logging\FileLogger.cpp" />
     <ClCompile Include="..\..\Logging\Logger.cpp" />
     <ClCompile Include="..\..\Math\matrix33.cpp" />

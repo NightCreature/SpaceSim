@@ -29,6 +29,8 @@ public:
     ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendState* alphaBlendState, ID3D11BlendState* blendState, unsigned int cubeMapWidhtHeight = 1024);
     ~ShadowMapRenderer();
 
+    void cleanup();
+
     void renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light);
 
     ID3D11ShaderResourceView* getShadowMap() { return m_shadowMapRV; }

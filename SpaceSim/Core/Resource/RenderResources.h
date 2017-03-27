@@ -1,0 +1,8 @@
+FIRST_RESOURCE(CameraManager)
+RESOURCE(DeviceManager)
+RESOURCE(EffectCache)
+RESOURCE(GameWindow)
+RESOURCE(LightManager)
+RESOURCE(ModelManager)
+RESOURCE(ShaderCache)
+RESOURCE(TextureManager)

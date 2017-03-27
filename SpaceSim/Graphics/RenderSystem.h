@@ -14,12 +14,29 @@
 #include "Graphics/CubeMapRenderer.h"
 #include "Graphics/ShadowMapRenderer.h"
 
+#include "Graphics/CameraManager.h"
+
+#include "Gameplay/particlesystemmanager.h" //This should move away from the gameplay directory
+#include "Graphics/LightManager.h"
+#include "Graphics/EffectCache.h"
+#include "Graphics/ShaderCache.h"
+
+#include "Core/Resource/RenderResource.h"
+#include "Core/MessageSystem/MessageObserver.h"
+
+#include "Loader/ResourceLoader.h"
+
 #ifdef _DEBUG
 #include <d3d11_1.h>
 #include <atlbase.h>
 #endif
 
 class RenderInstance;
+namespace MessageSystem
+{
+class MessageQueue;
+class Message;
+}
 
 struct CubeRendererInitialiseData
 {
@@ -45,13 +62,13 @@ public:
     
     void cleanup();
 
-    void beginDraw(RenderInstanceTree& renderInstances, Resource* resource);
+    void beginDraw();
 
     void CheckVisibility(RenderInstanceTree& renderInstances);
 
-    void update(Resource* resource, RenderInstanceTree& renderInstances, float elapsedTime, double time);
+    void update(float elapsedTime, double time);
 
-    void endDraw( Resource* resource );
+    void endDraw();
 
     HWND getWindowHandle() const { return m_window.getWindowHandle(); }
     const IDXGIFactory* getDXGIFactory() const { return m_dxgiFactory; }
@@ -63,17 +80,27 @@ public:
     ModelManager& getModelManger() { return m_modelManger; }
 
     CubeMapRenderer* getCubeMapRenderer() { return m_cubeMapRenderer; }
+
+    void CreateRenderList(const MessageSystem::Message& msg);
 protected:
 private:
     bool createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight);
     void patchUpDXGIFactory(ID3D11Device* device);
     void setupSwapChainForRendering( ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight );
-    void initialiseCubemapRendererAndResources( GameResourceHelper &resourceHelper );
+    void initialiseCubemapRendererAndResources( Resource* resource );
+    
+    RenderResource* m_renderResource;
 
+    CameraManager      m_cameraSystem;
     DeviceManager m_deviceManager;
     TextureManager m_textureManager;
     ModelManager m_modelManger;
+    LightManager m_lightManager;
+    ParticleSystemManager m_pfxManager;
+    ShaderCache m_shaderCache;
+    EffectCache m_effectCache;
     GameWindow m_window;
+    ResourceLoader m_resourceLoader;
     std::string m_appName;
 	std::string m_windowName;
 
@@ -108,6 +135,12 @@ private:
     ShadowMapRenderer* m_shadowMapRenderer;
     ID3D11SamplerState* m_samplerState;
 
-
+    Matrix44 m_CullingProjectionMatrix;
     RenderInstanceTree visibleInstances;
+
+    MessageSystem::MessageObserver m_messageObservers;
+
+
+    //TEMP HACK
+    RenderInstanceTree m_renderInstances;
 };

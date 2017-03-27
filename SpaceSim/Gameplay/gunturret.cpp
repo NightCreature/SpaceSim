@@ -13,7 +13,7 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
 #include <vector>
-#include "Core/Resource/GameResource.h"
+#include "Core/Resource/renderResource.h"
 #include "Graphics/EffectCache.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/DebugBox.h"
@@ -46,11 +46,12 @@ void GunTurret::initialise(const ShaderInstance& shaderInstance)
 {
     UNUSEDPARAM(shaderInstance);
 
-    const SettingsManager& sm = getGameResource().getSettingsManager();
-    const ISetting<std::string>* modelString = sm.getSetting<std::string>("Guns");
+    const SettingsManager* sm = m_resource->m_settingsManager;
+    const ISetting<std::string>* modelString = sm->getSetting<std::string>("Guns");
     if (modelString)
     {
-        m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, modelString->getData());
+        MSG_TRACE_CHANNEL("REFACTOR", "SEND A MESSAGE TO LOAD A MODEL TO THE RENDERER");
+        //m_drawableObject = getWriteableResource().getModelManager().LoadModel(m_resource, shaderInstance, modelString->getData());
     }
 
     Super::initialise(shaderInstance);
@@ -64,23 +65,24 @@ void GunTurret::onHit()
 {
     if (m_active)
     {
-        ParticleSystemManager& psm = getWriteableGameResource().getParticleSystemManager();
-        ParticleEmitter* pe = psm.createEmitter(m_center, Vector3::yAxis());
-        pe->setMaxParticles(250.0f);
-        pe->setEmissionRate(75.0f);
-        pe->setParticleStartColor(Color(1.0f, 1.0f, 1.0f, 1.0f));//Color(0.75f, 0.5f, 0.01f, 0.75f));
-        pe->setParticleKey1Color(Color(1.0f, 1.0f, 0.0f, 0.8f));
-        pe->setParticleKey1Pos(0.001f);
-        pe->setParticleKey2Color(Color(1.0f, 0.5f, 0.0f, 0.6f));
-        pe->setParticleKey2Pos(0.25f);
-        pe->setParticelEndColor(Color(0.0f, 0.0f, 0.0f, 0.0f));//Color(0.99f, 0.2f, 0.1f, 0.0f));
-        pe->setParticleLifetime(1.0f);
-        pe->setLifeTime(5.0f);
-        pe->setParticleSize(7.5f);
-        pe->setStartVelocity(10.0f);
-        pe->setSpreadAngle(180.0f);
-        pe->setAlive(true);
-        m_active = false;
+        MSG_TRACE_CHANNEL("REFACTOR", "SEND A MSG TO CREATE A PARTICLE EFFECT IN THIS LOCATION");
+        //ParticleSystemManager& psm = getWriteableResource().getParticleSystemManager();
+        //ParticleEmitter* pe = psm.createEmitter(m_center, Vector3::yAxis());
+        //pe->setMaxParticles(250.0f);
+        //pe->setEmissionRate(75.0f);
+        //pe->setParticleStartColor(Color(1.0f, 1.0f, 1.0f, 1.0f));//Color(0.75f, 0.5f, 0.01f, 0.75f));
+        //pe->setParticleKey1Color(Color(1.0f, 1.0f, 0.0f, 0.8f));
+        //pe->setParticleKey1Pos(0.001f);
+        //pe->setParticleKey2Color(Color(1.0f, 0.5f, 0.0f, 0.6f));
+        //pe->setParticleKey2Pos(0.25f);
+        //pe->setParticelEndColor(Color(0.0f, 0.0f, 0.0f, 0.0f));//Color(0.99f, 0.2f, 0.1f, 0.0f));
+        //pe->setParticleLifetime(1.0f);
+        //pe->setLifeTime(5.0f);
+        //pe->setParticleSize(7.5f);
+        //pe->setStartVelocity(10.0f);
+        //pe->setSpreadAngle(180.0f);
+        //pe->setAlive(true);
+        //m_active = false;
     }
 }
 
@@ -134,12 +136,13 @@ void GunTurret::transformBoundingBox()
 
 void GunTurret::fireLaser()
 {
-    ShaderInstance shaderInstance;
-    shaderInstance.setMaterial(Material(0.0f, Color::black(), Color::black(), Color::red(), Color::red()));
-    shaderInstance.getMaterial().setBlendState(true);
-    shaderInstance.getMaterial().setEffect(getGameResource().getEffectCache().getEffect("laser_effect.xml"));
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+    //ShaderInstance shaderInstance;
+    //shaderInstance.setMaterial(Material(0.0f, Color::black(), Color::black(), Color::red(), Color::red()));
+    //shaderInstance.getMaterial().setBlendState(true);
+    //shaderInstance.getMaterial().setEffect(getResource().getEffectCache().getEffect("laser_effect.xml"));
 
-    getWriteableGameResource().getLaserManager().addInstance(m_position + Vector3(0.0f, 3.0f, 0.0f), m_direction, shaderInstance);
+    //getWriteableResource().getLaserManager().addInstance(m_position + Vector3(0.0f, 3.0f, 0.0f), m_direction, shaderInstance);
 }
 
 void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)
@@ -167,7 +170,7 @@ void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)
                     //        createScorchMark(l->getPosition(), -planenormal);
                     //    }
                     //    //Setup particle system when laser hits something
-                    //    ParticleSystemManager* psm = getWriteableGameResource()->getParticleSystemManager();
+                    //    ParticleSystemManager* psm = getWriteableResource()->getParticleSystemManager();
                     //    ParticleEmitter* pe = psm->createEmitter(l->getPosition(), planenormal);
                     //    pe->setMaxParticles(5.0f);
                     //    pe->setEmissionRate(5.0f);
@@ -274,13 +277,15 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
             if (attribute != nullptr)
             {
                 //Heavily relies on the shader instance existing before we load the model, might be better to put the model construction in initialise instead
-                m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
-                m_drawableObject->setDirty();
+                //m_drawableObject = getWriteableResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
+                //m_drawableObject->setDirty();
+                MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
             }
         }
         if (childElementHash == Material::m_hash)
         {
-            shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement );
+            MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), childElement );
         }
     }
 
@@ -386,8 +391,9 @@ void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, 
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void GunTurret::handleMessage( const Message& msg )
+void GunTurret::handleMessage( const MessageSystem::Message& msg )
 {
-    const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    setActive(activateMsg.shouldActivate());
+    UNUSEDPARAM(msg);
+    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
+    //setActive(activateMsg.shouldActivate());
 }

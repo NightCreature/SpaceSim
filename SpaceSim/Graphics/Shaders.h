@@ -13,6 +13,7 @@ class VertexShader
 {
 public:
     VertexShader() {}
+    void cleanup() { m_shader->Release(); }
 
     void deserialise(const tinyxml2::XMLElement* element);
     bool createShader(const DeviceManager& deviceManager);
@@ -33,6 +34,7 @@ class HullShader
 {
 public:
     HullShader() {}
+    void cleanup() { m_shader->Release(); }
 
     void deserialise(const tinyxml2::XMLElement* element);
     bool createShader(const DeviceManager& deviceManager);
@@ -51,6 +53,7 @@ class DomainShader
 {
 public:
     DomainShader() {}
+    void cleanup() { m_shader->Release(); }
     
     void deserialise(const tinyxml2::XMLElement* element);
     bool createShader(const DeviceManager& deviceManager);
@@ -69,6 +72,7 @@ class GeometryShader
 {
 public:
     GeometryShader() {}
+    void cleanup() { m_shader->Release(); }
 
     void deserialise(const tinyxml2::XMLElement* element);
     bool createShader(const DeviceManager& deviceManager);
@@ -87,6 +91,7 @@ class PixelShader
 {
 public:
     PixelShader() {}
+    void cleanup() { m_shader->Release(); }
 
     void deserialise(const tinyxml2::XMLElement* element);
     bool createShader(const DeviceManager& deviceManager);
@@ -105,6 +110,7 @@ class ComputeShader
 {
 public:
     ComputeShader() {}
+    void cleanup() { m_shader->Release(); }
 
     void deserialise(const tinyxml2::XMLElement* element);
     bool createShader(const DeviceManager& deviceManager);

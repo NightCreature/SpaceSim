@@ -11,6 +11,8 @@ public:
     ShaderCache();
     ~ShaderCache();
 
+    void cleanup();
+
     //These should be renamed to shader create functions and return handles
     const unsigned int getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
     const unsigned int getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);

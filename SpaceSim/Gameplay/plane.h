@@ -21,7 +21,7 @@ public:
         m_name = str.str();
         m_invertNormal = false;
 
-       // e = getWriteableGameResource().getEntityManager().create();
+       // e = getWriteableResource().getEntityManager().create();
 
     }
 	Plane(Resource* resource, const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4, bool changeWindingOrder);
@@ -41,10 +41,7 @@ private:
 	void translateBbox(float xt, float yt, float zt);
 	void rotateBbox(float angle, float xr, float yr, float zr);
 
-    //-------------------------------------------------------------------------
-    // @brief 
-    //-------------------------------------------------------------------------
-    virtual void handleMessage( const Message& msg );
+    virtual void handleMessage( const MessageSystem::Message& msg );
     
 	float m_widthstartpos;
 	float m_widthendpos;

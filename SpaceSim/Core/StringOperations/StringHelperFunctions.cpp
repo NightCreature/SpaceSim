@@ -110,6 +110,21 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
 }
 
 //-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+std::string FormatString(const char* format, ...)
+{
+    static char buf[2048];
+    va_list args;
+    va_start(args, format);
+    vsprintf_s(buf, format, args);
+    va_end(args);
+    
+    return buf;
+}
+
+//-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
