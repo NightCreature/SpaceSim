@@ -87,6 +87,8 @@ public:
         {}
     ~Technique() {}
 
+    void cleanup() { m_constantBuffers[0]->Release(); m_constantBuffers[1]->Release(); }
+
     void deserialise(const tinyxml2::XMLElement* element);
 
     unsigned int getNameHash() const { return m_nameHash; }
@@ -169,6 +171,8 @@ public:
         //    m_wvpBuffer = 0;
         //}
     }
+
+    void cleanup() { for (auto technique : m_techniques) { technique.second.cleanup(); } }
 
     void deserialise(const tinyxml2::XMLElement* node, Resource* resource);
     void setupEffect() const;
