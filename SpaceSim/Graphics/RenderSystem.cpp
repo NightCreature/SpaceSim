@@ -16,6 +16,7 @@
 #include "Core/Profiler/ProfilerMacros.h"
 
 #include "Core/MessageSystem/GameMessages.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
 
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 
@@ -202,6 +203,7 @@ void RenderSystem::initialise(Resource* resource)
     rasterizerStateDesc.SlopeScaledDepthBias = 0.0f;
     rasterizerStateDesc.DepthClipEnable = false;
     hr = device->CreateRasterizerState(&rasterizerStateDesc, &m_rasteriserState);
+    D3DDebugHelperFunctions::SetDebugChildName(m_rasteriserState, "RenderSystem RasterizerState");
 
     D3D11_RASTERIZER_DESC rasterizerWireStateDesc;
     rasterizerWireStateDesc.CullMode = D3D11_CULL_NONE;
@@ -215,6 +217,7 @@ void RenderSystem::initialise(Resource* resource)
     rasterizerWireStateDesc.SlopeScaledDepthBias = 0.0f;
     rasterizerWireStateDesc.DepthClipEnable = false;
     hr = device->CreateRasterizerState(&rasterizerWireStateDesc, &m_rasteriserWireFrameModeState);
+    D3DDebugHelperFunctions::SetDebugChildName(m_rasteriserWireFrameModeState, "RenderSystem WireFrameRasterizerState");
     
     D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
     depthStencilStateDesc.DepthEnable = true;
@@ -232,6 +235,7 @@ void RenderSystem::initialise(Resource* resource)
     depthStencilStateDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
     depthStencilStateDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
     hr = device->CreateDepthStencilState(&depthStencilStateDesc, &m_depthStencilState);
+    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilState, "RenderSystem DepthStencilState");
 
     D3D11_BLEND_DESC blendStateDesc;
     blendStateDesc.AlphaToCoverageEnable = false;
@@ -248,6 +252,7 @@ void RenderSystem::initialise(Resource* resource)
         blendStateDesc.RenderTarget[counter].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
     }
     hr = device->CreateBlendState(&blendStateDesc, &m_blendState);
+    D3DDebugHelperFunctions::SetDebugChildName(m_blendState, "RenderSystem BlendState");
 
     D3D11_BLEND_DESC blendDescriptor;
     blendDescriptor.AlphaToCoverageEnable = FALSE;
@@ -265,6 +270,7 @@ void RenderSystem::initialise(Resource* resource)
     }
 
     hr = device->CreateBlendState(&blendDescriptor, &m_alphaBlendState);
+    D3DDebugHelperFunctions::SetDebugChildName(m_alphaBlendState, "RenderSystem AlphaBlendState");
     
     m_textureManager.createSamplerStates(m_deviceManager);
 
@@ -273,6 +279,7 @@ void RenderSystem::initialise(Resource* resource)
     lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float) + 3 * 16 * sizeof(float);
     lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = device->CreateBuffer(&lightContantsDescriptor, 0, &m_lightConstantBuffer);
+    D3DDebugHelperFunctions::SetDebugChildName(m_lightConstantBuffer, "RenderSystem Light Constant buffer");
 
     D3D11_SAMPLER_DESC samplerStateDesc;
     samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -293,6 +300,7 @@ void RenderSystem::initialise(Resource* resource)
     {
         MSG_TRACE_CHANNEL("RENDER SYSTEM", "Failed to create sampler state: 0x%x", hr)
     }
+    D3DDebugHelperFunctions::SetDebugChildName(m_samplerState, "RenderSystem SamplerState");
 
 #ifdef _DEBUG
     m_debugAxis = new OrientationAxis();
@@ -549,6 +557,8 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
             return;
     }
 
+    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilBuffer, "RenderSystem DepthStencil Texture");
+
 #if _DEBUG //Name the depth Stencil buffer
     //m_depthStencilBuffer->SetPrivateData( WKPDID_D3DDebugObjectName, 18, "DepthStencilBuffer" );
 #endif
@@ -564,6 +574,8 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
         MSG_TRACE_CHANNEL("ERROR", "Failed to create the depth stencil view")
             return;
     }
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilView, "RenderSystem DepthStencil View");
 
     deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
@@ -881,6 +893,8 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
             return;
         }
 
+        D3DDebugHelperFunctions::SetDebugChildName(textureResource, FormatString("RenderSystem CubeMap Render Target"));
+
         rtDesc.Texture2DArray.ArraySize = 1;
         for (size_t rtCounter = 0; rtCounter < 6; ++rtCounter)
         {
@@ -892,6 +906,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
                 MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create render target view for the cubemap renderer: 0x%x", hr);
                 return;
             }
+            D3DDebugHelperFunctions::SetDebugChildName(rtView[rtCounter], FormatString("RenderSystem CubeMap Render Target View no. %d", counter));
         }
 
         hr = m_deviceManager.getDevice()->CreateShaderResourceView(textureResource, &srvDesc, &srView);
@@ -900,6 +915,8 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
             MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create shader resource view for the cubemap renderer: 0x%x", hr);
             return;
         }
+
+        D3DDebugHelperFunctions::SetDebugChildName(srView, FormatString("RenderSystem CubeMap SRV"));
 
         cubeMap.createRenderTarget(textureResource, rtView, srView);
         tm.addTexture(m_cubeSettings[counter].m_texutureResourceName, cubeMap);

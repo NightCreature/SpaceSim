@@ -132,6 +132,9 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         MSG_TRACE_CHANNEL("EFFECT_ERROR", "failed to create the World, View and Porjection buffer for this effect");
             return;
     }
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_constantBuffers[0], FormatString("Constant Buffer 0 Technique %s has: vs: %ull, ps: %ull", techniqueName.c_str(), m_vertexShader, m_pixelShader));
+
     D3D11_BUFFER_DESC materialDescriptor;
     ZeroMemory(&materialDescriptor, sizeof(D3D11_BUFFER_DESC));
     materialDescriptor.ByteWidth = sizeof(float)* 20;
@@ -142,6 +145,7 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         MSG_TRACE_CHANNEL("EFFECT_ERROR", "failed to create the material buffer for this effect: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
             return;
     }
+    D3DDebugHelperFunctions::SetDebugChildName(m_constantBuffers[1], FormatString("Constant Buffer 1 Technique %s has: vs: %ull, ps: %ull", techniqueName.c_str(), m_vertexShader, m_pixelShader));
 }
 
 //-----------------------------------------------------------------------------
