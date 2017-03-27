@@ -56,18 +56,18 @@ public:
 	sideplane classifyPlane(const Vector3& normal, float d) const;
 
 	///Calculate the center point of the box
-	const Vector3 center() const {return (m_min + m_max) * 0.5;}
+	const Vector3 center() const {return (m_min + m_max) * 0.5f;}
 	///Defines the width(x), height(y) and length(z) of the bbox
 	const Vector3 size() const {return m_max - m_min;}
 	///Defines the radius vector of the bbox
-	const Vector3 radius() const {return size() * 0.5;}
+	const float radius() const {return size().length() * 0.5f;}
 
 	const Vector3 getMin() const {return m_min;}
 	const Vector3 getMax() const {return m_max;}
 	void setMin(const Vector3& min) {m_min = min;}
 	void setMax(const Vector3& max) {m_max = max;}
 
-	Vector3 getCenter() const {return ((m_min + m_max) * 0.5f);}
+	Vector3 getCenter() const {return center();}
 
     void resetToBox(const Bbox& otherBox);
 protected:

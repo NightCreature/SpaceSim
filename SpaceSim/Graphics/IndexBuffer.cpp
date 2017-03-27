@@ -3,6 +3,8 @@
 #include <iostream>
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+#include "Graphics/D3DDebugHelperFunctions.h"
+
 void IndexBuffer::createBuffer( const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic, unsigned int bindFlag )
 {
     D3D11_BUFFER_DESC bufferDescriptor;
@@ -26,6 +28,8 @@ void IndexBuffer::createBuffer( const DeviceManager& deviceManager, unsigned int
     }
 
     dynamic = false;
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_buffer, FormatString("Index buffer size: %d, no. indecis: %d", bufferSize, bufferSize / (sizeof(unsigned int))));
 }
 
 //-----------------------------------------------------------------------------

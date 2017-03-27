@@ -43,7 +43,7 @@ private:
     //-------------------------------------------------------------------------
     // @brief 
     //-------------------------------------------------------------------------
-    virtual void handleMessage( const Message& msg );
+    virtual void handleMessage( const MessageSystem::Message& msg );
 
     LaserList m_lasers;
     LaserList::iterator m_lasersit;

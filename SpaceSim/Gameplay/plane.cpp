@@ -9,6 +9,10 @@
 
 #include "Physics/PhysicsManager.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/RenderMessages.h"
+
 int Plane::m_planeCount = 0;
 
 //This needs to change so that it is a helper class that sets up a face correctly and then returns the face
@@ -20,6 +24,7 @@ m_changeWindingOrder(changeWindingOrder)
     str << "plane_" << m_planeCount;
     ++m_planeCount;
     m_name = str.str();
+    m_nameHash = hashString(m_name);
 	m_fillx = false;
 	m_filly = false;
 	m_fillz = false;
@@ -70,8 +75,8 @@ m_changeWindingOrder(changeWindingOrder)
 void Plane::initialise(const ShaderInstance& shaderInstance)
 {
     Face::CreationParams params;
-    params.resource = m_resource;
-    params.shaderInstance = &shaderInstance;
+//    params.resource = m_resource;
+//    params.shaderInstance = &shaderInstance;
     params.nrVerticesInX = m_rows;
     params.nrVerticesInY = m_coloms;
     params.width = m_widthendpos - m_widthstartpos;
@@ -91,15 +96,11 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
         params.tesselate = true;
     }
 
-    CreatedModel face = Face::CreateFace(params);
-    m_drawableObject = face.model;
-    m_drawableObject->setOriginalBoundingBox(face.boundingBox);
-
-    //ModelComponentManger mcm;
-    //mcm.addEntity(e, *m_drawableObject, m_world);
-
-    //Register the bounding box with the physics
-    getWriteableGameResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
+    auto resource = GameResourceHelper(m_resource).getWriteableResource();
+    MessageSystem::CreateFixedModelResource<Face::CreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Face::CreationParams);
+    createPlaneModel.SetData(params);
+    createPlaneModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
+    resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); 
 
     Super::initialise(shaderInstance);
 }
@@ -138,7 +139,8 @@ const ShaderInstance Plane::deserialise( const tinyxml2::XMLElement* node )
         unsigned int childElementHash = hashString(childElement->Value());
         if (Material::m_hash == childElementHash)
         {
-            shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
+            MSG_TRACE_CHANNEL("REFACTOR", "SEND A MESSAGE TO CREATE A RENDER RESOURCE");
+            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), childElement);
         }
     }
     return shaderInstance;
@@ -180,14 +182,32 @@ void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, cons
     //	(lowerleft.x() , upperright.y(), lowerleft.z());
     //	glEnd();
     //}
+    MessageSystem::RenderInformation renderInfo;
+    MessageSystem::RenderInformation::RenderInfo data;
+    data.m_renderObjectid = m_renderHandle;
+    data.m_gameobjectid = m_nameHash;
+    data.m_world = m_world;
+    renderInfo.SetData(data);
+    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
 }
 
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void Plane::handleMessage( const Message& msg )
+void Plane::handleMessage( const MessageSystem::Message& msg )
 {
-    UNUSEDPARAM(msg);
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
+    {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
+        m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
+        //Store the render object reference we get back and the things it can do
+
+        //Register the bounding box with the physics
+        //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
+
+        m_initialisationDone = true;
+    }
 }
 
 //-------------------------------------------------------------------------

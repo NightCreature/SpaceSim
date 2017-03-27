@@ -5,11 +5,13 @@
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+#include "Graphics/D3DDebugHelperFunctions.h"
+
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDecalartionDesctriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob)
+bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDeclarationDescriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob)
 {
     D3D11_BUFFER_DESC bufferDescriptor;
     ZeroMemory(&bufferDescriptor, sizeof(D3D11_BUFFER_DESC));
@@ -38,8 +40,12 @@ bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceMana
         return false;
     }
     
+
     m_vertexCount = bufferSize / m_vertexStride;
     dynamic = false;
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_buffer, FormatString("Vertex Buffer with size: %d, no. vertices: %d", bufferSize, m_vertexCount));
+    D3DDebugHelperFunctions::SetDebugChildName(m_inputLayout, FormatString("Vertex InputLayout for buffer with size: %d, no. vertices: %d", bufferSize, m_vertexCount));
 
     return true;
 }
@@ -63,7 +69,7 @@ bool VertexBuffer::createVertexInputLayout( const DeviceManager& deviceManager, 
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDecalartionDesctriptor::createInputElementLayout(size_t& vertexStride) const
+const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDeclarationDescriptor::createInputElementLayout(size_t& vertexStride) const
 {
     std::vector<D3D11_INPUT_ELEMENT_DESC> vertexDataLayoutElements;
     //Create the buffer layout elements

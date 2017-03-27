@@ -22,10 +22,13 @@ const size_t numberOfTexcoords = 1;
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-CreatedModel CreateFace(const CreationParams& params)
+CreatedModel CreateFace(const CreationParams& params, Resource* resource)
 {
-    GameResource& gameResource = *(GameResource*)params.resource;
-    const ShaderInstance& shaderInstance = *(params.shaderInstance);
+    RenderResourceHelper renderResourceHelper(resource);
+    const RenderResource& renderResource = renderResourceHelper.getResource();
+    //const ShaderInstance& shaderInstance = *(params.shaderInstance);
+
+    ShaderInstance shaderInstance;
 
     CreatedModel face;
     face.model = new Model();
@@ -40,10 +43,10 @@ CreatedModel CreateFace(const CreationParams& params)
         MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), shaderInstance);
         face.model->getMeshData().push_back(group);
         face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
-        if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
-            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.xml"));
-        }
+        //if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
+        //{
+            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.xml"));
+        //}
 
         VertexBuffer* vb = face.model->getMeshData()[0]->getGeometryInstance().getVB();
         IndexBuffer* ib = face.model->getMeshData()[0]->getGeometryInstance().getIB();
@@ -77,14 +80,14 @@ CreatedModel CreateFace(const CreationParams& params)
 
         //Move pointer to start of vertex array  
         const Technique* technique = face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
-        VertexDecalartionDesctriptor vertexDesc;
+        VertexDeclarationDescriptor vertexDesc;
         vertexDesc.position = 3;
         vertexDesc.normal = true;
         vertexDesc.tangent = true;
         vertexDesc.textureCoordinateDimensions = texCoordDimensions;
-        const VertexShader* shader = gameResource.getShaderCache().getVertexShader(technique->getVertexShader());
+        const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
-        if (!vb->createBufferAndLayoutElements(gameResource.getDeviceManager(), static_cast<unsigned int>(bufferSize), startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
+        if (!vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), static_cast<unsigned int>(bufferSize), startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
         {
             MSG_TRACE_CHANNEL("VERTEXBUFFER_ERROR", "Failed to create VB!");
             assert(false);
@@ -100,7 +103,7 @@ CreatedModel CreateFace(const CreationParams& params)
         unsigned int* startOfIndexData = indecis;
         createIndexData(indecis, params.changeWindingOrder, rows, columns);
 
-        ib->createBuffer(gameResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(renderResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
         delete[] startOfIndexData; //cleanup
         indecis = nullptr;
         startOfIndexData = nullptr;
@@ -114,7 +117,7 @@ CreatedModel CreateFace(const CreationParams& params)
         face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
         if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(gameResource.getEffectCache().getEffect("simple_effect.fx"));
+            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.fx"));
         }
     }
 

@@ -3,6 +3,7 @@
 #include "UI/Messages.h"
 #include "Core/Resource/Resourceable.h"
 #include "Core/Resource/GameResource.h"
+#include "Core/Resource/RenderResource.h"
 #include <cstddef>
 #include <vector>
 

@@ -13,6 +13,46 @@ ShaderCache::ShaderCache()
 //-------------------------------------------------------------------------
 ShaderCache::~ShaderCache()
 {
+    cleanup();
+
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void ShaderCache::cleanup()
+{
+    for (auto shader : m_vertexShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_vertexShaders.clear();
+    for (auto shader : m_domainShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_domainShaders.clear();
+    for (auto shader : m_hullShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_hullShaders.clear();
+    for (auto shader : m_geometryShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_geometryShaders.clear();
+    for (auto shader : m_pixelShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_pixelShaders.clear();
+    for (auto shader : m_computeShaders)
+    {
+        shader.second.cleanup();
+    }
+    m_computeShaders.clear();
 }
 
 //-------------------------------------------------------------------------
@@ -135,6 +175,11 @@ const unsigned int  ShaderCache::getComputeShader(const tinyxml2::XMLElement* el
 //-------------------------------------------------------------------------
 const VertexShader* ShaderCache::getVertexShader(unsigned int resourceName) const
 {
+    if (m_vertexShaders.empty())
+    {
+        return nullptr;
+    }
+
     unsigned int hashedFileName = resourceName;
     VertexShaders::const_iterator it = m_vertexShaders.find(hashedFileName);
     if (it != m_vertexShaders.end())
@@ -150,6 +195,11 @@ const VertexShader* ShaderCache::getVertexShader(unsigned int resourceName) cons
 //-------------------------------------------------------------------------
 const HullShader* ShaderCache::getHullShader(unsigned int resourceName) const
 {
+    if (m_hullShaders.empty())
+    {
+        return nullptr;
+    }
+
     unsigned int hashedFileName = resourceName;
     HullShaders::const_iterator it = m_hullShaders.find(hashedFileName);
     if (it != m_hullShaders.end())
@@ -164,6 +214,11 @@ const HullShader* ShaderCache::getHullShader(unsigned int resourceName) const
 //-------------------------------------------------------------------------
 const DomainShader* ShaderCache::getDomainShader(unsigned int resourceName) const
 {
+    if (m_domainShaders.empty())
+    {
+        return nullptr;
+    }
+
     unsigned int hashedFileName = resourceName;
     DomainShaders::const_iterator it = m_domainShaders.find(hashedFileName);
     if (it != m_domainShaders.end())
@@ -178,6 +233,11 @@ const DomainShader* ShaderCache::getDomainShader(unsigned int resourceName) cons
 //-------------------------------------------------------------------------
 const GeometryShader* ShaderCache::getGeometryShader(unsigned int resourceName) const
 {
+    if (m_geometryShaders.empty())
+    {
+        return nullptr;
+    }
+
     unsigned int hashedFileName = resourceName;
     GeometryShaders::const_iterator it = m_geometryShaders.find(hashedFileName);
     if (it != m_geometryShaders.end())
@@ -192,6 +252,11 @@ const GeometryShader* ShaderCache::getGeometryShader(unsigned int resourceName) 
 //-------------------------------------------------------------------------
 const PixelShader* ShaderCache::getPixelShader(unsigned int resourceName) const
 {
+    if (m_pixelShaders.empty())
+    {
+        return nullptr;
+    }
+
     unsigned int hashedFileName = resourceName;
     PixelShaders::const_iterator it = m_pixelShaders.find(hashedFileName);
     if (it != m_pixelShaders.end())
@@ -206,6 +271,11 @@ const PixelShader* ShaderCache::getPixelShader(unsigned int resourceName) const
 //-------------------------------------------------------------------------
 const ComputeShader* ShaderCache::getComputeShader(unsigned int resourceName) const
 {
+    if (m_computeShaders.empty())
+    {
+        return nullptr;
+    }
+
     unsigned int hashedFileName = resourceName;
     ComputeShaders::const_iterator it = m_computeShaders.find(hashedFileName);
     if (it != m_computeShaders.end())

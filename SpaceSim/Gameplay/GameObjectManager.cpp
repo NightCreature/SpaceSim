@@ -2,7 +2,9 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "UI/Messages.h"
 
-#include "Brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
+
+#include "Core/MessageSystem/RenderMessages.h"
 
 GameObjectManager::GameObjectManager(void)
 {
@@ -81,19 +83,41 @@ const std::vector<GameObject*> GameObjectManager::getGameObjectsThatDontContain(
 
 void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime, const Input& input)
 {
-    BROFILER_CATEGORY("GameObjectManagerUpdate", Profiler::Color::Red);
+    PROFILE_EVENT("GameObjectManagerUpdate", Red);
     for (auto gameObject : m_gameObjects)
     {
-        gameObject.second->update(renderList, elapsedTime, input);
+        if (gameObject.second != nullptr && !gameObject.second->IsInitialising())
+        {
+            gameObject.second->update(renderList, elapsedTime, input);
+        }
     }
 }
 
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void GameObjectManager::handleMessage( const Message& message ) const
+void GameObjectManager::handleMessage( const MessageSystem::Message& message )
 {
-    std::for_each(m_gameObjects.begin(), m_gameObjects.end(), DispatchFunctor(message));
+    UNUSEDPARAM(message);
+    //std::for_each(m_gameObjects.begin(), m_gameObjects.end(), DispatchFunctor(message));
+    if (MESSAGE_ID(CreatedRenderResourceMessage) == message.getMessageId())
+    { 
+        auto msg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(message);
+        auto data = msg.GetData();
+        if (m_gameObjects[static_cast<unsigned int>(data->m_gameObjectId)] != nullptr)
+        {
+            m_gameObjects[static_cast<unsigned int>(data->m_gameObjectId)]->handleMessage(message);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void GameObjectManager::addMessage(const Message& message)
+{
+    UNUSEDPARAM(message);
 }
 
 //-------------------------------------------------------------------------

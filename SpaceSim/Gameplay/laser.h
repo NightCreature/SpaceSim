@@ -2,6 +2,7 @@
 #define LASER_H
 
 #include "Gameplay/box.h"
+#include "Gameplay/bbox.h"
 #include "Math/matrix44.h"
 #include "Graphics/ShaderInstance.h"
 #include "Math/vector3.h"
@@ -14,6 +15,8 @@ struct LaserInstanceData
     LaserInstanceData(const ShaderInstance& shaderInstance) : m_shaderInstance(shaderInstance), world() {}
     ShaderInstance m_shaderInstance;
     Matrix44 world;
+
+    Bbox m_boundingBox;
 };
 
 class Laser
@@ -23,7 +26,7 @@ public:
 	Laser(const Vector3& pos, const Vector3& dir, const ShaderInstance& shaderInstance) : m_position(pos), m_direction(dir), m_instanceData(shaderInstance) {}
 	~Laser() {}
 
-    void update(float elapsedTime, const DeviceManager& deviceManager);
+    void update(float elapsedTime);
 
     const Vector3& getPosition() const { return m_position; }
     const Vector3& getDirection() const { return m_direction; }
@@ -34,7 +37,7 @@ public:
     }
 protected:
 private:
-    void updateInstanceData(const DeviceManager& deviceManager);
+    void updateInstanceData();
 
     LaserInstanceData m_instanceData;
     Vector3 m_position;

@@ -4,7 +4,7 @@
 #include "Graphics/EffectCache.h"
 #include "Graphics/modelmanager.h"
 
-#include "brofiler.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 const size_t maxNumberRenderInstances = 1024;
 
@@ -13,10 +13,11 @@ const size_t maxNumberRenderInstances = 1024;
 //-------------------------------------------------------------------------
 LaserManager::LaserManager() : m_enemyLaser(nullptr), m_playerLaser(nullptr), m_currentNumberOfEnemyLasers(0), m_currentNumberOfPlayerLasers(0)
 {
+    ShaderInstance instance;
     m_renderInstancePool.reserve(maxNumberRenderInstances);
     for (size_t counter = 0; counter < maxNumberRenderInstances; ++counter)
     {
-        m_renderInstancePool.push_back( new RenderInstance(nullptr, nullptr) );
+        m_renderInstancePool.push_back( new RenderInstance(nullptr, &instance) ); //Breaks horribly and should generate a render resource request
     }
 }
 
@@ -57,10 +58,12 @@ LaserManager::~LaserManager()
 //-------------------------------------------------------------------------
 void LaserManager::initialise(Resource* resource)
 {
-    GameResourceHelper helper(resource);
-    ShaderInstance enemyShaderInstance, playerShaderInstance;
-    m_enemyLaser = helper.getGameResource().getModelManager().LoadModel(resource, enemyShaderInstance, "Models\\enemy_laser.mml");
-    m_playerLaser = helper.getGameResource().getModelManager().LoadModel(resource, playerShaderInstance, "Models\\player_laser.mml");
+    UNUSEDPARAM(resource);
+    //GameResourceHelper helper(resource);
+    //ShaderInstance enemyShaderInstance, playerShaderInstance;
+    //m_enemyLaser = helper.getResource().getModelManager().LoadModel(resource, enemyShaderInstance, "Models\\enemy_laser.mml");
+    //m_playerLaser = helper.getResource().getModelManager().LoadModel(resource, playerShaderInstance, "Models\\player_laser.mml");
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
     //m_geometry->initialise(shaderInstance);
 }
 
@@ -99,9 +102,9 @@ void LaserManager::addInstance( const Vector3& position, const Vector3& directio
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void LaserManager::update(RenderInstanceTree& renderInstances, float time, const DeviceManager& deviceManager)
+void LaserManager::update(RenderInstanceTree& renderInstances, float time)
 {
-    BROFILER_CATEGORY("LaserManager::update", Profiler::Color::PaleGreen)
+    PROFILE_EVENT("LaserManager::update", PaleGreen)
 
     //for (RenderInstanceQueue::iterator it = m_renderInstances.begin(); it != m_renderInstances.end(); ++it)
     //{
@@ -113,9 +116,12 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time, const
     for (std::vector< LasterRenderPair >::iterator it = m_worldPlayerTransforms.begin(); it != m_worldPlayerTransforms.end(); ++it)
     {
         LasterRenderPair& laserPair = *it;
-        laserPair.first.update(time, deviceManager);
+        laserPair.first.update(time);
         LaserInstanceData& lid = laserPair.first.getInstanceData();
         laserPair.second->setShaderInstance(&(lid.m_shaderInstance));
+        Bbox box = m_playerLaser->getOriginalBoundingBox();
+        box.transformAccordingToMatrix(lid.world);
+        laserPair.second->setBoundingBox(box);
 #ifdef _DEBUG
         laserPair.second->m_name = L"Player Laser RI";
 #endif
@@ -125,10 +131,12 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time, const
     for (std::vector< LasterRenderPair >::iterator it = m_worldEnemyTransforms.begin(); it != m_worldEnemyTransforms.end(); ++it)
     {
         LasterRenderPair& laserPair = *it;
-        laserPair.first.update(time, deviceManager);
+        laserPair.first.update(time);
         LaserInstanceData& lid = laserPair.first.getInstanceData();
-        laserPair.first.update(time, deviceManager);
         laserPair.second->setShaderInstance(&(lid.m_shaderInstance));
+        Bbox box = m_enemyLaser->getOriginalBoundingBox();
+        box.transformAccordingToMatrix(lid.world);
+        laserPair.second->setBoundingBox(box);
 #ifdef _DEBUG
         laserPair.second->m_name = L"Player Laser RI";
 #endif

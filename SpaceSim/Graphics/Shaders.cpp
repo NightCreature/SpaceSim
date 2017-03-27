@@ -201,6 +201,13 @@ bool VertexShader::createShader(const DeviceManager& deviceManager)
         }
 
         delete []  shaderCodeBuffer;
+
+#ifdef _DEBUG
+        if (m_shader != nullptr)
+        {
+            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+        }
+#endif
         return true;
     }
 
@@ -265,6 +272,12 @@ bool HullShader::createShader(const DeviceManager& deviceManager)
         }
 
         delete[]  shaderCodeBuffer;
+#ifdef _DEBUG
+        if (m_shader != nullptr)
+        {
+            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+        }
+#endif
         return true;
     }
 
@@ -329,6 +342,12 @@ bool DomainShader::createShader(const DeviceManager& deviceManager)
         }
 
         delete[]  shaderCodeBuffer;
+#ifdef _DEBUG
+        if (m_shader != nullptr)
+        {
+            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+        }
+#endif
         return true;
     }
 
@@ -393,6 +412,12 @@ bool GeometryShader::createShader(const DeviceManager& deviceManager)
         }
 
         delete[]  shaderCodeBuffer;
+#ifdef _DEBUG
+        if (m_shader != nullptr)
+        {
+            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+        }
+#endif
         return true;
     }
 
@@ -450,6 +475,12 @@ bool PixelShader::createShader(const DeviceManager& deviceManager)
         }
 
         delete[]  shaderCodeBuffer;
+#ifdef _DEBUG
+        if (m_shader != nullptr)
+        {
+            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+        }
+#endif
         return true;
     }
 
@@ -513,6 +544,12 @@ bool ComputeShader::createShader(const DeviceManager& deviceManager)
         }
 
         delete[]  shaderCodeBuffer;
+#ifdef _DEBUG
+        if (m_shader != nullptr)
+        {
+            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+        }
+#endif
         return true;
     }
 

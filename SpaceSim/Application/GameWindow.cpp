@@ -1,6 +1,7 @@
 #include "Application/GameWindow.h"
 #include "Application/BaseApplication.h"
 #include "Graphics/DeviceManager.h"
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core/Settings/SettingsManager.h"
 
 #include <sstream>
@@ -105,7 +106,6 @@ void GameWindow::showWindow()
 void GameWindow::update( float elapsedTime, double time )
 {
     calculateFPS(elapsedTime);
-    setFpsInWindowTitle(elapsedTime);
     
     time = 0.0;
 }
@@ -123,6 +123,7 @@ void GameWindow::calculateFPS(float elapsedTime)
     else
     {
         m_fps = m_framesCounter;
+        setFpsInWindowTitle(elapsedTime);
         m_framesCounter = 0;
         m_timeAmount = 0.0f;
     }
@@ -133,9 +134,16 @@ void GameWindow::calculateFPS(float elapsedTime)
 //-----------------------------------------------------------------------------
 void GameWindow::setFpsInWindowTitle(float elpasedTime)
 {
+    PROFILE_EVENT("GameWindow::setFpsInWindowTitle", Brown);
     std::stringstream strStream;
-    strStream << m_windowTitle.c_str() << " - fps: " << m_fps << " frame time: " << elpasedTime * 1000 << "ms";
-    SetWindowText(m_windowHandle, strStream.str().c_str());
+    {
+        PROFILE_EVENT("StringStreamUpdate", Brown);
+        strStream << m_windowTitle.c_str() << " - fps: " << m_fps << " frame time: " << elpasedTime * 1000 << "ms";
+    }
+    {
+        PROFILE_EVENT("WindowTitleUpdate", Brown);
+        SetWindowText(m_windowHandle, strStream.str().c_str());
+    }
 }
 
 //-----------------------------------------------------------------------------

@@ -9,6 +9,8 @@
 #include <Windows.h>
 #include <Stringapiset.h>
 
+#include "Core/Profiler/ProfilerMacros.h"
+
 const unsigned int c_fnvHashOffset = 2166136261;
 const unsigned int c_fnvHashPrime = 16777619;
 
@@ -37,6 +39,7 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
 #define HASH_ELEMENT_DEFINITION static const unsigned int m_hash;
 #define HASH_ELEMENT_IMPLEMENTATION(CLASS) const unsigned int CLASS::m_hash = hashString( #CLASS );
 
+std::string FormatString(const char* format, ...);
 
 //-----------------------------------------------------------------------------
 //! @brief   Case insensitive hash function
@@ -44,6 +47,7 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
 //-----------------------------------------------------------------------------
 inline unsigned int hashString(const std::string& sourceStr)
 {
+    PROFILE_EVENT("HashString", Brown);
     unsigned int returnHash = c_fnvHashOffset;
     for(unsigned int counter = 0; counter < sourceStr.size(); ++ counter)
     {
@@ -54,6 +58,21 @@ inline unsigned int hashString(const std::string& sourceStr)
     return returnHash;
 }
 
+inline size_t hashBinaryData(const char* data, size_t size)
+{
+    PROFILE_EVENT("hashBinaryData", Brown);
+    unsigned int returnHash = c_fnvHashOffset;
+    for (unsigned int counter = 0; counter < size; ++counter)
+    {
+        returnHash = returnHash ^ data[counter];
+        returnHash = returnHash * c_fnvHashPrime;
+    }
+
+    return returnHash;
+}
+
+#define HASH_STRING(x) hashString(#x)
+#define HASH_BINARY(x) hashBinaryData(reinterpret_cast<const char*>(x), sizeof(x))
 //-------------------------------------------------------------------------
 // @brief Safe string copy
 //-------------------------------------------------------------------------
@@ -123,7 +142,7 @@ inline float strTofloat(const std::string& str, bool hex = false)
 inline std::string toLowerCase(const std::string& str)
 {
     std::string result = str;
-    std::transform(str.begin(), str.end(), result.begin(), std::tolower);
+    std::transform(str.begin(), str.end(), result.begin(), [](char c) { return static_cast<char>(::tolower(c)); });
     return result;
 }
 

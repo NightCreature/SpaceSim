@@ -2,6 +2,10 @@
 #include "Core/Settings/SettingsManager.h"
 #include "Graphics/texturemanager.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/RenderMessages.h"
+
 ScorchMark::ScorchMark(Resource* resource, const Vector3& position, const Vector3& normal, float lifetime):
 GameObject(resource)
 {
@@ -34,9 +38,14 @@ void ScorchMark::initialise(const ShaderInstance& shaderInstance)
     params.m_shaderInstance = &shaderInstance;
     params.m_lowerleft = Vector2(-0.5f, -0.5f);
     params.m_lowerleft = Vector2(0.5f, 0.5f);
-    CreatedModel square = Square::CreateSquare(params);
-    m_drawableObject = square.model;
-    m_drawableObject->setOriginalBoundingBox(square.boundingBox);
+
+    MessageSystem::CreateFixedModelResource<Square::SquareCreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Square::SquareCreationParams);
+    createPlaneModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
+    createPlaneModel.SetData(params);
+    GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
+
+
+
     Super::initialise(shaderInstance);
 }
 
@@ -125,7 +134,15 @@ void ScorchMark::update( RenderInstanceTree& renderInstances, float elapsedTime,
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void ScorchMark::handleMessage( const Message& msg )
+void ScorchMark::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
+    {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
+        m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
+        //Store the render object reference we get back and the things it can do
+        m_initialisationDone = true;
+    }
 }

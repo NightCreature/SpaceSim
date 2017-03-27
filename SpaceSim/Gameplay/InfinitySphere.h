@@ -13,7 +13,7 @@ public:
     virtual void update(RenderInstanceTree& renderInstances, float elapsedTime, const Input& input);
     HASH_ELEMENT_DEFINITION
 protected:
-    virtual void handleMessage(const Message& msg);
+    virtual void handleMessage(const MessageSystem::Message& msg);
 private:
     Vector3 m_scale;
 };

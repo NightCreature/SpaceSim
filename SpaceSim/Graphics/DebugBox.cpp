@@ -33,7 +33,7 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance )
 {
     UNUSEDPARAM(shaderInstance);
     box = new Model();
-    GameResourceHelper helper(m_resource);
+    RenderResourceHelper helper(m_resource);
     if (box->getMeshData().empty())
     {
         VertexBuffer* vb = new VertexBuffer();
@@ -49,7 +49,7 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance )
         box->getMeshData().push_back(new MeshGroup(vb, ib, newShaderInstance));
         //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         //{
-        box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getGameResource().getEffectCache().getEffect("debug_effect.xml"));
+        box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));
         //}
 
         ColorVertex boxVerts[] = 
@@ -68,10 +68,10 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance )
 
 
         const Technique* technique = box->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
-        VertexDecalartionDesctriptor vertexDesc;
+        VertexDeclarationDescriptor vertexDesc;
         vertexDesc.vertexColor = true;
-        const VertexShader* shader = helper.getGameResource().getShaderCache().getVertexShader(technique->getVertexShader());
-        vb->createBufferAndLayoutElements(helper.getGameResource().getDeviceManager(), numberOfBytes, (void*)boxVerts, false, vertexDesc, shader->getShaderBlob());
+        const VertexShader* shader = helper.getResource().getShaderCache().getVertexShader(technique->getVertexShader());
+        vb->createBufferAndLayoutElements(helper.getResource().getDeviceManager(), numberOfBytes, (void*)boxVerts, false, vertexDesc, shader->getShaderBlob());
         unsigned int indexData[] =
         {
             0, 2,
@@ -88,14 +88,14 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance )
             3, 1
         };
 
-        ib->createBuffer(helper.getGameResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(helper.getResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
         ib->setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
     }
     else
     {
         if (box->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         {
-            box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getGameResource().getEffectCache().getEffect("laser_effect.xml"));
+            box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("laser_effect.xml"));
         }
     }
 

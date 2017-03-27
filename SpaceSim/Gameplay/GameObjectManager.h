@@ -22,17 +22,18 @@ public:
 
     void update(RenderInstanceTree& renderList, float elapsedTime, const Input& input);
 
-    void handleMessage( const Message& message ) const;
+    void handleMessage( const MessageSystem::Message& message );
+    void addMessage(const Message& message);
 private:
     typedef std::pair<unsigned int, GameObject*> ModelPair;
     typedef std::map<unsigned int, GameObject*> GameObjectMap;
-    struct DispatchFunctor
-    {
-        explicit DispatchFunctor(const Message& message) : m_msg(message) {}
-        void operator() (const ModelPair& modelPair) { modelPair.second->dispatchMessage(m_msg); }
+    //struct DispatchFunctor
+    //{
+    //    explicit DispatchFunctor(const Message& message) : m_msg(message) {}
+    //    void operator() (const ModelPair& modelPair) { modelPair.second->dispatchMessage(m_msg); }
 
-        Message m_msg;
-    };
+    //    Message m_msg;
+    //};
 
     GameObjectMap m_gameObjects;
 };

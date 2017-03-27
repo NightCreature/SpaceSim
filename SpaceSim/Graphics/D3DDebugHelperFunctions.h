@@ -20,4 +20,16 @@ namespace D3DDebugHelperFunctions
             default: return "error code maps to no known D3D11 code";
         }
     }
+
+#ifdef _DEBUG
+    inline void SetDebugChildName(ID3D11DeviceChild* child, const std::string& name)
+    {
+        if (child != nullptr)
+        {
+            child->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(name.size()), name.c_str());
+        }
+    }
+#else
+    inline void SetDebugChildName(ID3D11DeviceChild* child, const std::string& name) {}
+#endif
 }

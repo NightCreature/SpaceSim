@@ -11,11 +11,11 @@ class Matrix44;
 namespace Face
 {
 
-    struct CreationParams
+    struct CreationParams //Needs potential modification
     {
         CreationParams() :
-            shaderInstance(nullptr),
-            resource(nullptr),
+            //shaderInstance(nullptr), Should be effect it would like to use, this can be a resource id in the model manger now instead of an actual shader instance
+            //resource(nullptr),
             fillvalue(0.0f),
             width(50),
             height(50),
@@ -30,8 +30,8 @@ namespace Face
         {
         }
 
-        const ShaderInstance* shaderInstance;
-        Resource* resource;
+        //const ShaderInstance* shaderInstance;
+        //Resource* resource;
         float fillvalue;
         float width;
         float height;
@@ -45,7 +45,7 @@ namespace Face
         bool invertNormal;
     };
 
-    CreatedModel CreateFace(const CreationParams& params);
+    CreatedModel CreateFace(const CreationParams& params, Resource* resource);
 
     static unsigned long long m_totalNumberOfVerts;
     static unsigned long long m_totalNumberOfPolygons;

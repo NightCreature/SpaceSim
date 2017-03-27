@@ -23,10 +23,12 @@
 #include <atlbase.h>
 
 #include "ScreenGrab.h"
-
-#include "brofiler.h"
 #endif
 
+#include "Core/Profiler/ProfilerMacros.h"
+
+#include <Graphics/Frustum.h>
+#include "Graphics/D3DDebugHelperFunctions.h"
 
 //-------------------------------------------------------------------------
 // @brief 
@@ -55,6 +57,8 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
         MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create depth stencil for the cubemap renderer: 0x%x", hr);
     }
 
+    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencil, "CubemapRenderer DepthStencil Texture");
+
     // Create the depth stencil view for the entire cube
     D3D11_DEPTH_STENCIL_VIEW_DESC cubeDepthStencilDescriptor;
     cubeDepthStencilDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
@@ -68,6 +72,8 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
     {
         MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create depth stencil view for the cubemap renderer: 0x%x", hr);
     }
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencil, "CubemapRenderer DepthStencilView");
 
     ZeroMemory(&m_cubeViewPort, sizeof(D3D11_VIEWPORT));
     m_cubeViewPort.Height = (float)m_cubeMapWidthHeight;
@@ -84,10 +90,23 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
     lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float);
     lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = deviceManager.getDevice()->CreateBuffer(&lightContantsDescriptor, 0, &m_perFrameConstants);
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencil, "CubemapRenderer Per Frame Constant Buffer");
 }
 
 CubeMapRenderer::~CubeMapRenderer()
 {
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void CubeMapRenderer::cleanup()
+{
+    m_depthStencil->Release();
+    m_depthStencilView->Release();
+    m_perFrameConstants->Release();
 }
 
 void CubeMapRenderer::initialise(Vector3 position)
@@ -96,11 +115,28 @@ void CubeMapRenderer::initialise(Vector3 position)
     createViewArray(position);
 }
 
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void CubeMapRenderer::CheckVisibility(RenderInstanceTree& visibleRenderInstances, const RenderInstanceTree& renderInstances, const Matrix44& viewMatrix)
+{
 
+    PROFILE_EVENT("CubeMapRenderer::CheckVisibility", Yellow);
+    Frustum frustum(viewMatrix, m_cubeProjection);
+    for (auto instance : renderInstances)
+    {
+        if (frustum.IsInside(instance->getBoundingBox()))
+        {
+            visibleRenderInstances.push_back(instance);
+        }
+    }
+
+}
 
 void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, PerFrameConstants& perFrameConstants, const TextureManager& textureManager)
 {
-    BROFILER_CATEGORY("CubeMapRenderer::renderCubeMap", Profiler::Color::LightBlue);
+    PROFILE_EVENT("CubeMapRenderer::renderCubeMap", LightBlue);
 
     ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
     ID3D11RenderTargetView* rtView[1] = { nullptr };
@@ -120,28 +156,37 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
 
     deviceContext->PSSetConstantBuffers(1, 1, &m_perFrameConstants);
 
-    const ShaderCache& shaderCache = GameResourceHelper(resource).getGameResource().getShaderCache();
+    const ShaderCache& shaderCache = RenderResourceHelper(resource).getResource().getShaderCache();
+
+    std::vector<ID3D11SamplerState*> samplerStates;
+    samplerStates.reserve(1);
+    samplerStates.push_back(textureManager.getSamplerState());
+    deviceContext->PSSetSamplers(0, 1, &samplerStates[0]);
+    RenderInstanceTree visibleRenderInstances;
+    visibleRenderInstances.reserve(renderInstances.size());
 
     for (size_t rtCounter = 0; rtCounter < 6; ++rtCounter)
     {
-        BROFILER_CATEGORY("CubeMapRenderer::renderFace", Profiler::Color::LightBlue);
+        PROFILE_EVENT("CubeMapRenderer::renderFace", LightBlue);
+
+        visibleRenderInstances.clear();
+        CheckVisibility(visibleRenderInstances, renderInstances, m_viewArray[rtCounter]);
+
         ID3D11RenderTargetView* aRTViews[1] = { renderTarget->getRenderTargetView(rtCounter) };
         deviceContext->OMSetRenderTargets(sizeof(aRTViews) / sizeof(aRTViews[0]), aRTViews, m_depthStencilView);
         deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0);
 
-        RenderInstanceTree::const_iterator renderInstanceIt = renderInstances.begin();
-        RenderInstanceTree::const_iterator renderInstanceEnd = renderInstances.end();
+        RenderInstanceTree::const_iterator renderInstanceIt = visibleRenderInstances.begin();
+        RenderInstanceTree::const_iterator renderInstanceEnd = visibleRenderInstances.end();
         unsigned int stride = 0;
         unsigned int offset = 0;
         size_t oldTechniqueId = 0;
         std::vector<ID3D11ShaderResourceView*> resourceViews;
-        std::vector<ID3D11SamplerState*> samplerStates;
         resourceViews.reserve(128);
-        samplerStates.reserve(128);
+
         for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
         {
             resourceViews.clear();
-            samplerStates.clear();
             RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 
             const Material& material = renderInstance.getShaderInstance().getMaterial();
@@ -166,15 +211,12 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
                     ++currentTextureIndex;
                 }
                 ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-                ID3D11SamplerState* const samplerState = textureManager.getSamplerState();
                 resourceViews.push_back(srv);
-                samplerStates.push_back(samplerState);
             }
 
             if (!resourceViews.empty())
             {
                 deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
-                deviceContext->PSSetSamplers(0, 1, &samplerStates[0]); //THis shoudl not be this way
             }
 
             if (technique->getTechniqueId() != oldTechniqueId)

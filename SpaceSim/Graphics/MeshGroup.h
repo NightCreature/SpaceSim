@@ -9,6 +9,7 @@
 
 class DeviceManager;
 class Resource;
+class Bbox;
 
 //Wrapper to hold more then one Geometry instance and material together
 class MeshGroup
@@ -22,7 +23,7 @@ public:
     ~MeshGroup();
 
     //Create and add a RenderInstance into the tree to be rendered
-    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name);
+    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box);
     
     void setMaterial(const Material& material) { m_shaderInstance.setMaterial(material); m_renderInstanceDirty = true; }
     void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true; }

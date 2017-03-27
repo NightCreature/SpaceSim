@@ -19,17 +19,19 @@ const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* nod
         unsigned int childElementHash = hashString(childElement->Value());
         if (childElementHash == Material::m_hash)
         {
-            shaderInstance.getMaterial().deserialise(m_resource, getGameResource().getDeviceManager(), getGameResource().getTextureManager(), getGameResource().getLightManager(), childElement);
+            MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), childElement);
         }
         else if (childElementHash == modelHash)
         {
             const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("file");
             if (attribute != nullptr)
             {
+                MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
                 //Heavily relies on the shader instance existing before we load the model, might be better to put the model construction in initialise instead
-                m_drawableObject = getWriteableGameResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
-                m_drawableObject->getMeshData()[0]->getShaderInstance().getMaterial().addTextureReference(Material::TextureSlotMapping(hashString("skybox_small.dds"), Material::TextureSlotMapping::Diffuse0)); //Hacky
-                m_drawableObject->setDirty();
+                //m_drawableObject = getWriteableResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
+                //m_drawableObject->getMeshData()[0]->getShaderInstance().getMaterial().addTextureReference(Material::TextureSlotMapping(hashString("skybox_small.dds"), Material::TextureSlotMapping::Diffuse0)); //Hacky
+                //m_drawableObject->setDirty();
             }
         }
         else if (Vector3::m_hash == childElementHash)
@@ -55,14 +57,15 @@ void InfinitySphere::initialise(const ShaderInstance& shaderInstance)
 //-------------------------------------------------------------------------
 void InfinitySphere::update(RenderInstanceTree& renderInstances, float elapsedTime, const Input& input)
 {
-    const Camera* cam = getGameResource().getCameraManager().getCamera("global");
-    if (cam != nullptr)
-    {
-        scale(m_world, m_scale.x(), m_scale.y(), m_scale.z());
-        Matrix44 temp;
-        translate(temp, cam->getEye());
-        m_world = m_world * temp;
-    }
+    MSG_TRACE_CHANNEL("REFACTOR", "SEND Cameraid this should be centered arround");
+    //const Camera* cam = getResource().getCameraManager().getCamera("global");
+    //if (cam != nullptr)
+    //{
+    //    scale(m_world, m_scale.x(), m_scale.y(), m_scale.z());
+    //    Matrix44 temp;
+    //    translate(temp, cam->getEye());
+    //    m_world = m_world * temp;
+    //}
 
     Super::update(renderInstances, elapsedTime, input);
 }
@@ -70,7 +73,7 @@ void InfinitySphere::update(RenderInstanceTree& renderInstances, float elapsedTi
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void InfinitySphere::handleMessage(const Message& msg)
+void InfinitySphere::handleMessage(const MessageSystem::Message& msg)
 {
     UNUSEDPARAM(msg);
 }

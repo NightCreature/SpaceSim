@@ -10,7 +10,7 @@
 #include "Graphics/DeviceManager.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/D3DDebugHelperFunctions.h"
-#include "Core/Resource/GameResource.h"
+#include "Core/Resource/RenderResource.h"
 #include "Graphics/ShaderCache.h"
 #include <stdio.h>
 
@@ -75,9 +75,9 @@ const Technique* Effect::getTechnique(const unsigned int techniqueName) const
 //-------------------------------------------------------------------------
 void Technique::deserialise(const tinyxml2::XMLElement* element)
 {
-    GameResource* gameResource = (GameResource*)m_resource;
-    ShaderCache& shaderCache = gameResource->getShaderCache();
-    const DeviceManager& deviceManager = gameResource->getDeviceManager();
+    RenderResourceHelper renderResource = { m_resource };
+    ShaderCache& shaderCache = renderResource.getWriteableResource().getShaderCache();
+    const DeviceManager& deviceManager = renderResource.getResource().getDeviceManager();
 
     std::string techniqueName = "default_technique";
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
@@ -132,6 +132,9 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         MSG_TRACE_CHANNEL("EFFECT_ERROR", "failed to create the World, View and Porjection buffer for this effect");
             return;
     }
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_constantBuffers[0], FormatString("Constant Buffer 0 Technique %s has: vs: %ull, ps: %ull", techniqueName.c_str(), m_vertexShader, m_pixelShader));
+
     D3D11_BUFFER_DESC materialDescriptor;
     ZeroMemory(&materialDescriptor, sizeof(D3D11_BUFFER_DESC));
     materialDescriptor.ByteWidth = sizeof(float)* 20;
@@ -142,6 +145,7 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         MSG_TRACE_CHANNEL("EFFECT_ERROR", "failed to create the material buffer for this effect: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
             return;
     }
+    D3DDebugHelperFunctions::SetDebugChildName(m_constantBuffers[1], FormatString("Constant Buffer 1 Technique %s has: vs: %ull, ps: %ull", techniqueName.c_str(), m_vertexShader, m_pixelShader));
 }
 
 //-----------------------------------------------------------------------------

@@ -1,20 +1,17 @@
 #pragma once
 
+#include "Application/UpdateThread.h"
 #include "Graphics/CameraManager.h"
 #include "Graphics/RenderSystem.h"
 #include "Application/GameWindow.h"
 #include "Core/Settings/SettingsParser.h"
 #include "Core/Settings/SettingsManager.h"
 #include "Gameplay/GameObjectManager.h"
-#include "Gameplay/particlesystemmanager.h"
 #include "Gameplay/LaserManager.h"
-#include "Graphics/LightManager.h"
 #include "Core/Resource/GameResource.h"
 #include "Input/InputSystem.h"
 #include "Loader/MapLoader.h"
 #include "Core/Thread/Timer.h"
-#include "Graphics/EffectCache.h"
-#include "Graphics/ShaderCache.h"
 #include "Core/Paths.h"
 #include "UI/UIManger.h"
 #include "Gameplay/EntityManager.h"
@@ -27,6 +24,8 @@
 #include "Memory.h"
 
 #include "Logging/Logger.h"
+
+#include "Core/MessageSystem/MessageQueue.h"
 
 
 //-----------------------------------------------------------------------------
@@ -58,14 +57,11 @@ public:
 private:
     EntityManager      m_entityManager;
     RenderSystem       m_renderSystem;
-    CameraManager      m_cameraSystem;
     SettingsManager    m_settingsManager;
     GameObjectManager  m_gameObjectManager;
-    ParticleSystemManager m_pfxManager;
-    LightManager m_lightManager;
+
     LaserManager    m_laserManager;
-    ShaderCache m_shaderCache;
-    EffectCache m_effectCache;
+
     UIManger m_uiManager;
     PhysicsManager m_physicsManger;
     GameResource*      m_gameResource;
@@ -80,7 +76,8 @@ private:
 
     size_t m_previousRenderInstanceListSize;
 
-
+    UpdateThread m_UpdateThread;
+    MessageSystem::MessageQueues m_messageQueues;
     //ModelComponentManger m_modelManager;
 public:
     static Matrix44 m_view;

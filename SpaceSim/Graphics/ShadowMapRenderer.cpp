@@ -18,16 +18,17 @@
 #include "Graphics/texturemanager.h"
 #include "Graphics/modelmanager.h"
 #include "Graphics/light.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 #include <numeric>
+
+#include "Graphics/Frustum.h"
 
 #ifdef _DEBUG
 #include <d3d11_1.h>
 #include <atlbase.h>
 
 #include "ScreenGrab.h"
-
-#include "brofiler.h"
 #endif
 
 static const unsigned int shadowMapTechniqueHash = hashString("shadow_map");
@@ -150,127 +151,167 @@ ShadowMapRenderer::~ShadowMapRenderer()
 }
 
 //-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void ShadowMapRenderer::cleanup()
+{
+    m_depthStencil->Release();
+    m_shadowMap->Release();
+    m_depthStencilView->Release();
+    m_shadowMapView->Release();
+    m_shadowMapRV->Release();
+    m_perFrameConstants->Release();
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   TODO enter a description
+//! @remark
+//-----------------------------------------------------------------------------
+void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, const RenderInstanceTree& renderInstances)
+{
+    PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
+    visibileInstances.clear();
+    Frustum frustum(m_shadowMVP.m_view, m_shadowMVP.m_projection);
+    for (auto instance : renderInstances)
+    {
+        if (frustum.IsInside(instance->getBoundingBox()))
+        {
+            visibileInstances.push_back(instance);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
 void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light)
 {
-    BROFILER_CATEGORY("ShadowMapRenderer::renderShadowMap", Profiler::Color::Blue);
-#ifdef _DEBUG
-    pPerf->BeginEvent(L"ShadowMapRenderer::renderShadowMap");
-#endif
-
-    ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
-    ID3D11RenderTargetView* rtView[1] = { nullptr };
-    ID3D11DepthStencilView* dsView = nullptr;
-    deviceContext->OMGetRenderTargets(1, rtView, &dsView);
-
-    D3D11_VIEWPORT OldVP;
-    UINT cRT = 1;
-    deviceContext->RSGetViewports(&cRT, &OldVP);
-    deviceContext->RSSetViewports(1, &m_lightViewPort);
-
-    deviceContext->OMSetRenderTargets(1, &m_shadowMapView, m_depthStencilView);
-
-    float clearColor[4] = { std::numeric_limits<float>::max(), 1.0f, 1.0f, 1.0f };
-    deviceContext->ClearRenderTargetView(m_shadowMapView, clearColor);
-    deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-    RenderInstanceTree::const_iterator renderInstanceIt = renderInstances.begin();
-    RenderInstanceTree::const_iterator renderInstanceEnd = renderInstances.end();
-    unsigned int stride = 0;
-    unsigned int offset = 0;
-
-    GameResourceHelper gameResource = GameResourceHelper(resource);
-    const ShaderCache& shaderCache = gameResource.getGameResource().getShaderCache();
-
-    size_t oldTechniqueId = 0;
-    std::vector<ID3D11ShaderResourceView*> resourceViews;
-    std::vector<ID3D11SamplerState*> samplerStates;
-    resourceViews.reserve(128);
-    samplerStates.reserve(128);
-
-    Camera cam;
-    cam.positionCamera(light->getPosition(), light->getPosition() + light->getDirection(), Vector3::yAxis());
-    m_shadowMVP.m_view = cam.createCamera();
-    //UNUSEDPARAM(light);
-    //wvpContent.m_view = Application::m_view;
-    for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
+    PROFILE_EVENT("ShadowMapRenderer::renderShadowMap", Blue);
+    if (light != nullptr)
     {
-        resourceViews.clear();
-        samplerStates.clear();
-
-        RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 #ifdef _DEBUG
-        if (!renderInstance.m_name.empty())
-        {
-            pPerf->BeginEvent(renderInstance.m_name.c_str());
-        }
+        pPerf->BeginEvent(L"ShadowMapRenderer::renderShadowMap");
 #endif
 
-        const Material& material = renderInstance.getShaderInstance().getMaterial();
-        const Effect* effect = material.getEffect();
-        const Technique* technique = effect->getTechnique(shadowMapTechniqueHash);
-        if (technique)
+        ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
+        ID3D11RenderTargetView* rtView[1] = { nullptr };
+        ID3D11DepthStencilView* dsView = nullptr;
+        deviceContext->OMGetRenderTargets(1, rtView, &dsView);
+
+        D3D11_VIEWPORT OldVP;
+        UINT cRT = 1;
+        deviceContext->RSGetViewports(&cRT, &OldVP);
+        deviceContext->RSSetViewports(1, &m_lightViewPort);
+
+        deviceContext->OMSetRenderTargets(1, &m_shadowMapView, m_depthStencilView);
+
+        float clearColor[4] = { std::numeric_limits<float>::max(), 1.0f, 1.0f, 1.0f };
+        deviceContext->ClearRenderTargetView(m_shadowMapView, clearColor);
+        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+        RenderInstanceTree visibleRenderInstances;
+        visibleRenderInstances.reserve(renderInstances.size());
+        CheckVisibility(visibleRenderInstances, renderInstances);
+
+        RenderInstanceTree::const_iterator renderInstanceIt = visibleRenderInstances.begin();
+        RenderInstanceTree::const_iterator renderInstanceEnd = visibleRenderInstances.end();
+        unsigned int stride = 0;
+        unsigned int offset = 0;
+
+        RenderResourceHelper gameResource = { resource };
+        const ShaderCache& shaderCache = gameResource.getResource().getShaderCache();
+
+        size_t oldTechniqueId = 0;
+        std::vector<ID3D11ShaderResourceView*> resourceViews;
+        std::vector<ID3D11SamplerState*> samplerStates;
+        resourceViews.reserve(128);
+        samplerStates.reserve(128);
+
+        Camera cam;
+        cam.positionCamera(light->getPosition(), light->getPosition() + light->getDirection(), Vector3::yAxis());
+        m_shadowMVP.m_view = cam.createCamera();
+
+        //UNUSEDPARAM(light);
+        //wvpContent.m_view = Application::m_view;
+        for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
         {
-            m_shadowMVP.m_world = renderInstance.getShaderInstance().getWVPConstants().m_world;
-            deviceManager.getDeviceContext()->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&m_shadowMVP, 0, 0);
+            resourceViews.clear();
+            samplerStates.clear();
 
-            if (technique->getTechniqueId() != oldTechniqueId)
+            RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
+#ifdef _DEBUG
+            if (!renderInstance.m_name.empty())
             {
-                //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-                deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
-                oldTechniqueId = technique->getTechniqueId();
+                pPerf->BeginEvent(renderInstance.m_name.c_str());
             }
-            deviceContext->VSSetConstantBuffers(0, 1, &m_perFrameConstants);
+#endif
 
-            if (material.getBlendState())
+            const Material& material = renderInstance.getShaderInstance().getMaterial();
+            const Effect* effect = material.getEffect();
+            const Technique* technique = effect->getTechnique(shadowMapTechniqueHash);
+            if (technique)
             {
-                deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
-            }
-            else
-            {
-                deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
-            }
+                m_shadowMVP.m_world = renderInstance.getShaderInstance().getWVPConstants().m_world;
+                deviceManager.getDeviceContext()->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&m_shadowMVP, 0, 0);
 
-            // Set vertex buffer stride and offset.
-            const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
-            ID3D11Buffer* buffer = vb->getBuffer();
-            stride = static_cast<unsigned int>(vb->getVertexStride());
-            if (renderInstance.getGeometryInstance().getIB() != nullptr)
-            {
-                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-                deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
-                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
+                if (technique->getTechniqueId() != oldTechniqueId)
+                {
+                    //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
+                    deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+                    oldTechniqueId = technique->getTechniqueId();
+                }
+                deviceContext->VSSetConstantBuffers(0, 1, &m_perFrameConstants);
+
+                if (material.getBlendState())
+                {
+                    deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
+                }
+                else
+                {
+                    deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
+                }
+
+                // Set vertex buffer stride and offset.
+                const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
+                ID3D11Buffer* buffer = vb->getBuffer();
+                stride = static_cast<unsigned int>(vb->getVertexStride());
+                if (renderInstance.getGeometryInstance().getIB() != nullptr)
+                {
+                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                    deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
+                    deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                    deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
+                }
+                else
+                {
+                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                    deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                    deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
+                }
             }
-            else
-            {
-                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
-            }
+#ifdef _DEBUG
+            pPerf->EndEvent();
+#endif
         }
+
+        deviceContext->Flush();
+
+        deviceContext->OMSetRenderTargets(1, rtView, dsView);
+        rtView[0]->Release();
+        dsView->Release();
+
+        deviceContext->RSSetViewports(cRT, &OldVP);
+
 #ifdef _DEBUG
         pPerf->EndEvent();
 #endif
     }
-
-    deviceContext->Flush();
-
-    deviceContext->OMSetRenderTargets(1, rtView, dsView);
-    rtView[0]->Release();
-    dsView->Release();
-
-    deviceContext->RSSetViewports(cRT, &OldVP);
-
-#ifdef _DEBUG
-    pPerf->EndEvent();
-#endif
 }

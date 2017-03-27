@@ -47,7 +47,7 @@ public:
 
     virtual bool collision( const Bbox& bbox, const Vector3& dir );
     virtual float collision( const Vector3& position, const Vector3& dir, Vector3& normal );
-    virtual void handleMessage( const Message& msg );
+    virtual void handleMessage( const MessageSystem::Message& msg );
 
     void getsHit();
     void getsKilled();
