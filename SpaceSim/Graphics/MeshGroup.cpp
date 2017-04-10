@@ -39,13 +39,13 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
             PROFILE_EVENT("MeshGroup::update::Allocation", Black);
 			m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
 #ifdef _DEBUG
-			convertToWideString(name, m_renderInstance->m_name);
+			convertToWideString(name, m_renderInstance->m_name); 
 #else
 			UNUSEDPARAM(name);
 #endif
 		}
 
-        WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
+        WVPBufferContent& wvpConstants = m_renderInstance->GetShaderInstance().getWVPConstants();
         wvpConstants.m_projection = Application::m_projection;
         wvpConstants.m_view = Application::m_view;
         wvpConstants.m_world = m_world * world; 

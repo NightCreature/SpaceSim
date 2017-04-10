@@ -20,7 +20,7 @@ public:
     RenderInstance(const Bbox& boundingBox, GeometryInstance* geometryInstance, const ShaderInstance* shaderInstance) : 
         m_boundingBox(boundingBox),
         m_geometryInstance(geometryInstance),
-        m_shaderInstance(*shaderInstance) 
+        m_shaderInstance(*shaderInstance)  
     {}
     ~RenderInstance(void)
     {
@@ -29,7 +29,7 @@ public:
 #ifdef _DEBUG
     std::wstring m_name;
 #endif
-
+    ShaderInstance& GetShaderInstance() { return m_shaderInstance; }
     const ShaderInstance& getShaderInstance() const { return m_shaderInstance; }
     const GeometryInstance& getGeometryInstance() const { return *m_geometryInstance; }
     const unsigned int getPrimitiveType() const { return m_geometryInstance->getPrimitiveType(); }

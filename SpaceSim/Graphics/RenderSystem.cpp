@@ -812,7 +812,7 @@ void RenderSystem::CreateRenderList(const MessageSystem::Message& msg)
     const CreatedModel* model = mm.GetRenderResource(info->m_renderObjectid);
     if (model)
     {
-        model->model->update(m_renderResource, m_renderInstances, 0.0f, info->m_world, "temp name");
+        model->model->update(m_renderResource, m_renderInstances, 0.0f, info->m_world, info->m_name);
     }
 }
 

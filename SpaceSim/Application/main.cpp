@@ -163,6 +163,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     UNUSEDPARAM(szCmdLine);
     UNUSEDPARAM(iCmdShow);
 
+    //Allocator::STLAllocator<int> stl_allocator;
+    //Allocator::IntPoolAllocator int_allocator(128);
+    //stl_allocator.m_allocator = &int_allocator;
+    //std::vector<int, Allocator::STLAllocator<int>> test(stl_allocator);
+    //test.push_back(1000);
+
     String16 test3("LongStringIsTOOLONG TO FIT");
     test3.assign(12, 'h');
     MSG_TRACE("%c %c %c, %s", test3[11], test3.back(), test3.front(), test3.c_str());

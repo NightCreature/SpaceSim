@@ -59,6 +59,7 @@ public:
         size_t m_renderObjectid;
         size_t m_gameobjectid;
         Matrix44 m_world;
+        std::string m_name;
     };
 
     RenderInformation()
