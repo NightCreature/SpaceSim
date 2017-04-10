@@ -72,7 +72,7 @@ inline size_t hashBinaryData(const char* data, size_t size)
 }
 
 #define HASH_STRING(x) hashString(#x)
-#define HASH_BINARY(x) hashBinaryData(reinterpret_cast<const char*>(x), sizeof(x))
+#define HASH_BINARY(x) hashBinaryData(reinterpret_cast<const char*>(x), sizeof(*x))
 //-------------------------------------------------------------------------
 // @brief Safe string copy
 //-------------------------------------------------------------------------
