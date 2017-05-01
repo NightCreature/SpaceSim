@@ -45,7 +45,7 @@ int UpdateThread::workerFunction()
             m_renderList.clear();
 
             m_gameObjectManager->update(m_renderList, m_elapsedTime, m_input);
-            m_laserManager->update(m_renderList, m_elapsedTime);
+            m_laserManager->update(m_renderList, m_elapsedTime, Matrix44(), Matrix44()); //TODO FIX LASERS
 
             m_done = true;
             LeaveCriticalSection(&m_criticalSection);

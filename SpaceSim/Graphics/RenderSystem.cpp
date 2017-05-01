@@ -331,6 +331,9 @@ void RenderSystem::initialise(Resource* resource)
 	m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(this, &RenderSystem::CreateRenderList));
+
+    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1500.0f);
+    m_view = m_cameraSystem.getCamera("global")->getCamera();
 }
 
 //-----------------------------------------------------------------------------
@@ -650,6 +653,8 @@ void RenderSystem::beginDraw()
 
     m_renderInstances.clear();
 
+    m_view = m_cameraSystem.getCamera("global")->getCamera();
+
     m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
     m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
 
@@ -766,7 +771,7 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 {
     PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
     visibleInstances.clear();
-    Frustum frustum(Application::m_view, m_CullingProjectionMatrix);
+    Frustum frustum(m_view, m_CullingProjectionMatrix);
     for (auto instance : renderInstances)
     {
         if (frustum.IsInside(instance->getBoundingBox()))
@@ -783,7 +788,7 @@ void RenderSystem::endDraw()
 {
     PROFILE_EVENT("RenderSystem::endDraw", Orange);
 #ifdef _DEBUG
-    m_debugAxis->draw(m_deviceManager, m_renderResource);
+    m_debugAxis->draw(m_deviceManager, m_view, m_projection, m_renderResource);
 #else
     UNUSEDPARAM(resource);
 #endif
@@ -812,7 +817,7 @@ void RenderSystem::CreateRenderList(const MessageSystem::Message& msg)
     const CreatedModel* model = mm.GetRenderResource(info->m_renderObjectid);
     if (model)
     {
-        model->model->update(m_renderResource, m_renderInstances, 0.0f, info->m_world, info->m_name);
+        model->model->update(m_renderResource, m_renderInstances, 0.0f, info->m_world, m_view, m_projection, info->m_name);
     }
 }
 

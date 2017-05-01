@@ -26,7 +26,7 @@ public:
 	Laser(const Vector3& pos, const Vector3& dir, const ShaderInstance& shaderInstance) : m_position(pos), m_direction(dir), m_instanceData(shaderInstance) {}
 	~Laser() {}
 
-    void update(float elapsedTime);
+    void update(float elapsedTime, const Matrix44& view, const Matrix44& projection);
 
     const Vector3& getPosition() const { return m_position; }
     const Vector3& getDirection() const { return m_direction; }
@@ -37,7 +37,7 @@ public:
     }
 protected:
 private:
-    void updateInstanceData();
+    void updateInstanceData(const Matrix44& view, const Matrix44& projection);
 
     LaserInstanceData m_instanceData;
     Vector3 m_position;

@@ -142,4 +142,8 @@ private:
 
     //TEMP HACK
     RenderInstanceTree m_renderInstances;
+
+    //No more need for these to be static
+    Matrix44 m_view;
+    Matrix44 m_projection;
 };

@@ -17,7 +17,7 @@ public:
     DebugBox(Resource* resource, const Vector3& lowerLeft, const Vector3& upperRight);
     virtual ~DebugBox();
 
-    virtual void initialise( const ShaderInstance& shaderInstance );
+    virtual void initialise( const ShaderInstance& shaderInstance, const Matrix44& view, const Matrix44& projection);
 private:
     Vector3 m_lowerLeft;
     Vector3 m_upperRight;

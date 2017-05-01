@@ -155,10 +155,11 @@ void TextBlockCache::removeAllTexts()
 void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 {
 	//Should only really do this for blocks that are active
-	for (auto& textBlock : m_textBlocks)
-	{
-		textBlock.m_shaderInstance.getWVPConstants().m_view = Application::m_view;
-	}
+	//for (auto& textBlock : m_textBlocks)
+	//{
+ //       //TODO FIX THIS SHOULD ACCESS CURRENT VIEW MATRIX SOMEHOW
+	//	//textBlock.m_shaderInstance.getWVPConstants().m_view = Application::m_view;
+	//}
 
 	//std::copy(m_textBlocksToRender.begin(), m_textBlocksToRender.end(), renderInstances.end());
 	for (size_t counter = 0; counter < m_textBlocksToRender.size(); ++counter)
@@ -578,8 +579,9 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 	mat.setTechnique(hashString("default"));
 	m_shaderInstance.setMaterial(mat);
 	WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
-	wvpConstants.m_projection = Application::m_projection; //math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
-	wvpConstants.m_view = Application::m_view; //gameResource.getResource().getCameraManager().getCamera("text_block_camera")->getCamera();
+    //TODO FIX ME SHOULD ASK RENDER SYSTEM FOR VIEW AND PROJECTION
+	//wvpConstants.m_projection = Application::m_projection; //math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
+	//wvpConstants.m_view = Application::m_view; //gameResource.getResource().getCameraManager().getCamera("text_block_camera")->getCamera();
 	wvpConstants.m_world.identity();
 }
 

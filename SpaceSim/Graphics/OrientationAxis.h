@@ -36,9 +36,9 @@ public:
     void cleanup();
 
     void initialise(Resource* resource, const DeviceManager& deviceManager);
-    void draw(const DeviceManager& deviceManager, Resource* resource);
+    void draw(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection, Resource* resource);
 private:
-    void transform(const DeviceManager& deviceManager);
+    void transform(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection);
     static LineVertex m_vertices[];
     Effect* m_effect;
     VertexBuffer m_vertexBuffer;

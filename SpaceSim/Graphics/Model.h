@@ -32,13 +32,13 @@ public:
         }
     }
 
-    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name)
+    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name)
     {
         if (!m_modelData.empty())
         {
             for (size_t counter = 0; counter < m_modelData.size(); ++counter)
             {
-                m_modelData[counter]->update(resource, renderInstance, elapsedTime, world, name, m_boundingBox);
+                m_modelData[counter]->update(resource, renderInstance, elapsedTime, world, view, projection, name, m_boundingBox);
             }
         }
     }

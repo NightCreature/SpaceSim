@@ -29,7 +29,7 @@ DebugBox::~DebugBox()
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void DebugBox::initialise( const ShaderInstance& shaderInstance )
+void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44& view, const Matrix44& projection)
 {
     UNUSEDPARAM(shaderInstance);
     box = new Model();
@@ -43,8 +43,8 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance )
         Matrix44 temp;
         temp.identity();
         wvp.m_world = temp;
-        wvp.m_view = Application::m_view;
-        wvp.m_projection = Application::m_projection;
+        wvp.m_view = view;
+        wvp.m_projection = projection;
         ShaderInstance newShaderInstance(wvp, Material());
         box->getMeshData().push_back(new MeshGroup(vb, ib, newShaderInstance));
         //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)

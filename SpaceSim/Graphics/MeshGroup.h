@@ -23,7 +23,7 @@ public:
     ~MeshGroup();
 
     //Create and add a RenderInstance into the tree to be rendered
-    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box);
+    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box);
     
     void setMaterial(const Material& material) { m_shaderInstance.setMaterial(material); m_renderInstanceDirty = true; }
     void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true; }
