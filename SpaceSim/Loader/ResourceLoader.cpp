@@ -7,12 +7,15 @@
 
 #include "Graphics/modelmanager.h"
 
+#include "Loader/ResourceLoadRequests.h"
+
 //-----------------------------------------------------------------------------
 //! @brief   Initialise the application
 //! @remark
 //-----------------------------------------------------------------------------
 void ResourceLoader::update()
 {
+    m_isUpdating = true;
     PROFILE_EVENT("ResourceLoader::update", Crimson);
 
     RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
@@ -34,6 +37,9 @@ void ResourceLoader::update()
     }
 
     m_requests.clear();
+    m_requests.swap(m_newRequestsDuringUpdate);
+
+    m_isUpdating = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -51,4 +57,20 @@ void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
     memcpy(request.m_loadData, crrmsg.GetImplementationData(), crrmsg.GetImplementationDataSize());
 
     m_requests.push_back(request);
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void ResourceLoader::AddLoadRequest(const LoadRequest& request)
+{
+    if (m_isUpdating)
+    {
+        m_newRequestsDuringUpdate.push_back(request);
+    }
+    else
+    {
+        m_requests.push_back(request);
+    }
 }

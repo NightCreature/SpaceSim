@@ -250,6 +250,7 @@
     <ClInclude Include="..\..\Loader\ModelLoaders\ModelLoader.h" />
     <ClInclude Include="..\..\Loader\ModelLoaders\XMLModelLoader.h" />
     <ClInclude Include="..\..\Loader\ResourceLoader.h" />
+    <ClInclude Include="..\..\Loader\ResourceLoadRequests.h" />
     <ClInclude Include="..\..\Logging\FileLogger.h" />
     <ClInclude Include="..\..\Logging\Logger.h" />
     <ClInclude Include="..\..\Math\MathUtilityFunctions.h" />

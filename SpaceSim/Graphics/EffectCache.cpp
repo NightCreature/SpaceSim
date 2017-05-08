@@ -41,12 +41,17 @@ const Effect* EffectCache::createEffect(Resource* resource, const std::string& r
 
 const Effect* EffectCache::getEffect(const std::string& name) const
 {
+    return getEffect(hashString(name));
+}
+
+const Effect* EffectCache::getEffect(unsigned int effectHash) const
+{
     if (m_effects.empty())
     {
         return nullptr;
     }
 
-    std::map<unsigned int, Effect>::const_iterator it = m_effects.find(hashString(name));
+    std::map<unsigned int, Effect>::const_iterator it = m_effects.find(effectHash);
     if (it == m_effects.end())
     {
         return nullptr;

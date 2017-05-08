@@ -12,6 +12,8 @@
 #include "Graphics/ShaderInstance.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+#include "Loader/ResourceLoadRequests.h"
+
 
 namespace Face
 {
@@ -29,6 +31,25 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     //const ShaderInstance& shaderInstance = *(params.shaderInstance);
 
     ShaderInstance shaderInstance;
+    Material mat;
+    mat.setEffect(renderResource.getEffectCache().getEffect(params.m_materialParameters.m_effectHash));
+    mat.setMaterialContent(params.m_materialParameters.m_materialContent);
+    mat.setBlendState(params.m_materialParameters.m_alphaBlend);
+    mat.setTechnique(params.m_materialParameters.m_techniqueHash);
+    //Fix up texture references here
+    for (auto counter = 0; counter < Material::TextureSlotMapping::NumSlots; ++counter) 
+    {
+        if (!strICmp(params.m_materialParameters.m_textureNames[counter], ""))
+        {
+            mat.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(params.m_materialParameters.m_textureNames[counter])), static_cast<Material::TextureSlotMapping::TextureSlot>(counter)));
+            ResourceLoader::LoadRequest loadRequest;
+            loadRequest.m_gameObjectId = 0;
+            loadRequest.m_resourceType = HASH_STRING("LOAD_TEXTURE");
+            loadRequest.m_loadData = static_cast<void*>(new TextureLoadRequest(params.m_materialParameters.m_textureNames[counter], counter));
+            renderResourceHelper.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
+        }
+    }
+    shaderInstance.setMaterial(mat);
 
     CreatedModel face;
     face.model = new Model();
@@ -43,10 +64,10 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
         MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), shaderInstance);
         face.model->getMeshData().push_back(group);
         face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
-        //if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        //{
+        if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
+        {
             face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.xml"));
-        //}
+        }
 
         VertexBuffer* vb = face.model->getMeshData()[0]->getGeometryInstance().getVB();
         IndexBuffer* ib = face.model->getMeshData()[0]->getGeometryInstance().getIB();

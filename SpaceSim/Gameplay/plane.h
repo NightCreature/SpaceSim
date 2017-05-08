@@ -56,5 +56,7 @@ private:
     bool m_invertNormal;
     bool m_changeWindingOrder;
     static int m_planeCount;
+
+    Material::MaterialParameters m_materialParameters;
 };
 #endif

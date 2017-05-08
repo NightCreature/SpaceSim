@@ -139,4 +139,104 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
     UNUSEDPARAM(lightManager);
 }
 
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XMLElement* childElement)
+{
+    MaterialParameters returnVal;
+    childElement = childElement->FirstChildElement();
+    static unsigned int shininessHash = hashString("Shininess");
+    static unsigned int alphaBlend = hashString("AlphaBlend");
+    unsigned int numberOfColorsDeserialised = 1;
+    for (; childElement; childElement = childElement->NextSiblingElement())
+    {
+        unsigned int elementHash = hashString(childElement->Value());
+        if (Color::m_hash == elementHash)
+        {
+            Color temp;
+            switch (numberOfColorsDeserialised)
+            {
+            case 1:
+                temp.deserialise(childElement);
+                returnVal.m_materialContent.m_ambient[0] = temp.r();
+                returnVal.m_materialContent.m_ambient[1] = temp.g();
+                returnVal.m_materialContent.m_ambient[2] = temp.b();
+                returnVal.m_materialContent.m_ambient[3] = temp.a();
+                break;
+            case 2:
+                temp.deserialise(childElement);
+                returnVal.m_materialContent.m_diffuse[0] = temp.r();
+                returnVal.m_materialContent.m_diffuse[1] = temp.g();
+                returnVal.m_materialContent.m_diffuse[2] = temp.b();
+                returnVal.m_materialContent.m_diffuse[3] = temp.a();
+                break;
+            case 3:
+                temp.deserialise(childElement);
+                returnVal.m_materialContent.m_specular[0] = temp.r();
+                returnVal.m_materialContent.m_specular[1] = temp.g();
+                returnVal.m_materialContent.m_specular[2] = temp.b();
+                returnVal.m_materialContent.m_specular[3] = temp.a();
+                break;
+            case 4:
+                temp.deserialise(childElement);
+                returnVal.m_materialContent.m_emissive[0] = temp.r();
+                returnVal.m_materialContent.m_emissive[1] = temp.g();
+                returnVal.m_materialContent.m_emissive[2] = temp.b();
+                returnVal.m_materialContent.m_emissive[3] = temp.a();
+                break;
+            }
+
+            ++numberOfColorsDeserialised;
+        }
+        else if (shininessHash == elementHash)
+        {
+            const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("value");
+            if (attribute)
+            {
+                returnVal.m_materialContent.m_shininess = attribute->FloatValue();
+            }
+        }
+        else if (Texture::m_hash == elementHash)
+        {
+            const char* fileName = childElement->Attribute("file_name");
+            if (fileName)
+            {
+                Material::TextureSlotMapping::TextureSlot textureSlot = Material::TextureSlotMapping::Diffuse0;
+                const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("texture_slot");
+                if (attribute != nullptr)
+                {
+                    textureSlot = static_cast<Material::TextureSlotMapping::TextureSlot>(attribute->UnsignedValue());
+                }
+
+                stringCopy(returnVal.m_textureNames[textureSlot], fileName);
+            }
+        }
+        else if (Effect::m_hash == elementHash)
+        {
+            const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("file_name");
+            if (attribute)
+            {
+                returnVal.m_effectHash = hashString( attribute->Value() );
+            }
+            attribute = childElement->FindAttribute("technique_name");
+            if (attribute)
+            {
+                returnVal.m_techniqueHash = hashString(attribute->Value());
+            }
+            //m_effect.deserialise(deviceManager, childElement);
+        }
+        else if (alphaBlend == elementHash)
+        {
+            const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("enabled");
+            if (attribute != nullptr)
+            {
+                returnVal.m_alphaBlend = attribute->BoolValue();
+            }
+        }
+    }
+
+    return returnVal;
+}
 

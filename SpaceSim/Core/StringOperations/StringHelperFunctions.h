@@ -79,7 +79,7 @@ inline size_t hashBinaryData(const char* data, size_t size)
 template <size_t charCount>
 void stringCopy(char (&output)[charCount], const char* source)
 {
-    strncpy(output, source, charCount);
+    strncpy_s(output, source, charCount);
     output[charCount -1] = 0;
 }
 

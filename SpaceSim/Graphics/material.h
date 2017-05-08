@@ -98,6 +98,7 @@ public:
     void setSpecular(const Color& specular) { m_materialCB.m_specular[0] = specular.r(); m_materialCB.m_specular[1] = specular.g(); m_materialCB.m_specular[2] = specular.b(); m_materialCB.m_specular[3] = specular.a(); }
     void setEmissive(const Color& emissive) { m_materialCB.m_emissive[0] = emissive.r(); m_materialCB.m_emissive[1] = emissive.g(); m_materialCB.m_emissive[2] = emissive.b(); m_materialCB.m_emissive[3] = emissive.a(); }
     void setShininess(const float shininess) { m_materialCB.m_shininess = shininess; }
+    void setMaterialContent(const MaterialContent& materialContent) { m_materialCB = materialContent; }
     void setEffect( const Effect* effect) { m_effect = const_cast<Effect*>(effect); }
     void addTextureReference( const TextureSlotMapping& textureSlot) { m_texture.push_back(textureSlot); }
     const std::vector<TextureSlotMapping>& getTextureHashes() const { return m_texture; }
@@ -111,6 +112,23 @@ public:
     Effect* getEffect() { return m_effect; }
 	unsigned int getTechnique() const { return m_techniqueHash; }
 	void setTechnique(unsigned int techniqueHash) { m_techniqueHash = techniqueHash; }
+
+    struct MaterialParameters
+    {
+        MaterialParameters()
+        {
+            memset(m_textureNames, 0, sizeof(char) * Material::TextureSlotMapping::NumSlots * 256);
+        }
+
+        char m_textureNames[Material::TextureSlotMapping::NumSlots][256];
+        //std::vector< TextureData > m_texture;
+        MaterialContent m_materialContent;
+        unsigned int m_effectHash;
+        unsigned int m_techniqueHash;
+        bool m_alphaBlend;
+    };
+
+    static MaterialParameters GetMaterialParameters(const tinyxml2::XMLElement* childElement);
 protected:
 private:
     unsigned int m_techniqueHash;
