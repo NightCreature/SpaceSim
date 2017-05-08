@@ -38,6 +38,7 @@ void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOr
     params.fillvalue = 0.0f;
     params.fillx = true;
     params.changeWindingOrder = changeWindingOrder;
+    params.m_materialParameters = m_materialParameters;
     //CreatedModel face = Face::CreateFace(params);
     //m_drawableObject = face.model;
     //m_active = true;
@@ -71,6 +72,7 @@ const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
             //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
             //shaderInstance.getMaterial().setBlendState(true);
+            m_materialParameters = Material::GetMaterialParameters(element);
         }
         else if (Vector3::m_hash == typeHash)
         {

@@ -43,6 +43,7 @@ const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* el
             MSG_TRACE_CHANNEL("REFACTOR", "CREATE RENDER RESOURCE HERE THROUGH A MESSAGE");
             //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
             //shaderInstance.getMaterial().setBlendState(true);
+            m_materialParameters = Material::GetMaterialParameters(element);
         }
         else if (Vector3::m_hash == typeHash)
         {

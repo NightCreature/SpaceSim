@@ -56,5 +56,7 @@ private:
 	Model* m_rotatingblades1;
     Model* m_rotatingblades2;
 	float m_angle;
+
+    Material::MaterialParameters m_materialParameters;
 };
 #endif

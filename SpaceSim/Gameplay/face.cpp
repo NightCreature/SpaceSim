@@ -44,7 +44,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
             mat.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(params.m_materialParameters.m_textureNames[counter])), static_cast<Material::TextureSlotMapping::TextureSlot>(counter)));
             ResourceLoader::LoadRequest loadRequest;
             loadRequest.m_gameObjectId = 0;
-            loadRequest.m_resourceType = HASH_STRING("LOAD_TEXTURE");
+            loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
             loadRequest.m_loadData = static_cast<void*>(new TextureLoadRequest(params.m_materialParameters.m_textureNames[counter], counter));
             renderResourceHelper.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
         }

@@ -220,6 +220,7 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
             {
                 returnVal.m_effectHash = hashString( attribute->Value() );
             }
+            returnVal.m_techniqueHash = hashString("default"); //In case we dont have an attached technique name
             attribute = childElement->FindAttribute("technique_name");
             if (attribute)
             {

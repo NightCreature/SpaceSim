@@ -5,7 +5,9 @@
 #include "Core/MessageSystem/RenderMessages.h"
 #include "Core/Resource/RenderResource.h"
 
+#include "Graphics/DeviceManager.h"
 #include "Graphics/modelmanager.h"
+#include "Graphics/texturemanager.h"
 
 #include "Loader/ResourceLoadRequests.h"
 
@@ -31,6 +33,11 @@ void ResourceLoader::update()
             returnMessage.SetData(data);
             
             renderResource.m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage);
+        }
+        else if (request.m_resourceType == hashString("LOAD_TEXTURE"))
+        {
+            auto textureLoadData = static_cast<TextureLoadRequest*>(request.m_loadData);
+            renderResource.getTextureManager().addLoad(renderResource.getDeviceManager(), textureLoadData->m_textureName);
         }
 
         delete [] request.m_loadData;
