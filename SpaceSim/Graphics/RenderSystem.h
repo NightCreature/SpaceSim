@@ -81,6 +81,8 @@ public:
     CubeMapRenderer* getCubeMapRenderer() { return m_cubeMapRenderer; }
 
     void CreateRenderList(const MessageSystem::Message& msg);
+
+    void setInput(Input input) { m_input = input; }
 protected:
 private:
     bool createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight);
@@ -146,4 +148,5 @@ private:
     //No more need for these to be static
     Matrix44 m_view;
     Matrix44 m_projection;
+    Input m_input;
 };

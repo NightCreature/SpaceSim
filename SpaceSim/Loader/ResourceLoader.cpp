@@ -36,8 +36,8 @@ void ResourceLoader::update()
         }
         else if (request.m_resourceType == hashString("LOAD_TEXTURE"))
         {
-            auto textureLoadData = static_cast<TextureLoadRequest*>(request.m_loadData);
-            renderResource.getTextureManager().addLoad(renderResource.getDeviceManager(), textureLoadData->m_textureName);
+            auto textureLoadData = static_cast<char*>(request.m_loadData);
+            renderResource.getTextureManager().addLoad(renderResource.getDeviceManager(), textureLoadData);
         }
 
         delete [] request.m_loadData;

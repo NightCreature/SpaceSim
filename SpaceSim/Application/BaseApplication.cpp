@@ -189,6 +189,8 @@ void Application::mainGameLoop()
             //Unblock simulation here
             m_inputSystem.update(m_elapsedTime, m_time);
 
+            m_renderSystem.setInput(input);
+
             m_renderSystem.beginDraw();
             m_renderSystem.update(m_elapsedTime, m_time);
             m_renderSystem.endDraw();

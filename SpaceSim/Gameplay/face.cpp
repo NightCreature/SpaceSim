@@ -45,7 +45,8 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
             ResourceLoader::LoadRequest loadRequest;
             loadRequest.m_gameObjectId = 0;
             loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-            loadRequest.m_loadData = static_cast<void*>(new TextureLoadRequest(params.m_materialParameters.m_textureNames[counter], counter));
+            loadRequest.m_loadData = static_cast<void*>(new char[256]);
+            memcpy(loadRequest.m_loadData, params.m_materialParameters.m_textureNames[counter], 256);
             renderResourceHelper.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
         }
     }
