@@ -9,14 +9,7 @@ class Resource;
 class ResourceLoader : public MessageSystem::IMessageDispatcher
 {
 public:
-    ResourceLoader() {}
-    ~ResourceLoader() {}
 
-    void initialise(Resource* resource) { m_resource = resource; }
-    void update();
-
-    virtual void dispatchMessage(const MessageSystem::Message & msg) override;
-public:
     struct LoadRequest
     {
         size_t m_resourceType;
@@ -24,7 +17,19 @@ public:
         void* m_loadData;
     };
 
+    ResourceLoader() {}
+    ~ResourceLoader() {}
+
+    void initialise(Resource* resource) { m_resource = resource; }
+    void update();
+
+    virtual void dispatchMessage(const MessageSystem::Message & msg) override;
+    void AddLoadRequest(const LoadRequest& request);
+public:
+
     std::vector<LoadRequest> m_requests;
+    std::vector<LoadRequest> m_newRequestsDuringUpdate;
+    bool m_isUpdating;
     Resource* m_resource;
     
 

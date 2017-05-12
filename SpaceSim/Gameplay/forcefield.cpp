@@ -22,6 +22,9 @@ GameObject(resource)
 	m_position = position;
 	m_texturespeed = 0.0f;
 	m_active = true;
+
+    m_name = "forcefield";
+    m_nameHash = hashString(m_name);
 }
 
 //-----------------------------------------------------------------------------
@@ -37,6 +40,7 @@ void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWin
     params.fillvalue = 0.0f;
     params.fillx = true;
     params.changeWindingOrder = changeWindingOrder;
+    params.m_materialParameters = m_materialParameters;
     //CreatedModel face = Face::CreateFace(params);
     //m_drawableObject = face.model;
     //m_active = true;
@@ -60,6 +64,7 @@ const ShaderInstance ForceField::deserialise( const tinyxml2::XMLElement* elemen
     if (attribute != nullptr)
     {
         m_name = attribute->Value();
+        m_nameHash = hashString(m_name);
     }
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
@@ -70,6 +75,7 @@ const ShaderInstance ForceField::deserialise( const tinyxml2::XMLElement* elemen
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
             //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
             //shaderInstance.getMaterial().setBlendState(true);
+            m_materialParameters = Material::GetMaterialParameters(element);
         }
         else if (Vector3::m_hash == typeHash)
         {
@@ -98,6 +104,15 @@ void ForceField::update( RenderInstanceTree& renderInstances, float elapsedTime,
         {
             m_texturespeed = 0.0f;
         }
+
+        MessageSystem::RenderInformation renderInfo;
+        MessageSystem::RenderInformation::RenderInfo data;
+        data.m_renderObjectid = m_renderHandle;
+        data.m_gameobjectid = m_nameHash;
+        data.m_world = m_world;
+        data.m_name = m_name;
+        renderInfo.SetData(data);
+        m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
     }
 }
 
@@ -116,5 +131,6 @@ void ForceField::handleMessage( const MessageSystem::Message& msg )
         m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
         //Store the render object reference we get back and the things it can do
         m_initialisationDone = true;
+        m_active = true;
     }
 }

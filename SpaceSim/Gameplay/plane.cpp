@@ -87,6 +87,7 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
     params.fillvalue = m_fillvalue;
     params.invertNormal = m_invertNormal;
     params.changeWindingOrder = m_changeWindingOrder;
+    params.m_materialParameters = m_materialParameters;
     //if (10 != m_rows && 10 != m_coloms)
     //{
     //    params.tesselate = false;
@@ -139,8 +140,7 @@ const ShaderInstance Plane::deserialise( const tinyxml2::XMLElement* node )
         unsigned int childElementHash = hashString(childElement->Value());
         if (Material::m_hash == childElementHash)
         {
-            MSG_TRACE_CHANNEL("REFACTOR", "SEND A MESSAGE TO CREATE A RENDER RESOURCE");
-            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), childElement);
+            m_materialParameters = Material::GetMaterialParameters(childElement);
         }
     }
     return shaderInstance;
@@ -187,6 +187,7 @@ void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, cons
     data.m_renderObjectid = m_renderHandle;
     data.m_gameobjectid = m_nameHash;
     data.m_world = m_world;
+    data.m_name = m_name;
     renderInfo.SetData(data);
     m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
 }

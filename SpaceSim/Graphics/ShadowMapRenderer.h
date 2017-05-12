@@ -13,7 +13,6 @@
 //#endif
 #ifdef _DEBUG
 #include <d3d11_1.h>
-#include <atlbase.h>
 #endif
 
 
@@ -52,6 +51,6 @@ private:
     ID3D11Buffer* m_perFrameConstants;
     unsigned int m_shadowMapWidthHeight;
 #ifdef _DEBUG
-    CComPtr<ID3DUserDefinedAnnotation> pPerf;
+    ID3DUserDefinedAnnotation* pPerf;
 #endif
 };

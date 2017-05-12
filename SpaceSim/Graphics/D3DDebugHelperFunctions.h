@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Types/TypeHelpers.h"
+
 namespace D3DDebugHelperFunctions
 {
     inline const char* D3DErrorCodeToString( HRESULT errorCode )
@@ -30,6 +32,6 @@ namespace D3DDebugHelperFunctions
         }
     }
 #else
-    inline void SetDebugChildName(ID3D11DeviceChild* child, const std::string& name) {}
+    inline void SetDebugChildName(ID3D11DeviceChild* child, const std::string& name) { UNUSEDPARAM(child); UNUSEDPARAM(name); }
 #endif
 }

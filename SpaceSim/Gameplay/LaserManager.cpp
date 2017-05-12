@@ -102,7 +102,7 @@ void LaserManager::addInstance( const Vector3& position, const Vector3& directio
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void LaserManager::update(RenderInstanceTree& renderInstances, float time)
+void LaserManager::update(RenderInstanceTree& renderInstances, float time, const Matrix44& view, const Matrix44& projection)
 {
     PROFILE_EVENT("LaserManager::update", PaleGreen)
 
@@ -116,7 +116,7 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time)
     for (std::vector< LasterRenderPair >::iterator it = m_worldPlayerTransforms.begin(); it != m_worldPlayerTransforms.end(); ++it)
     {
         LasterRenderPair& laserPair = *it;
-        laserPair.first.update(time);
+        laserPair.first.update(time, view, projection);
         LaserInstanceData& lid = laserPair.first.getInstanceData();
         laserPair.second->setShaderInstance(&(lid.m_shaderInstance));
         Bbox box = m_playerLaser->getOriginalBoundingBox();
@@ -131,7 +131,7 @@ void LaserManager::update(RenderInstanceTree& renderInstances, float time)
     for (std::vector< LasterRenderPair >::iterator it = m_worldEnemyTransforms.begin(); it != m_worldEnemyTransforms.end(); ++it)
     {
         LasterRenderPair& laserPair = *it;
-        laserPair.first.update(time);
+        laserPair.first.update(time, view, projection);
         LaserInstanceData& lid = laserPair.first.getInstanceData();
         laserPair.second->setShaderInstance(&(lid.m_shaderInstance));
         Bbox box = m_enemyLaser->getOriginalBoundingBox();

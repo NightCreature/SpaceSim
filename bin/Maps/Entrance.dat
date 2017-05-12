@@ -1049,6 +1049,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="0" g="0.5" b="0.0" a="1"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="12" file_name="Textures\forcefield.dds"/>
       <Effect file_name="Shaders\Effects\Force_Field_Effect.xml" />
     </Material>
@@ -1061,6 +1062,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="0" g="0.5" b="0.0" a="1"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="12" file_name="Textures\forcefield.dds"/>
       <Effect file_name="Shaders\Effects\Force_Field_Effect.xml" />
     </Material>
@@ -1073,6 +1075,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="0" g="0" b="0.0" a="1"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="13" file_name="Textures\door_test.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
       <AlphaBlend enabled="true" />
@@ -1086,6 +1089,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="0" g="0" b="0.0" a="1"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="13" file_name="Textures\door_test.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
       <AlphaBlend enabled="true" />
@@ -1099,6 +1103,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="0" g="0" b="0.0" a="1"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="14" file_name="Textures\blades.bmp"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1122,6 +1127,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="0.25" g="1" b="0.25" a="1"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="17" file_name="Textures\core_small.jpg"/>
       <Effect file_name="Shaders\Effects\core_Effect.xml" />
     </Material>
@@ -1138,6 +1144,7 @@
       -->
   <!--
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="17" file_name="Textures\core_small.jpg"/>
       <Effect file_name="Shaders\Effects\core_Effect.xml" />
     </Material>
@@ -1156,6 +1163,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1165,6 +1173,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1178,6 +1187,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1187,6 +1197,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1200,6 +1211,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1209,6 +1221,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1222,6 +1235,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1231,6 +1245,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1244,6 +1259,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1253,6 +1269,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1266,6 +1283,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>
@@ -1275,6 +1293,7 @@
       <Color r="1" g="1" b="1" a="1"/>
       <Color r="5" g="0" b="0" a="0.75"/>
       <Shininess value="0"/>
+      <AlphaBlend enabled="true" />
       <Texture type="15" file_name="Textures\switch.dds"/>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
     </Material>

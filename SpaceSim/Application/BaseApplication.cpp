@@ -32,8 +32,6 @@ class RenderInstance;
 HashString exitGame("exit_game");
 
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
-Matrix44 Application::m_view;
-Matrix44 Application::m_projection;
 Logger Application::m_logger;
 
 //-----------------------------------------------------------------------------
@@ -88,7 +86,6 @@ bool Application::initialise()
     {
         windowHeight = heightSetting->getData();     
     }
-    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1500.0f);
 
     SettingsParser settings(&m_settingsManager);
     if (!settings.loadFile(m_paths.getSettingsPath() + "settings.cfg"))
@@ -172,6 +169,7 @@ void Application::mainGameLoop()
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();
+            m_inputSystem.update(m_elapsedTime, m_time);
             Input input = m_inputSystem.getInput();
             //THis needs to happen in single threaded update
             {
@@ -181,6 +179,7 @@ void Application::mainGameLoop()
                 //m_view = cam->getCamera();
 
                 m_UpdateThread.setInput(input);
+                m_renderSystem.setInput(input);
 
                 m_UpdateThread.SetElapsedTime(m_elapsedTime, m_time);
 
@@ -190,7 +189,6 @@ void Application::mainGameLoop()
                 m_UpdateThread.UnLockCriticalSection();
             }
             //Unblock simulation here
-            m_inputSystem.update(m_elapsedTime, m_time);
 
             m_renderSystem.beginDraw();
             m_renderSystem.update(m_elapsedTime, m_time);

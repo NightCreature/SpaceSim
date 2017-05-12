@@ -56,9 +56,10 @@ class RenderInformation : public Message
 public:
     struct RenderInfo : public MessageData
     {
-        size_t m_renderObjectid;
-        size_t m_gameobjectid;
         Matrix44 m_world;
+        size_t m_renderObjectid;
+        size_t m_gameobjectid;        
+        std::string m_name;
     };
 
     RenderInformation()

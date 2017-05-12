@@ -5,7 +5,11 @@
 #include "Core/MessageSystem/RenderMessages.h"
 #include "Core/Resource/RenderResource.h"
 
+#include "Graphics/DeviceManager.h"
 #include "Graphics/modelmanager.h"
+#include "Graphics/texturemanager.h"
+
+#include "Loader/ResourceLoadRequests.h"
 
 //-----------------------------------------------------------------------------
 //! @brief   Initialise the application
@@ -13,6 +17,7 @@
 //-----------------------------------------------------------------------------
 void ResourceLoader::update()
 {
+    m_isUpdating = true;
     PROFILE_EVENT("ResourceLoader::update", Crimson);
 
     RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
@@ -29,11 +34,19 @@ void ResourceLoader::update()
             
             renderResource.m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage);
         }
+        else if (request.m_resourceType == hashString("LOAD_TEXTURE"))
+        {
+            auto textureLoadData = static_cast<char*>(request.m_loadData);
+            renderResource.getTextureManager().addLoad(renderResource.getDeviceManager(), textureLoadData);
+        }
 
         delete [] request.m_loadData;
     }
 
     m_requests.clear();
+    m_requests.swap(m_newRequestsDuringUpdate);
+
+    m_isUpdating = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -51,4 +64,20 @@ void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
     memcpy(request.m_loadData, crrmsg.GetImplementationData(), crrmsg.GetImplementationDataSize());
 
     m_requests.push_back(request);
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void ResourceLoader::AddLoadRequest(const LoadRequest& request)
+{
+    if (m_isUpdating)
+    {
+        m_newRequestsDuringUpdate.push_back(request);
+    }
+    else
+    {
+        m_requests.push_back(request);
+    }
 }

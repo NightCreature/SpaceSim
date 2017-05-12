@@ -1,5 +1,6 @@
 #include "Graphics/texture.h"
-#include "Graphics\DeviceManager.h"
+#include "Graphics/DeviceManager.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
 #include "Core/Paths.h"
 
 #include "WICTextureLoader.h"
@@ -34,11 +35,13 @@ bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, const std:
     if (extension == "dds")
     {
         hr = DirectX::CreateDDSTextureFromFile(device, wfilename.c_str(), 0, &m_textureShaderResourceView);
+        D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("SRV for Texture %s", filename.c_str()));
     }
     else
     {
 
         hr = DirectX::CreateWICTextureFromFile(device, deviceManager.getDeviceContext(), wfilename.c_str(), 0, &m_textureShaderResourceView, 0);
+        D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("RTV for Texture %s", filename.c_str()));
     }
 
     if (FAILED(hr))
@@ -58,13 +61,8 @@ bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, const std:
     {
         MSG_TRACE_CHANNEL("ERROR", "Failed to create Sampler State" )
     }
-
-#ifdef _DEBUG
-    if (m_textureSamplerState != nullptr)
-    {
-        m_textureSamplerState->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(wfilename.size()), wfilename.c_str());
-    }
-#endif
+    
+    D3DDebugHelperFunctions::SetDebugChildName(m_textureSamplerState, FormatString("Sampler for Texture %s", filename.c_str()));
 
 	return true;
 }

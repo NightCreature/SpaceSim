@@ -5,7 +5,7 @@
 
 #define SOURCE_INFO SourceInfo(__FILE__, __LINE__)
 #define ALLOCATE_FROM_ARENA(arena, size) arena.allocate(size, SOURCE_INFO)
-#define DEALLOCATE_FROM_ARENA(ptr, size) arena.deallocate(ptr, SOURCE_INFO)
+#define DEALLOCATE_FROM_ARENA(arena, ptr) arena.deallocate(ptr, SOURCE_INFO)
 
 namespace Allocator
 {

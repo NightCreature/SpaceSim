@@ -24,7 +24,7 @@ MeshGroup::~MeshGroup()
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box )
+void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box )
 {
     PROFILE_EVENT("MeshGroup::update", Aqua);
     if (m_renderInstanceDirty || m_renderInstance == nullptr)
@@ -39,15 +39,15 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
             PROFILE_EVENT("MeshGroup::update::Allocation", Black);
 			m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
 #ifdef _DEBUG
-			convertToWideString(name, m_renderInstance->m_name);
+			convertToWideString(name, m_renderInstance->m_name); 
 #else
 			UNUSEDPARAM(name);
 #endif
 		}
 
-        WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
-        wvpConstants.m_projection = Application::m_projection;
-        wvpConstants.m_view = Application::m_view;
+        WVPBufferContent& wvpConstants = m_renderInstance->GetShaderInstance().getWVPConstants();
+        wvpConstants.m_projection = projection;
+        wvpConstants.m_view = view;
         wvpConstants.m_world = m_world * world; 
         UNUSEDPARAM(resource);
     }

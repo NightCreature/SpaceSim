@@ -23,10 +23,10 @@
 #include <numeric>
 
 #include "Graphics/Frustum.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
 
 #ifdef _DEBUG
 #include <d3d11_1.h>
-#include <atlbase.h>
 
 #include "ScreenGrab.h"
 #endif
@@ -62,6 +62,8 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
          MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create depth stencil for the cubemap renderer: 0x%x", hr);
      }
 
+     D3DDebugHelperFunctions::SetDebugChildName(m_depthStencil, "ShadowMapRenderer DepthStencil Texture");
+
      // Create the depth stencil view
      D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor;
      ZeroMemory(&depthStencilViewDescriptor, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
@@ -73,6 +75,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
          MSG_TRACE_CHANNEL("ERROR", "Failed to create the depth stencil view")
              return;
      }
+     D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilView, "ShadowMapRenderer DepthStencil View");
 
      D3D11_TEXTURE2D_DESC shadowMapTextureDesc;
      shadowMapTextureDesc.Width = m_shadowMapWidthHeight;
@@ -91,6 +94,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
      {
          MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create depth stencil for the cubemap renderer: 0x%x", hr);
      }
+     D3DDebugHelperFunctions::SetDebugChildName(m_shadowMap, "ShadowMapRenderer ShadowMap Texture");
 
      // Create the depth stencil view
      D3D11_RENDER_TARGET_VIEW_DESC shadowMapViewDescriptor;
@@ -103,6 +107,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
          MSG_TRACE_CHANNEL("ERROR", "Failed to create the depth stencil view")
          return;
      }
+     D3DDebugHelperFunctions::SetDebugChildName(m_shadowMapView, "ShadowMapRenderer ShadowMap RTV");
 
      D3D11_SHADER_RESOURCE_VIEW_DESC shadowMapSRVDescriptor;
      ZeroMemory(&shadowMapSRVDescriptor, sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
@@ -114,6 +119,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
          MSG_TRACE_CHANNEL("ERROR", "Failed to create the depth stencil view")
          return;
      }
+     D3DDebugHelperFunctions::SetDebugChildName(m_shadowMapRV, "ShadowMapRenderer ShadowMap SRV");
 
      ID3D11Device* device = deviceManager.getDevice();
      D3D11_BUFFER_DESC wvpBufferDescriptor;
@@ -125,6 +131,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
          MSG_TRACE_CHANNEL("EFFECT_ERROR", "failed to create the World, View and Porjection buffer for this effect");
          return;
      }
+     D3DDebugHelperFunctions::SetDebugChildName(m_perFrameConstants, "ShadowMapRendererPer Frame Constants");
 
      ZeroMemory(&m_lightViewPort, sizeof(D3D11_VIEWPORT));
      m_lightViewPort.Height = (float)m_shadowMapWidthHeight;
@@ -162,6 +169,10 @@ void ShadowMapRenderer::cleanup()
     m_shadowMapView->Release();
     m_shadowMapRV->Release();
     m_perFrameConstants->Release();
+
+#ifdef _DEBUG
+    pPerf->Release();
+#endif
 }
 
 //-----------------------------------------------------------------------------

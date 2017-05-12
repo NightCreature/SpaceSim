@@ -26,6 +26,7 @@ public:
     HASH_ELEMENT_DEFINITION
 protected:
 private:
+    Material::MaterialParameters m_materialParameters;
 	Vector3 m_position;
 	float m_texturespeed;
 };

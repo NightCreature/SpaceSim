@@ -1,10 +1,10 @@
 #include "Graphics/DeviceManager.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
 #include <iostream>
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 
 
-#include <atlbase.h>
 
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
@@ -35,6 +35,12 @@ bool DeviceManager::createDevice(IDXGIAdapter* adapter)
         return false;
     }
 
+#ifdef _DEBUG
+    m_device->SetPrivateData(WKPDID_D3DDebugObjectName, 13, "Render Device");
+#endif
+
+    D3DDebugHelperFunctions::SetDebugChildName(m_deviceContext, "Render Device Context");
+
     return true;
 }
 
@@ -44,21 +50,21 @@ bool DeviceManager::createDevice(IDXGIAdapter* adapter)
 //-----------------------------------------------------------------------------
 void DeviceManager::cleanup()
 {
-    CComPtr<ID3D11Debug> pDebug = nullptr;
-    HRESULT hr = m_device->QueryInterface(IID_PPV_ARGS(&pDebug));
-    hr = hr;
+    ID3D11Debug* debugInterface = nullptr;
+    m_device->QueryInterface(__uuidof(ID3D11Debug), (void **)&debugInterface);
 
-    if (pDebug != nullptr)
+    if (debugInterface != nullptr)
     {
-        pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+        debugInterface->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+        debugInterface->Release();
     }
 
-    if (m_device)
-    {
-        m_device->Release();
-    }
     if (m_deviceContext)
     {
         m_deviceContext->Release();
+    }
+    if (m_device)
+    {
+        m_device->Release();
     }
 }

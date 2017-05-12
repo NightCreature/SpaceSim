@@ -5,7 +5,7 @@
 #endif
 
 #ifdef PROFILING
-#define PROFILE_EVENT(event_name, event_color) BROFILER_CATEGORY(event_name, Profiler::Color::#event_color);
+#define PROFILE_EVENT(event_name, event_color) BROFILER_CATEGORY(event_name, Profiler::Color::event_color);
 #else
 #define PROFILE_EVENT(event_name, event_color) ;
 #endif

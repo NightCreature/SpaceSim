@@ -21,7 +21,7 @@ public:
     void initialise(Resource* resource);
     void addInstance( const Vector3& position, const Vector3& direction, const ShaderInstance& shaderInstance, bool player_laser = false);
 
-    void update(RenderInstanceTree& renderInstances, float time);
+    void update(RenderInstanceTree& renderInstances, float time, const Matrix44& view, const Matrix44& projection);
 
     typedef std::vector<RenderInstance* > RenderInstancePool;
     typedef std::vector< RenderInstance* > RenderInstanceQueue;

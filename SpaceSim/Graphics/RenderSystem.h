@@ -28,7 +28,6 @@
 
 #ifdef _DEBUG
 #include <d3d11_1.h>
-#include <atlbase.h>
 #endif
 
 class RenderInstance;
@@ -82,6 +81,8 @@ public:
     CubeMapRenderer* getCubeMapRenderer() { return m_cubeMapRenderer; }
 
     void CreateRenderList(const MessageSystem::Message& msg);
+
+    void setInput(Input input) { m_input = input; }
 protected:
 private:
     bool createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight);
@@ -89,6 +90,10 @@ private:
     void setupSwapChainForRendering( ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight );
     void initialiseCubemapRendererAndResources( Resource* resource );
     
+    Matrix44 m_CullingProjectionMatrix;
+    Matrix44 m_view;
+    Matrix44 m_projection;
+
     RenderResource* m_renderResource;
 
     CameraManager      m_cameraSystem;
@@ -127,7 +132,7 @@ private:
     size_t m_totalNumberOfRenderedFrames;
 #ifdef _DEBUG
     OrientationAxis* m_debugAxis;
-    CComPtr<ID3DUserDefinedAnnotation> pPerf;
+    ID3DUserDefinedAnnotation* pPerf;
 #endif
 
     std::vector<CubeRendererInitialiseData> m_cubeSettings;
@@ -135,7 +140,7 @@ private:
     ShadowMapRenderer* m_shadowMapRenderer;
     ID3D11SamplerState* m_samplerState;
 
-    Matrix44 m_CullingProjectionMatrix;
+    
     RenderInstanceTree visibleInstances;
 
     MessageSystem::MessageObserver m_messageObservers;
@@ -143,4 +148,9 @@ private:
 
     //TEMP HACK
     RenderInstanceTree m_renderInstances;
+
+    //No more need for these to be static
+    Input m_input;
+
+    size_t m_numberOfInstancePerFrame;
 };

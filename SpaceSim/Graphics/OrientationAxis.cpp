@@ -25,6 +25,16 @@ OrientationAxis::LineVertex OrientationAxis::m_vertices[] =
     {0.0f,  0.0f, 1.0f},//, 0xFFFFFFFF
     {0.0f, 0.25f, 1.0f} //, 0xFFFFFFFF
 };
+
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+void OrientationAxis::cleanup()
+{
+    m_vertexBuffer.cleanup();
+}
+
 //-----------------------------------------------------------------------------
 //! @brief   TODO enter a description
 //! @remark
@@ -48,9 +58,9 @@ void OrientationAxis::initialise(Resource* resource, const DeviceManager& device
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void OrientationAxis::draw( const DeviceManager& deviceManager, Resource* resource )
+void OrientationAxis::draw( const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection, Resource* resource )
 {   
-    transform(deviceManager); //Needs to move to the update of an object not the draw step
+    transform(deviceManager, view, projection); //Needs to move to the update of an object not the draw step
     ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
     const Technique* technique = m_effect->getTechnique("default");
     technique->setWVPContent(deviceManager, m_wvpConstants);
@@ -79,10 +89,10 @@ void OrientationAxis::draw( const DeviceManager& deviceManager, Resource* resour
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void OrientationAxis::transform(const DeviceManager& deviceManager)
+void OrientationAxis::transform(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection)
 {
-    m_wvpConstants.m_projection = Application::m_projection;
-    m_wvpConstants.m_view = Application::m_view;
+    m_wvpConstants.m_projection = projection;
+    m_wvpConstants.m_view = view;
     Matrix44 world;
     world.identity();
     m_wvpConstants.m_world = world; 

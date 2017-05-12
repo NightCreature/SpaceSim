@@ -80,8 +80,5 @@ private:
     MessageSystem::MessageQueues m_messageQueues;
     //ModelComponentManger m_modelManager;
 public:
-    static Matrix44 m_view;
-    static Matrix44 m_projection;
-
     static Logger m_logger;
 };

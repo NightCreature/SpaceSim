@@ -32,6 +32,7 @@ namespace Face
 
         //const ShaderInstance* shaderInstance;
         //Resource* resource;
+        Material::MaterialParameters m_materialParameters; //This way we can create the material on the mesh group
         float fillvalue;
         float width;
         float height;

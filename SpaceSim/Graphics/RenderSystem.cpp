@@ -91,7 +91,13 @@ RenderSystem::~RenderSystem()
     m_shaderCache.cleanup();
     m_effectCache.cleanup();
 
-    m_deviceManager.cleanup();
+    m_dxgiFactory->Release();
+   
+
+#ifdef _DEBUG
+    pPerf->Release();
+    m_debugAxis->cleanup();
+#endif
 
 #ifdef _DEBUG
     if (m_debugAxis != nullptr)
@@ -109,7 +115,7 @@ RenderSystem::~RenderSystem()
 //-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource)
 {
-    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_shaderCache, &m_textureManager);
+    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager);
 
     m_modelManger.initialise(m_renderResource);
     m_resourceLoader.initialise(m_renderResource);
@@ -162,6 +168,7 @@ void RenderSystem::initialise(Resource* resource)
     {
         ExitProcess(1); //Fix this exit cleanly
     }
+    adapter->Release();
 
     ID3D11Device* device = m_deviceManager.getDevice();
     //Patch up the factory
@@ -325,6 +332,9 @@ void RenderSystem::initialise(Resource* resource)
 	m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(this, &RenderSystem::CreateRenderList));
+
+    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1500.0f);
+    m_view = m_cameraSystem.getCamera("global")->getCamera();
 }
 
 //-----------------------------------------------------------------------------
@@ -455,6 +465,7 @@ void RenderSystem::update(float elapsedTime, double time)
                 pPerf->EndEvent();
             }
 #endif
+            ++m_numberOfInstancePerFrame;
         }
     }
 
@@ -536,7 +547,9 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
         MSG_TRACE_CHANNEL("ERROR", "Failed to Create the render target view")
             return;
     }
+    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem BackBuffer Texture for Swap Chain");
     m_backBuffer->Release();
+    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem RTV for Swap Chain");
 
     // Create depth stencil texture
     D3D11_TEXTURE2D_DESC depthBufferDescriptor;
@@ -640,14 +653,18 @@ void RenderSystem::beginDraw()
 {
     PROFILE_EVENT("RenderSystem::beginDraw", Orange);
 
+    m_numberOfInstancePerFrame = 0;
+
     m_renderInstances.clear();
+
+    m_cameraSystem.update(m_renderResource->m_performanceTimer->getElapsedTime(), m_renderResource->m_performanceTimer->getTime(), m_input);
+    m_view = m_cameraSystem.getCamera("global")->getCamera();
 
     m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
     m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
 
     //Kick resource loading, potentially this needs to move to its own low priority thread too.
     m_resourceLoader.update();
-    m_cameraSystem.update(m_renderResource->m_performanceTimer->getElapsedTime(), m_renderResource->m_performanceTimer->getTime());
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
@@ -758,7 +775,7 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 {
     PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
     visibleInstances.clear();
-    Frustum frustum(Application::m_view, m_CullingProjectionMatrix);
+    Frustum frustum(m_view, m_CullingProjectionMatrix);
     for (auto instance : renderInstances)
     {
         if (frustum.IsInside(instance->getBoundingBox()))
@@ -775,19 +792,20 @@ void RenderSystem::endDraw()
 {
     PROFILE_EVENT("RenderSystem::endDraw", Orange);
 #ifdef _DEBUG
-    m_debugAxis->draw(m_deviceManager, m_renderResource);
-#else
-    UNUSEDPARAM(resource);
+    m_debugAxis->draw(m_deviceManager, m_view, m_projection, m_renderResource);
 #endif
 
-    HRESULT hr = m_swapChain->Present(0, 0);
-    ++m_totalNumberOfRenderedFrames;
-    m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
-    if (FAILED(hr))
+    if (m_numberOfInstancePerFrame > 0)
     {
-        MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr)
-            MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason())
-            assert(false);
+        HRESULT hr = m_swapChain->Present(0, 0);
+        ++m_totalNumberOfRenderedFrames;
+        m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
+        if (FAILED(hr))
+        {
+            MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr)
+                MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason())
+                assert(false);
+        }
     }
 }
 
@@ -804,7 +822,7 @@ void RenderSystem::CreateRenderList(const MessageSystem::Message& msg)
     const CreatedModel* model = mm.GetRenderResource(info->m_renderObjectid);
     if (model)
     {
-        model->model->update(m_renderResource, m_renderInstances, 0.0f, info->m_world, "temp name");
+        model->model->update(m_renderResource, m_renderInstances, 0.0f, info->m_world, m_view, m_projection, info->m_name);
     }
 }
 
@@ -894,7 +912,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
             return;
         }
 
-        D3DDebugHelperFunctions::SetDebugChildName(textureResource, FormatString("RenderSystem CubeMap Render Target"));
+        D3DDebugHelperFunctions::SetDebugChildName(textureResource, FormatString("RenderSystem CubeMap Render Target for cubemap no. %d", counter));
 
         rtDesc.Texture2DArray.ArraySize = 1;
         for (size_t rtCounter = 0; rtCounter < 6; ++rtCounter)
@@ -907,7 +925,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
                 MSG_TRACE_CHANNEL("CubemapRenderer_ERROR", "Failed to create render target view for the cubemap renderer: 0x%x", hr);
                 return;
             }
-            D3DDebugHelperFunctions::SetDebugChildName(rtView[rtCounter], FormatString("RenderSystem CubeMap Render Target View no. %d", counter));
+            D3DDebugHelperFunctions::SetDebugChildName(rtView[rtCounter], FormatString("RenderSystem CubeMap Render Target View no. %d", rtCounter));
         }
 
         hr = m_deviceManager.getDevice()->CreateShaderResourceView(textureResource, &srvDesc, &srView);
@@ -917,7 +935,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
             return;
         }
 
-        D3DDebugHelperFunctions::SetDebugChildName(srView, FormatString("RenderSystem CubeMap SRV"));
+        D3DDebugHelperFunctions::SetDebugChildName(srView, FormatString("RenderSystem CubeMap SRV for cubemap no. %d", counter));
 
         cubeMap.createRenderTarget(textureResource, rtView, srView);
         tm.addTexture(m_cubeSettings[counter].m_texutureResourceName, cubeMap);

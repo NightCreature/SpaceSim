@@ -115,56 +115,60 @@ template<class T> void deallocateArray(AllocatorInterface& allocator, T* array)
     allocator.deallocate(array - headerSize);
 }
 
-//template<class T>
-//class STLAllocator
-//{
-//public:
-//    typedef size_t size_type;
-//    typedef T* pointer;
-//    typedef const T* const_pointer;
-//    typedef T& reference;
-//    typedef const T& const_reference;
-//    typedef T value_type;
-//
-//    STLAllocator();
-//    STLAllocator(const STLAllocator& other);
-//
-//    template<typename U>
-//    STLAllocator(const STLAllocator<U>&);
-//
-//    STLAllocator<T>& operator=(const STLAllocator& other);
-//
-//    template<typename U>
-//    STLAllocator& operator=(const STLAllocator<U>& other);
-//
-//    pointer address(reference x) const;
-//    const_pointer address(const_reference x) const;
-//
-//    pointer allocate(size_type n, const void* hint = 0);
-//    void deallocate(void* p, size_type n);
-//
-//    void construct(pointer p, const T& val);
-//
-//    //Has to be implemented for C++11 allocator
-//    //template<typename U, typename... Args>
-//    //void construct(U* p, Args&&... args);
-//
-//    void destroy(pointer p);
-//
-//    template<typename U>
-//    void destroy(U* p);
-//
-//    size_type max_size() const;
-//
-//    template<typename U>
-//    struct rebind
-//    {
-//        typedef STLAllocator<U> other;
-//    };
-//private:
-//    size_t m_numberOfAllocations;
-//    size_t m_usedMemory;
-//};
+template<class T>
+class STLAllocator
+{
+public:
+    typedef size_t size_type;
+    typedef T* pointer;
+    typedef const T* const_pointer;
+    typedef T& reference;
+    typedef const T& const_reference;
+    typedef T value_type;
+
+    STLAllocator() {}
+    STLAllocator(const STLAllocator& other) { m_allocator = other.m_allocator; }
+
+    template<typename U>
+    STLAllocator(const STLAllocator<U>&) { m_allocator = other.m_allocator; }
+
+    template<typename U>
+    STLAllocator& operator=(const STLAllocator<U>& other) { return *this; }
+
+    pointer address(reference x) const { return &x; }
+    const_pointer address(const_reference x) const { return &x; }
+
+    pointer allocate(size_type n, const void* hint = 0) 
+    {
+        hint = hint; 
+        return static_cast<T*>(m_allocator->allocate(n * sizeof(T))); 
+    }
+    void deallocate(void* p, size_type n) { m_allocator->deallocate(p); n = n; }
+
+    void construct(pointer p, const T& val) { new (p) T(val); }
+
+    //Has to be implemented for C++11 allocator
+    //template<typename U, typename... Args>
+    //void construct(U* p, Args&&... args);
+
+    void destroy(pointer p) { p->~T(); }
+
+    template<typename U>
+    void destroy(U* p) { p->!U(); }
+
+    size_type max_size() const { return m_allocator->getSize() / sizeof(T); }
+
+    template<typename U>
+    struct rebind
+    {
+        typedef STLAllocator<U> other;
+    };
+private:
+    STLAllocator<T>& operator=(const STLAllocator& other);
+
+public:
+    AllocatorInterface* m_allocator;
+};
 
 };
 
