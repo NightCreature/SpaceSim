@@ -92,9 +92,10 @@ RenderSystem::~RenderSystem()
     m_effectCache.cleanup();
 
     m_dxgiFactory->Release();
-    pPerf->Release();
+   
 
 #ifdef _DEBUG
+    pPerf->Release();
     m_debugAxis->cleanup();
 #endif
 
@@ -464,6 +465,7 @@ void RenderSystem::update(float elapsedTime, double time)
                 pPerf->EndEvent();
             }
 #endif
+            ++m_numberOfInstancePerFrame;
         }
     }
 
@@ -651,8 +653,11 @@ void RenderSystem::beginDraw()
 {
     PROFILE_EVENT("RenderSystem::beginDraw", Orange);
 
+    m_numberOfInstancePerFrame = 0;
+
     m_renderInstances.clear();
 
+    m_cameraSystem.update(m_renderResource->m_performanceTimer->getElapsedTime(), m_renderResource->m_performanceTimer->getTime(), m_input);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
 
     m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
@@ -660,7 +665,6 @@ void RenderSystem::beginDraw()
 
     //Kick resource loading, potentially this needs to move to its own low priority thread too.
     m_resourceLoader.update();
-    m_cameraSystem.update(m_renderResource->m_performanceTimer->getElapsedTime(), m_renderResource->m_performanceTimer->getTime(), m_input);
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
@@ -789,18 +793,19 @@ void RenderSystem::endDraw()
     PROFILE_EVENT("RenderSystem::endDraw", Orange);
 #ifdef _DEBUG
     m_debugAxis->draw(m_deviceManager, m_view, m_projection, m_renderResource);
-#else
-    UNUSEDPARAM(resource);
 #endif
 
-    HRESULT hr = m_swapChain->Present(0, 0);
-    ++m_totalNumberOfRenderedFrames;
-    m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
-    if (FAILED(hr))
+    if (m_numberOfInstancePerFrame > 0)
     {
-        MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr)
-            MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason())
-            assert(false);
+        HRESULT hr = m_swapChain->Present(0, 0);
+        ++m_totalNumberOfRenderedFrames;
+        m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
+        if (FAILED(hr))
+        {
+            MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr)
+                MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason())
+                assert(false);
+        }
     }
 }
 

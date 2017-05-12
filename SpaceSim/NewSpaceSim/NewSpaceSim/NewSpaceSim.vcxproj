@@ -128,8 +128,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4820</DisableSpecificWarnings>
-      <PreprocessorDefinitions>NOMINMAX;USE_PROFILER 1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4820;4324</DisableSpecificWarnings>
+      <PreprocessorDefinitions>NOMINMAX;USE_PROFILER 1;PROFILING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

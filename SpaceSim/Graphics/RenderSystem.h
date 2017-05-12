@@ -90,6 +90,10 @@ private:
     void setupSwapChainForRendering( ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight );
     void initialiseCubemapRendererAndResources( Resource* resource );
     
+    Matrix44 m_CullingProjectionMatrix;
+    Matrix44 m_view;
+    Matrix44 m_projection;
+
     RenderResource* m_renderResource;
 
     CameraManager      m_cameraSystem;
@@ -136,7 +140,7 @@ private:
     ShadowMapRenderer* m_shadowMapRenderer;
     ID3D11SamplerState* m_samplerState;
 
-    Matrix44 m_CullingProjectionMatrix;
+    
     RenderInstanceTree visibleInstances;
 
     MessageSystem::MessageObserver m_messageObservers;
@@ -146,7 +150,7 @@ private:
     RenderInstanceTree m_renderInstances;
 
     //No more need for these to be static
-    Matrix44 m_view;
-    Matrix44 m_projection;
     Input m_input;
+
+    size_t m_numberOfInstancePerFrame;
 };

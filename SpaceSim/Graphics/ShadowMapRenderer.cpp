@@ -170,7 +170,9 @@ void ShadowMapRenderer::cleanup()
     m_shadowMapRV->Release();
     m_perFrameConstants->Release();
 
+#ifdef _DEBUG
     pPerf->Release();
+#endif
 }
 
 //-----------------------------------------------------------------------------

@@ -62,6 +62,7 @@ const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
     if (attribute != nullptr)
     {
         m_name = attribute->Value();
+        m_nameHash = hashString(m_name);
     }
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
@@ -112,6 +113,15 @@ void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const
 
     UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(input);
+
+    MessageSystem::RenderInformation renderInfo;
+    MessageSystem::RenderInformation::RenderInfo data;
+    data.m_renderObjectid = m_renderHandle;
+    data.m_gameobjectid = m_nameHash;
+    data.m_world = m_world;
+    data.m_name = m_name;
+    renderInfo.SetData(data);
+    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
 }
 
 //-------------------------------------------------------------------------
@@ -130,5 +140,6 @@ void Door::handleMessage( const MessageSystem::Message& msg )
         m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
         //Store the render object reference we get back and the things it can do
         m_initialisationDone = true;
+        m_active = true;
     }
 }
