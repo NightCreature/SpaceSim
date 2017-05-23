@@ -1109,16 +1109,11 @@
     </Material>
     <Vector3 x="525" y="-300" z="375"/>
   </RotatingBlades>
-  <!--
-   <GunTurret name="turret_2" >
+  <GunTurret name="turret_2" >
     <Vector3 name="position"  x="175" y="-300" z="525"/>
     <Vector3 name="direction" x="-1" y="0.0000001" z="0"/>
-    <Material>
-      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-    </Material>
     <Model file="Models\space_ship.mml" />
   </GunTurret>
-  -->
   <!--
   <Core name="core">
     <Material name="CoreMaterialNormalGlow">

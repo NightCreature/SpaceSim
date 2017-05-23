@@ -20,6 +20,7 @@
 
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/RenderMessages.h"
 #include "Loader/ModelLoaders/ModelLoader.h"
 
 HASH_ELEMENT_IMPLEMENTATION(GunTurret)
@@ -395,6 +396,15 @@ void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, 
 
     Super::update(renderInstances, elapsedTime, input);
 
+    MessageSystem::RenderInformation renderInfo;
+    MessageSystem::RenderInformation::RenderInfo data;
+    data.m_renderObjectid = m_renderHandle;
+    data.m_gameobjectid = m_nameHash;
+    data.m_world = m_world;
+    data.m_name = m_name;
+    renderInfo.SetData(data);
+    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+
     //for (std::vector<Laser*>::iterator lit = m_lasers.end(); lit != m_lasers.end(); ++lit)
     //{
     //    (*lit)->update(elapsedTime);
@@ -406,7 +416,16 @@ void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, 
 //-------------------------------------------------------------------------
 void GunTurret::handleMessage( const MessageSystem::Message& msg )
 {
-    UNUSEDPARAM(msg);
-    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    //setActive(activateMsg.shouldActivate());
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
+    {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
+        m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
+        //Store the render object reference we get back and the things it can do
+
+        //Register the bounding box with the physics
+        //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
+
+        m_initialisationDone = true;
+    }
 }
