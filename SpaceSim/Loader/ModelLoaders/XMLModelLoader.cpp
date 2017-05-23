@@ -15,7 +15,7 @@ XMLModelLoader::~XMLModelLoader(void)
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName)
+Model* XMLModelLoader::LoadModel(Resource* resource, const std::string& fileName)
 {
     if (fileName.empty())
         return nullptr;

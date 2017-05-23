@@ -18,8 +18,9 @@ AssimpModelLoader::~AssimpModelLoader(void)
 
 //-------------------------------------------------------------------------
 // @brief 
+// @remark This should somehow be able to extract the used shader from the model file.
 //-------------------------------------------------------------------------
-Model* AssimpModelLoader::LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName)
+Model* AssimpModelLoader::LoadModel(Resource* resource, const std::string& fileName)
 {
     if (fileName.empty())
     {

@@ -18,6 +18,10 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/DebugBox.h"
 
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/MessageSystem/GameMessages.h"
+#include "Loader/ModelLoaders/ModelLoader.h"
+
 HASH_ELEMENT_IMPLEMENTATION(GunTurret)
 
 
@@ -245,6 +249,7 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
     if (attribute != nullptr)
     {
         m_name = attribute->Value();
+        m_nameHash = hashString(m_name);
     }
 
     Matrix44 scaleTransform, translation, rotation;
@@ -280,6 +285,14 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
                 //m_drawableObject = getWriteableResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
                 //m_drawableObject->setDirty();
                 MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+
+                auto resource = GameResourceHelper(m_resource).getWriteableResource();
+                MessageSystem::CreateFixedModelResource<LoadModelResource> createModel = CREATEFIXEDMODELRESOURCEMESSAGE(LoadModelResource);
+                LoadModelResource param;
+                stringCopy(param.m_fileName, attribute->Value());
+                createModel.SetData(param);
+                createModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
+                resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createModel);
             }
         }
         if (childElementHash == Material::m_hash)

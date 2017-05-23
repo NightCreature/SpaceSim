@@ -11,7 +11,7 @@ public:
     //-------------------------------------------------------------------------
     // @brief 
     //-------------------------------------------------------------------------
-    Model* LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName);
+    Model* LoadModel(Resource* resource, const std::string& fileName);
 
 };
 

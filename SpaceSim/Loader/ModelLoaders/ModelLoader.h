@@ -4,7 +4,11 @@
 
 class Model;
 class Resource;
-class ShaderInstance;
+
+struct LoadModelResource
+{
+    char m_fileName[256];
+};
 
 class ModelLoader
 {
@@ -12,6 +16,6 @@ public:
     ModelLoader() {}
     virtual ~ModelLoader() {}
 
-    virtual Model* LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName) = 0;
+    virtual Model* LoadModel(Resource* resource, const std::string& fileName) = 0;
 };
 

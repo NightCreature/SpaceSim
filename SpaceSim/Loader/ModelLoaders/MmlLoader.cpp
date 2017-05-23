@@ -12,7 +12,7 @@ const unsigned int c_ModelHash = hashString("Model");
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-Model* MmlLoader::LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName)
+Model* MmlLoader::LoadModel(Resource* resource, const std::string& fileName)
 {
     Model* model = nullptr;
     if (fileName.empty())

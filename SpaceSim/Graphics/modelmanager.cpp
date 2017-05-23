@@ -13,6 +13,9 @@
 
 #include "Gameplay/face.h"
 
+#include "Loader/ModelLoaders/ModelLoader.h"
+#include "Core/MessageSystem/GameMessages.h"
+
 ModelManager::~ModelManager()
 {
     cleanup();
@@ -31,44 +34,50 @@ void ModelManager::cleanup()
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-Model* ModelManager::LoadModel( Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName ) const
+size_t ModelManager::LoadModel( void* data )
 {
-    if (fileName.empty())
+    auto modelData = static_cast<MessageSystem::CreateFixedModelResource<LoadModelResource>::FixedModelResourceData<LoadModelResource>*>(data);
+
+    auto fileName = modelData->m_fixedData.m_fileName;
+    size_t renderResourceId = hashString(fileName);
+    if (!HasRenderResource(renderResourceId) && renderResourceId)
     {
-        return nullptr;
+        if (fileName[0] == 0)
+        {
+            return renderResourceId;
+        }
+
+        std::string extension = extractExtensionFromFileName(fileName);
+
+        Model* model = nullptr;
+        if (strICmp(extension, "dat") || strICmp(extension, "xml"))
+        {
+            XMLModelLoader loader;
+            model = loader.LoadModel(m_resource, fileName);
+            //m_loadedModels.insert(GeometryTreePair(fileNameHash, model));
+        }
+        else if (strICmp(extension, "mml"))
+        {
+            //This format is a mixture between an xml and a attached model file
+            MmlLoader loader;
+            model = loader.LoadModel(m_resource, fileName);
+        }
+        else
+        {
+            AssimpModelLoader loader;
+            model = loader.LoadModel(m_resource, fileName);
+            //m_loadedModels.insert(GeometryTreePair(fileNameHash, model)); 
+        }
+
+        if (model != nullptr)
+        {
+            CreatedModel createdModel; //Need to deal with the bounding box here too really
+            createdModel.model = model;
+            RegisterCreatedModel(createdModel, renderResourceId);
+        }
     }
 
-    //unsigned int fileNameHash = hashString(fileName);
-    //MSG_TRACE_CHANNEL("MODELMANAGER", "hash for %s is %d", fileName.c_str(), fileNameHash);
-    //GeometryTreeIterator it = m_loadedModels.find(fileNameHash);
-    //if (it != m_loadedModels.end())
-    //{
-    //    return it->second;
-    //}
-
-    std::string extension = extractExtensionFromFileName(fileName);
-
-    Model* model = nullptr;
-    if ( strICmp(extension, "dat") || strICmp(extension, "xml") )
-    {
-        XMLModelLoader loader;
-        model = loader.LoadModel(resource, shaderInstance, fileName);
-        //m_loadedModels.insert(GeometryTreePair(fileNameHash, model));
-    }
-    else if (strICmp(extension, "mml"))
-    {
-        //This format is a mixture between an xml and a attached model file
-        MmlLoader loader;
-        model = loader.LoadModel(resource, shaderInstance, fileName);
-    }
-    else
-    {
-        AssimpModelLoader loader;
-        model = loader.LoadModel(resource, shaderInstance, fileName);
-        //m_loadedModels.insert(GeometryTreePair(fileNameHash, model)); 
-    }
-    
-    return model; //These should probably also register
+    return renderResourceId;
 }
 
 //-----------------------------------------------------------------------------
@@ -83,10 +92,6 @@ size_t ModelManager::AddFace(void* data)
     {
         //register face with model manager
         RegisterCreatedModel(Face::CreateFace((creationParams->m_fixedData), m_resource), renderResourceId);
-    }
-    else
-    {
-        //const CreatedModel* model = GetRenderResource(renderResourceId);                
     }
 
     return renderResourceId;
