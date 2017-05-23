@@ -17,13 +17,8 @@ cbuffer MaterialConstants : register(b0)
     float shininess;
 };
 
-Texture2D<float4> shaderTextures;
-SamplerState SampleType
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
+Texture2D<float4> shaderTextures: register(t8);
+SamplerState SampleType : register (s0);
 
 //--------------------------------------------------------------------------------------
 struct VS_INPUT
