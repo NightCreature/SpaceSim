@@ -7,6 +7,6 @@ class MmlLoader : public ModelLoader
 public:
     MmlLoader() {}
     ~MmlLoader() {}
-    virtual Model* LoadModel(Resource* resource, const std::string& fileName) override;
+    virtual CreatedModel LoadModel(Resource* resource, const LoadData& loadData) override;
 private:
 };

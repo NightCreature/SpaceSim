@@ -11,7 +11,7 @@ public:
     //-------------------------------------------------------------------------
     // @brief 
     //-------------------------------------------------------------------------
-    Model* LoadModel(Resource* resource, const std::string& fileName);
+    CreatedModel LoadModel(Resource* resource, const LoadData& loadData);
 
 };
 

@@ -7,41 +7,39 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
 
-AssimpModelLoader::AssimpModelLoader(void)
+namespace AssimpModelLoader
 {
-}
 
-
-AssimpModelLoader::~AssimpModelLoader(void)
+//-----------------------------------------------------------------------------
+//! @brief   Initialise the application
+//! @remark
+//-----------------------------------------------------------------------------
+CreatedModel LoadModel(Resource* resource, const Material& material, const std::string& fileName)
 {
-}
+    UNUSEDPARAM(material);
 
-//-------------------------------------------------------------------------
-// @brief 
-// @remark This should somehow be able to extract the used shader from the model file.
-//-------------------------------------------------------------------------
-Model* AssimpModelLoader::LoadModel(Resource* resource, const std::string& fileName)
-{
     if (fileName.empty())
     {
-        return nullptr;
+        return CreatedModel();
     }
+
     //Load the model here
-    Assimp::Importer importer;  
+    Assimp::Importer importer;
     // And have it read the given file with some example postprocessing  
     // Usually - if speed is not the most important aspect for you - you'll   
     // propably to request more postprocessing than we do in this example.  aiProcessPreset_TargetRealtime_Quality
     const aiScene* scene = importer.ReadFile(fileName, aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_FlipWindingOrder); //Optimize the mesh and scenegraph to reduce drawcalls
-    if( !scene)  
-    {    
-        MSG_TRACE_CHANNEL("ASSIMPMODELLOADER", "failed to open the model file ( %s ) importer error: %s", fileName.c_str(), importer.GetErrorString() )
-        return nullptr;
+    if (!scene)
+    {
+        MSG_TRACE_CHANNEL("ASSIMPMODELLOADER", "failed to open the model file ( %s ) importer error: %s", fileName.c_str(), importer.GetErrorString())
+            return CreatedModel();
     }  // Now we can access the file's contents.
 
     MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to load model %s", fileName.c_str());
 
     //Grab the verts here
     Mesh::CreationParams params;
+    ShaderInstance shaderInstance;
     params.m_shaderInstance = const_cast<ShaderInstance*>(&shaderInstance);
     params.m_resource = resource;
     unsigned int highestIndex = 0;
@@ -127,23 +125,23 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const std::string& fileN
         }
 
         meshGroupParams.m_shaderInstance = shaderInstance;
-        aiMaterial* material = scene->mMaterials[subMesh->mMaterialIndex];
+        aiMaterial* aimaterial = scene->mMaterials[subMesh->mMaterialIndex];
         Material shaderMaterial = meshGroupParams.m_shaderInstance.getMaterial();
         aiColor4D color;
-        material->Get(AI_MATKEY_COLOR_AMBIENT, color);
+        aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
         shaderMaterial.setAmbient(Color(color.r, color.g, color.b, color.a));
 
-        material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+        aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
         shaderMaterial.setDiffuse(Color(color.r, color.g, color.b, color.a));
 
-        material->Get(AI_MATKEY_COLOR_SPECULAR, color);
+        aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
         shaderMaterial.setSpecular(Color(color.r, color.g, color.b, color.a));
 
-        material->Get(AI_MATKEY_COLOR_EMISSIVE, color);
+        aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, color);
         shaderMaterial.setEmissive(Color(color.r, color.g, color.b, color.a));
-        
+
         float shininess;
-        material->Get(AI_MATKEY_SHININESS, shininess);
+        aimaterial->Get(AI_MATKEY_SHININESS, shininess);
         shaderMaterial.setShininess(shininess);
 
         //load the texture maps here
@@ -154,46 +152,46 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const std::string& fileN
         aiTextureMapping uvMapping;
         unsigned int uv_index = 0xFFFFFFFF;
         //SHould early out on all of these when we cant go past slots any more or we are not getting a slot
-        for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_AMBIENT) && counter < Material::TextureSlotMapping::Ambient7; ++counter)
+        for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_AMBIENT) && counter < Material::TextureSlotMapping::Ambient7; ++counter)
         {
-            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_AMBIENT, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
+            if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_AMBIENT, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
                 tm.addLoad(dm, path.C_Str());
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Ambient0 + counter)));
             }
         }
-        for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_DIFFUSE) && counter < Material::TextureSlotMapping::Diffuse7; ++counter)
+        for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_DIFFUSE) && counter < Material::TextureSlotMapping::Diffuse7; ++counter)
         {
-            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
+            if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_DIFFUSE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
                 tm.addLoad(dm, path.C_Str());
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Diffuse0 + counter)));
             }
         }
-        for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_EMISSIVE) && counter < Material::TextureSlotMapping::Emmisive7; ++counter)
+        for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_EMISSIVE) && counter < Material::TextureSlotMapping::Emmisive7; ++counter)
         {
-            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_EMISSIVE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
+            if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_EMISSIVE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
                 tm.addLoad(dm, path.C_Str());
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Emmisive0 + counter)));
             }
         }
-        for (size_t counter = 0; counter < material->GetTextureCount(aiTextureType_SPECULAR) && counter < Material::TextureSlotMapping::Specular7; ++counter)
+        for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_SPECULAR) && counter < Material::TextureSlotMapping::Specular7; ++counter)
         {
-            if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_SPECULAR, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
+            if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_SPECULAR, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
                 tm.addLoad(dm, path.C_Str());
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Specular0 + counter)));
             }
         }
 
-        if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_NORMALS, 0, &path, &uvMapping, &uv_index))
+        if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_NORMALS, 0, &path, &uvMapping, &uv_index))
         {
             tm.addLoad(dm, path.C_Str());
             shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Normals));
         }
-        MSG_TRACE_CHANNEL("ASSIMP LOADER","Trying to read material %d", material);
-        
+        MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to read material %d", aimaterial);
+
         meshGroupParams.m_numtangents = meshGroupParams.m_tangents.size(); //TODO FIX this needs to look at the model to get this.
         meshGroupParams.m_vertexDeclaration.position = 3;
         meshGroupParams.m_vertexDeclaration.normal = meshGroupParams.m_normals.size() > 0;
@@ -212,6 +210,7 @@ Model* AssimpModelLoader::LoadModel(Resource* resource, const std::string& fileN
 
 
 
-    CreatedModel mesh = Mesh::CreateMesh(params); //Probably should create a mesh group instead of a mesh
-    return mesh.model;
+    return  Mesh::CreateMesh(params);
+}
+
 }

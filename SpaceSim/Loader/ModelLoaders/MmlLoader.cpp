@@ -4,6 +4,7 @@
 #include "Graphics/Model.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/modelmanager.h"
+#include "Loader/ModelLoaders/AssimpModelLoader.h"
 #include <string>
 
 const unsigned int c_ModelHash = hashString("Model");
@@ -12,24 +13,25 @@ const unsigned int c_ModelHash = hashString("Model");
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-Model* MmlLoader::LoadModel(Resource* resource, const std::string& fileName)
+CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData)
 {
-    Model* model = nullptr;
-    if (fileName.empty())
+    if (loadData.m_fileName.empty())
     {
-        return model;
+        return CreatedModel();
     }
 
-    ShaderInstance& shaderInstance_ref = const_cast<ShaderInstance&>(shaderInstance);
+    CreatedModel model;
 
     tinyxml2::XMLDocument document;
-    if (document.LoadFile(fileName.c_str()) != tinyxml2::XML_NO_ERROR)
+    if (document.LoadFile(loadData.m_fileName.c_str()) != tinyxml2::XML_NO_ERROR)
     {
-        MSG_TRACE_CHANNEL("MMLLoader Error", "Failed to load %s\nWith error: %d", fileName.c_str(), document.ErrorID())
+        MSG_TRACE_CHANNEL("MMLLoader Error", "Failed to load %s\nWith error: %d", loadData.m_fileName.c_str(), document.ErrorID())
         return model;
     }
 
     const RenderResource& gameResource = RenderResourceHelper(resource).getResource();
+    Material mat;
+    std::string modelFileName;
 
     const tinyxml2::XMLElement* element;
     element = document.FirstChildElement();
@@ -40,15 +42,17 @@ Model* MmlLoader::LoadModel(Resource* resource, const std::string& fileName)
         if (element_hash == c_ModelHash)
         {
             const tinyxml2::XMLAttribute* attribute = element->FindAttribute("file_name");
-            std::string modelFileName = attribute->Value();
-            model = gameResource.getModelManager().LoadModel(resource, shaderInstance_ref, modelFileName);
+            modelFileName = attribute->Value();
         }
         else if (element_hash == Material::m_hash)
         {
-            Material mat;
             mat.deserialise(resource, gameResource.getDeviceManager(), gameResource.getTextureManager(), gameResource.getLightManager(), element);
-            shaderInstance_ref.setMaterial(mat);
         }
+    }
+
+    if (!modelFileName.empty())
+    {
+        AssimpModelLoader::LoadModel(resource, mat, modelFileName); //This needs to change to a mesh creation function instead because no more assimp loading on its own
     }
 
     return model;

@@ -115,7 +115,7 @@ public:
 
     struct MaterialParameters
     {
-        MaterialParameters()
+        MaterialParameters() : m_alphaBlend(false)
         {
             memset(m_textureNames, 0, sizeof(char) * Material::TextureSlotMapping::NumSlots * 256);
         }

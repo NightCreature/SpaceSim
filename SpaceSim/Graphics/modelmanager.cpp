@@ -38,41 +38,39 @@ size_t ModelManager::LoadModel( void* data )
 {
     auto modelData = static_cast<MessageSystem::CreateFixedModelResource<LoadModelResource>::FixedModelResourceData<LoadModelResource>*>(data);
 
-    auto fileName = modelData->m_fixedData.m_fileName;
-    size_t renderResourceId = hashString(fileName);
+    ModelLoader::LoadData loadData;
+    loadData.m_fileName = modelData->m_fixedData.m_fileName;
+    size_t renderResourceId = hashString(loadData.m_fileName);
     if (!HasRenderResource(renderResourceId) && renderResourceId)
     {
-        if (fileName[0] == 0)
+        if (loadData.m_fileName.empty())
         {
             return renderResourceId;
         }
 
-        std::string extension = extractExtensionFromFileName(fileName);
+        std::string extension = extractExtensionFromFileName(loadData.m_fileName);
 
-        Model* model = nullptr;
+        CreatedModel createdModel;
         if (strICmp(extension, "dat") || strICmp(extension, "xml"))
         {
             XMLModelLoader loader;
-            model = loader.LoadModel(m_resource, fileName);
+            createdModel = loader.LoadModel(m_resource, loadData);
             //m_loadedModels.insert(GeometryTreePair(fileNameHash, model));
         }
         else if (strICmp(extension, "mml"))
         {
             //This format is a mixture between an xml and a attached model file
             MmlLoader loader;
-            model = loader.LoadModel(m_resource, fileName);
+            createdModel = loader.LoadModel(m_resource, loadData);
         }
         else
         {
-            AssimpModelLoader loader;
-            model = loader.LoadModel(m_resource, fileName);
-            //m_loadedModels.insert(GeometryTreePair(fileNameHash, model)); 
+            MSG_TRACE_CHANNEL("ModelManager", "unsupported file format encountered for file name: %s", loadData.m_fileName.c_str());
         }
 
-        if (model != nullptr)
+        if (createdModel.model != nullptr)
         {
-            CreatedModel createdModel; //Need to deal with the bounding box here too really
-            createdModel.model = model;
+             //Need to deal with the bounding box here too really
             RegisterCreatedModel(createdModel, renderResourceId);
         }
     }
