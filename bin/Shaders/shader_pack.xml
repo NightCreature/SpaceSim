@@ -3,6 +3,7 @@
     <Effect file_name="Shaders\Effects\core_effect.xml" />
     <Effect file_name="Shaders\Effects\debug_color_shader.xml" />
     <Effect file_name="Shaders\Effects\debug_effect.xml" />
+    <Effect file_name="Shaders\Effects\door_effect.xml" />
     <Effect file_name="Shaders\Effects\force_field_effect.xml" />
     <Effect file_name="Shaders\Effects\laser_effect.xml" />
     <Effect file_name="Shaders\Effects\simple_effect.xml" />
