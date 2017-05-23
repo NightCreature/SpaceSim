@@ -1,17 +1,16 @@
 #pragma once
 
-#include "modelloader.h"
+#include "Graphics/Model.h"
 
-class AssimpModelLoader : public ModelLoader
+#include <string>
+
+class Resource;
+class Material;
+
+namespace AssimpModelLoader 
 {
-public:
-    AssimpModelLoader(void);
-    ~AssimpModelLoader(void);
 
-    //-------------------------------------------------------------------------
-    // @brief 
-    //-------------------------------------------------------------------------
-    Model* LoadModel(Resource* resource, const std::string& fileName);
-private:
+    CreatedModel LoadModel(Resource* resource, const Material& material, const std::string& fileName);
+
 };
 
