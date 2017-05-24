@@ -1,0 +1,6 @@
+<xml>
+	<Material>
+      <Effect file_name="Shaders\Effects\gun.xml" />
+    </Material>
+	<Model file_name="Models/gun.DAE" />
+</xml>
