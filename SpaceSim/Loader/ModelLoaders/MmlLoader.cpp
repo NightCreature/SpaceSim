@@ -52,7 +52,7 @@ CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData)
 
     if (!modelFileName.empty())
     {
-        AssimpModelLoader::LoadModel(resource, mat, modelFileName); //This needs to change to a mesh creation function instead because no more assimp loading on its own
+        model = AssimpModelLoader::LoadModel(resource, mat, modelFileName); //This needs to change to a mesh creation function instead because no more assimp loading on its own
     }
 
     return model;

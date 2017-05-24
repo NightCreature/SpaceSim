@@ -40,6 +40,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
     //Grab the verts here
     Mesh::CreationParams params;
     ShaderInstance shaderInstance;
+    shaderInstance.setMaterial(material);
     params.m_shaderInstance = const_cast<ShaderInstance*>(&shaderInstance);
     params.m_resource = resource;
     unsigned int highestIndex = 0;
