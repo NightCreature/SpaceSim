@@ -303,8 +303,8 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
         }
     }
 
-    m_world = rotation * scaleTransform * translation;
-    m_world.identity();
+    m_world = /*rotation */ scaleTransform * translation;
+    //m_world.identity();
 
     return shaderInstance;
 }

@@ -27,8 +27,8 @@ MeshGroup::~MeshGroup()
 void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box )
 {
     PROFILE_EVENT("MeshGroup::update", Aqua);
-    if (m_renderInstanceDirty || m_renderInstance == nullptr)
-    {  
+    //if (m_renderInstanceDirty || m_renderInstance == nullptr)
+    //{  
         //if ( m_renderInstance != nullptr)
         //{
         //    delete m_renderInstance;
@@ -50,7 +50,7 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
         wvpConstants.m_view = view;
         wvpConstants.m_world = m_world * world; 
         UNUSEDPARAM(resource);
-    }
+    //}
     
     if (m_renderInstance != nullptr)
     {
