@@ -5,13 +5,13 @@
       <author>Assimp</author>
       <authoring_tool>Assimp Collada Exporter</authoring_tool>
     </contributor>
-    <created>2017-05-25T20:32:26</created>
-    <modified>2017-05-25T20:32:26</modified>
+    <created>2017-05-25T21:27:16</created>
+    <modified>2017-05-25T21:27:16</modified>
     <unit name="meter" meter="1" />
     <up_axis>Y_UP</up_axis>
   </asset>
   <library_effects>
-    <effect id="m0m0m0JoinedMaterial__24-fx" name="m0m0m0JoinedMaterial__24">
+    <effect id="m0m0m0m0m0JoinedMaterial__24-fx" name="m0m0m0m0m0JoinedMaterial__24">
       <profile_COMMON>
         <technique sid="standard">
           <phong>
@@ -48,8 +48,8 @@
     </effect>
   </library_effects>
   <library_materials>
-    <material id="m0m0m0JoinedMaterial__24" name="m0m0m0JoinedMaterial__24">
-      <instance_effect url="#m0m0m0JoinedMaterial__24-fx"/>
+    <material id="m0m0m0m0m0JoinedMaterial__24" name="m0m0m0m0m0JoinedMaterial__24">
+      <instance_effect url="#m0m0m0m0m0JoinedMaterial__24-fx"/>
     </material>
   </library_materials>
   <library_geometries>
@@ -94,7 +94,7 @@
         <instance_geometry url="#meshId0">
           <bind_material>
             <technique_common>
-              <instance_material symbol="theresonlyone" target="#m0m0m0JoinedMaterial__24" />
+              <instance_material symbol="theresonlyone" target="#m0m0m0m0m0JoinedMaterial__24" />
             </technique_common>
           </bind_material>
         </instance_geometry>

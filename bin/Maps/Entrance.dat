@@ -1113,7 +1113,7 @@
     <!--<Vector3 name="position"  x="175" y="-300" z="525"/>-->
     <Vector3 name="position"  x="0" y="0" z="0"/>
     <Vector3 name="direction" x="-1" y="0.0000001" z="0"/>
-    <Model file="Models\gun_turret.mml" />
+    <Model file="Models\space_ship.mml" />
   </GunTurret>
   <!--
   <Core name="core">

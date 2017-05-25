@@ -52,7 +52,7 @@ float4 ps_main( PS_INPUT input) : SV_Target
     float3 vertexPos = input.WorldPos;
     float4 color;
 
-    float4 texColor = float4(1,1,1,1); //shaderTextures.Sample(SampleType, input.Tex);
+    float4 texColor = shaderTextures.Sample(SampleType, input.Tex);
     float3 nnormal = normalize(input.Nor);
 
     float3 nviewdirection = normalize(camera_position - vertexPos);
