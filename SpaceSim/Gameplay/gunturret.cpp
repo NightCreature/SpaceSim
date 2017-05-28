@@ -266,7 +266,7 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
                 {
                     m_position.deserialise(childElement);
                     
-                    scale(scaleTransform, 1.0f, 1.0f, 1.0f);
+                    scale(scaleTransform, 0.1f,0.1f,0.1f);
                     translate(translation, m_position);  
                 }
                 else if( strICmp(nameAttribute->Value(), "direction") )
