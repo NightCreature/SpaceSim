@@ -28,7 +28,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
     // And have it read the given file with some example postprocessing  
     // Usually - if speed is not the most important aspect for you - you'll   
     // propably to request more postprocessing than we do in this example.  aiProcessPreset_TargetRealtime_Quality
-    const aiScene* scene = importer.ReadFile(fileName, aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_FlipWindingOrder); //Optimize the mesh and scenegraph to reduce drawcalls
+    const aiScene* scene = importer.ReadFile(fileName, aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_FlipWindingOrder | aiProcess_FlipUVs); //Optimize the mesh and scenegraph to reduce drawcalls
     if (!scene)
     {
         MSG_TRACE_CHANNEL("ASSIMPMODELLOADER", "failed to open the model file ( %s ) importer error: %s", fileName.c_str(), importer.GetErrorString())
@@ -165,6 +165,21 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         {
             if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_DIFFUSE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
+                int val;
+                aiTextureType type = aiTextureType_DIFFUSE;
+                if (AI_SUCCESS == aiGetMaterialInteger(aimaterial, AI_MATKEY_UVWSRC(type, 0), &val))
+                {
+                }
+                //Grab all texture information for this stage as texture coordinates could need to be transformed :(
+                aiUVTransform textureTransform;
+                const aiMaterialProperty* property = nullptr;
+                if (AI_SUCCESS == aiGetMaterialProperty(aimaterial, AI_MATKEY_UVTRANSFORM(aiTextureType_DIFFUSE, static_cast<unsigned int>(counter)), &property))
+                {
+                    if (property != nullptr)
+                    {
+                        textureTransform = *(aiUVTransform*)(property->mData);
+                    }
+                }
                 tm.addLoad(dm, path.C_Str());
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Diffuse0 + counter)));
             }
