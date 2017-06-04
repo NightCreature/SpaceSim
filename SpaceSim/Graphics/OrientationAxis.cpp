@@ -27,7 +27,7 @@ OrientationAxis::LineVertex OrientationAxis::m_vertices[] =
 };
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void OrientationAxis::cleanup()

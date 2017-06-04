@@ -98,7 +98,7 @@ CubeMapRenderer::~CubeMapRenderer()
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void CubeMapRenderer::cleanup()

@@ -17,12 +17,24 @@ struct ParticleEmitterData
 {
     ColorCurve m_colorCurve;
     Vector3 m_emitterDirection;
+    Vector3 m_emitterPosition;
     size_t m_maxNumberOfParticles = 25;
     size_t m_emissionRate;
     float m_particleLifetime;
     float m_particleSize;
     float m_startVelocity;
     float m_emitConeAngle;
+};
+
+class ParticleEmitterComponentBased
+{
+public:
+
+    void update(float elapsedTime);
+private:
+    ParticleData m_particleData;
+    Generators m_generators;
+    Updaters m_updaters;
 };
 
 class ParticleEmitter

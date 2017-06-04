@@ -158,7 +158,7 @@ ShadowMapRenderer::~ShadowMapRenderer()
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void ShadowMapRenderer::cleanup()

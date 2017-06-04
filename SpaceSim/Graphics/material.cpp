@@ -140,7 +140,7 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XMLElement* childElement)

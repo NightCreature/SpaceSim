@@ -110,7 +110,7 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 std::string FormatString(const char* format, ...)

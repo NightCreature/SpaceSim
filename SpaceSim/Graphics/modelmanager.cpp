@@ -79,7 +79,7 @@ size_t ModelManager::LoadModel( void* data )
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 size_t ModelManager::AddFace(void* data)
@@ -96,7 +96,7 @@ size_t ModelManager::AddFace(void* data)
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 bool ModelManager::HasRenderResource(size_t resource_id) const
@@ -106,7 +106,7 @@ bool ModelManager::HasRenderResource(size_t resource_id) const
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourceId)
@@ -122,7 +122,7 @@ void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourc
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 const CreatedModel* ModelManager::GetRenderResource(size_t renderResourceId) const

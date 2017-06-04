@@ -12,7 +12,7 @@
 #include "Loader/ResourceLoadRequests.h"
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void ResourceLoader::update()
@@ -60,7 +60,7 @@ void ResourceLoader::update()
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
@@ -77,7 +77,7 @@ void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void ResourceLoader::AddLoadRequest(const LoadRequest& request)
