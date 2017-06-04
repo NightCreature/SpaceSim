@@ -17,6 +17,7 @@
 #include "Graphics/EffectCache.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/DebugBox.h"
+#include "Gameplay/particleemitter.h"
 
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/GameMessages.h"
@@ -197,15 +198,16 @@ void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)
                     //}
                     //l->move(elapsedtime);
 
-                    MessageSystem::CreatedRenderResourceMessage message = CREATERENDERRESOURCEMESSAGE(ParticleSystem::ParticleEmitterData);
-
-                    message.m_maxNumberOfParticles = 25;
-                    message.m_emissionRate = 5.0f;
-                    message.m_colorCurve = new ColorCurve();
-                    message.m_particleLifetime = 5.0f;
-                    message.m_particleSize = 5.0f;
-                    message.m_startVelocity = 0.75f;
-                    message.m_emitConeAngle = 90.0f;
+                    MessageSystem::CreateRenderResource<ParticleSystem::ParticleEmitterData> message = CREATERENDERRESOURCEMESSAGE(ParticleSystem::ParticleEmitterData);
+                    ParticleSystem::ParticleEmitterData data;
+                    data.m_maxNumberOfParticles = 25;
+                    data.m_emissionRate = 5;
+                    data.m_colorCurve = ParticleSystem::ColorCurve();
+                    data.m_particleLifetime = 5.0f;
+                    data.m_particleSize = 5.0f;
+                    data.m_startVelocity = 0.75f;
+                    data.m_emitConeAngle = 90.0f;
+                    message.SetData(data);
                     m_resource->m_messageQueues->getRenderMessageQueue()->addMessage(message);
                     
                     m_lasersit++;
