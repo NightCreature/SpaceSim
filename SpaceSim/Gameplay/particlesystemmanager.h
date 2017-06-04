@@ -7,5 +7,10 @@
 namespace ParticleSystem
 {
 
+class ParticleSystemManager
+{
+
+};
+
 }
 #endif
