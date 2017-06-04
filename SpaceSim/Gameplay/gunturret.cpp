@@ -196,6 +196,18 @@ void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)
                     //    continue;
                     //}
                     //l->move(elapsedtime);
+
+                    MessageSystem::CreatedRenderResourceMessage message = CREATERENDERRESOURCEMESSAGE(ParticleSystem::ParticleEmitterData);
+
+                    message.m_maxNumberOfParticles = 25;
+                    message.m_emissionRate = 5.0f;
+                    message.m_colorCurve = new ColorCurve();
+                    message.m_particleLifetime = 5.0f;
+                    message.m_particleSize = 5.0f;
+                    message.m_startVelocity = 0.75f;
+                    message.m_emitConeAngle = 90.0f;
+                    m_resource->m_messageQueues->getRenderMessageQueue()->addMessage(message);
+                    
                     m_lasersit++;
                 }
                 else
@@ -266,7 +278,7 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
                 {
                     m_position.deserialise(childElement);
                     
-                    scale(scaleTransform, 0.1f,0.1f,0.1f);
+                    scale(scaleTransform, 0.01f,0.01f,0.01f);
                     translate(translation, m_position);  
                 }
                 else if( strICmp(nameAttribute->Value(), "direction") )
@@ -288,7 +300,7 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
                 MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
 
                 auto resource = GameResourceHelper(m_resource).getWriteableResource();
-                MessageSystem::CreateFixedModelResource<LoadModelResource> createModel = CREATEFIXEDMODELRESOURCEMESSAGE(LoadModelResource);
+                MessageSystem::CreateRenderResource<LoadModelResource> createModel = CREATERENDERRESOURCEMESSAGE(LoadModelResource);
                 LoadModelResource param;
                 stringCopy(param.m_fileName, attribute->Value());
                 createModel.SetData(param);

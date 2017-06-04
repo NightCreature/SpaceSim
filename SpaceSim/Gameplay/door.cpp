@@ -45,7 +45,7 @@ void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOr
 
     //Super::initialise(shaderInstance);
 
-    MessageSystem::CreateRenderResource<Face::CreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Face::CreationParams);
+    MessageSystem::CreateRenderResource<Face::CreationParams> createPlaneModel = CREATERENDERRESOURCEMESSAGE(Face::CreationParams);
     createPlaneModel.SetData(params);
     createPlaneModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
     GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread

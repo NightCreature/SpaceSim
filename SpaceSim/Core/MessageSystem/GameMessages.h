@@ -77,4 +77,4 @@ public:
 
 }
 
-#define CREATEFIXEDMODELRESOURCEMESSAGE(type) MessageSystem::CreateRenderResource<type>(#type);
+#define CREATERENDERRESOURCEMESSAGE(type) MessageSystem::CreateRenderResource<type>(#type);

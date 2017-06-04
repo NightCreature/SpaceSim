@@ -101,7 +101,7 @@ private:
     TextureManager m_textureManager;
     ModelManager m_modelManger;
     LightManager m_lightManager;
-    ParticleSystemManager m_pfxManager;
+    ParticleSystem::ParticleSystemManager m_pfxManager;
     ShaderCache m_shaderCache;
     EffectCache m_effectCache;
     GameWindow m_window;
