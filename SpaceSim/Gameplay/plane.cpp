@@ -98,7 +98,7 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
     }
 
     auto resource = GameResourceHelper(m_resource).getWriteableResource();
-    MessageSystem::CreateFixedModelResource<Face::CreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Face::CreationParams);
+    MessageSystem::CreateRenderResource<Face::CreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Face::CreationParams);
     createPlaneModel.SetData(params);
     createPlaneModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
     resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); 

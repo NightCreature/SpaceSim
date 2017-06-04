@@ -39,7 +39,7 @@ void ScorchMark::initialise(const ShaderInstance& shaderInstance)
     params.m_lowerleft = Vector2(-0.5f, -0.5f);
     params.m_lowerleft = Vector2(0.5f, 0.5f);
 
-    MessageSystem::CreateFixedModelResource<Square::SquareCreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Square::SquareCreationParams);
+    MessageSystem::CreateRenderResource<Square::SquareCreationParams> createPlaneModel = CREATEFIXEDMODELRESOURCEMESSAGE(Square::SquareCreationParams);
     createPlaneModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
     createPlaneModel.SetData(params);
     GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread

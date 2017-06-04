@@ -78,5 +78,6 @@ float4 ps_main( PS_INPUT input) : SV_Target
     }
     //color.rgb = nnormal;
     //color.a = texColor.a;
+    color = float4(input.Tex, 0.0f, 1.0);
     return saturate(color);
 }

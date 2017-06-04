@@ -36,7 +36,7 @@ void ModelManager::cleanup()
 //-------------------------------------------------------------------------
 size_t ModelManager::LoadModel( void* data )
 {
-    auto modelData = static_cast<MessageSystem::CreateFixedModelResource<LoadModelResource>::FixedModelResourceData<LoadModelResource>*>(data);
+    auto modelData = static_cast<MessageSystem::CreateRenderResource<LoadModelResource>::ResourceData<LoadModelResource>*>(data);
 
     ModelLoader::LoadData loadData;
     loadData.m_fileName = modelData->m_fixedData.m_fileName;
@@ -84,7 +84,7 @@ size_t ModelManager::LoadModel( void* data )
 //-----------------------------------------------------------------------------
 size_t ModelManager::AddFace(void* data)
 {
-    auto creationParams = static_cast<MessageSystem::CreateFixedModelResource<Face::CreationParams>::FixedModelResourceData<Face::CreationParams>*>(data);
+    auto creationParams = static_cast<MessageSystem::CreateRenderResource<Face::CreationParams>::ResourceData<Face::CreationParams>*>(data);
     size_t renderResourceId = HASH_BINARY(creationParams);
     if (!HasRenderResource(renderResourceId))
     {
