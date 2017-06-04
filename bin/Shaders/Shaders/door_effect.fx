@@ -70,7 +70,7 @@ PS_INPUT vs_main( VS_INPUT input )
 //--------------------------------------------------------------------------------------
 float4 ps_main( PS_INPUT input) : SV_Target
 {
-    float4 color = ambient + shaderTextures.Sample(SampleType, input.Tex).a * diffuse + emissive;
+    float4 color = ambient + shaderTextures.Sample(SampleType, input.Tex) * diffuse + emissive;
     color.a = shaderTextures.Sample(SampleType, input.Tex).a;
     return saturate(color);
 }

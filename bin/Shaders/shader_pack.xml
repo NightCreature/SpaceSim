@@ -3,9 +3,12 @@
     <Effect file_name="Shaders\Effects\core_effect.xml" />
     <Effect file_name="Shaders\Effects\debug_color_shader.xml" />
     <Effect file_name="Shaders\Effects\debug_effect.xml" />
+    <Effect file_name="Shaders\Effects\door_effect.xml" />
     <Effect file_name="Shaders\Effects\force_field_effect.xml" />
+    <Effect file_name="Shaders\Effects\gun.xml" />
     <Effect file_name="Shaders\Effects\laser_effect.xml" />
     <Effect file_name="Shaders\Effects\simple_effect.xml" />
+    <Effect file_name="Shaders\Effects\simple_effect_no_normal_mapping.xml" />
     <Effect file_name="Shaders\Effects\skydome.xml" />
     <Effect file_name="Shaders\Effects\sdf_font_effect.xml" />
     <Effect file_name="Shaders\Effects\spaceship.xml" />

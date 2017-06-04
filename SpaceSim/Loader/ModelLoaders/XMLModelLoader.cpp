@@ -15,16 +15,16 @@ XMLModelLoader::~XMLModelLoader(void)
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName)
+CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadData)
 {
-    if (fileName.empty())
-        return nullptr;
+    if (loadData.m_fileName.empty())
+        return CreatedModel();
 
     tinyxml2::XMLDocument doc;
-    if (doc.LoadFile(fileName.c_str()) != tinyxml2::XML_NO_ERROR)
+    if (doc.LoadFile(loadData.m_fileName.c_str()) != tinyxml2::XML_NO_ERROR)
     {
-        MSG_TRACE_CHANNEL("XMLMODELLOADER", "Failed to load %s\nWith error: %d", fileName.c_str(), doc.ErrorID() )
-        return nullptr;
+        MSG_TRACE_CHANNEL("XMLMODELLOADER", "Failed to load %s\nWith error: %d", loadData.m_fileName.c_str(), doc.ErrorID() )
+        return CreatedModel();
     }
 
     tinyxml2::XMLElement* element;
@@ -36,6 +36,7 @@ Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shade
 
     MeshGroupCreator::CreationParams params;
     params.m_resource = resource;
+    ShaderInstance shaderInstance;
     params.m_shaderInstance = shaderInstance;
 
     //Mesh* mesh = new Mesh(resource);
@@ -128,6 +129,6 @@ Model* XMLModelLoader::LoadModel(Resource* resource, const ShaderInstance& shade
 
     Mesh::CreationParams meshParams;
     meshParams.m_meshGroups.push_back(mesh);
-    CreatedModel model = Mesh::CreateMesh(meshParams);
-    return model.model;
+
+    return  Mesh::CreateMesh(meshParams);
 }

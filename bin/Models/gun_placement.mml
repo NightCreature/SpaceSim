@@ -1,0 +1,6 @@
+<xml>
+	<Material>
+      <Effect file_name="Shaders\Effects\spaceship.xml" />
+    </Material>
+	<Model file_name="Models/turret/gun_turret_2.DAE" />
+</xml>

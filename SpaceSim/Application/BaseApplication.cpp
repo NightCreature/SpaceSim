@@ -50,7 +50,7 @@ m_previousRenderInstanceListSize(1)
 Text::TextBlockCache* cache;
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 bool Application::initialise()

@@ -22,7 +22,7 @@ public:
     void cleanup();
     void initialise(Resource* resource) { m_resource = resource; }
 
-    Model* LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName) const;
+    size_t LoadModel(void* data);
     size_t AddFace(void* data);
 
     bool HasRenderResource(size_t resource_id) const;

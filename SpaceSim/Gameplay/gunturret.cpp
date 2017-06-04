@@ -17,6 +17,12 @@
 #include "Graphics/EffectCache.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/DebugBox.h"
+#include "Gameplay/particleemitter.h"
+
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/RenderMessages.h"
+#include "Loader/ModelLoaders/ModelLoader.h"
 
 HASH_ELEMENT_IMPLEMENTATION(GunTurret)
 
@@ -191,6 +197,19 @@ void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)
                     //    continue;
                     //}
                     //l->move(elapsedtime);
+
+                    MessageSystem::CreateRenderResource<ParticleSystem::ParticleEmitterData> message = CREATERENDERRESOURCEMESSAGE(ParticleSystem::ParticleEmitterData);
+                    ParticleSystem::ParticleEmitterData data;
+                    data.m_maxNumberOfParticles = 25;
+                    data.m_emissionRate = 5;
+                    data.m_colorCurve = ParticleSystem::ColorCurve();
+                    data.m_particleLifetime = 5.0f;
+                    data.m_particleSize = 5.0f;
+                    data.m_startVelocity = 0.75f;
+                    data.m_emitConeAngle = 90.0f;
+                    message.SetData(data);
+                    m_resource->m_messageQueues->getRenderMessageQueue()->addMessage(message);
+                    
                     m_lasersit++;
                 }
                 else
@@ -245,6 +264,7 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
     if (attribute != nullptr)
     {
         m_name = attribute->Value();
+        m_nameHash = hashString(m_name);
     }
 
     Matrix44 scaleTransform, translation, rotation;
@@ -260,7 +280,7 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
                 {
                     m_position.deserialise(childElement);
                     
-                    scale(scaleTransform, 5.0f, 5.0f, 5.0f);
+                    scale(scaleTransform, 0.01f,0.01f,0.01f);
                     translate(translation, m_position);  
                 }
                 else if( strICmp(nameAttribute->Value(), "direction") )
@@ -280,6 +300,14 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
                 //m_drawableObject = getWriteableResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
                 //m_drawableObject->setDirty();
                 MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
+
+                auto resource = GameResourceHelper(m_resource).getWriteableResource();
+                MessageSystem::CreateRenderResource<LoadModelResource> createModel = CREATERENDERRESOURCEMESSAGE(LoadModelResource);
+                LoadModelResource param;
+                stringCopy(param.m_fileName, attribute->Value());
+                createModel.SetData(param);
+                createModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
+                resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createModel);
             }
         }
         if (childElementHash == Material::m_hash)
@@ -289,7 +317,8 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
         }
     }
 
-    m_world = rotation * scaleTransform * translation;
+    m_world = /*rotation */ scaleTransform * translation;
+    //m_world.identity();
 
     return shaderInstance;
 }
@@ -382,6 +411,15 @@ void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, 
 
     Super::update(renderInstances, elapsedTime, input);
 
+    MessageSystem::RenderInformation renderInfo;
+    MessageSystem::RenderInformation::RenderInfo data;
+    data.m_renderObjectid = m_renderHandle;
+    data.m_gameobjectid = m_nameHash;
+    data.m_world = m_world;
+    data.m_name = m_name;
+    renderInfo.SetData(data);
+    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+
     //for (std::vector<Laser*>::iterator lit = m_lasers.end(); lit != m_lasers.end(); ++lit)
     //{
     //    (*lit)->update(elapsedTime);
@@ -393,7 +431,16 @@ void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, 
 //-------------------------------------------------------------------------
 void GunTurret::handleMessage( const MessageSystem::Message& msg )
 {
-    UNUSEDPARAM(msg);
-    //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
-    //setActive(activateMsg.shouldActivate());
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
+    {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
+        m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
+        //Store the render object reference we get back and the things it can do
+
+        //Register the bounding box with the physics
+        //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
+
+        m_initialisationDone = true;
+    }
 }

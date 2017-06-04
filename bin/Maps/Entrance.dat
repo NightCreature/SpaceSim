@@ -1051,7 +1051,7 @@
       <Shininess value="0"/>
       <AlphaBlend enabled="true" />
       <Texture type="12" file_name="Textures\forcefield.dds"/>
-      <Effect file_name="Shaders\Effects\Force_Field_Effect.xml" />
+      <Effect file_name="Shaders\Effects\force_field_effect.xml" />
     </Material>
     <Vector3 x="300" y="-100" z="150"/>
   </ForceField>
@@ -1064,7 +1064,7 @@
       <Shininess value="0"/>
       <AlphaBlend enabled="true" />
       <Texture type="12" file_name="Textures\forcefield.dds"/>
-      <Effect file_name="Shaders\Effects\Force_Field_Effect.xml" />
+      <Effect file_name="Shaders\Effects\force_field_effect.xml" />
     </Material>
     <Vector3 x="750" y="-100" z="150"/>
   </ForceField>
@@ -1077,7 +1077,7 @@
       <Shininess value="0"/>
       <AlphaBlend enabled="true" />
       <Texture type="13" file_name="Textures\door_test.dds"/>
-      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Effect file_name="Shaders\Effects\door_effect.xml" />
       <AlphaBlend enabled="true" />
     </Material>
     <Vector3 x="200" y="-300" z="650"/>
@@ -1091,7 +1091,7 @@
       <Shininess value="0"/>
       <AlphaBlend enabled="true" />
       <Texture type="13" file_name="Textures\door_test.dds"/>
-      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+      <Effect file_name="Shaders\Effects\door_effect.xml" />
       <AlphaBlend enabled="true" />
     </Material>
     <Vector3 x="850" y="-300" z="650"/>
@@ -1109,16 +1109,12 @@
     </Material>
     <Vector3 x="525" y="-300" z="375"/>
   </RotatingBlades>
-  <!--
-   <GunTurret name="turret_2" >
-    <Vector3 name="position"  x="175" y="-300" z="525"/>
+  <GunTurret name="turret_2" >
+    <!--<Vector3 name="position"  x="175" y="-300" z="525"/>-->
+    <Vector3 name="position"  x="0" y="0" z="0"/>
     <Vector3 name="direction" x="-1" y="0.0000001" z="0"/>
-    <Material>
-      <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
-    </Material>
-    <Model file="Models\space_ship.mml" />
+    <Model file="Models\gun_placement.mml" />
   </GunTurret>
-  -->
   <!--
   <Core name="core">
     <Material name="CoreMaterialNormalGlow">

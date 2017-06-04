@@ -5,48 +5,27 @@
 #include "Graphics/color.h"
 #include "Graphics/interpolatecurveRGBA.h"
 
-class Particle
+namespace ParticleSystem
 {
-public:
-    enum State {
-        Unborn,
-        Living,
-        Dead
-    };
 
-	Particle();
-	~Particle();
+struct ParticleData
+{
+    void createParticles(size_t numberOfParticles);
+    void destroyParticles();
+    void wakeParticle(size_t id);
+    void killParticle(size_t id);
+    void swapParticleData(size_t first, size_t second);
 
-	void initialize(const Vector3& position, const Vector3& velocity, const Color& startcolor, float lifetime);
-	void initializeColorCurve(Color& color1, Color& color2, Color& color3, Color& color4, float keyframe1, float keyframe2);
-	void proceed(float elapsedtime);
-	const Vector3 getPosition() const {return m_position;}
-	const Vector3 getVelocity() const {return m_velocity;}
-	void setLifeTime(float time) {m_lifetime = time;}
-	float getLifeTime() const {return m_lifetime;}
-	void setState(State state){m_state = state;}
-	State getState() const {return m_state;}
-	float getSize() const {return m_size;}
-	void setSize(float size) {m_size = size;}
-	Color getStartColor() const {return m_startcolor;}
-	Color getEndColor() const {return m_endcolor;}
-	Color getColor() const {return m_intercolor;}
-	void setStartColor(const Color& c) {m_startcolor = c;}
-	void setEndColor(const Color& c) {m_endcolor = c;}
-protected:	
-private:
-	float getRelativeAge() const;
+    Vector4* m_positionData;
+    Vector4* m_velocityData;
+    Vector4* m_startColor;
+    Vector4* m_endColor;
+    float* m_lifeTimes; //if these are zero or below particle is dead
+    float* m_size;
 
-	interpolateCurveRGBA m_icrgba;
-	Vector3 m_position;
-	Vector3 m_velocity;//Velocity and direction
-	Color   m_intercolor;
-	Color	m_startcolor;
-	Color	m_endcolor;
-	State	m_state;
-	float	m_lifetime;
-	float	m_living;
-	float	m_rotation;
-	float	m_size;
+    size_t m_aliveParticles;
+    size_t m_maxParticles;
 };
+
+}
 #endif

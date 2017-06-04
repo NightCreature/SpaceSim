@@ -1,10 +1,16 @@
 #pragma once
 
+#include "Graphics/Model.h"
+
 #include <string>
 
-class Model;
 class Resource;
-class ShaderInstance;
+
+struct LoadModelResource
+{
+    char m_fileName[256];
+    size_t m_effectHash;
+};
 
 class ModelLoader
 {
@@ -12,6 +18,11 @@ public:
     ModelLoader() {}
     virtual ~ModelLoader() {}
 
-    virtual Model* LoadModel(Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName) = 0;
+    struct LoadData
+    {
+        std::string m_fileName;
+    };
+
+    virtual CreatedModel LoadModel(Resource* resource, const LoadData& loadData) = 0;
 };
 

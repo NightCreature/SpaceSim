@@ -27,28 +27,28 @@ protected:
 };
 
 template<class T>
-class CreateFixedModelResource : public LoadResourceRequest
+class CreateRenderResource : public LoadResourceRequest
 {
 public:
     template<class T>
-    struct FixedModelResourceData : public LoadResourceRequest::LoadResourceData
+    struct ResourceData : public LoadResourceRequest::LoadResourceData
     {
         T m_fixedData;
     };
 
-    CreateFixedModelResource(const char* typeName)
+    CreateRenderResource(const char* typeName)
     {
-        m_implementationData = new FixedModelResourceData<T>();
-        static_cast<FixedModelResourceData<T>*>(m_implementationData)->m_resourceType = hashString(typeName);
-        m_implementationDataSize = sizeof(FixedModelResourceData<T>);
+        m_implementationData = new ResourceData<T>();
+        static_cast<ResourceData<T>*>(m_implementationData)->m_resourceType = hashString(typeName);
+        m_implementationDataSize = sizeof(ResourceData<T>);
 
         UNUSEDPARAM(typeName); //work arround for compile error parameter is used
     }
 
-    virtual void CleanupImplementationData() { delete static_cast<FixedModelResourceData<T>*>(m_implementationData); }
+    virtual void CleanupImplementationData() { delete static_cast<ResourceData<T>*>(m_implementationData); }
 
-    void SetData(const T& data) { FixedModelResourceData<T>* dataPtr = static_cast<FixedModelResourceData<T>*>(m_implementationData); (*dataPtr).m_fixedData = data; }
-    const FixedModelResourceData<T>* GetData() const { return static_cast<FixedModelResourceData<T>*>(m_implementationData); }
+    void SetData(const T& data) { ResourceData<T>* dataPtr = static_cast<ResourceData<T>*>(m_implementationData); (*dataPtr).m_fixedData = data; }
+    const ResourceData<T>* GetData() const { return static_cast<ResourceData<T>*>(m_implementationData); }
 }; 
 
 class RenderInformation : public Message
@@ -77,4 +77,4 @@ public:
 
 }
 
-#define CREATEFIXEDMODELRESOURCEMESSAGE(type) MessageSystem::CreateFixedModelResource<type>(#type);
+#define CREATERENDERRESOURCEMESSAGE(type) MessageSystem::CreateRenderResource<type>(#type);

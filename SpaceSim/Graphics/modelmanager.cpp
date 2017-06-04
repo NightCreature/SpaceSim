@@ -13,6 +13,9 @@
 
 #include "Gameplay/face.h"
 
+#include "Loader/ModelLoaders/ModelLoader.h"
+#include "Core/MessageSystem/GameMessages.h"
+
 ModelManager::~ModelManager()
 {
     cleanup();
@@ -31,69 +34,69 @@ void ModelManager::cleanup()
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
-Model* ModelManager::LoadModel( Resource* resource, const ShaderInstance& shaderInstance, const std::string& fileName ) const
+size_t ModelManager::LoadModel( void* data )
 {
-    if (fileName.empty())
-    {
-        return nullptr;
-    }
+    auto modelData = static_cast<MessageSystem::CreateRenderResource<LoadModelResource>::ResourceData<LoadModelResource>*>(data);
 
-    //unsigned int fileNameHash = hashString(fileName);
-    //MSG_TRACE_CHANNEL("MODELMANAGER", "hash for %s is %d", fileName.c_str(), fileNameHash);
-    //GeometryTreeIterator it = m_loadedModels.find(fileNameHash);
-    //if (it != m_loadedModels.end())
-    //{
-    //    return it->second;
-    //}
+    ModelLoader::LoadData loadData;
+    loadData.m_fileName = modelData->m_fixedData.m_fileName;
+    size_t renderResourceId = hashString(loadData.m_fileName);
+    if (!HasRenderResource(renderResourceId) && renderResourceId)
+    {
+        if (loadData.m_fileName.empty())
+        {
+            return renderResourceId;
+        }
 
-    std::string extension = extractExtensionFromFileName(fileName);
+        std::string extension = extractExtensionFromFileName(loadData.m_fileName);
 
-    Model* model = nullptr;
-    if ( strICmp(extension, "dat") || strICmp(extension, "xml") )
-    {
-        XMLModelLoader loader;
-        model = loader.LoadModel(resource, shaderInstance, fileName);
-        //m_loadedModels.insert(GeometryTreePair(fileNameHash, model));
-    }
-    else if (strICmp(extension, "mml"))
-    {
-        //This format is a mixture between an xml and a attached model file
-        MmlLoader loader;
-        model = loader.LoadModel(resource, shaderInstance, fileName);
-    }
-    else
-    {
-        AssimpModelLoader loader;
-        model = loader.LoadModel(resource, shaderInstance, fileName);
-        //m_loadedModels.insert(GeometryTreePair(fileNameHash, model)); 
-    }
-    
-    return model; //These should probably also register
-}
+        CreatedModel createdModel;
+        if (strICmp(extension, "dat") || strICmp(extension, "xml"))
+        {
+            XMLModelLoader loader;
+            createdModel = loader.LoadModel(m_resource, loadData);
+            //m_loadedModels.insert(GeometryTreePair(fileNameHash, model));
+        }
+        else if (strICmp(extension, "mml"))
+        {
+            //This format is a mixture between an xml and a attached model file
+            MmlLoader loader;
+            createdModel = loader.LoadModel(m_resource, loadData);
+        }
+        else
+        {
+            MSG_TRACE_CHANNEL("ModelManager", "unsupported file format encountered for file name: %s", loadData.m_fileName.c_str());
+        }
 
-//-----------------------------------------------------------------------------
-//! @brief   Initialise the application
-//! @remark
-//-----------------------------------------------------------------------------
-size_t ModelManager::AddFace(void* data)
-{
-    auto creationParams = static_cast<MessageSystem::CreateFixedModelResource<Face::CreationParams>::FixedModelResourceData<Face::CreationParams>*>(data);
-    size_t renderResourceId = HASH_BINARY(creationParams);
-    if (!HasRenderResource(renderResourceId))
-    {
-        //register face with model manager
-        RegisterCreatedModel(Face::CreateFace((creationParams->m_fixedData), m_resource), renderResourceId);
-    }
-    else
-    {
-        //const CreatedModel* model = GetRenderResource(renderResourceId);                
+        if (createdModel.model != nullptr)
+        {
+             //Need to deal with the bounding box here too really
+            RegisterCreatedModel(createdModel, renderResourceId);
+        }
     }
 
     return renderResourceId;
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
+//! @remark
+//-----------------------------------------------------------------------------
+size_t ModelManager::AddFace(void* data)
+{
+    auto creationParams = static_cast<MessageSystem::CreateRenderResource<Face::CreationParams>::ResourceData<Face::CreationParams>*>(data);
+    size_t renderResourceId = HASH_BINARY(creationParams);
+    if (!HasRenderResource(renderResourceId))
+    {
+        //register face with model manager
+        RegisterCreatedModel(Face::CreateFace((creationParams->m_fixedData), m_resource), renderResourceId);
+    }
+
+    return renderResourceId;
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 bool ModelManager::HasRenderResource(size_t resource_id) const
@@ -103,7 +106,7 @@ bool ModelManager::HasRenderResource(size_t resource_id) const
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourceId)
@@ -119,7 +122,7 @@ void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourc
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 const CreatedModel* ModelManager::GetRenderResource(size_t renderResourceId) const

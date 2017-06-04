@@ -12,7 +12,7 @@
 #include "Loader/ResourceLoadRequests.h"
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void ResourceLoader::update()
@@ -39,6 +39,16 @@ void ResourceLoader::update()
             auto textureLoadData = static_cast<char*>(request.m_loadData);
             renderResource.getTextureManager().addLoad(renderResource.getDeviceManager(), textureLoadData);
         }
+        else if ( request.m_resourceType == hashString("LoadModelResource"))
+        {
+            MessageSystem::CreatedRenderResourceMessage returnMessage;
+            MessageSystem::CreatedRenderResourceMessage::CreatedRenderResource data;
+            data.m_renderResourceHandle = renderResource.getModelManager().LoadModel(request.m_loadData);
+            data.m_gameObjectId = request.m_gameObjectId;
+            returnMessage.SetData(data);
+
+            renderResource.m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage);
+        }
 
         delete [] request.m_loadData;
     }
@@ -50,7 +60,7 @@ void ResourceLoader::update()
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
@@ -67,7 +77,7 @@ void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   Initialise the application
+//! @brief   
 //! @remark
 //-----------------------------------------------------------------------------
 void ResourceLoader::AddLoadRequest(const LoadRequest& request)
