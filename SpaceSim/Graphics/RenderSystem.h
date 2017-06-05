@@ -26,6 +26,8 @@
 
 #include "Loader/ResourceLoader.h"
 
+#include "Gameplay/particleemitter.h"
+
 #ifdef _DEBUG
 #include <d3d11_1.h>
 #endif
@@ -153,4 +155,8 @@ private:
     Input m_input;
 
     size_t m_numberOfInstancePerFrame;
+
+
+    //Test shit
+    ParticleSystem::ParticleEmitterComponentBased m_emmiter;
 };

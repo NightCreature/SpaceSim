@@ -335,6 +335,8 @@ void RenderSystem::initialise(Resource* resource)
 
     m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1500.0f);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
+
+    m_emmiter.initialise(m_renderResource);
 }
 
 //-----------------------------------------------------------------------------
@@ -343,6 +345,16 @@ void RenderSystem::initialise(Resource* resource)
 //-----------------------------------------------------------------------------
 void RenderSystem::update(float elapsedTime, double time)
 {
+    {
+#ifdef _DEBUG
+        pPerf->BeginEvent(L"Emitter Update");
+#endif
+        m_emmiter.update((double)elapsedTime);
+#ifdef _DEBUG
+        pPerf->EndEvent();
+#endif
+    }
+
     PROFILE_EVENT("RenderSystem::Update", Blue);
 
 #ifdef _DEBUG
@@ -452,6 +464,11 @@ void RenderSystem::update(float elapsedTime, double time)
                     deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
                     deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
                     generateVerticesCount = 1; //We don't need to generate geometry in the shader based on the SV_VERTEXID so reset this to 1
+                }
+                else
+                {
+                    deviceContext->IASetInputLayout(nullptr);
+                    deviceContext->IASetVertexBuffers(0, 0, nullptr, 0, 0);
                 }
 
                 deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
@@ -808,9 +825,9 @@ void RenderSystem::endDraw()
         m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
         if (FAILED(hr))
         {
-            MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr)
-                MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason())
-                assert(false);
+            MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr);
+            MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason());
+            //assert(false);
         }
     }
 }
