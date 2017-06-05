@@ -47,12 +47,31 @@ void ParticleEmitterComponentBased::update(double elapsedTime)
 }
 
 //-----------------------------------------------------------------------------
-//! @brief   
+//! @brief   Simple Euler motion updater
 //! @remark
 //-----------------------------------------------------------------------------
 void EulerUpdater::update(double elapsedTime, const ParticleData& particleData)
 {
-    
+    float dt = static_cast<float>(elapsedTime);
+    for (size_t counter = 0; counter < particleData.m_aliveParticles; ++counter)
+    {
+        particleData.m_velocityData[counter] += m_acceleration * dt;
+        particleData.m_positionData[counter] += particleData.m_velocityData[counter] * dt;
+    }
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   Simple single point spawner
+//! @remark  Only updates the start positionn of a particle
+//-----------------------------------------------------------------------------
+void PointGenerator::generate(size_t start, size_t end, const ParticleData& particleData)
+{
+    for (size_t counter = start; counter < end; ++counter)
+    {
+        particleData.m_positionData[counter] = m_spawnPosition;
+        //TODO REMOVE THIS TEST CODE BELOW
+        particleData.m_lifeTimes[counter] = 100.0f; //Make this particle live for 100 seconds
+    }
 }
 
 }

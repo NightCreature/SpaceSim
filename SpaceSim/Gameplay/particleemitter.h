@@ -19,6 +19,15 @@ public:
     virtual void generate(size_t start, size_t end, const ParticleData& particleData) = 0;
 };
 
+class PointGenerator : public IGenerator
+{
+public:
+    virtual void generate(size_t start, size_t end, const ParticleData& particleData);
+
+private:
+    Vector4 m_spawnPosition;
+};
+
 class IUpdater
 {
 public:
@@ -31,7 +40,7 @@ public:
 
     virtual void update(double elapsedTime, const ParticleData& particleData) override;
 private:
-    float m_acceleration;
+    Vector4 m_acceleration;
 };
 
 struct ParticleEmitterData
