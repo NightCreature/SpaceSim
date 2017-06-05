@@ -150,7 +150,7 @@ char* getShaderBuffer(const std::string& fileName, size_t& length)
     return buffer;
 }
 
-void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string entryPoint, std::string profileVersion, std::string fileName)
+void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string& entryPoint, std::string& profileVersion, std::string& fileName)
 {
     for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
     {
