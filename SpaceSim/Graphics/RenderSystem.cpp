@@ -446,11 +446,17 @@ void RenderSystem::update(float elapsedTime, double time)
             stride = static_cast<unsigned int>(vb->getVertexStride());
             if (renderInstance.getGeometryInstance().getIB() != nullptr)
             {
-                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                uint32 generateVerticesCount = 6; //In the case of a particle system we assume to generate quads in the vertex shader
+                if (buffer != nullptr) //if vb is null we assume the vertex shader to generate the geometry
+                {
+                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                    generateVerticesCount = 1; //We don't need to generate geometry in the shader based on the SV_VERTEXID so reset this to 1
+                }
+
                 deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
                 deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
+                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis() * generateVerticesCount, 0, 0);
             }
             else
             {
