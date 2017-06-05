@@ -77,12 +77,12 @@ void convertToUTF16String(const std::string& str, std::wstring& out)
 //-----------------------------------------------------------------------------
 void debugOutput(TraceSeverity severity, const std::string& prefix, const char* file, int line, const char * format, ...)
 {
-    static char buf[2048];
+    static char buf[4096];
     va_list args;
     va_start(args, format);
     vsprintf_s(buf, format, args);
     va_end(args);
-    static char debugOutputStr[3072];
+    static char debugOutputStr[5120];
     std::string outputFormatString = "";
     std::string prefixInternal = prefix;
     if (prefix.empty())

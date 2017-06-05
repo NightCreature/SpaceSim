@@ -335,6 +335,8 @@ void RenderSystem::initialise(Resource* resource)
 
     m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1500.0f);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
+
+    m_emmiter.initialise(m_renderResource);
 }
 
 //-----------------------------------------------------------------------------
@@ -343,6 +345,16 @@ void RenderSystem::initialise(Resource* resource)
 //-----------------------------------------------------------------------------
 void RenderSystem::update(float elapsedTime, double time)
 {
+    {
+#ifdef _DEBUG
+        pPerf->BeginEvent(L"Emitter Update");
+#endif
+        m_emmiter.update((double)elapsedTime, m_view, m_projection, m_inverseView);
+#ifdef _DEBUG
+        pPerf->EndEvent();
+#endif
+    }
+
     PROFILE_EVENT("RenderSystem::Update", Blue);
 
 #ifdef _DEBUG
@@ -353,6 +365,7 @@ void RenderSystem::update(float elapsedTime, double time)
     m_window.update(elapsedTime, time);
 
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
 
     RenderInstanceTree::iterator renderInstanceIt = visibleInstances.begin();
     RenderInstanceTree::iterator renderInstanceEnd = visibleInstances.end();
@@ -446,11 +459,22 @@ void RenderSystem::update(float elapsedTime, double time)
             stride = static_cast<unsigned int>(vb->getVertexStride());
             if (renderInstance.getGeometryInstance().getIB() != nullptr)
             {
-                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                uint32 generateVerticesCount = 6; //In the case of a particle system we assume to generate quads in the vertex shader
+                if (buffer != nullptr) //if vb is null we assume the vertex shader to generate the geometry
+                {
+                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                    generateVerticesCount = 1; //We don't need to generate geometry in the shader based on the SV_VERTEXID so reset this to 1
+                }
+                else
+                {
+                    deviceContext->IASetInputLayout(nullptr);
+                    deviceContext->IASetVertexBuffers(0, 0, nullptr, 0, 0);
+                }
+
                 deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
                 deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
+                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis() * generateVerticesCount, 0, 0);
             }
             else
             {
@@ -659,6 +683,7 @@ void RenderSystem::beginDraw()
 
     m_cameraSystem.update(m_renderResource->m_performanceTimer->getElapsedTime(), m_renderResource->m_performanceTimer->getTime(), m_input);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
+    m_inverseView = m_cameraSystem.getCamera("global")->getInvCamera();
 
     m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
     m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
@@ -802,9 +827,9 @@ void RenderSystem::endDraw()
         m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
         if (FAILED(hr))
         {
-            MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr)
-                MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason())
-                assert(false);
+            MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr);
+            MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason());
+            //assert(false);
         }
     }
 }

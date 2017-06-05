@@ -28,78 +28,84 @@ enum ShaderType
 //! @brief   TODO enter a description
 //! @remark
 //-----------------------------------------------------------------------------
-void getProfileName(const DeviceManager& deviceManager, ShaderType type, std::string &profileName)
+void getProfileName(const DeviceManager& deviceManager, ShaderType type, std::string &profileName, const std::string profileVersion = std::string())
 {
     D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
 
     switch (type)
     {
     case eVertexShader:
-        {
-            profileName = "vs";
-        }
-        break;
-    case eHullShader:
-        {
-            profileName = "hs";
-        }
-        break;
-    case eDomainShader:
-        {
-            profileName = "ds";
-        }
-        break;
-    case eGeometryShader:
-        {
-            profileName = "gs";
-        }
-        break;
-    case ePixelShader:
-        {
-            profileName = "ps";
-        }
-        break;
-    case eComputeShader:
-        {
-            profileName = "cs";
-        }
-        break;
-    }
-
-    switch (featureLevel)
     {
-    case D3D_FEATURE_LEVEL_9_1:
-    case D3D_FEATURE_LEVEL_9_2:
+        profileName = "vs";
+    }
+    break;
+    case eHullShader:
+    {
+        profileName = "hs";
+    }
+    break;
+    case eDomainShader:
+    {
+        profileName = "ds";
+    }
+    break;
+    case eGeometryShader:
+    {
+        profileName = "gs";
+    }
+    break;
+    case ePixelShader:
+    {
+        profileName = "ps";
+    }
+    break;
+    case eComputeShader:
+    {
+        profileName = "cs";
+    }
+    break;
+    }
+    if (profileVersion.empty())
+    {
+        switch (featureLevel)
+        {
+        case D3D_FEATURE_LEVEL_9_1:
+        case D3D_FEATURE_LEVEL_9_2:
         {
             profileName += "_4_0_level_9_1";
         }
         break;
-    case D3D_FEATURE_LEVEL_9_3:
+        case D3D_FEATURE_LEVEL_9_3:
         {
             profileName += "_4_0_level_9_3";
         }
         break;
-    case D3D_FEATURE_LEVEL_10_0:
+        case D3D_FEATURE_LEVEL_10_0:
         {
             profileName += "_4_0";
         }
         break;
-    case D3D_FEATURE_LEVEL_10_1:
+        case D3D_FEATURE_LEVEL_10_1:
         {
             profileName += "_4_1";
         }
         break;
-    case D3D_FEATURE_LEVEL_11_0:
-    case D3D_FEATURE_LEVEL_11_1:
+        case D3D_FEATURE_LEVEL_11_0:
+        case D3D_FEATURE_LEVEL_11_1:
         {
             profileName += "_5_0";
         }
         break;
-    default:
+        default:
         {
             profileName += "_4_0_level_9_1";
         }
         break;
+        }
+    }
+    else
+    {
+        profileName += profileVersion;
     }
 }
 
@@ -144,11 +150,30 @@ char* getShaderBuffer(const std::string& fileName, size_t& length)
     return buffer;
 }
 
+void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string& entryPoint, std::string& profileVersion, std::string& fileName)
+{
+    for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
+    {
+        if (strICmp(attribute->Name(), "entry_point"))
+        {
+            entryPoint = attribute->Value();
+        }
+        else if (strICmp(attribute->Name(), "profile_version"))
+        {
+            profileVersion = attribute->Value();
+        }
+        else if (strICmp(attribute->Name(), "file_name"))
+        {
+            fileName = attribute->Value();
+        }
+}
+    }
+
 
 #if defined( DEBUG ) || defined( _DEBUG )
-DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_DEBUG;
+DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES;
 #else
-DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
+DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES;
 #endif
 
 //-----------------------------------------------------------------------------
@@ -157,17 +182,8 @@ DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRI
 //-----------------------------------------------------------------------------
 void VertexShader::deserialise(const tinyxml2::XMLElement* element)
 {
-    for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
-    {
-        if (strICmp(attribute->Name(), "entry_point"))
-        {
-            m_entryPoint = attribute->Value();
-        }
-        else if (strICmp(attribute->Name(), "file_name"))
-        {
-            m_fileName = attribute->Value();
-        }
-    }
+    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -220,18 +236,7 @@ bool VertexShader::createShader(const DeviceManager& deviceManager)
 //-----------------------------------------------------------------------------
 void HullShader::deserialise(const tinyxml2::XMLElement* element)
 {
-    for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
-    {
-        if (strICmp(attribute->Name(), "entry_point"))
-        {
-            m_entryPoint = attribute->Value();
-        }
-        else if (strICmp(attribute->Name(), "file_name"))
-        {
-            m_fileName = attribute->Value();
-
-        }
-    }
+    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
 //-----------------------------------------------------------------------------
@@ -251,7 +256,7 @@ bool HullShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, eHullShader, profileName);
+        getProfileName(deviceManager, eHullShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
@@ -290,18 +295,7 @@ bool HullShader::createShader(const DeviceManager& deviceManager)
 //-----------------------------------------------------------------------------
 void DomainShader::deserialise(const tinyxml2::XMLElement* element)
 {
-    for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
-    {
-        if (strICmp(attribute->Name(), "entry_point"))
-        {
-            m_entryPoint = attribute->Value();
-        }
-        else if (strICmp(attribute->Name(), "file_name"))
-        {
-            m_fileName = attribute->Value();
-        }
-
-    }
+    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
 //-----------------------------------------------------------------------------
@@ -321,7 +315,7 @@ bool DomainShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, eDomainShader, profileName);
+        getProfileName(deviceManager, eDomainShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
@@ -360,17 +354,7 @@ bool DomainShader::createShader(const DeviceManager& deviceManager)
 //-----------------------------------------------------------------------------
 void GeometryShader::deserialise(const tinyxml2::XMLElement* element)
 {
-    for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
-    {
-        if (strICmp(attribute->Name(), "entry_point"))
-        {
-            m_entryPoint = attribute->Value();
-        }
-        else if (strICmp(attribute->Name(), "file_name"))
-        {
-            m_fileName = attribute->Value();
-        }
-    }
+    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
 //-----------------------------------------------------------------------------
@@ -391,7 +375,7 @@ bool GeometryShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, eGeometryShader, profileName);
+        getProfileName(deviceManager, eGeometryShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
@@ -430,17 +414,7 @@ bool GeometryShader::createShader(const DeviceManager& deviceManager)
 //-----------------------------------------------------------------------------
 void PixelShader::deserialise(const tinyxml2::XMLElement* element)
 {
-    for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
-    {
-        if (strICmp(attribute->Name(), "entry_point"))
-        {
-            m_entryPoint = attribute->Value();
-        }
-        else if (strICmp(attribute->Name(), "file_name"))
-        {
-            m_fileName = attribute->Value();
-        }
-    }
+    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
 //-----------------------------------------------------------------------------
@@ -454,7 +428,7 @@ bool PixelShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, ePixelShader, profileName);
+        getProfileName(deviceManager, ePixelShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
@@ -493,17 +467,7 @@ bool PixelShader::createShader(const DeviceManager& deviceManager)
 //-----------------------------------------------------------------------------
 void ComputeShader::deserialise(const tinyxml2::XMLElement* element)
 {
-    for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
-    {
-        if (strICmp(attribute->Name(), "entry_point"))
-        {
-            m_entryPoint = attribute->Value();
-        }
-        else if (strICmp(attribute->Name(), "file_name"))
-        {
-            m_fileName = attribute->Value();
-        }
-    }
+    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
 //-----------------------------------------------------------------------------
@@ -523,7 +487,7 @@ bool ComputeShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, eComputeShader, profileName);
+        getProfileName(deviceManager, eComputeShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);

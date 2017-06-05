@@ -133,4 +133,100 @@ inline bool operator== (const Vector4& lhs, const Vector4& rhs)
 {
 	return lhs.equal(rhs);
 }
+
+inline Vector4::Vector4()
+{
+    m_x = 0.0f;
+    m_y = 0.0f;
+    m_z = 0.0f;
+    m_w = 0.0f;
+}
+
+inline Vector4::Vector4(float x, float y, float z, float w)
+{
+    m_x = x;
+    m_y = y;
+    m_z = z;
+    m_w = w;
+}
+
+inline Vector4::Vector4(const float xyzw[])
+{
+    m_x = xyzw[0];
+    m_y = xyzw[1];
+    m_z = xyzw[2];
+    m_w = xyzw[3];
+}
+
+//-------------------------------------------------------------------------
+// @brief 
+//-------------------------------------------------------------------------
+inline Vector4::Vector4(const Vector3& v, float w)
+{
+    m_x = v.x();
+    m_y = v.y();
+    m_z = v.z();
+    m_w = w;
+}
+
+inline float Vector4::dot(const Vector4& v)
+{
+    return (m_x*v.m_x + m_y*v.m_y + m_z*v.m_z + m_w*v.m_w);
+}
+
+inline float Vector4::length()
+{
+    return sqrt(dot(*this));
+}
+
+inline void Vector4::normalize()
+{
+    *this = *this / length();
+}
+
+inline Vector4 Vector4::multiply(float scalar) const
+{
+    return Vector4(m_x * scalar, m_y * scalar, m_z * scalar, m_w * scalar);
+}
+
+inline Vector4 Vector4::add(const Vector4& v) const
+{
+    return Vector4(m_x + v.m_x, m_y + v.m_y, m_z + v.m_z, m_w + v.m_w);
+}
+
+inline void Vector4::operator+= (const Vector4& v)
+{
+    m_x += v.m_x;
+    m_y += v.m_y;
+    m_z += v.m_z;
+    m_w += v.m_w;
+}
+
+
+inline void Vector4::operator-= (const Vector4& v)
+{
+    m_x -= v.m_x;
+    m_y -= v.m_y;
+    m_z -= v.m_z;
+    m_w -= v.m_w;
+}
+
+inline void Vector4::operator*= (float scalar)
+{
+    m_x *= scalar;
+    m_y *= scalar;
+    m_z *= scalar;
+    m_w *= scalar;
+}
+
+
+inline void Vector4::operator/= (float scalar)
+{
+    m_x /= scalar;
+    m_y /= scalar;
+    m_z /= scalar;
+    m_w /= scalar;
+}
+
+
 #endif

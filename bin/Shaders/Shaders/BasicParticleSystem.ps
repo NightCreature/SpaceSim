@@ -1,0 +1,25 @@
+//--------------------------------------------------------------------------------------
+// Constant Buffer Variables
+//--------------------------------------------------------------------------------------
+
+Texture2D<float4> shaderTextures : register(t8);
+SamplerState SampleType : register(s0)
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+
+struct PSInput
+{
+    float4 Pos : SV_POSITION;
+    float2 Tex : TEXCOORD0;
+};
+
+
+float4 ps_main(PSInput input) : SV_Target
+{
+	return float4(input.Tex,0,1);
+	//return shaderTextures.Sample(SampleType, input.Tex);
+}

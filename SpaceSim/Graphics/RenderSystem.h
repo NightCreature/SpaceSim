@@ -26,6 +26,8 @@
 
 #include "Loader/ResourceLoader.h"
 
+#include "Gameplay/particleemitter.h"
+
 #ifdef _DEBUG
 #include <d3d11_1.h>
 #endif
@@ -92,6 +94,7 @@ private:
     
     Matrix44 m_CullingProjectionMatrix;
     Matrix44 m_view;
+    Matrix44 m_inverseView;
     Matrix44 m_projection;
 
     RenderResource* m_renderResource;
@@ -153,4 +156,8 @@ private:
     Input m_input;
 
     size_t m_numberOfInstancePerFrame;
+
+
+    //Test shit
+    ParticleSystem::ParticleEmitterComponentBased m_emmiter;
 };

@@ -1,0 +1,8 @@
+<xml>
+  <Effect >
+    <Technique name="default">
+      <VertexShader entry_point="vs_main" profile_version="_5_0" file_name="Shaders\Shaders\BasicParticleSystem.vs" />
+      <PixelShader entry_point="ps_main" profile_version="_5_0" file_name="Shaders\Shaders\BasicParticleSystem.ps" />
+    </Technique>
+   </Effect>
+</xml>	

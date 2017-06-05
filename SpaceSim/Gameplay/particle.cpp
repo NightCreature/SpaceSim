@@ -45,7 +45,7 @@ void ParticleData::destroyParticles()
 //-----------------------------------------------------------------------------
 void ParticleData::wakeParticle(size_t id)
 {
-    if (0 < id && id < m_maxParticles && m_aliveParticles < m_maxParticles)
+    if (0 <= id && id < m_maxParticles && m_aliveParticles < m_maxParticles)
     {
         swapParticleData(id, m_aliveParticles++);
     }
@@ -57,8 +57,14 @@ void ParticleData::wakeParticle(size_t id)
 //-----------------------------------------------------------------------------
 void ParticleData::killParticle(size_t id)
 {
-    if (0 < id && id < m_maxParticles)
+    if (0 <= id && id < m_maxParticles)
     {
+        m_positionData[id] = Vector4();
+        m_velocityData[id] = Vector4();
+        m_startColor[id] = Vector4();
+        m_endColor[id] = Vector4();
+        m_lifeTimes[id] = -1.0f;
+        m_size[id] = 0.0f;
         swapParticleData(id, m_aliveParticles--);
     }
 }

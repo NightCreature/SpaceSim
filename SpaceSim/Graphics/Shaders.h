@@ -16,6 +16,7 @@ public:
     void cleanup() { m_shader->Release(); }
 
     void deserialise(const tinyxml2::XMLElement* element);
+
     bool createShader(const DeviceManager& deviceManager);
     const std::string getFileName() const { return m_fileName; }
     const ID3DBlob* getShaderBlob() const { return m_vertexShaderBlob; }
@@ -28,6 +29,7 @@ private:
     ID3D11VertexShader* m_shader;
     std::string m_fileName;
     std::string m_entryPoint;
+    std::string m_profileVersion;
 };
 
 class HullShader
@@ -47,6 +49,7 @@ private:
     ID3D11HullShader* m_shader;
     std::string m_fileName;
     std::string m_entryPoint;
+    std::string m_profileVersion;
 };
 
 class DomainShader
@@ -66,6 +69,7 @@ private:
     ID3D11DomainShader* m_shader;
     std::string m_fileName;
     std::string m_entryPoint;
+    std::string m_profileVersion;
 };
 
 class GeometryShader
@@ -85,6 +89,7 @@ private:
     ID3D11GeometryShader* m_shader;
     std::string m_fileName;
     std::string m_entryPoint;
+    std::string m_profileVersion;
 };
 
 class PixelShader
@@ -104,6 +109,7 @@ private:
     ID3D11PixelShader* m_shader;
     std::string m_fileName;
     std::string m_entryPoint;
+    std::string m_profileVersion;
 };
 
 class ComputeShader
@@ -123,4 +129,5 @@ private:
     ID3D11ComputeShader* m_shader;
     std::string m_fileName;
     std::string m_entryPoint;
+    std::string m_profileVersion;
 };
