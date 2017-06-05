@@ -23,7 +23,7 @@ namespace ParticleSystem
 //-----------------------------------------------------------------------------
 void ParticleEmitterComponentBased::initialise(Resource* resource)
 {
-    uint32 numberParticles = 100;
+    uint32 numberParticles = 100000;
     m_resource = resource;
     m_particleData.createParticles(numberParticles);
 
@@ -51,12 +51,12 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     uint32* indecis = new uint32[6 * numberParticles];
     for (uint32 counter = 0; counter < numberParticles * 6; counter += 6)
     {
-        indecis[counter] = counter;
-        indecis[counter + 1] = counter + 1;
-        indecis[counter + 2] = counter + 2;
-        indecis[counter + 3] = counter + 1;
-        indecis[counter + 4] = counter + 3;
-        indecis[counter + 5] = counter + 2;
+        indecis[counter] = (counter / 6 * 4);
+        indecis[counter + 1] = (counter / 6 * 4) + 2;
+        indecis[counter + 2] = (counter / 6 * 4) + 1;
+        indecis[counter + 3] = (counter / 6 * 4) + 1;
+        indecis[counter + 4] = (counter / 6 * 4) + 2;
+        indecis[counter + 5] = (counter / 6 * 4) + 3;
     }
     D3D11_SUBRESOURCE_DATA initData;
     ZeroMemory(&initData, sizeof(D3D11_SUBRESOURCE_DATA));
