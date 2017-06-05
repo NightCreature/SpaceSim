@@ -5,6 +5,7 @@
 #include "Graphics/color.h"
 #include "Graphics/interpolatecurveRGBA.h"
 
+
 namespace ParticleSystem
 {
 

@@ -138,6 +138,7 @@ private:
     unsigned int m_pixelShader;
     unsigned int m_computeShader;
     Resource* m_resource;
+public: //TODO remove
     ID3D11Buffer* m_constantBuffers[2]; //Contains the projection, view and world matrices, these should move in to something called constant buffer which can be set by the model
 };
 

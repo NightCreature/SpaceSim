@@ -94,6 +94,7 @@ private:
     
     Matrix44 m_CullingProjectionMatrix;
     Matrix44 m_view;
+    Matrix44 m_inverseView;
     Matrix44 m_projection;
 
     RenderResource* m_renderResource;

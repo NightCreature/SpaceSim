@@ -349,7 +349,7 @@ void RenderSystem::update(float elapsedTime, double time)
 #ifdef _DEBUG
         pPerf->BeginEvent(L"Emitter Update");
 #endif
-        m_emmiter.update((double)elapsedTime);
+        m_emmiter.update((double)elapsedTime, m_view, m_projection, m_inverseView);
 #ifdef _DEBUG
         pPerf->EndEvent();
 #endif
@@ -682,6 +682,7 @@ void RenderSystem::beginDraw()
 
     m_cameraSystem.update(m_renderResource->m_performanceTimer->getElapsedTime(), m_renderResource->m_performanceTimer->getTime(), m_input);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
+    m_inverseView = m_cameraSystem.getCamera("global")->getInvCamera();
 
     m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
     m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();

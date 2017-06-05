@@ -55,9 +55,10 @@ struct ParticleEmitterData
 class ParticleEmitterComponentBased
 {
 public:
-    ParticleEmitterComponentBased(Resource* resource) : m_resource(resource) {}
 
-    void update(double elapsedTime);
+    void initialise(Resource* resource);
+
+    void update(double elapsedTime, const Matrix44& view, const Matrix44& projection, const Matrix44& inverseView);
 
     void addGenerator(IGenerator* generator) { m_generators.push_back(generator); }
     void addUpdater(IUpdater* updater) { m_updaters.push_back(updater); }
@@ -69,6 +70,12 @@ private:
     Resource* m_resource;
 
     float m_emmisionRate;
+
+    ID3D11Buffer* m_particleDataBuffer;
+    ID3D11Buffer* m_indexBuffer;
+    ID3D11ShaderResourceView* m_srv;
+    //Test code
+    ID3D11Buffer* m_constantBuffers[2];
 };
 
 }
