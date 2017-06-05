@@ -202,7 +202,6 @@ void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)
                     ParticleSystem::ParticleEmitterData data;
                     data.m_maxNumberOfParticles = 25;
                     data.m_emissionRate = 5;
-                    data.m_colorCurve = ParticleSystem::ColorCurve();
                     data.m_particleLifetime = 5.0f;
                     data.m_particleSize = 5.0f;
                     data.m_startVelocity = 0.75f;
