@@ -39,7 +39,8 @@ VSOutput vs_main(uint id:SV_VERTEXID)
 	position.z = 0.0;
 	position.xy *= 0.5;//data[particleIndex].size.x;
 
-	position = mul(position, (float3x3)InverseView) + data[particleIndex].position.xyz; //transition from screen space to world space and add world space position
+	position = mul(position, (float3x3)InverseView);
+	position += data[particleIndex].position.xyz; //transition from screen space to world space and add world space position
 	VSOutput output = (VSOutput)0;
     output.Pos = mul( float4(position, 1.0), World );
     output.Pos = mul( output.Pos, View );

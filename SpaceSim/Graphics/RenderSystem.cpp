@@ -365,6 +365,7 @@ void RenderSystem::update(float elapsedTime, double time)
     m_window.update(elapsedTime, time);
 
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
 
     RenderInstanceTree::iterator renderInstanceIt = visibleInstances.begin();
     RenderInstanceTree::iterator renderInstanceEnd = visibleInstances.end();

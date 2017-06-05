@@ -37,7 +37,7 @@ public:
 class EulerUpdater : public IUpdater
 {
 public:
-
+    EulerUpdater() { m_acceleration = Vector4(0.1f, 0.1f, 0.0f, 0.0f); }
     virtual void update(double elapsedTime, const ParticleData& particleData) override;
 private:
     Vector4 m_acceleration;

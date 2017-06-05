@@ -23,13 +23,14 @@ namespace ParticleSystem
 //-----------------------------------------------------------------------------
 void ParticleEmitterComponentBased::initialise(Resource* resource)
 {
+    uint32 numberParticles = 100;
     m_resource = resource;
-    m_particleData.createParticles(1000);
+    m_particleData.createParticles(numberParticles);
 
     D3D11_BUFFER_DESC bufferDescriptor;
     ZeroMemory(&bufferDescriptor, sizeof(D3D11_BUFFER_DESC));
     bufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
-    bufferDescriptor.ByteWidth = (unsigned int)1000 * ((4 * sizeof(float) * 2) + sizeof(float));
+    bufferDescriptor.ByteWidth = (unsigned int)numberParticles * ((4 * sizeof(float) * 2) + sizeof(float));
     bufferDescriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     bufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     bufferDescriptor.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -43,12 +44,12 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     ZeroMemory(&srvDescriptor, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
     srvDescriptor.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
     srvDescriptor.Buffer.FirstElement = 0;
-    srvDescriptor.Buffer.NumElements = static_cast<uint32>(1000);
+    srvDescriptor.Buffer.NumElements = static_cast<uint32>(numberParticles);
     deviceContext->CreateShaderResourceView(m_particleDataBuffer, &srvDescriptor, &m_srv);
 
 
-    uint32* indecis = new uint32[6 * 1000];
-    for (uint32 counter = 0; counter < 1000 * 6; counter += 6)
+    uint32* indecis = new uint32[6 * numberParticles];
+    for (uint32 counter = 0; counter < numberParticles * 6; counter += 6)
     {
         indecis[counter] = counter;
         indecis[counter + 1] = counter + 1;
@@ -66,7 +67,7 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     D3D11_BUFFER_DESC indexBufferDescriptor;
     ZeroMemory(&indexBufferDescriptor, sizeof(D3D11_BUFFER_DESC));
     indexBufferDescriptor.Usage = D3D11_USAGE_IMMUTABLE;
-    indexBufferDescriptor.ByteWidth = 6 * 1000 * sizeof(uint32);
+    indexBufferDescriptor.ByteWidth = 6 * numberParticles * sizeof(uint32);
     indexBufferDescriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
     indexBufferDescriptor.CPUAccessFlags = 0;
     indexBufferDescriptor.MiscFlags = 0;
@@ -76,7 +77,7 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
 
     m_generators.push_back(new PointGenerator());
     m_updaters.push_back(new EulerUpdater());
-    m_emmisionRate = 10;
+    m_emmisionRate = 5500;
 
 
     //Test CODE
@@ -140,6 +141,7 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
     //Run a last updater that is fixed and checks if particles are alive still
     for (size_t counter = 0; counter < m_particleData.m_aliveParticles; ++counter)
     {
+        m_particleData.m_lifeTimes[counter] -= static_cast<float>(elapsedTime);
         if (m_particleData.m_lifeTimes[counter] < 0.0f)
         {
             m_particleData.killParticle(counter);
@@ -241,7 +243,7 @@ void PointGenerator::generate(size_t start, size_t end, const ParticleData& part
     {
         particleData.m_positionData[counter] = m_spawnPosition;
         //TODO REMOVE THIS TEST CODE BELOW
-        particleData.m_lifeTimes[counter] = 100.0f; //Make this particle live for 100 seconds
+        particleData.m_lifeTimes[counter] = 10.0f; //Make this particle live for 100 seconds
     }
 }
 
