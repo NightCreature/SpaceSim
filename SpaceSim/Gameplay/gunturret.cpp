@@ -202,10 +202,6 @@ void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)
                     ParticleSystem::ParticleEmitterData data;
                     data.m_maxNumberOfParticles = 25;
                     data.m_emissionRate = 5;
-                    data.m_particleLifetime = 5.0f;
-                    data.m_particleSize = 5.0f;
-                    data.m_startVelocity = 0.75f;
-                    data.m_emitConeAngle = 90.0f;
                     message.SetData(data);
                     m_resource->m_messageQueues->getRenderMessageQueue()->addMessage(message);
                     

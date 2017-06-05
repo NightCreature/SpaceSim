@@ -5,7 +5,10 @@
 #include "Gameplay/particle.h"
 #include "Graphics/Model.h"
 #include "Graphics/color.h"
+#include <array>
 #include <deque>
+
+class Resource;
 
 namespace ParticleSystem
 {
@@ -22,27 +25,39 @@ public:
     virtual void update(double elapsedTime, const ParticleData& particleData) = 0;
 };
 
+class EulerUpdater : public IUpdater
+{
+public:
+
+    virtual void update(double elapsedTime, const ParticleData& particleData) override;
+private:
+    float m_acceleration;
+};
+
 struct ParticleEmitterData
 {
-    Vector3 m_emitterDirection;
-    Vector3 m_emitterPosition;
     size_t m_maxNumberOfParticles = 25;
     size_t m_emissionRate;
-    float m_particleLifetime;
-    float m_particleSize;
-    float m_startVelocity;
-    float m_emitConeAngle;
+    //Should really fix this to be something like generator and updater data instead of newing them here
+    std::array<IGenerator*, 32> m_generators; //only allow 32 for now
+    std::array<IUpdater*, 32> m_updaters; //only allow 32 for now
 };
 
 class ParticleEmitterComponentBased
 {
 public:
+    ParticleEmitterComponentBased(Resource* resource) : m_resource(resource) {}
 
     void update(double elapsedTime);
+
+    void addGenerator(IGenerator* generator) { m_generators.push_back(generator); }
+    void addUpdater(IUpdater* updater) { m_updaters.push_back(updater); }
 private:
     ParticleData m_particleData;
     std::vector<IGenerator*> m_generators;
     std::vector<IUpdater*> m_updaters;
+
+    Resource* m_resource;
 
     float m_emmisionRate;
 };

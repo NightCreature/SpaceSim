@@ -42,6 +42,17 @@ void ParticleEmitterComponentBased::update(double elapsedTime)
             m_particleData.killParticle(counter);
         }
     }
+
+    //Finally extract render information here and send of to render list
+}
+
+//-----------------------------------------------------------------------------
+//! @brief   
+//! @remark
+//-----------------------------------------------------------------------------
+void EulerUpdater::update(double elapsedTime, const ParticleData& particleData)
+{
+    
 }
 
 }
