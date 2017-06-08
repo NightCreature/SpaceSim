@@ -88,7 +88,7 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
             3, 1
         };
 
-        ib->createBuffer(helper.getResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(helper.getResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false);
         ib->setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
     }
     else

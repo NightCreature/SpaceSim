@@ -265,7 +265,7 @@ CreatedModel CreateBox(const CreationParams& params)
             20, 21, 22, 22, 23, 20 //VF2
         };
 
-        ib->createBuffer(renderResource.getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(renderResource.getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false);
         ib->setNumberOfIndecis(36);
     }
     else

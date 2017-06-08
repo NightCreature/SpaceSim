@@ -58,6 +58,8 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
         indecis[counter + 4] = (counter / 6 * 4) + 2;
         indecis[counter + 5] = (counter / 6 * 4) + 3;
     }
+    IndexBuffer indexbuffer;
+    indexbuffer.createBuffer(resourceHelper.getWriteableResource().getDeviceManager(), 6 * numberParticles, indecis, false);
     D3D11_SUBRESOURCE_DATA initData;
     ZeroMemory(&initData, sizeof(D3D11_SUBRESOURCE_DATA));
     initData.pSysMem = indecis;
@@ -116,12 +118,6 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
     size_t numberOfParticlesToGenerate = static_cast<size_t>(elapsedTime * m_emmisionRate);
     size_t startingParticleIndex = m_particleData.m_aliveParticles;
     size_t lastParticleIndex = std::min(startingParticleIndex + numberOfParticlesToGenerate, m_particleData.m_maxParticles - 1);
-
-
-    WVPBufferContent wvp;
-    wvp.m_world.identity();
-    wvp.m_view = view;
-    wvp.m_projection = projection;
 
     for (auto&& generator : m_generators)
     {
@@ -185,6 +181,11 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
     
     //This is test code to draw should be really refactored
     {
+        WVPBufferContent wvp;
+        wvp.m_world.identity();
+        wvp.m_view = view;
+        wvp.m_projection = projection;
+
         PROFILE_EVENT("ParticleEmitter::SubmitInstance", DarkBlue);
 
         const Effect* effect = helper.getResource().getEffectCache().getEffect(hashString("ParticleSystem.xml"));

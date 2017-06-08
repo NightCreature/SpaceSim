@@ -12,5 +12,13 @@ class ParticleSystemManager
 
 };
 
+class ParticleSystem
+{
+public:
+
+    void initialise();
+private:
+
+};
 }
 #endif

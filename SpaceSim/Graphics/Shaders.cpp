@@ -6,6 +6,8 @@
 
 #include <D3Dcompiler.h>
 #include <fstream>
+#include <numeric>
+#include <limits>
 
 HASH_ELEMENT_IMPLEMENTATION(VertexShader);
 HASH_ELEMENT_IMPLEMENTATION(HullShader);
@@ -121,14 +123,15 @@ char* getShaderBuffer(const std::string& fileName, size_t& length)
     char * buffer = nullptr;
     if (shaderStream.is_open())
     {
-        shaderStream.seekg(0, std::fstream::end);
-        length = shaderStream.tellg();
-        shaderStream.seekg(0, std::fstream::beg);
+        shaderStream.ignore(std::numeric_limits<std::streamsize>::max());
+        length = shaderStream.gcount();
+        shaderStream.clear();   //  Since ignore will have set eof.
+        shaderStream.seekg(0, std::ios_base::beg);
 
         // allocate memory:
        buffer = new char[length];
 
-        // read data as a block:
+       // read data as a block:
         shaderStream.read(buffer, length);
         shaderStream.close();
         char* endChar = buffer + length;
@@ -138,6 +141,7 @@ char* getShaderBuffer(const std::string& fileName, size_t& length)
         }
         ++endChar;
         *endChar = '\0';
+        length = strlen(buffer);
     }
     else
     {

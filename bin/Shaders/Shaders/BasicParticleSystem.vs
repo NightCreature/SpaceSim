@@ -17,7 +17,7 @@ struct ParticleData
 {
 	float4 position;
 	float4 color;
-	float size;
+	float4 size;
 };
 
 StructuredBuffer<ParticleData> data : register(t0);

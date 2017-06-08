@@ -69,7 +69,7 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     delete[] vertexData;
 
     ib->setNumberOfIndecis((unsigned int)params.m_indices.size());
-    ib->createBuffer(renderResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false, D3D11_BIND_INDEX_BUFFER);
+    ib->createBuffer(renderResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false);
 
     
     meshGroup.meshGroup = new MeshGroup(vb, ib, params.m_shaderInstance);

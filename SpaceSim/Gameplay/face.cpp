@@ -125,7 +125,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
         unsigned int* startOfIndexData = indecis;
         createIndexData(indecis, params.changeWindingOrder, rows, columns);
 
-        ib->createBuffer(renderResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(renderResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false);
         delete[] startOfIndexData; //cleanup
         indecis = nullptr;
         startOfIndexData = nullptr;

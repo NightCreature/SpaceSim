@@ -553,7 +553,7 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 			indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
 		}
 	}
-	ib.createBuffer(gameResource.getResource().getDeviceManager(), static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer, false, D3D11_BIND_INDEX_BUFFER);
+	ib.createBuffer(gameResource.getResource().getDeviceManager(), static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer, false);
 	ib.setNumberOfIndecis(static_cast<unsigned int>(numberIndecis));
 
 	m_geometryInstance.setVB(&vb);
