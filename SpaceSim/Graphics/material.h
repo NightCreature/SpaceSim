@@ -110,6 +110,7 @@ public:
     
     const Effect* getEffect() const { return m_effect; }
     Effect* getEffect() { return m_effect; }
+    unsigned int getEffectHash() const { return m_effectHash; }
 	unsigned int getTechnique() const { return m_techniqueHash; }
 	void setTechnique(unsigned int techniqueHash) { m_techniqueHash = techniqueHash; }
 
@@ -129,9 +130,11 @@ public:
     };
 
     static MaterialParameters GetMaterialParameters(const tinyxml2::XMLElement* childElement);
+    void setEffectHash(unsigned int effectHash) { m_effectHash = effectHash; }
 protected:
 private:
     unsigned int m_techniqueHash;
+    unsigned int m_effectHash;
     Effect* m_effect; //Could be a resource Id now seeing that the model and shaders only live on the render side, would make the material a sharable state object :)
     MaterialContent m_materialCB;
     std::vector<TextureSlotMapping> m_texture;//Order is sampler order as well

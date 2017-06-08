@@ -12,7 +12,7 @@ namespace Square
 {
     struct SquareCreationParams : public Model::CreationParams
     {
-
+        Material mat;
         Vector2 m_lowerleft;
         Vector2 m_upperright;
     };

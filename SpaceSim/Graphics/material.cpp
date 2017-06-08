@@ -240,4 +240,3 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
 
     return returnVal;
 }
-

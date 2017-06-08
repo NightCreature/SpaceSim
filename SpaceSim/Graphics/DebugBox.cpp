@@ -45,11 +45,12 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
         wvp.m_world = temp;
         wvp.m_view = view;
         wvp.m_projection = projection;
-        ShaderInstance newShaderInstance(wvp, Material());
-        box->getMeshData().push_back(new MeshGroup(vb, ib, newShaderInstance));
+        Material mat;
+        mat.setEffectHash(hashString("debug_effect.xml"));
+        box->getMeshData().push_back(new MeshGroup(vb, ib, mat));
         //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         //{
-        box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));
+        //box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));
         //}
 
         ColorVertex boxVerts[] = 

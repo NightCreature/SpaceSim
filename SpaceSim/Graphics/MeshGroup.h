@@ -4,6 +4,7 @@
 #include "Graphics/ShaderInstance.h"
 #include "Math/matrix44.h"
 #include "Core/Types/Types.h"
+#include "Graphics/material.h"
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 
@@ -15,7 +16,7 @@ class Bbox;
 class MeshGroup
 {
 public:
-    MeshGroup(VertexBuffer* vb, IndexBuffer* ib, const ShaderInstance& shaderInstance) : m_geometryInstance(vb, ib), m_shaderInstance(shaderInstance), m_renderInstance(nullptr)
+    MeshGroup(VertexBuffer* vb, IndexBuffer* ib, const Material& material) : m_geometryInstance(vb, ib), m_material(material), m_renderInstance(nullptr)
     {
         m_world.identity();
     }
@@ -25,7 +26,7 @@ public:
     //Create and add a RenderInstance into the tree to be rendered
     void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box);
     
-    void setMaterial(const Material& material) { m_shaderInstance.setMaterial(material); m_renderInstanceDirty = true; }
+    void setMaterial(const Material& material) { m_material = material; m_renderInstanceDirty = true; }
     void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true; }
 
     const GeometryInstance& getGeometryInstance() const { return m_geometryInstance; }
@@ -37,6 +38,7 @@ public:
     void setDirty() { m_renderInstanceDirty = true; }
 private:
     Matrix44 m_world;
+    Material m_material;
     GeometryInstance m_geometryInstance;
     ShaderInstance m_shaderInstance;
     RenderInstance* m_renderInstance;

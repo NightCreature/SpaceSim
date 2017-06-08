@@ -60,6 +60,8 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     }
     IndexBuffer indexbuffer;
     indexbuffer.createBuffer(resourceHelper.getWriteableResource().getDeviceManager(), 6 * numberParticles, indecis, false);
+    GeometryInstance geomInstance(nullptr, &indexbuffer);
+    
     D3D11_SUBRESOURCE_DATA initData;
     ZeroMemory(&initData, sizeof(D3D11_SUBRESOURCE_DATA));
     initData.pSysMem = indecis;

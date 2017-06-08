@@ -30,7 +30,6 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     const RenderResource& renderResource = renderResourceHelper.getResource();
     //const ShaderInstance& shaderInstance = *(params.shaderInstance);
 
-    ShaderInstance shaderInstance;
     Material mat;
     mat.setEffect(renderResource.getEffectCache().getEffect(params.m_materialParameters.m_effectHash));
     mat.setMaterialContent(params.m_materialParameters.m_materialContent);
@@ -50,7 +49,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
             renderResourceHelper.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
         }
     }
-    shaderInstance.setMaterial(mat);
+
 
     CreatedModel face;
     face.model = new Model();
@@ -62,13 +61,8 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
 
     if (face.model->getMeshData().empty())
     {
-        MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), shaderInstance);
+        MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), mat);
         face.model->getMeshData().push_back(group);
-        face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
-        if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
-            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.xml"));
-        }
 
         VertexBuffer* vb = face.model->getMeshData()[0]->getGeometryInstance().getVB();
         IndexBuffer* ib = face.model->getMeshData()[0]->getGeometryInstance().getIB();
@@ -101,7 +95,10 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
         createVertexData(params, vertexData, face.boundingBox, corridorheight, corridorwidth, rows, columns);
 
         //Move pointer to start of vertex array  
-        const Technique* technique = face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
+        const EffectCache& effectCache = renderResource.getEffectCache();
+        const Effect* effect = effectCache.getEffect(mat.getEffectHash());
+        const Technique* technique = effect->getTechnique(mat.getTechnique());
+
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.position = 3;
         vertexDesc.normal = true;
@@ -136,11 +133,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     }
     else
     {
-        face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
-        if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
-            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.fx"));
-        }
+
     }
 
     face.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

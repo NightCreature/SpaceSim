@@ -1,29 +1,29 @@
 #pragma once 
 
-#include "material.h"
+struct ID3D11Buffer;
+struct ID3D11ShaderResourceView;
 
 class DeviceManager;
+class Effect;
 
 class ShaderInstance
 {
 public:
-    ShaderInstance()
-    {
-        m_wvpConstants.m_world.identity();
-        m_wvpConstants.m_view.identity();
-        m_wvpConstants.m_projection.identity();
-    }
-    ShaderInstance(const WVPBufferContent& wvp, const Material& material) : m_wvpConstants(wvp), m_material(material) {}
+    ShaderInstance() {}
     ~ShaderInstance() {}
 
+    typedef size_t SlotId;
+    typedef std::pair<SlotId, ID3D11Buffer*> ConstantBufferData;
+    typedef std::pair<SlotId, ID3D11ShaderResourceView*> SRVData;
+
     //Add get set operations here
-    const Material& getMaterial() const { return m_material; }
-    Material& getMaterial() { return m_material; }
-    const WVPBufferContent& getWVPConstants() const { return m_wvpConstants; }
-    WVPBufferContent& getWVPConstants() { return m_wvpConstants; }
-    void setMaterial( const Material& material ) { m_material = material; }
-    void setWorld( const Matrix44& world ) { m_wvpConstants.m_world = world; }
+    const std::vector<ConstantBufferData>& getConstantBufferSetup() const { return m_constantBufferData; }
+    const std::vector<SRVData>& getSRVSetup() const { return m_srvData; }
+
+    const Effect* getEffect() const { return m_effect; }
 private:
-    WVPBufferContent m_wvpConstants;
-    Material m_material;
+    //This is pure render information 
+    Effect* m_effect;
+    std::vector<ConstantBufferData> m_constantBufferData;
+    std::vector<SRVData> m_srvData;
 };

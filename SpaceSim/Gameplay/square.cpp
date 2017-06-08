@@ -47,26 +47,19 @@ CreatedModel CreateSquare(const SquareCreationParams& params)
         texCoordDim.push_back(2);
 
         VertexBuffer* vb = new VertexBuffer();
-        const Technique* technique = square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
+        const EffectCache& effectCache = renderResource.getEffectCache();
+        const Effect* effect = effectCache.getEffect(params.mat.getEffectHash());
+        const Technique* technique = effect->getTechnique(params.mat.getTechnique());
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
         const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
         vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
-        square.model->getMeshData().push_back(new MeshGroup(vb, 0, *(params.m_shaderInstance)));
-        if (square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
-            square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.fx"));
-        }
+        square.model->getMeshData().push_back(new MeshGroup(vb, 0, params.mat));
         data = nullptr;
     }
     else
     {
-        square.model->getMeshData()[0]->setShaderInstance(*(params.m_shaderInstance));
-        if (square.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
-            square.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.fx"));
-        }
     }
 
     square.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

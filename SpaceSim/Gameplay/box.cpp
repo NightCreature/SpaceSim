@@ -17,7 +17,7 @@ CreatedModel CreateBox(const CreationParams& params)
     CreatedModel box;
 
     RenderResource& renderResource = *(RenderResource*)params.resource;
-    ShaderInstance& shaderInstance = *(params.shaderInstance);
+    Material material = params.material;
 
     box.model = new Model();
     if (box.model->getMeshData().empty())
@@ -25,13 +25,7 @@ CreatedModel CreateBox(const CreationParams& params)
         VertexBuffer* vb = new VertexBuffer();
         IndexBuffer* ib = new IndexBuffer();
 
-        box.model->getMeshData().push_back(new MeshGroup(vb, ib, shaderInstance));
-        const Effect* effect = box.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect();
-        if (effect == nullptr)
-        {
-            effect = renderResource.getEffectCache().getEffect("laser_effect.xml");
-            box.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(effect);
-        }
+        box.model->getMeshData().push_back(new MeshGroup(vb, ib, material));
 
         std::vector<unsigned int> texCoordDim;
         if (params.m_gentexcoords)
@@ -243,12 +237,10 @@ CreatedModel CreateBox(const CreationParams& params)
 
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
-        static unsigned int defaultHash = hashString("default");
-        const Technique* technique = effect->getTechnique(defaultHash);
-        if (technique == nullptr)
-        {
-            MSG_TRACE_CHANNEL("BOX", "FAILED TO GET THE TECHNIQUE DEFAULT PASS");
-        }
+
+        EffectCache& effectCache = renderResource.getEffectCache();
+        const Effect* effect = effectCache.getEffect(material.getEffectHash());
+        const Technique* technique = effect->getTechnique(material.getTechnique());
         const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader()); //Technique pointer is 0!
         assert(shader);
         vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), numberOfBytes, (void*)startOfData, params.m_dynamic, vertexDesc, shader->getShaderBlob());
@@ -270,10 +262,7 @@ CreatedModel CreateBox(const CreationParams& params)
     }
     else
     {
-        if (box.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
-            box.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("laser_effect.xml"));
-        }
+        //Should probably update the material here althoguh that is not how this should be used to begin with
     }
 
     box.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
