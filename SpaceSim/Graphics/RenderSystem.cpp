@@ -401,35 +401,15 @@ void RenderSystem::update(float elapsedTime, double time)
                 pPerf->BeginEvent(renderInstance.m_name.c_str());
             }
 #endif
-            const Material& material = renderInstance.getShaderInstance().getMaterial();
-            const Effect* effect = material.getEffect();
-            const Technique* technique = effect->getTechnique(material.getTechnique());
-            technique->setMaterialContent(m_deviceManager, material.getMaterialCB());
-            technique->setWVPContent(m_deviceManager, renderInstance.getShaderInstance().getWVPConstants());
+            const auto shaderInstance = renderInstance.getShaderInstance();
+            const Effect* effect = shaderInstance.getEffect();
+            const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
+            
+            deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
+            deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
 
-            const std::vector<Material::TextureSlotMapping>& textureHashes = material.getTextureHashes();
-            //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
-
-            size_t currentTextureIndex = 0;
-            for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots && currentTextureIndex < textureHashes.size(); ++counter) //We assume these are put in as order for the slots demand
-            {
-                const Texture* texture = nullptr;
-                if (static_cast<Material::TextureSlotMapping::TextureSlot>(counter) == textureHashes[currentTextureIndex].m_textureSlot)
-                {
-                    texture = m_textureManager.getTexture(textureHashes[currentTextureIndex].m_textureHash);
-                    ++currentTextureIndex;
-                }
-                ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-                resourceViews.push_back(srv);
-            }
-
-            resourceViews.push_back(m_shadowMapRenderer->getShadowMap());
-
-            if (!resourceViews.empty())
-            {
-                deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
-
-            }
+            deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
+            deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
 
             if (technique->getTechniqueId() != oldTechniqueId)
             {
@@ -443,8 +423,8 @@ void RenderSystem::update(float elapsedTime, double time)
             }
             technique->setupTechnique();
 
-            deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
-            if (material.getBlendState())
+            //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
+            if (shaderInstance.getAlphaBlend())
             {
                 deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
             }
@@ -710,15 +690,14 @@ void RenderSystem::beginDraw()
         PROFILE_EVENT("RenderSystem::beginDraw::MaterialSorting", DarkRed);
         std::sort(begin(m_renderInstances), end(m_renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
         {
-            const Material& lhsMaterial = lhs->getShaderInstance().getMaterial();
-            const Material& rhsMaterial = rhs->getShaderInstance().getMaterial();
-            //This might not be the most effiecient material/sahder id combo
-            return lhsMaterial.getEffect()->getTechnique(lhsMaterial.getTechnique())->getTechniqueId() < rhsMaterial.getEffect()->getTechnique(rhsMaterial.getTechnique())->getTechniqueId();
+            size_t lhsTechniqueId = lhs->getShaderInstance().getEffect()->getTechnique(lhs->getShaderInstance().getTechniqueHash())->getTechniqueId();
+            size_t rhsTechniqueId = rhs->getShaderInstance().getEffect()->getTechnique(lhs->getShaderInstance().getTechniqueHash())->getTechniqueId();
+            return lhsTechniqueId < rhsTechniqueId; //Need a shader chache instance here to access 
         });
 
         std::sort(begin(m_renderInstances), end(m_renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
         {
-            return lhs->getShaderInstance().getMaterial().getBlendState() < rhs->getShaderInstance().getMaterial().getBlendState();
+            return lhs->getShaderInstance().getAlphaBlend() < rhs->getShaderInstance().getAlphaBlend();
         });
     }
     

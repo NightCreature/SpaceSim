@@ -40,7 +40,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
     //Grab the verts here
     Mesh::CreationParams params;
     ShaderInstance shaderInstance;
-    shaderInstance.setMaterial(material);
+    //shaderInstance.setMaterial(material);
     params.m_shaderInstance = const_cast<ShaderInstance*>(&shaderInstance);
     params.m_resource = resource;
     unsigned int highestIndex = 0;
@@ -127,7 +127,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
 
         meshGroupParams.m_shaderInstance = shaderInstance;
         aiMaterial* aimaterial = scene->mMaterials[subMesh->mMaterialIndex];
-        Material& shaderMaterial = meshGroupParams.m_shaderInstance.getMaterial();
+        Material shaderMaterial;// = meshGroupParams.m_shaderInstance.getMaterial();
         aiColor4D color;
         aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
         shaderMaterial.setAmbient(Color(color.r, color.g, color.b, color.a));

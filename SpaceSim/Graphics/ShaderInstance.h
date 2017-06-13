@@ -1,5 +1,7 @@
 #pragma once 
 
+#include "Core/Types/Types.h"
+
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
 
@@ -12,18 +14,22 @@ public:
     ShaderInstance() {}
     ~ShaderInstance() {}
 
-    typedef size_t SlotId;
-    typedef std::pair<SlotId, ID3D11Buffer*> ConstantBufferData;
-    typedef std::pair<SlotId, ID3D11ShaderResourceView*> SRVData;
-
     //Add get set operations here
-    const std::vector<ConstantBufferData>& getConstantBufferSetup() const { return m_constantBufferData; }
-    const std::vector<SRVData>& getSRVSetup() const { return m_srvData; }
+    const std::vector<ID3D11Buffer*>& getPSConstantBufferSetup() const { return m_psConstantBuffers; }
+    const std::vector<ID3D11Buffer*>& getVSConstantBufferSetup() const { return m_vsConstantBuffers; }
+    const std::vector<ID3D11ShaderResourceView*>& getPSSRVSetup() const { return m_psSvData; }
+    const std::vector<ID3D11ShaderResourceView*>& getVSSRVSetup() const { return m_vsSvData; }
 
     const Effect* getEffect() const { return m_effect; }
+    uint32 getTechniqueHash() const { return m_techniqueHash; }
+    bool getAlphaBlend() const { return m_alphaBlendEnabled; }
 private:
     //This is pure render information 
     Effect* m_effect;
-    std::vector<ConstantBufferData> m_constantBufferData;
-    std::vector<SRVData> m_srvData;
+    std::vector<ID3D11Buffer*> m_psConstantBuffers;
+    std::vector<ID3D11Buffer*> m_vsConstantBuffers;
+    std::vector<ID3D11ShaderResourceView*> m_psSvData;
+    std::vector<ID3D11ShaderResourceView*> m_vsSvData;
+    uint32 m_techniqueHash;
+    bool m_alphaBlendEnabled;
 };

@@ -26,4 +26,6 @@ void Laser::updateInstanceData(const Matrix44& view, const Matrix44& projection)
     //wvpConstants.m_view = view;
     //wvpConstants.m_world = m_instanceData.world;
     //m_instanceData.m_shaderInstance.getMaterial().getEffect()->setWVPContent(deviceManager, wvpConstants);
+    UNUSEDPARAM(view);
+    UNUSEDPARAM(projection);
 }

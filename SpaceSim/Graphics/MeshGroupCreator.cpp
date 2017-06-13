@@ -1,4 +1,5 @@
 #include "Graphics/MeshGroupCreator.h"
+#include "Graphics/EffectCache.h"
 #include "Graphics/ShaderCache.h"
 
 #include "assert.h"
@@ -61,8 +62,11 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
         texCoordDimensions.push_back(2);
     }
     vertexData = vertexData - bufferSize;
-    const Technique* technique = params.m_shaderInstance.getMaterial().getEffect()->getTechnique("default");
-    RenderResource& renderResource= RenderResourceHelper(params.m_resource).getWriteableResource();
+    RenderResource& renderResource = RenderResourceHelper(params.m_resource).getWriteableResource();
+    const EffectCache& effectCache = renderResource.getEffectCache();
+    const Effect* effect = effectCache.getEffect(params.mat.getEffectHash());
+    const Technique* technique = effect->getTechnique(params.mat.getTechnique());
+    
     const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
     assert(shader);
     vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
@@ -72,7 +76,7 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     ib->createBuffer(renderResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false);
 
     
-    meshGroup.meshGroup = new MeshGroup(vb, ib, params.m_shaderInstance);
+    meshGroup.meshGroup = new MeshGroup(vb, ib, params.mat);
     return meshGroup;
 }
 
