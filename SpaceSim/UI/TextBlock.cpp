@@ -577,12 +577,12 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
 	mat.setTechnique(hashString("default"));
-	m_shaderInstance.setMaterial(mat);
-	WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
+	//m_shaderInstance.setMaterial(mat);
+	//WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
     //TODO FIX ME SHOULD ASK RENDER SYSTEM FOR VIEW AND PROJECTION
 	//wvpConstants.m_projection = Application::m_projection; //math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
 	//wvpConstants.m_view = Application::m_view; //gameResource.getResource().getCameraManager().getCamera("text_block_camera")->getCamera();
-	wvpConstants.m_world.identity();
+	//wvpConstants.m_world.identity();
 }
 
 //-----------------------------------------------------------------------------

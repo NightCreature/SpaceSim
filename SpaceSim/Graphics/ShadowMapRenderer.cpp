@@ -259,46 +259,21 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
             }
 #endif
 
-            //This should transform into this but need to take care of have to deal with the projection and view of the light we are rendering a shadow map for
-            //const auto shaderInstance = renderInstance.getShaderInstance();
-            //const Effect* effect = shaderInstance.getEffect();
-            //const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
+            const auto shaderInstance = renderInstance.getShaderInstance();
+            const Effect* effect = shaderInstance.getEffect();
+            const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
 
-            //deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
-            //deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
-
-            //deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
-            //deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
-
-            //if (technique->getTechniqueId() != oldTechniqueId)
-            //{
-            //    //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-            //    deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-            //    deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-            //    deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-            //    deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-            //    deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
-            //    oldTechniqueId = technique->getTechniqueId();
-            //}
-            //technique->setupTechnique();
-
-            ////deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
-            //if (shaderInstance.getAlphaBlend())
-            //{
-            //    deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
-            //}
-            //else
-            //{
-            //    deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
-            //}
-
-            const Material& material = renderInstance.getShaderInstance().getMaterial();
-            const Effect* effect = material.getEffect();
-            const Technique* technique = effect->getTechnique(shadowMapTechniqueHash);
             if (technique)
             {
-                m_shadowMVP.m_world = renderInstance.getShaderInstance().getWVPConstants().m_world;
-                deviceManager.getDeviceContext()->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&m_shadowMVP, 0, 0);
+                //Special bit for shadow map rendering we need
+                deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
+                deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+
+                deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
+                deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+
+                //m_shadowMVP.m_world = renderInstance.getShaderInstance().getWVPConstants().m_world;
+                //deviceManager.getDeviceContext()->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&m_shadowMVP, 0, 0);
 
                 if (technique->getTechniqueId() != oldTechniqueId)
                 {
@@ -310,9 +285,10 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
                     deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
                     oldTechniqueId = technique->getTechniqueId();
                 }
-                deviceContext->VSSetConstantBuffers(0, 1, &m_perFrameConstants);
+                technique->setupTechnique();
 
-                if (material.getBlendState())
+                //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
+                if (shaderInstance.getAlphaBlend())
                 {
                     deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
                 }
@@ -320,6 +296,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
                 {
                     deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
                 }
+
 
                 // Set vertex buffer stride and offset.
                 const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
