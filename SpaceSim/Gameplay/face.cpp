@@ -35,6 +35,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     mat.setMaterialContent(params.m_materialParameters.m_materialContent);
     mat.setBlendState(params.m_materialParameters.m_alphaBlend);
     mat.setTechnique(params.m_materialParameters.m_techniqueHash);
+    mat.setEffectHash(params.m_materialParameters.m_effectHash);
     //Fix up texture references here
     for (auto counter = 0; counter < Material::TextureSlotMapping::NumSlots; ++counter) 
     {

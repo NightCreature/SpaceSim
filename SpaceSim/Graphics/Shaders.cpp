@@ -138,10 +138,9 @@ char* getShaderBuffer(const std::string& fileName, size_t& length)
         while (*endChar != '}')
         {
             --endChar;
+            --length;
         }
-        ++endChar;
-        *endChar = '\0';
-        length = strlen(buffer);
+        ++length; //Found last } so add 1 to be at the end of the shader code
     }
     else
     {
@@ -225,7 +224,7 @@ bool VertexShader::createShader(const DeviceManager& deviceManager)
 #ifdef _DEBUG
         if (m_shader != nullptr)
         {
-            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+            //m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
         }
 #endif
         return true;
@@ -456,7 +455,7 @@ bool PixelShader::createShader(const DeviceManager& deviceManager)
 #ifdef _DEBUG
         if (m_shader != nullptr)
         {
-            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+            //m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
         }
 #endif
         return true;
