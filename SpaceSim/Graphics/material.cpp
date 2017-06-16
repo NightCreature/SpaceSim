@@ -115,8 +115,6 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
             const tinyxml2::XMLAttribute* attribute = node->FindAttribute("file_name");
             if (attribute)
             {
-                RenderResourceHelper helper(resource);
-                helper.getWriteableResource().getEffectCache().createEffect(resource, attribute->Value());
                 m_effectHash = hashString( getResourceNameFromFileName(attribute->Value()) );
             }
             attribute = node->FindAttribute("technique_name");
@@ -136,6 +134,7 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
         }
     }
 
+    UNUSEDPARAM(resource);
     UNUSEDPARAM(lightManager);
 }
 
