@@ -42,7 +42,6 @@ m_techniqueHash(hashString("default"))
 
 Material::Material(const Material& material)
 {
-    m_effect = material.m_effect;
     m_materialCB = material.m_materialCB;
     m_texture.insert(m_texture.begin(), material.m_texture.begin(), material.m_texture.end());
     m_alphaBlend = material.m_alphaBlend;
@@ -117,7 +116,8 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
             if (attribute)
             {
                 RenderResourceHelper helper(resource);
-                m_effect = const_cast<Effect*>(helper.getWriteableResource().getEffectCache().createEffect(resource, attribute->Value()));
+                helper.getWriteableResource().getEffectCache().createEffect(resource, attribute->Value());
+                m_effectHash = hashString( getResourceNameFromFileName(attribute->Value()) );
             }
             attribute = node->FindAttribute("technique_name");
             if (attribute)

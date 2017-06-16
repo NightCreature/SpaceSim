@@ -99,7 +99,7 @@ public:
     void setEmissive(const Color& emissive) { m_materialCB.m_emissive[0] = emissive.r(); m_materialCB.m_emissive[1] = emissive.g(); m_materialCB.m_emissive[2] = emissive.b(); m_materialCB.m_emissive[3] = emissive.a(); }
     void setShininess(const float shininess) { m_materialCB.m_shininess = shininess; }
     void setMaterialContent(const MaterialContent& materialContent) { m_materialCB = materialContent; }
-    void setEffect( const Effect* effect) { m_effect = const_cast<Effect*>(effect); }
+    
     void addTextureReference( const TextureSlotMapping& textureSlot) { m_texture.push_back(textureSlot); }
     const std::vector<TextureSlotMapping>& getTextureHashes() const { return m_texture; }
 
@@ -108,8 +108,6 @@ public:
     void setBlendState(bool alphaBlendEnabled) { m_alphaBlend = alphaBlendEnabled; }
     bool getBlendState() const { return m_alphaBlend; }
     
-    const Effect* getEffect() const { return m_effect; }
-    Effect* getEffect() { return m_effect; }
     unsigned int getEffectHash() const { return m_effectHash; }
 	unsigned int getTechnique() const { return m_techniqueHash; }
 	void setTechnique(unsigned int techniqueHash) { m_techniqueHash = techniqueHash; }
@@ -135,7 +133,6 @@ protected:
 private:
     unsigned int m_techniqueHash;
     unsigned int m_effectHash;
-    Effect* m_effect; //Could be a resource Id now seeing that the model and shaders only live on the render side, would make the material a sharable state object :)
     MaterialContent m_materialCB;
     std::vector<TextureSlotMapping> m_texture;//Order is sampler order as well
     bool m_alphaBlend;

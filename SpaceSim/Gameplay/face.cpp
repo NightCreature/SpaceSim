@@ -31,7 +31,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     //const ShaderInstance& shaderInstance = *(params.shaderInstance);
 
     Material mat;
-    mat.setEffect(renderResource.getEffectCache().getEffect(params.m_materialParameters.m_effectHash));
+    mat.setEffectHash(params.m_materialParameters.m_effectHash);
     mat.setMaterialContent(params.m_materialParameters.m_materialContent);
     mat.setBlendState(params.m_materialParameters.m_alphaBlend);
     mat.setTechnique(params.m_materialParameters.m_techniqueHash);
