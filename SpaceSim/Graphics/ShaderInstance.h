@@ -26,6 +26,7 @@ public:
 private:
     //This is pure render information 
     Effect* m_effect;
+    //These only contain buffers beyond basic setup for the effect
     std::vector<ID3D11Buffer*> m_psConstantBuffers;
     std::vector<ID3D11Buffer*> m_vsConstantBuffers;
     std::vector<ID3D11ShaderResourceView*> m_psSvData;

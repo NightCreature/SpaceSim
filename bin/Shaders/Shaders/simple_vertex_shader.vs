@@ -1,32 +1,6 @@
-//--------------------------------------------------------------------------------------
-// Constant Buffer Variables
-//--------------------------------------------------------------------------------------
-cbuffer WVPConstants : register(b0)
-{
-    float4x4 World;
-    float4x4 View;
-    float4x4 Projection;
-};
-
-struct LightConstants
-{
-    float4 m_position;
-    float4 m_direction;
-    float4 m_diffuse;
-    float4 m_specular;
-    float4 m_attenuationFallOff;
-    float4 m_range;
-};
-
-cbuffer LightParamters: register(b1)
-{
-    //float3 eyePosition;
-    LightConstants m_lights[8];
-    float3 camera_position;
-    float4x4 ShadowWorld;
-    float4x4 ShadowView;
-    float4x4 ShadowProjection;
-}
+#define LIGHTHING
+#define SHADOW
+#include "CommonConstantBuffers.ivs"
 
 //--------------------------------------------------------------------------------------
 struct VS_INPUT

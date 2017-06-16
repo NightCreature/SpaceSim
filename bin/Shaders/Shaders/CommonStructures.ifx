@@ -1,0 +1,14 @@
+#ifndef CONSTANTSTRUCTURES
+#define CONSTANTSTRUCTURES
+
+struct LightConstants
+{
+    float4 m_position;
+    float4 m_direction;
+    float4 m_diffuse;
+    float4 m_specular;
+    float4 m_attenuationFallOff;
+    float4 m_range;
+};
+
+#endif

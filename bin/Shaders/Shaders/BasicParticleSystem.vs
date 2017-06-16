@@ -1,13 +1,8 @@
+#include "CommonConstantBuffers.ivs"
+
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer WVPConstants : register(b0)
-{
-    float4x4 World;
-    float4x4 View;
-    float4x4 Projection;
-};
-
 cbuffer InverseView : register(b1)
 {
 	float4x4 InverseView;

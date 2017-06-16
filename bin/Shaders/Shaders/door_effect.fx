@@ -1,21 +1,8 @@
+#include "CommonConstantBuffers.ivs"
+#include "CommonConstantBuffers.ips"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer WVPConstants : register(b0)
-{
-    matrix World;
-    matrix View;
-    matrix Projection;
-};
-
-cbuffer MaterialConstants : register(b0)
-{
-    float4 ambient;
-    float4 diffuse;
-    float4 specular;
-    float4 emissive;
-    float shininess;
-};
 
 Texture2D<float4> shaderTextures: register(t8);
 SamplerState SampleType : register (s0);

@@ -75,6 +75,8 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     ib->setNumberOfIndecis((unsigned int)params.m_indices.size());
     ib->createBuffer(renderResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false);
 
+
+    //Should fix shader instance setup here
     
     meshGroup.meshGroup = new MeshGroup(vb, ib, params.mat);
     return meshGroup;

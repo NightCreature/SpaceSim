@@ -1,13 +1,8 @@
+#include "CommonConstantBuffers.ivs"
+
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer WVPConstants : register(b0)
-{
-    float4x4 World;
-    float4x4 View;
-    float4x4 Projection;
-};
-
 cbuffer MaterialConstants : register(b0)
 {
     float4 ambient;
