@@ -45,10 +45,13 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
 #endif
 		}
 
-        //WVPBufferContent& wvpConstants = m_renderInstance->GetShaderInstance().getWVPConstants();
-        //wvpConstants.m_projection = projection;
-        //wvpConstants.m_view = view;
-        //wvpConstants.m_world = m_world * world; 
+        WVPBufferContent wvpConstants; //= m_renderInstance->GetShaderInstance().getWVPConstants();
+        wvpConstants.m_projection = projection;
+        wvpConstants.m_view = view;
+        wvpConstants.m_world = m_world * world; 
+        auto vsConstants = m_shaderInstance.getVSConstantBufferSetup();
+        deviceManager.getDeviceContext()->UpdateSubresource(vsConstants[0], 0, 0, (void*)&wvpConstants, 0, 0); //Not sure about this
+
         UNUSEDPARAM(resource);
         UNUSEDPARAM(world);
         UNUSEDPARAM(view);

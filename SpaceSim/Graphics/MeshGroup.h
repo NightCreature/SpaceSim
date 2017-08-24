@@ -19,6 +19,7 @@ public:
     MeshGroup(VertexBuffer* vb, IndexBuffer* ib, const Material& material) : m_geometryInstance(vb, ib), m_material(material), m_renderInstance(nullptr)
     {
         m_world.identity();
+        m_shaderInstance.setMaterial(m_material);
     }
     MeshGroup(const MeshGroup& source);
     ~MeshGroup();

@@ -187,7 +187,7 @@ void RenderSystem::initialise(Resource* resource)
         windowHeight = heightSetting->getData();
     }
 
-    m_CullingProjectionMatrix = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1000.0f);
+    m_CullingProjectionMatrix = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 1000.0f, 0.001f); //Reverse Z
 
     RECT rect;
     GetClientRect(m_window.getWindowHandle(), &rect);
@@ -230,7 +230,7 @@ void RenderSystem::initialise(Resource* resource)
     D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
     depthStencilStateDesc.DepthEnable = true;
     depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_GREATER;
     depthStencilStateDesc.StencilEnable = false;
     depthStencilStateDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
     depthStencilStateDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
@@ -329,7 +329,7 @@ void RenderSystem::initialise(Resource* resource)
     initialiseCubemapRendererAndResources(m_renderResource);
     m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
 
-	m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(this, &RenderSystem::CreateRenderList));
 
@@ -402,8 +402,8 @@ void RenderSystem::update(float elapsedTime, double time)
             }
 #endif
             const auto shaderInstance = renderInstance.getShaderInstance();
-            const Effect* effect = shaderInstance.getEffect();
-            const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
+            const Effect* effect = m_effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());;
+            const Technique* technique = effect->getTechnique(shaderInstance.getMaterial().getTechnique());
             
             deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
             deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
@@ -562,7 +562,7 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
     depthBufferDescriptor.Height = windowHeight;
     depthBufferDescriptor.MipLevels = 1;
     depthBufferDescriptor.ArraySize = 1;
-    depthBufferDescriptor.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthBufferDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
     depthBufferDescriptor.SampleDesc.Count = 1;
     depthBufferDescriptor.SampleDesc.Quality = 0;
     depthBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
@@ -671,10 +671,10 @@ void RenderSystem::beginDraw()
     //Kick resource loading, potentially this needs to move to its own low priority thread too.
     m_resourceLoader.update();
 
-    float clearColor[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    float clearColor[4] = { 0.8f, 0.8f, 0.8f, 0.0f }; //Reverse Z so clear to 0 instead of 1 leads to a linear depth pass
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
     deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
-    deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
     if (!m_wireFrame)
     {
         deviceContext->RSSetState(m_rasteriserState);
@@ -688,10 +688,12 @@ void RenderSystem::beginDraw()
 
     {
         PROFILE_EVENT("RenderSystem::beginDraw::MaterialSorting", DarkRed);
-        std::sort(begin(m_renderInstances), end(m_renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
+        std::sort(begin(m_renderInstances), end(m_renderInstances), [this](const RenderInstance* lhs, const RenderInstance* rhs)
         {
-            size_t lhsTechniqueId = lhs->getShaderInstance().getEffect()->getTechnique(lhs->getShaderInstance().getTechniqueHash())->getTechniqueId();
-            size_t rhsTechniqueId = rhs->getShaderInstance().getEffect()->getTechnique(lhs->getShaderInstance().getTechniqueHash())->getTechniqueId();
+            const Effect* lhsEffect = m_effectCache.getEffect(lhs->getShaderInstance().getMaterial().getEffectHash());
+            const Effect* rhsEffect = m_effectCache.getEffect(rhs->getShaderInstance().getMaterial().getEffectHash());
+            size_t lhsTechniqueId = lhsEffect->getTechnique(lhs->getShaderInstance().getMaterial().getTechnique())->getTechniqueId();
+            size_t rhsTechniqueId = rhsEffect->getTechnique(lhs->getShaderInstance().getMaterial().getTechnique())->getTechniqueId();
             return lhsTechniqueId < rhsTechniqueId; //Need a shader chache instance here to access 
         });
 

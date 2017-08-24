@@ -82,7 +82,7 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
     m_cubeViewPort.TopLeftX = 0;
     m_cubeViewPort.TopLeftY = 0;
 
-    m_cubeProjection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 2.0f, 1.0f, 1.0f, 500.0f);
+    m_cubeProjection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 2.0f, 1.0f, 500.0f, 1.0f); //Reverse Z trick
 
     D3D11_BUFFER_DESC lightContantsDescriptor;
     ZeroMemory(&lightContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
@@ -156,6 +156,7 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
     deviceContext->PSSetConstantBuffers(1, 1, &m_perFrameConstants);
 
     const ShaderCache& shaderCache = RenderResourceHelper(resource).getResource().getShaderCache();
+    const EffectCache& effectCache = RenderResourceHelper(resource).getResource().getEffectCache();
 
     std::vector<ID3D11SamplerState*> samplerStates;
     samplerStates.reserve(1);
@@ -173,7 +174,7 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
 
         ID3D11RenderTargetView* aRTViews[1] = { renderTarget->getRenderTargetView(rtCounter) };
         deviceContext->OMSetRenderTargets(sizeof(aRTViews) / sizeof(aRTViews[0]), aRTViews, m_depthStencilView);
-        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0);
+        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 0.0f, 0);
 
         RenderInstanceTree::const_iterator renderInstanceIt = visibleRenderInstances.begin();
         RenderInstanceTree::const_iterator renderInstanceEnd = visibleRenderInstances.end();
@@ -190,7 +191,7 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
 
             //This should transform into this but need to take care of the view projection stuff for the cubemap technique, might need special shaders :)
             const auto shaderInstance = renderInstance.getShaderInstance();
-            const Effect* effect = shaderInstance.getEffect();
+            const Effect* effect = effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());
             const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
 
             deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);

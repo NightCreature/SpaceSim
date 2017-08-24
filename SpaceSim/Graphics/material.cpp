@@ -46,6 +46,7 @@ Material::Material(const Material& material)
     m_texture.insert(m_texture.begin(), material.m_texture.begin(), material.m_texture.end());
     m_alphaBlend = material.m_alphaBlend;
     m_techniqueHash = material.getTechnique();
+    m_effectHash = material.getEffectHash();
 }
 
 //-------------------------------------------------------------------------

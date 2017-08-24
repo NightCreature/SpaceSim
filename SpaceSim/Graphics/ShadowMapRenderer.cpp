@@ -141,7 +141,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
      m_lightViewPort.TopLeftX = 0;
      m_lightViewPort.TopLeftY = 0;
 
-     m_shadowMVP.m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI * 0.5f, 1.0f, 0.1f, 500.0f);
+     m_shadowMVP.m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI * 0.5f, 1.0f, 500.0f, 0.1f);
 #ifdef _DEBUG
      hr = deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
 #endif
@@ -220,7 +220,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
 
         float clearColor[4] = { std::numeric_limits<float>::max(), 1.0f, 1.0f, 1.0f };
         deviceContext->ClearRenderTargetView(m_shadowMapView, clearColor);
-        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 
         RenderInstanceTree visibleRenderInstances;
         visibleRenderInstances.reserve(renderInstances.size());
@@ -233,6 +233,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
 
         RenderResourceHelper gameResource = { resource };
         const ShaderCache& shaderCache = gameResource.getResource().getShaderCache();
+        const EffectCache& effectCache = gameResource.getResource().getEffectCache();
 
         size_t oldTechniqueId = 0;
         std::vector<ID3D11ShaderResourceView*> resourceViews;
@@ -260,7 +261,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
 #endif
 
             const auto shaderInstance = renderInstance.getShaderInstance();
-            const Effect* effect = shaderInstance.getEffect();
+            const Effect* effect = effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());
             const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
 
             if (technique)
