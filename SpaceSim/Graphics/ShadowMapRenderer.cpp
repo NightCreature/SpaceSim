@@ -267,11 +267,23 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
             if (technique)
             {
                 //Special bit for shadow map rendering we need
-                deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
-                deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+                if (!shaderInstance.getVSConstantBufferSetup().empty())
+                {
+                    deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
+                }
+                if (!shaderInstance.getPSConstantBufferSetup().empty())
+                {
+                    deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+                }
 
-                deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
-                deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+                if (!shaderInstance.getVSSRVSetup().empty())
+                {
+                    deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
+                }
+                if (!shaderInstance.getPSSRVSetup().empty())
+                {
+                    deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+                }
 
                 //m_shadowMVP.m_world = renderInstance.getShaderInstance().getWVPConstants().m_world;
                 //deviceManager.getDeviceContext()->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&m_shadowMVP, 0, 0);

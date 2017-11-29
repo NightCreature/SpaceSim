@@ -194,59 +194,74 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
             const Effect* effect = effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());
             const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
 
-            deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
-            deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
-
-            deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
-            deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
-
-            //The special sauce for this renderer
-            //WVPBufferContent wvpConstants = renderInstance.getShaderInstance().getWVPConstants();
-            //wvpConstants.m_projection = m_cubeProjection;
-            //wvpConstants.m_view = m_viewArray[rtCounter];
-            //technique->setWVPContent(deviceManager, wvpConstants);
-
-
-            if (technique->getTechniqueId() != oldTechniqueId)
+            if (technique)
             {
-                //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-                deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
-                oldTechniqueId = technique->getTechniqueId();
-            }
-            technique->setupTechnique();
+                if (!shaderInstance.getVSConstantBufferSetup().empty())
+                {
+                    deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
+                }
+                if (!shaderInstance.getPSConstantBufferSetup().empty())
+                {
+                    deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+                }
 
-            //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
-            if (shaderInstance.getAlphaBlend())
-            {
-                deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
-            }
-            else
-            {
-                deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
-            }
+                if (!shaderInstance.getVSSRVSetup().empty())
+                {
+                    deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
+                }
+                if (!shaderInstance.getPSSRVSetup().empty())
+                {
+                    deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+                }
 
-            // Set vertex buffer stride and offset.
-            const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
-            ID3D11Buffer* buffer = vb->getBuffer();
-            stride = static_cast<unsigned int>(vb->getVertexStride());
-            if (renderInstance.getGeometryInstance().getIB() != nullptr)
-            {
-                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-                deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
-                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
-            }
-            else
-            {
-                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
+                //The special sauce for this renderer
+                //WVPBufferContent wvpConstants = renderInstance.getShaderInstance().getWVPConstants();
+                //wvpConstants.m_projection = m_cubeProjection;
+                //wvpConstants.m_view = m_viewArray[rtCounter];
+                //technique->setWVPContent(deviceManager, wvpConstants);
+
+
+                if (technique->getTechniqueId() != oldTechniqueId)
+                {
+                    //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
+                    deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+                    oldTechniqueId = technique->getTechniqueId();
+                }
+                technique->setupTechnique();
+
+                //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
+                if (shaderInstance.getAlphaBlend())
+                {
+                    deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
+                }
+                else
+                {
+                    deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
+                }
+
+                // Set vertex buffer stride and offset.
+                const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
+                ID3D11Buffer* buffer = vb->getBuffer();
+                stride = static_cast<unsigned int>(vb->getVertexStride());
+                if (renderInstance.getGeometryInstance().getIB() != nullptr)
+                {
+                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                    deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
+                    deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                    deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
+                }
+                else
+                {
+                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                    deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                    deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
+                }
             }
         }
         deviceContext->Flush();

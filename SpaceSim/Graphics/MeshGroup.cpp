@@ -9,6 +9,7 @@
 #endif
 #include "Core/Profiler/ProfilerMacros.h"
 
+#include "Core/Resource/RenderResource.h"
 //-------------------------------------------------------------------------
 // @brief 
 //-------------------------------------------------------------------------
@@ -50,7 +51,11 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
         wvpConstants.m_view = view;
         wvpConstants.m_world = m_world * world; 
         auto vsConstants = m_shaderInstance.getVSConstantBufferSetup();
-        deviceManager.getDeviceContext()->UpdateSubresource(vsConstants[0], 0, 0, (void*)&wvpConstants, 0, 0); //Not sure about this
+        RenderResourceHelper resourceHelper(resource);
+        if (!vsConstants.empty())
+        {
+            resourceHelper.getResource().getDeviceManager().getDeviceContext()->UpdateSubresource(vsConstants[0], 0, 0, (void*)&wvpConstants, 0, 0); //Not sure about this
+        }
 
         UNUSEDPARAM(resource);
         UNUSEDPARAM(world);

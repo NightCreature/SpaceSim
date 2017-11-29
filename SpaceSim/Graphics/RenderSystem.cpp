@@ -405,11 +405,23 @@ void RenderSystem::update(float elapsedTime, double time)
             const Effect* effect = m_effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());;
             const Technique* technique = effect->getTechnique(shaderInstance.getMaterial().getTechnique());
             
-            deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
-            deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+            if (!shaderInstance.getVSConstantBufferSetup().empty())
+            {
+                deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
+            }
+            if (!shaderInstance.getPSConstantBufferSetup().empty())
+            {
+                deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+            }
 
-            deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
-            deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+            if (!shaderInstance.getVSSRVSetup().empty())
+            {
+                deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
+            }
+            if (!shaderInstance.getPSSRVSetup().empty())
+            {
+                deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+            }
 
             if (technique->getTechniqueId() != oldTechniqueId)
             {

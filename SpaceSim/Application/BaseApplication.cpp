@@ -25,7 +25,7 @@
 
 #include "Core/Profiler/ProfilerMacros.h" 
 
-#include "D:/Visual Leak Detector/include/vld.h"
+#include "vld.h"
 
 class RenderInstance;
 
