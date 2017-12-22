@@ -20,10 +20,10 @@ namespace Face
 
 const size_t numberOfTexcoords = 1;
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 CreatedModel CreateFace(const CreationParams& params, Resource* resource)
 {
     RenderResourceHelper renderResourceHelper(resource);
@@ -142,10 +142,10 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     return face;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns)
 {
     if (0 == rows || 0 == columns)
@@ -236,10 +236,10 @@ void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbo
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Face::createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns)
 {
     unsigned int nrcolumns = static_cast<unsigned int>(columns);

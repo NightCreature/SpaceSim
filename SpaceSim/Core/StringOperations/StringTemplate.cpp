@@ -13,10 +13,10 @@
 //bool operator> (const Iterator& lhs, const Iterator& rhs) { return false; }
 //bool operator>= (const Iterator& lhs, const Iterator& rhs) { return false; }
 //
-////-----------------------------------------------------------------------------
-////! @brief   TODO enter a description
-////! @remark
-////-----------------------------------------------------------------------------
+/////-----------------------------------------------------------------------------
+/////! @brief   TODO enter a description
+/////! @remark
+/////-----------------------------------------------------------------------------
 //template<class T, size_t Size /*= 64*/, class Traits /*= std::char_traits<T> */>
 //bool StaticString<T, Size, Traits>::operator==( const Iterator& lhs, const Iterator& rhs )
 //{

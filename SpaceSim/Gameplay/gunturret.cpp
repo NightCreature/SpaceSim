@@ -44,10 +44,10 @@ GunTurret::~GunTurret()
     cleanup();
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void GunTurret::initialise(const ShaderInstance& shaderInstance)
 {
     UNUSEDPARAM(shaderInstance);
@@ -249,9 +249,9 @@ void GunTurret::createScorchMark(const Vector3 &pos, const Vector3 &normal)
     m_scorchmarks.push_back(new ScorchMark(m_resource, pos, normal, 5.0f));
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element)
 {
     ShaderInstance shaderInstance;
@@ -318,9 +318,9 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     //From draw
@@ -421,9 +421,9 @@ void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, 
     //}
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void GunTurret::handleMessage( const MessageSystem::Message& msg )
 {
     if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))

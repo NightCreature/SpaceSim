@@ -10,10 +10,10 @@
 namespace AssimpModelLoader
 {
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark  This needs re writing so we can apply uv transforms to correct streams and embedded correct uv streams in to the vbs.
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark  This needs re writing so we can apply uv transforms to correct streams and embedded correct uv streams in to the vbs.
+///-----------------------------------------------------------------------------
 CreatedModel LoadModel(Resource* resource, const Material& material, const std::string& fileName)
 {
     UNUSEDPARAM(material);

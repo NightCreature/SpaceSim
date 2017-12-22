@@ -7,10 +7,10 @@
 #include "Input/XController.h"
 #include "Graphics/Camera.h"
 
-//-----------------------------------------------------------------------------
-//! @brief  This class represents the window in which the game is running
-//! @remark You need to overload this class and provide an implementation for the update function
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  This class represents the window in which the game is running
+///! @remark You need to overload this class and provide an implementation for the update function
+///-----------------------------------------------------------------------------
 class GameWindow
 {
 public:

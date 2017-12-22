@@ -14,10 +14,10 @@ MouseController::~MouseController()
 {
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void MouseController::initialise(HWND hwnd)
 {
     RAWINPUTDEVICE rawInputDevice;
@@ -45,10 +45,10 @@ void MouseController::initialise(HWND hwnd)
     m_monitorHeight = info.rcMonitor.bottom - info.rcMonitor.top;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput)
 {
     UNUSEDPARAM(keyboardInput);
@@ -137,10 +137,10 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
     return m_controllerState;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void MouseController::internalActionSetup(InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input)
 {
     UNUSEDPARAM(inputAction);

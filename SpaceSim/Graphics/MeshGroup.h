@@ -20,6 +20,7 @@ public:
     {
         m_world.identity();
         m_shaderInstance.setMaterial(m_material);
+        //m_shaderInstance.AddPs
     }
     MeshGroup(const MeshGroup& source);
     ~MeshGroup();

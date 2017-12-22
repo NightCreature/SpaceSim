@@ -35,10 +35,10 @@
 //    static int atomicIncrement(int volatile *addend);
 //    static int atomicDecrement(int volatile *addend);
 //    static void cryptoRandomValue(unsigned char *buffer, size_t length);
-//    //-----------------------------------------------------------------------------
-//    //! @brief   TODO enter a description
-//    //! @remark
-//    //-----------------------------------------------------------------------------
+//    ///-----------------------------------------------------------------------------
+//    ///! @brief   TODO enter a description
+//    ///! @remark
+//    ///-----------------------------------------------------------------------------
 //    void doLoopIteration();
 //    static double m_elapsedTimeOnThread;
 //    static std::atomic<int> m_atomicInt;

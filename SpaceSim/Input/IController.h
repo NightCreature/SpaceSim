@@ -5,10 +5,10 @@
 
 class InputSystem;
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark should rename this to input Device as it is the actual hardware device in derived classes
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark should rename this to input Device as it is the actual hardware device in derived classes
+///-----------------------------------------------------------------------------
 class IInputDevice
 {
 public:

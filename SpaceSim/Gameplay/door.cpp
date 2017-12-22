@@ -24,10 +24,10 @@ GameObject(resource)
     m_active = true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder)
 {
     UNUSEDPARAM(shaderInstance);
@@ -51,9 +51,9 @@ void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOr
     GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
 {
     ShaderInstance shaderInstance;
@@ -85,9 +85,9 @@ const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     //move
@@ -124,9 +124,9 @@ void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const
     m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Door::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);

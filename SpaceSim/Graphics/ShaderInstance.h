@@ -4,6 +4,8 @@
 
 #include "Graphics/material.h"
 
+#include <string>
+
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
 
@@ -21,6 +23,8 @@ public:
     const std::vector<ID3D11Buffer*>& getVSConstantBufferSetup() const { return m_vsConstantBuffers; }
     const std::vector<ID3D11ShaderResourceView*>& getPSSRVSetup() const { return m_psSvData; }
     const std::vector<ID3D11ShaderResourceView*>& getVSSRVSetup() const { return m_vsSvData; }
+
+    void AddPsConstantBuffer(size_t bufferSize, const std::string& name);
 
     const Effect* getEffect() const { return m_effect; }
     uint32 getTechniqueHash() const { return m_techniqueHash; }

@@ -50,10 +50,10 @@ const size_t CommonFontInfo::blueChannelHash = hashString("blueChnl");
 const size_t Pages::PageInfo::idHash = hashString("id");
 const size_t Pages::PageInfo::fileHash = hashString("file");
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
 {
     using namespace tinyxml2;
@@ -283,10 +283,10 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
     return true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 const Glyph& BitmapFont::getGlyph(short id) const
 {
     for (auto& glyph : m_glyphs)
@@ -300,10 +300,10 @@ const Glyph& BitmapFont::getGlyph(short id) const
     return m_invalidGlyph;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 Glyph* BitmapFont::findGlyph(short id)
 {
 

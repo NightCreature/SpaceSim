@@ -17,10 +17,10 @@
 namespace ParticleSystem
 {
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ParticleEmitterComponentBased::initialise(Resource* resource)
 {
     uint32 numberParticles = 100000;
@@ -111,10 +111,10 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     D3DDebugHelperFunctions::SetDebugChildName(m_constantBuffers[1], "Constant Buffer 1  Particle System");
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& view, const Matrix44& projection, const Matrix44& inverseView)
 {
     size_t numberOfParticlesToGenerate = static_cast<size_t>(elapsedTime * m_emmisionRate);
@@ -222,10 +222,10 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Simple Euler motion updater
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Simple Euler motion updater
+///! @remark
+///-----------------------------------------------------------------------------
 void EulerUpdater::update(double elapsedTime, const ParticleData& particleData)
 {
     float dt = static_cast<float>(elapsedTime);
@@ -241,10 +241,10 @@ void EulerUpdater::update(double elapsedTime, const ParticleData& particleData)
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Simple single point spawner
-//! @remark  Only updates the start position of a particle
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Simple single point spawner
+///! @remark  Only updates the start position of a particle
+///-----------------------------------------------------------------------------
 void PointGenerator::generate(size_t start, size_t end, const ParticleData& particleData)
 {
     for (size_t counter = start; counter < end; ++counter)

@@ -83,10 +83,10 @@ long TextureManager::getTexMemUsed() const
 	}
 	return result;
 }
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void TextureManager::cleanup()
 {
     static int numberOfTimesCalled = 0;
@@ -103,9 +103,9 @@ void TextureManager::cleanup()
     m_samplerState->Release();
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @Create needed sampler states for the textures here
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 bool TextureManager::createSamplerStates(const DeviceManager& deviceManager)
 {
     //Setup sampler state here
@@ -136,9 +136,9 @@ bool TextureManager::createSamplerStates(const DeviceManager& deviceManager)
     return true;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 Material::TextureSlotMapping TextureManager::deserialise( const DeviceManager& deviceManager, const tinyxml2::XMLElement* node )
 {
     (void*)node;
@@ -158,9 +158,9 @@ Material::TextureSlotMapping TextureManager::deserialise( const DeviceManager& d
     return Material::TextureSlotMapping(hashString(""), Material::TextureSlotMapping::Invalid);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void TextureManager::addTexture( const std::string& textureName, const Texture& texture )
 {
     unsigned int textureNameHash = hashString(textureName);

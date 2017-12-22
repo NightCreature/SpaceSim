@@ -3,10 +3,10 @@
 #include "Core/Resource/GameResource.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 FileLogger::FileLogger(const std::string& logPath)
 {
     std::string logFile = logPath + "log.log";
@@ -18,20 +18,20 @@ FileLogger::FileLogger(const std::string& logPath)
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 FileLogger::~FileLogger()
 {
     m_fileLog.flush();
     m_fileLog.close();
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void FileLogger::LogMessage(const std::string& message)
 {
     m_fileLog << message;

@@ -21,9 +21,9 @@ GameObject(resource)
 	m_active = true;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* element)
 {
     ShaderInstance shaderInstance;
@@ -65,9 +65,9 @@ const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* el
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     m_angle += 25.0f*elapsedTime;
@@ -127,9 +127,9 @@ void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedT
     UNUSEDPARAM(elapsedTime);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void RotatingBlades::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);

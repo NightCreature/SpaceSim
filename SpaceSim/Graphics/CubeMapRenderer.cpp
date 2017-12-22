@@ -29,9 +29,9 @@
 #include <Graphics/Frustum.h>
 #include "Graphics/D3DDebugHelperFunctions.h"
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState* alphaBlendState, ID3D11BlendState* blendState, unsigned int cubeMapWidhtHeight /*= 1024*/) :
     m_alphaBlendState(alphaBlendState),
     m_blendState(blendState)
@@ -97,10 +97,10 @@ CubeMapRenderer::~CubeMapRenderer()
 {
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void CubeMapRenderer::cleanup()
 {
     m_depthStencil->Release();
@@ -114,10 +114,10 @@ void CubeMapRenderer::initialise(Vector3 position)
     createViewArray(position);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void CubeMapRenderer::CheckVisibility(RenderInstanceTree& visibleRenderInstances, const RenderInstanceTree& renderInstances, const Matrix44& viewMatrix)
 {
 
@@ -275,9 +275,9 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
     deviceContext->GenerateMips(renderTarget->getShaderResourceView());
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void CubeMapRenderer::createViewArray(Vector3 position)
 {
     Camera viewArray[6];

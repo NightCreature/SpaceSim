@@ -20,9 +20,9 @@
 
 HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void CubeRendererInitialiseData::deserialise(const tinyxml2::XMLElement* element)
 {
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
@@ -39,10 +39,10 @@ void CubeRendererInitialiseData::deserialise(const tinyxml2::XMLElement* element
     m_position.deserialise(element->FirstChildElement());
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 RenderSystem::RenderSystem() :
 m_lightConstantBuffer(nullptr),
 m_numberOfInstancesRenderingThisFrame(0),
@@ -54,10 +54,10 @@ m_totalNumberOfRenderedFrames(0)
     m_wireFrame = false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 RenderSystem::~RenderSystem()
 {
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "Total number of rendered instances: %d", m_totalNumberOfInstancesRendered)
@@ -109,10 +109,10 @@ RenderSystem::~RenderSystem()
 }
 
 
-//-----------------------------------------------------------------------------
-//! @brief   Initialise the RenderSystem
-//! @remark  Creates a window and reveals the window
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Initialise the RenderSystem
+///! @remark  Creates a window and reveals the window
+///-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource)
 {
     m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager);
@@ -339,10 +339,10 @@ void RenderSystem::initialise(Resource* resource)
     m_emmiter.initialise(m_renderResource);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void RenderSystem::update(float elapsedTime, double time)
 {
     {
@@ -455,6 +455,7 @@ void RenderSystem::update(float elapsedTime, double time)
                 if (buffer != nullptr) //if vb is null we assume the vertex shader to generate the geometry
                 {
                     deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+
                     deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
                     generateVerticesCount = 1; //We don't need to generate geometry in the shader based on the SV_VERTEXID so reset this to 1
                 }
@@ -493,10 +494,10 @@ void RenderSystem::update(float elapsedTime, double time)
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool RenderSystem::createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight)
 {
     DXGI_MODE_DESC bufferDescription;
@@ -525,11 +526,11 @@ bool RenderSystem::createSwapChain(ID3D11Device* device, int windowWidth, int wi
     return true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Because the device is created elsewhere(DeviceManager) the DXGIFactory
-//!          needs to be patched. Otherwise other resources can't be created through it.
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Because the device is created elsewhere(DeviceManager) the DXGIFactory
+///!          needs to be patched. Otherwise other resources can't be created through it.
+///! @remark
+///-----------------------------------------------------------------------------
 void RenderSystem::patchUpDXGIFactory(ID3D11Device* device)
 {
     IDXGIDevice * pDXGIDevice;
@@ -545,10 +546,10 @@ void RenderSystem::patchUpDXGIFactory(ID3D11Device* device)
     pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&m_dxgiFactory);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight)
 {
     // Create a render target view
@@ -625,10 +626,10 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
     deviceContext->RSSetViewports(1, &vp);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void RenderSystem::cleanup()
 {
     if (m_dxgiFactory)
@@ -662,9 +663,9 @@ void RenderSystem::cleanup()
     delete m_renderResource;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief Takes a renderlist to do ordering on the render list before actually rendering it
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void RenderSystem::beginDraw()
 {
     PROFILE_EVENT("RenderSystem::beginDraw", Orange);
@@ -785,10 +786,10 @@ void RenderSystem::beginDraw()
 
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 {
     PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
@@ -803,9 +804,9 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void RenderSystem::endDraw()
 {
     PROFILE_EVENT("RenderSystem::endDraw", Orange);
@@ -827,10 +828,10 @@ void RenderSystem::endDraw()
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Match and extract all render instances that need to be rendered
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Match and extract all render instances that need to be rendered
+///! @remark
+///-----------------------------------------------------------------------------
 void RenderSystem::CreateRenderList(const MessageSystem::Message& msg)
 {
     UNUSEDPARAM(msg);
@@ -844,9 +845,9 @@ void RenderSystem::CreateRenderList(const MessageSystem::Message& msg)
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
 {
     m_cubeMapRenderer = new CubeMapRenderer(m_deviceManager, m_alphaBlendState, m_blendState);

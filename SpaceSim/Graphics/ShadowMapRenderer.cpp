@@ -33,10 +33,10 @@
 
 static const unsigned int shadowMapTechniqueHash = hashString("shadow_map");
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendState* alphaBlendState, ID3D11BlendState* blendState, unsigned int shadowMapWidhtHeight /*= 1024*/) :
     m_blendState(blendState),
     m_alphaBlendState(alphaBlendState)
@@ -148,19 +148,19 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
 
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 ShadowMapRenderer::~ShadowMapRenderer()
 {
 
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ShadowMapRenderer::cleanup()
 {
     m_depthStencil->Release();
@@ -175,10 +175,10 @@ void ShadowMapRenderer::cleanup()
 #endif
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, const RenderInstanceTree& renderInstances)
 {
     PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
@@ -193,10 +193,10 @@ void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, c
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light)
 {
     PROFILE_EVENT("ShadowMapRenderer::renderShadowMap", Blue);

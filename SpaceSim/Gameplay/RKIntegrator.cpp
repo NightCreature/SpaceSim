@@ -10,10 +10,10 @@ RKIntegrator::~RKIntegrator(void)
 {
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 State RKIntegrator::integrate( const State& initial, float t, float dt )
 {
     Derivative a,b,c,d;
@@ -34,10 +34,10 @@ State RKIntegrator::integrate( const State& initial, float t, float dt )
     return state;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 Derivative RKIntegrator::evaluate( const State& initial, float t, float dt, const Derivative& d )
 {
     State state;

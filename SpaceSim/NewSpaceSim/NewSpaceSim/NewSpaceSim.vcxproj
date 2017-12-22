@@ -343,6 +343,7 @@
     <ClCompile Include="..\..\Graphics\RenderInstance.cpp" />
     <ClCompile Include="..\..\Graphics\RenderSystem.cpp" />
     <ClCompile Include="..\..\Graphics\ShaderCache.cpp" />
+    <ClCompile Include="..\..\Graphics\ShaderInstance.cpp" />
     <ClCompile Include="..\..\Graphics\shadermanager.cpp" />
     <ClCompile Include="..\..\Graphics\ShaderPack.cpp" />
     <ClCompile Include="..\..\Graphics\Shaders.cpp" />

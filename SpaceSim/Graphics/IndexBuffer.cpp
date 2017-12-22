@@ -32,10 +32,10 @@ void IndexBuffer::createBuffer( const DeviceManager& deviceManager, unsigned int
     D3DDebugHelperFunctions::SetDebugChildName(m_buffer, FormatString("Index buffer size: %d, no. indecis: %d", bufferSize, bufferSize / (sizeof(unsigned int))));
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void IndexBuffer::cleanup()
 {
     if (m_buffer)

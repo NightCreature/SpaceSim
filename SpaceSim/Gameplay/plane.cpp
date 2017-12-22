@@ -68,10 +68,10 @@ m_changeWindingOrder(changeWindingOrder)
 }
 
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Plane::initialise(const ShaderInstance& shaderInstance)
 {
     Face::CreationParams params;
@@ -129,9 +129,9 @@ void Plane::transform()
 	}
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance Plane::deserialise( const tinyxml2::XMLElement* node )
 {
     ShaderInstance shaderInstance;
@@ -146,9 +146,9 @@ const ShaderInstance Plane::deserialise( const tinyxml2::XMLElement* node )
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     Super::update(renderInstances, elapsedTime, input);
@@ -192,9 +192,9 @@ void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, cons
     m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Plane::handleMessage( const MessageSystem::Message& msg )
 {
     if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
@@ -211,9 +211,9 @@ void Plane::handleMessage( const MessageSystem::Message& msg )
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Plane::invertNormal()
 {
     m_invertNormal = true;

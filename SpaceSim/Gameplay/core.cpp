@@ -9,9 +9,9 @@
 
 HASH_ELEMENT_IMPLEMENTATION(Core)
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 Core::Core(Resource* resource) :
 GameObject(resource), m_position(), m_radius(5.0f), m_slices(10), m_stacks(10), m_ffstrength(10)
 {
@@ -45,10 +45,10 @@ GameObject(resource), m_position(position), m_radius(radius), m_slices(slices), 
     //return m_bbox;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Core::initialise(const ShaderInstance& shaderInstance)
 {
     //m_drawableObject->dontCleanupGeometry();
@@ -77,9 +77,9 @@ void Core::onHit()
 	}
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
 {
     ShaderInstance shaderInstance;
@@ -145,9 +145,9 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Core::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     if (360 > m_angle)
@@ -228,9 +228,9 @@ void Core::update( RenderInstanceTree& renderInstances, float elapsedTime, const
     UNUSEDPARAM(elapsedTime);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Core::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);

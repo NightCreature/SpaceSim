@@ -26,19 +26,19 @@ OrientationAxis::LineVertex OrientationAxis::m_vertices[] =
     {0.0f, 0.25f, 1.0f} //, 0xFFFFFFFF
 };
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void OrientationAxis::cleanup()
 {
     m_vertexBuffer.cleanup();
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void OrientationAxis::initialise(Resource* resource, const DeviceManager& deviceManger)
 {
     RenderResourceHelper helper(resource);
@@ -54,10 +54,10 @@ void OrientationAxis::initialise(Resource* resource, const DeviceManager& device
     m_vertexBuffer.createBufferAndLayoutElements(deviceManger, bufferSize, m_vertices, false, vertexDesc, shader->getShaderBlob());
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void OrientationAxis::draw( const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection, Resource* resource )
 {   
     transform(deviceManager, view, projection); //Needs to move to the update of an object not the draw step
@@ -85,10 +85,10 @@ void OrientationAxis::draw( const DeviceManager& deviceManager, const Matrix44& 
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
     deviceContext->Draw(12, 0);
 }
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void OrientationAxis::transform(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection)
 {
     m_wvpConstants.m_projection = projection;

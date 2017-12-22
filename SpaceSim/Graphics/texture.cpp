@@ -67,10 +67,10 @@ bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, const std:
 	return true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Texture::cleanup()
 {
     //if (!m_renderTargetViews.empty())

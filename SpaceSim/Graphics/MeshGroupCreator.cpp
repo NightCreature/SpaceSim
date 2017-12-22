@@ -4,10 +4,10 @@
 
 #include "assert.h"
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
 {
     CreatedMeshGroup meshGroup;

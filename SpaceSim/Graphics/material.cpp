@@ -49,9 +49,9 @@ Material::Material(const Material& material)
     m_effectHash = material.getEffectHash();
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Material::deserialise( Resource* resource, const DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node )
 {
     node = node->FirstChildElement();
@@ -139,10 +139,10 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
     UNUSEDPARAM(lightManager);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XMLElement* childElement)
 {
     MaterialParameters returnVal;

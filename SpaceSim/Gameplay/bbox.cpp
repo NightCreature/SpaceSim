@@ -295,10 +295,10 @@ Bbox::sideplane Bbox::classifyPlane(const Vector3 &normal, float d) const
 	return intERSECT;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Bbox::resetToBox(const Bbox& otherBox)
 {
     m_min = otherBox.m_min;
@@ -506,7 +506,7 @@ float Bbox::rayintersect(const Vector3 &rayorigin, const Vector3 &raydelta, Vect
 	return t;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
 //         Faster method should implementation prove to slow
 //         Box box;		
@@ -523,7 +523,7 @@ float Bbox::rayintersect(const Vector3 &rayorigin, const Vector3 &raydelta, Vect
 //             }
 //         }
 //         return(box);
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Bbox::transformAccordingToMatrix( const Matrix44& transform )
 {
     Vector3 corners[] = 

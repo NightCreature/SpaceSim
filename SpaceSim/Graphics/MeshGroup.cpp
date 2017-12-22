@@ -10,9 +10,9 @@
 #include "Core/Profiler/ProfilerMacros.h"
 
 #include "Core/Resource/RenderResource.h"
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 MeshGroup::~MeshGroup()
 {
     if (m_renderInstance != nullptr)
@@ -22,9 +22,9 @@ MeshGroup::~MeshGroup()
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box )
 {
     PROFILE_EVENT("MeshGroup::update", Aqua);
@@ -72,9 +72,9 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
     UNUSEDPARAM(elapsedTime);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 MeshGroup::MeshGroup( const MeshGroup& source )
 {
     m_world = source.m_world;

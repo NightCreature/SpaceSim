@@ -27,10 +27,10 @@ GameObject(resource)
     }
     m_world = m_world * transform;
 }
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void ScorchMark::initialise(const ShaderInstance& shaderInstance)
 {
     Square::SquareCreationParams params;
@@ -49,9 +49,9 @@ void ScorchMark::initialise(const ShaderInstance& shaderInstance)
     Super::initialise(shaderInstance);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance ScorchMark::deserialise( const tinyxml2::XMLElement* node )
 {
     //TextureManager& tm = TextureManager::getInstance();
@@ -77,9 +77,9 @@ const ShaderInstance ScorchMark::deserialise( const tinyxml2::XMLElement* node )
     return ShaderInstance();
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void ScorchMark::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     m_lifetime -= elapsedTime;
@@ -131,9 +131,9 @@ void ScorchMark::update( RenderInstanceTree& renderInstances, float elapsedTime,
     UNUSEDPARAM(input);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void ScorchMark::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);

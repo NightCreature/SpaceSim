@@ -34,10 +34,10 @@ HashString exitGame("exit_game");
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Logger Application::m_logger;
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 Application::Application():
 m_gameResource(nullptr),
 m_previousRenderInstanceListSize(1)
@@ -49,10 +49,10 @@ m_previousRenderInstanceListSize(1)
 
 Text::TextBlockCache* cache;
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 bool Application::initialise()
 {
     m_logger.addLogger(new OutputDebugLog());
@@ -119,13 +119,13 @@ bool Application::initialise()
     //cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt");
     //cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 48.0f, true);
 
-    //!!This needs to move
+    ///!!This needs to move
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");
     if (mapFileName)
     {
         returnValue &= m_map.loadMap(m_gameResource, mapFileName->getData());
     }
-    //!!
+    ///!!
 
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts);
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons);
@@ -142,10 +142,10 @@ bool Application::initialise()
     return returnValue;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Application::mainGameLoop()
 {
     MSG message;
@@ -206,9 +206,9 @@ void Application::mainGameLoop()
     m_UpdateThread.stopThread();
 }
 
-//-----------------------------------------------------------------------------
-//! @brief  Pass win32 messages on to the window
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Pass win32 messages on to the window
+///-----------------------------------------------------------------------------
 LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     if (message == WM_DESTROY)
@@ -230,9 +230,9 @@ LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wP
     return DefWindowProc (hwnd, message, wParam, lParam);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief  Cleanup the instance and window
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Cleanup the instance and window
+///-----------------------------------------------------------------------------
 void Application::cleanup()
 {
     m_renderSystem.cleanup();

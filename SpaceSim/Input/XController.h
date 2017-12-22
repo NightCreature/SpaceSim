@@ -10,9 +10,9 @@
 
 class Vector4;
 
-//!-----------------------------------------------------------------------------
-//! @brief Structure to keep track of the analog deltas
-//!-----------------------------------------------------------------------------
+///!-----------------------------------------------------------------------------
+///! @brief Structure to keep track of the analog deltas
+///!-----------------------------------------------------------------------------
 struct AnalogControls
 {
     float leftXAxis;
@@ -39,7 +39,7 @@ enum ControllerActions
     B =          0x00002000,
     X =          0x00004000,
     Y =          0x00008000,
-    //!last for are options to get if left or right is pressed on either the dpad or the left stick
+    ///!last for are options to get if left or right is pressed on either the dpad or the left stick
     LLeft =       0x00100000,
     LRight =      0x00200000,
     LUp =         0x00400000,
@@ -50,9 +50,9 @@ enum ControllerActions
     RDown =       0x08000000,
 };
 
-//!-----------------------------------------------------------------------------
-//! @brief XBox controller pad
-//!-----------------------------------------------------------------------------
+///!-----------------------------------------------------------------------------
+///! @brief XBox controller pad
+///!-----------------------------------------------------------------------------
 class XInputDevice : public IInputDevice
 {
 public:

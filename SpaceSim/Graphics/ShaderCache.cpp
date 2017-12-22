@@ -1,26 +1,26 @@
 #include "ShaderCache.h"
 #include <fstream>
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 ShaderCache::ShaderCache()
 {
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 ShaderCache::~ShaderCache()
 {
     cleanup();
 
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ShaderCache::cleanup()
 {
     for (auto& shader : m_vertexShaders)
@@ -55,9 +55,9 @@ void ShaderCache::cleanup()
     m_computeShaders.clear();
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 
 const unsigned int ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
@@ -75,9 +75,9 @@ const unsigned int ShaderCache::getVertexShader(const tinyxml2::XMLElement* elem
     return resourceName;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const unsigned int ShaderCache::getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     HullShader shader;
@@ -94,9 +94,9 @@ const unsigned int ShaderCache::getHullShader(const tinyxml2::XMLElement* elemen
     return resourceName;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const unsigned int ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     DomainShader shader;
@@ -113,9 +113,9 @@ const unsigned int ShaderCache::getDomainShader(const tinyxml2::XMLElement* elem
     return resourceName;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const unsigned int ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     GeometryShader shader;
@@ -132,9 +132,9 @@ const unsigned int ShaderCache::getGeometryShader(const tinyxml2::XMLElement* el
     return resourceName;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const unsigned int ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     PixelShader shader;
@@ -151,9 +151,9 @@ const unsigned int ShaderCache::getPixelShader(const tinyxml2::XMLElement* eleme
     return resourceName;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const unsigned int  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     ComputeShader shader;
@@ -170,9 +170,9 @@ const unsigned int  ShaderCache::getComputeShader(const tinyxml2::XMLElement* el
     return resourceName;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const VertexShader* ShaderCache::getVertexShader(unsigned int resourceName) const
 {
     if (m_vertexShaders.empty())
@@ -190,9 +190,9 @@ const VertexShader* ShaderCache::getVertexShader(unsigned int resourceName) cons
     return nullptr;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const HullShader* ShaderCache::getHullShader(unsigned int resourceName) const
 {
     if (m_hullShaders.empty())
@@ -209,9 +209,9 @@ const HullShader* ShaderCache::getHullShader(unsigned int resourceName) const
     return nullptr;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const DomainShader* ShaderCache::getDomainShader(unsigned int resourceName) const
 {
     if (m_domainShaders.empty())
@@ -228,9 +228,9 @@ const DomainShader* ShaderCache::getDomainShader(unsigned int resourceName) cons
     return nullptr;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const GeometryShader* ShaderCache::getGeometryShader(unsigned int resourceName) const
 {
     if (m_geometryShaders.empty())
@@ -247,9 +247,9 @@ const GeometryShader* ShaderCache::getGeometryShader(unsigned int resourceName) 
     return nullptr;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const PixelShader* ShaderCache::getPixelShader(unsigned int resourceName) const
 {
     if (m_pixelShaders.empty())
@@ -266,9 +266,9 @@ const PixelShader* ShaderCache::getPixelShader(unsigned int resourceName) const
     return nullptr;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ComputeShader* ShaderCache::getComputeShader(unsigned int resourceName) const
 {
     if (m_computeShaders.empty())
@@ -286,10 +286,10 @@ const ComputeShader* ShaderCache::getComputeShader(unsigned int resourceName) co
 }
 
 #ifdef DEBUG
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void ShaderCache::DumpLoadedShaderNames()
 {
     for (VertexShaders::const_iterator it = m_vertexShaders.begin(); it != m_vertexShaders.end(); ++it)

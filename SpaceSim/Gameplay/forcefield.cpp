@@ -27,10 +27,10 @@ GameObject(resource)
     m_nameHash = hashString(m_name);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder)
 {
 	UNUSEDPARAM(shaderInstance);
@@ -53,9 +53,9 @@ void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWin
     //Super::initialise(shaderInstance);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance ForceField::deserialise( const tinyxml2::XMLElement* element)
 {
     ShaderInstance shaderInstance;
@@ -87,9 +87,9 @@ const ShaderInstance ForceField::deserialise( const tinyxml2::XMLElement* elemen
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void ForceField::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     //React to input before doing the draw update below
@@ -116,9 +116,9 @@ void ForceField::update( RenderInstanceTree& renderInstances, float elapsedTime,
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void ForceField::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);

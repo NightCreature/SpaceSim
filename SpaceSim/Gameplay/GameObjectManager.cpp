@@ -16,17 +16,17 @@ GameObjectManager::~GameObjectManager(void)
     //Should delete all game objects as this is the owner
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void GameObjectManager::addGameObject( GameObject* model )
 {
     m_gameObjects.insert( ModelPair(hashString(model->getName()), model) );
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void GameObjectManager::removeGameObject( GameObject* model )
 {
     GameObjectMap::iterator gameObjectIt = m_gameObjects.find( hashString(model->getName()) );
@@ -36,9 +36,9 @@ void GameObjectManager::removeGameObject( GameObject* model )
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const GameObject* GameObjectManager::getGameObject( const std::string& objectName ) const
 {
     GameObjectMap::const_iterator gameObjectIt = m_gameObjects.find(hashString(objectName));
@@ -50,9 +50,9 @@ const GameObject* GameObjectManager::getGameObject( const std::string& objectNam
     return nullptr;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const std::vector<GameObject*> GameObjectManager::getGameObjectsThatContain( const std::string& partOfObjectName ) const
 {
     std::vector<GameObject*> returnValue;
@@ -93,9 +93,9 @@ void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void GameObjectManager::handleMessage( const MessageSystem::Message& message )
 {
     UNUSEDPARAM(message);
@@ -111,18 +111,18 @@ void GameObjectManager::handleMessage( const MessageSystem::Message& message )
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void GameObjectManager::addMessage(const Message& message)
 {
     UNUSEDPARAM(message);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void GameObjectManager::cleanup()
 {
     for (GameObjectMap::iterator it = m_gameObjects.begin(); it != m_gameObjects.end(); ++it)

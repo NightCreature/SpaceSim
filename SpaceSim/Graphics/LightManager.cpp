@@ -3,9 +3,9 @@
 #include "Core/MessageSystem/RenderMessages.h"
 #include "Graphics/DebugHelperFunctions.h"
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void LightManager::addLight( const std::string& name, const Light& light )
 {
     unsigned int hashedName = hashString(name);
@@ -16,9 +16,9 @@ void LightManager::addLight( const std::string& name, const Light& light )
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const Light* LightManager::getLight( const std::string& name ) const
 {
     unsigned int hashedName = hashString(name);
@@ -31,9 +31,9 @@ const Light* LightManager::getLight( const std::string& name ) const
     return nullptr;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 Light* LightManager::getLight( const std::string& name )
 {
     unsigned int hashedName = hashString(name);
@@ -46,10 +46,10 @@ Light* LightManager::getLight( const std::string& name )
     return nullptr;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Dispatches Create light messages
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Dispatches Create light messages
+///! @remark
+///-----------------------------------------------------------------------------
 void LightManager::dispatchMessage(const MessageSystem::Message& message)
 {
     ASSERT(message.getMessageId() == MESSAGE_ID(CreateLightMessage), "Message is not a create light message should be handled elsewhere. Message id: %d", message.getMessageId());

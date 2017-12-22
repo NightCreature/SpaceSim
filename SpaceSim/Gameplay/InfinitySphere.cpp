@@ -5,9 +5,9 @@
 
 HASH_ELEMENT_IMPLEMENTATION(InfinitySphere);
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* node)
 {
     m_name = "skydome";
@@ -43,18 +43,18 @@ const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* nod
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void InfinitySphere::initialise(const ShaderInstance& shaderInstance)
 {
     //m_drawableObject->initialise(shaderInstance);
     Super::initialise(shaderInstance);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void InfinitySphere::update(RenderInstanceTree& renderInstances, float elapsedTime, const Input& input)
 {
     MSG_TRACE_CHANNEL("REFACTOR", "SEND Cameraid this should be centered arround");
@@ -70,9 +70,9 @@ void InfinitySphere::update(RenderInstanceTree& renderInstances, float elapsedTi
     Super::update(renderInstances, elapsedTime, input);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void InfinitySphere::handleMessage(const MessageSystem::Message& msg)
 {
     UNUSEDPARAM(msg);
