@@ -15,10 +15,10 @@ public:
         size_t m_resourceType;
         size_t m_gameObjectId;
         void* m_loadData;
-
-#ifdef _DEBUG
-        SourceInfo m_sourceInfo;
-#endif
+//
+//#ifdef _DEBUG
+//        SourceInfo m_sourceInfo;
+//#endif
     };
 
     ResourceLoader() {}
