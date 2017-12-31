@@ -18,6 +18,25 @@ namespace ParticleSystem
 {
 
 ///-----------------------------------------------------------------------------
+///! @brief 
+///! @remark
+///-----------------------------------------------------------------------------
+ParticleEmitterComponentBased::~ParticleEmitterComponentBased()
+{
+    m_particleData.destroyParticles();
+
+    for (size_t counter = 0; counter < m_generators.size(); ++counter)
+    {
+        delete m_generators[counter];
+    }
+
+    for (size_t counter = 0; counter < m_updaters.size(); ++counter)
+    {
+        delete m_updaters[counter];
+    }
+}
+
+///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
