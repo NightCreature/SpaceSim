@@ -50,12 +50,15 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
         wvpConstants.m_projection = projection;
         wvpConstants.m_view = view;
         wvpConstants.m_world = m_world * world; 
-        auto vsConstants = m_shaderInstance.getVSConstantBufferSetup();
+        auto vsConstants = m_renderInstance->GetShaderInstance().getVSConstantBufferSetup();
         RenderResourceHelper resourceHelper(resource);
         if (!vsConstants.empty())
         {
             resourceHelper.getResource().getDeviceManager().getDeviceContext()->UpdateSubresource(vsConstants[0], 0, 0, (void*)&wvpConstants, 0, 0); //Not sure about this
         }
+
+        //Fix shader resource view references for the material.
+        m_renderInstance->GetShaderInstance().FixSrvReferences(resourceHelper.getWriteableResource());
 
         UNUSEDPARAM(resource);
         UNUSEDPARAM(world);

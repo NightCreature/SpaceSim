@@ -12,6 +12,8 @@ struct ID3D11ShaderResourceView;
 class DeviceManager;
 class Effect;
 
+class RenderResource;
+
 class ShaderInstance
 {
 public:
@@ -34,6 +36,8 @@ public:
     bool getAlphaBlend() const { return m_alphaBlendEnabled; }
     const Material& getMaterial() const { return m_material; }
     void setMaterial(const Material& mat) { m_material = mat; }
+
+    void FixSrvReferences(RenderResource& resource);
 private:
     //This is pure render information 
     Material m_material;

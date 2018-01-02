@@ -68,6 +68,19 @@ size_t ShaderInstance::AddVsConstantBuffer(size_t bufferSize, DeviceManager& dev
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
+///! @remark This is not a fix all but should at least fix the problem of the material references
+///          Dynamic RT references are still a problem
+///-----------------------------------------------------------------------------
+void ShaderInstance::FixSrvReferences(RenderResource& resource)
+{
+    if (m_material.getTextureHashes().size() > m_psSvData.size())
+    {
+        ShaderInstanceHelpers::FixTextureSRVReferences(*this, m_material, resource);
+    }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief 
 ///! @remark 
 ///-----------------------------------------------------------------------------
 void ShaderInstanceHelpers::FixTextureSRVReferences(ShaderInstance& shaderInstance, const Material& mat, RenderResource& renderResource)
