@@ -3,6 +3,11 @@
 #include "Graphics/DeviceManager.h"
 #include "Graphics/D3DDebugHelperFunctions.h"
 
+#include "Graphics/texture.h"
+#include "Graphics/texturemanager.h"
+#include "Core/Resource/RenderResource.h"
+
+
 ///-----------------------------------------------------------------------------
 ///! @brief 
 ///! @remark
@@ -29,28 +34,56 @@ ID3D11Buffer* CreateD3DBuffer(size_t bufferSize, DeviceManager &deviceManager, c
 
 ///-----------------------------------------------------------------------------
 ///! @brief bufferSize is in bytes, so should be the amount of floats we need for this buffer
-///! @remark
+///! @remark returns the index at which location this buffer is stored
 ///-----------------------------------------------------------------------------
-void ShaderInstance::AddPsConstantBuffer(size_t bufferSize, DeviceManager& deviceManager, const std::string& name)
+size_t ShaderInstance::AddPsConstantBuffer(size_t bufferSize, DeviceManager& deviceManager, const std::string& name)
 {
     ID3D11Buffer* buffer = CreateD3DBuffer(bufferSize, deviceManager, name);
 
     if (buffer != nullptr)
     {
         m_psConstantBuffers.push_back(buffer);
+        return m_psConstantBuffers.size();
     }
+
+    return static_cast<size_t>(-1);
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief bufferSize is in bytes, so should be the amount of floats we need for this buffer
-///! @remark
+///! @remark returns the index at which location this buffer is stored
 ///-----------------------------------------------------------------------------
-void ShaderInstance::AddVsConstantBuffer(size_t bufferSize, DeviceManager& deviceManager, const std::string& name)
+size_t ShaderInstance::AddVsConstantBuffer(size_t bufferSize, DeviceManager& deviceManager, const std::string& name)
 {
     ID3D11Buffer* buffer = CreateD3DBuffer(bufferSize, deviceManager, name);
     
     if (buffer != nullptr)
     {
         m_vsConstantBuffers.push_back(buffer);
+        return m_vsConstantBuffers.size();
+    }
+
+    return static_cast<size_t>(-1);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief 
+///! @remark 
+///-----------------------------------------------------------------------------
+void ShaderInstanceHelpers::FixTextureSRVReferences(ShaderInstance& shaderInstance, const Material& mat, RenderResource& renderResource)
+{
+    const std::vector<Material::TextureSlotMapping>& textureHashes = mat.getTextureHashes();
+
+    size_t currentTextureIndex = 0;
+    for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots && currentTextureIndex < textureHashes.size(); ++counter) //We assume these are put in as order for the slots demand
+    {
+        const Texture* texture = nullptr;
+        if (static_cast<Material::TextureSlotMapping::TextureSlot>(counter) == textureHashes[currentTextureIndex].m_textureSlot)
+        {
+            texture = renderResource.getTextureManager().getTexture(textureHashes[currentTextureIndex].m_textureHash);
+            ++currentTextureIndex;
+        }
+        ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
+        shaderInstance.AddPsSRV(srv);
     }
 }

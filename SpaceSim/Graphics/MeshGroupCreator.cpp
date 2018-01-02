@@ -1,6 +1,8 @@
 #include "Graphics/MeshGroupCreator.h"
 #include "Graphics/EffectCache.h"
 #include "Graphics/ShaderCache.h"
+#include "Graphics/Texture.h"
+#include "Graphics/texturemanager.h"
 
 #include "assert.h"
 
@@ -75,10 +77,11 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     ib->setNumberOfIndecis((unsigned int)params.m_indices.size());
     ib->createBuffer(renderResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false);
 
+    meshGroup.meshGroup = new MeshGroup(vb, ib, params.mat, renderResource.getDeviceManager());
 
-    //Should fix shader instance setup here
-    
-    meshGroup.meshGroup = new MeshGroup(vb, ib, params.mat);
+    //Add a binding to the shadow map
+    //shaderInstance.AddPsSRV(m_shadowMapRenderer->getShadowMap());
+
     return meshGroup;
 }
 

@@ -10,6 +10,7 @@
 namespace MeshGroupCreator
 {
     typedef std::vector<Vector3> TexCoords;
+
     typedef std::vector<TexCoords> MultiTexCoords;
 
     struct CreationParams : public Model::CreationParams

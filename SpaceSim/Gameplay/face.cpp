@@ -9,6 +9,7 @@
 
 #include "Application/BaseApplication.h" //Hack for now
 #include "Core/Types/TypeHelpers.h" //Hack for now
+#include "Graphics/MeshGroupCreator.h"
 #include "Graphics/ShaderInstance.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
@@ -62,7 +63,8 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
 
     if (face.model->getMeshData().empty())
     {
-        MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), mat);
+        MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), mat, renderResourceHelper.getWriteableResource().getDeviceManager());
+
         face.model->getMeshData().push_back(group);
 
         VertexBuffer* vb = face.model->getMeshData()[0]->getGeometryInstance().getVB();

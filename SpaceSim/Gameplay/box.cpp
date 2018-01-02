@@ -25,7 +25,7 @@ CreatedModel CreateBox(const CreationParams& params)
         VertexBuffer* vb = new VertexBuffer();
         IndexBuffer* ib = new IndexBuffer();
 
-        box.model->getMeshData().push_back(new MeshGroup(vb, ib, material));
+        box.model->getMeshData().push_back(new MeshGroup(vb, ib, material, renderResource.getDeviceManager()));
 
         std::vector<unsigned int> texCoordDim;
         if (params.m_gentexcoords)

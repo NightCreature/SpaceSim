@@ -16,11 +16,12 @@ class Bbox;
 class MeshGroup
 {
 public:
-    MeshGroup(VertexBuffer* vb, IndexBuffer* ib, const Material& material) : m_geometryInstance(vb, ib), m_material(material), m_renderInstance(nullptr)
+    MeshGroup(VertexBuffer* vb, IndexBuffer* ib, const Material& material, DeviceManager& deviceManager) : m_geometryInstance(vb, ib), m_material(material), m_renderInstance(nullptr)
     {
         m_world.identity();
         m_shaderInstance.setMaterial(m_material);
-        //m_shaderInstance.AddPs
+        m_shaderInstance.AddPsConstantBuffer(sizeof(MaterialContent), deviceManager, "material content buffer for meshgroup");
+        m_shaderInstance.AddVsConstantBuffer(sizeof(WVPBufferContent), deviceManager, "WVP content buffer for meshgroup");
     }
     MeshGroup(const MeshGroup& source);
     ~MeshGroup();

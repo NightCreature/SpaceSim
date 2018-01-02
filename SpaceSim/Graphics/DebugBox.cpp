@@ -50,7 +50,7 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
         wvp.m_projection = projection;
         Material mat;
         mat.setEffectHash(hashString("debug_effect.xml"));
-        box->getMeshData().push_back(new MeshGroup(vb, ib, mat));
+        box->getMeshData().push_back(new MeshGroup(vb, ib, mat, helper.getWriteableResource().getDeviceManager()));
         //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         //{
         //box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));

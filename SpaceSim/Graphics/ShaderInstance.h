@@ -24,8 +24,10 @@ public:
     const std::vector<ID3D11ShaderResourceView*>& getPSSRVSetup() const { return m_psSvData; }
     const std::vector<ID3D11ShaderResourceView*>& getVSSRVSetup() const { return m_vsSvData; }
 
-    void AddPsConstantBuffer(size_t bufferSize, DeviceManager& deviceManager, const std::string& name);
-    void AddVsConstantBuffer(size_t bufferSize, DeviceManager& deviceManager, const std::string& name);
+    size_t AddPsConstantBuffer(size_t bufferSize, DeviceManager& deviceManager, const std::string& name);
+    size_t AddVsConstantBuffer(size_t bufferSize, DeviceManager& deviceManager, const std::string& name);
+
+    void AddPsSRV(ID3D11ShaderResourceView* SRV) { m_psSvData.push_back(SRV); }
 
     const Effect* getEffect() const { return m_effect; }
     uint32 getTechniqueHash() const { return m_techniqueHash; }
@@ -44,3 +46,8 @@ private:
     uint32 m_techniqueHash;
     bool m_alphaBlendEnabled;
 };
+
+namespace ShaderInstanceHelpers
+{
+    void FixTextureSRVReferences(ShaderInstance& shaderInstance, const Material& mat, RenderResource& renderResource);
+}

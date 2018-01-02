@@ -55,7 +55,7 @@ CreatedModel CreateSquare(const SquareCreationParams& params)
         const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
         assert(shader);
         vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
-        square.model->getMeshData().push_back(new MeshGroup(vb, 0, params.mat));
+        square.model->getMeshData().push_back(new MeshGroup(vb, 0, params.mat, renderResource.getDeviceManager()));
         data = nullptr;
     }
     else
