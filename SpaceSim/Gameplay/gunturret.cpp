@@ -197,8 +197,7 @@ void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)
                     //    continue;
                     //}
                     //l->move(elapsedtime);
-
-                    MessageSystem::CreateRenderResource<ParticleSystem::ParticleEmitterData> message = CREATERENDERRESOURCEMESSAGE(ParticleSystem::ParticleEmitterData);
+                    DECLAREANDCREATERESOURCEMESSAGE(message, ParticleSystem::ParticleEmitterData);
                     ParticleSystem::ParticleEmitterData data;
                     data.m_maxNumberOfParticles = 25;
                     data.m_emissionRate = 5;
@@ -297,7 +296,7 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
                 MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
 
                 auto resource = GameResourceHelper(m_resource).getWriteableResource();
-                MessageSystem::CreateRenderResource<LoadModelResource> createModel = CREATERENDERRESOURCEMESSAGE(LoadModelResource);
+                DECLAREANDCREATERESOURCEMESSAGE(createModel, LoadModelResource);
                 LoadModelResource param;
                 stringCopy(param.m_fileName, attribute->Value());
                 createModel.SetData(param);

@@ -73,9 +73,9 @@ void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
     request.m_loadData = static_cast<void*>(new char[crrmsg.GetImplementationDataSize()]);
     memcpy(request.m_loadData, crrmsg.GetImplementationData(), crrmsg.GetImplementationDataSize());
 
-//#ifdef _DEBUG
-//    request.m_sourceInfo = msg.m_sourceInfo;
-//#endif
+#ifdef _DEBUG
+    request.m_sourceInfo = SourceInfo(msg.m_sourceInfo.getSourceFileName().c_str(), msg.m_sourceInfo.getSourceFileLineNumber());
+#endif
 
     m_requests.push_back(request);
 }

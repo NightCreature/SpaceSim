@@ -78,3 +78,11 @@ public:
 }
 
 #define CREATERENDERRESOURCEMESSAGE(type) MessageSystem::CreateRenderResource<type>(#type);
+
+
+#ifdef _DEBUG
+#define DECLAREANDCREATERESOURCEMESSAGE(name, type) auto name = CREATERENDERRESOURCEMESSAGE(type); \
+name.m_sourceInfo = SourceInfo(__FILE__, __LINE__);
+#else
+#define DECLAREANDCREATERESOURCEMESSAGE(name, type) auto name = CREATERENDERRESOURCEMESSAGE(type);
+#endif
