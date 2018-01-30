@@ -345,16 +345,16 @@ void RenderSystem::initialise(Resource* resource)
 ///-----------------------------------------------------------------------------
 void RenderSystem::update(float elapsedTime, double time)
 {
-    {
-#ifdef _DEBUG
-        pPerf->BeginEvent(L"Emitter Update");
-#endif
-        m_emmiter.update((double)elapsedTime, m_view, m_projection, m_inverseView); //This fucks with the pipeline state :(
-#ifdef _DEBUG
-        pPerf->EndEvent();
-#endif
-    }
-
+//    {
+//#ifdef _DEBUG
+//        pPerf->BeginEvent(L"Emitter Update");
+//#endif
+//        m_emmiter.update((double)elapsedTime, m_view, m_projection, m_inverseView); //This fucks with the pipeline state :(
+//#ifdef _DEBUG
+//        pPerf->EndEvent();
+//#endif
+//    }
+//
     PROFILE_EVENT("RenderSystem::Update", Blue);
 
 #ifdef _DEBUG
@@ -366,7 +366,6 @@ void RenderSystem::update(float elapsedTime, double time)
 
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
     deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
-    deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
 
     RenderInstanceTree::iterator renderInstanceIt = visibleInstances.begin();
     RenderInstanceTree::iterator renderInstanceEnd = visibleInstances.end();

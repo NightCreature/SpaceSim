@@ -239,6 +239,11 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
             deviceContext->DrawIndexed((uint32)m_particleData.m_aliveParticles * generateVerticesCount, 0, 0);
         }
     }
+
+    //Reset use of VSConstant Buffers slots.
+    ID3D11Buffer* nullBuffer = nullptr;
+    deviceContext->VSSetConstantBuffers(0, 1, &nullBuffer);
+    deviceContext->VSSetConstantBuffers(1, 1, &nullBuffer);
 }
 
 ///-----------------------------------------------------------------------------
