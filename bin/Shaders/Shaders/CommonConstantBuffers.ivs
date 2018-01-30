@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer WVPConstants : register(b0)
+cbuffer WVPConstants : register(b2)
 {
     float4x4 World;
     float4x4 View;
@@ -10,7 +10,7 @@ cbuffer WVPConstants : register(b0)
 };
 
 #ifdef LIGHTING
-cbuffer LightParamters: register(b1)
+cbuffer LightParamters: register(b0)
 {
     //float3 eyePosition;
     LightConstants m_lights[8];
@@ -19,9 +19,10 @@ cbuffer LightParamters: register(b1)
 #endif
 
 #ifdef SHADOW
-cbuffer ShadowConstants : register(b2)
+cbuffer ShadowConstants : register(b1)
 {
-	float4x4 ShadowProjection;
+	float4x4 ShadowWorld;
 	float4x4 ShadowView;
+	float4x4 ShadowProjection;
 }
 #endif

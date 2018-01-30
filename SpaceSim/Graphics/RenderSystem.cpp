@@ -349,7 +349,7 @@ void RenderSystem::update(float elapsedTime, double time)
 #ifdef _DEBUG
         pPerf->BeginEvent(L"Emitter Update");
 #endif
-        m_emmiter.update((double)elapsedTime, m_view, m_projection, m_inverseView);
+        m_emmiter.update((double)elapsedTime, m_view, m_projection, m_inverseView); //This fucks with the pipeline state :(
 #ifdef _DEBUG
         pPerf->EndEvent();
 #endif
@@ -365,6 +365,7 @@ void RenderSystem::update(float elapsedTime, double time)
     m_window.update(elapsedTime, time);
 
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
     deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
 
     RenderInstanceTree::iterator renderInstanceIt = visibleInstances.begin();
@@ -407,7 +408,7 @@ void RenderSystem::update(float elapsedTime, double time)
             
             if (!shaderInstance.getVSConstantBufferSetup().empty())
             {
-                deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
+                deviceContext->VSSetConstantBuffers(2, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
             }
             if (!shaderInstance.getPSConstantBufferSetup().empty())
             {
@@ -777,7 +778,7 @@ void RenderSystem::beginDraw()
     perFrameConstants.m_cameraPosition[2] = camPos.z();
     perFrameConstants.m_shadowMVP = m_shadowMapRenderer->getShadowMapMVP();
     deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
-    deviceContext->VSSetConstantBuffers(1, 1, &m_lightConstantBuffer);
+    deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
 
     CheckVisibility(m_renderInstances);
 
