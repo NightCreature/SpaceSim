@@ -121,10 +121,10 @@ float Camera::restrictAngleTo360(float angle) const
 
     return angle;
 }
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Camera::update( float elapsedTime, double time, const Input& input )
 {
     const InputState* inputState = input.getInput(0);

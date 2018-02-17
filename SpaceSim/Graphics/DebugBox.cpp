@@ -6,12 +6,15 @@
 #include "Graphics/Effect.h"
 #include "Application/BaseApplication.h"
 
+#include "Core/Resource/RenderResource.h"
+#include "Graphics/EffectCache.h"
+
 namespace DebugGraphics
 {
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 DebugBox::DebugBox(Resource* resource, const Vector3& lowerLeft, const Vector3& upperRight) :
 m_lowerLeft(lowerLeft),
 m_upperRight(upperRight),
@@ -19,16 +22,16 @@ m_resource(resource)
 {
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 DebugBox::~DebugBox()
 {
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44& view, const Matrix44& projection)
 {
     UNUSEDPARAM(shaderInstance);
@@ -45,11 +48,12 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
         wvp.m_world = temp;
         wvp.m_view = view;
         wvp.m_projection = projection;
-        ShaderInstance newShaderInstance(wvp, Material());
-        box->getMeshData().push_back(new MeshGroup(vb, ib, newShaderInstance));
+        Material mat;
+        mat.setEffectHash(hashString("debug_effect.xml"));
+        box->getMeshData().push_back(new MeshGroup(vb, ib, mat, helper.getWriteableResource().getDeviceManager()));
         //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         //{
-        box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));
+        //box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));
         //}
 
         ColorVertex boxVerts[] = 
@@ -66,8 +70,10 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
 
         unsigned int numberOfBytes = sizeof(boxVerts);
 
-
-        const Technique* technique = box->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
+        RenderResourceHelper renderResource(m_resource);
+        const EffectCache& effectCache = renderResource.getResource().getEffectCache();
+        const Effect* effect = effectCache.getEffect(mat.getEffectHash());
+        const Technique* technique = effect->getTechnique(mat.getTechnique());
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.vertexColor = true;
         const VertexShader* shader = helper.getResource().getShaderCache().getVertexShader(technique->getVertexShader());
@@ -88,15 +94,11 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
             3, 1
         };
 
-        ib->createBuffer(helper.getResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(helper.getResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false);
         ib->setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
     }
     else
     {
-        if (box->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
-            box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("laser_effect.xml"));
-        }
     }
 
     box->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_LINELIST);

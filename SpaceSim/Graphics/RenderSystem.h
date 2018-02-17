@@ -49,10 +49,10 @@ struct CubeRendererInitialiseData
     bool m_hasBeenRenderedTo;
 };
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 class RenderSystem 
 {
 public:
@@ -127,6 +127,7 @@ private:
     ID3D11BlendState* m_alphaBlendState;
     ID3D11DepthStencilState* m_depthStencilState;
     ID3D11Buffer* m_lightConstantBuffer;
+    ID3D11Buffer* m_shadowConstantBuffer;
     bool m_wireFrame;
 
     size_t m_numberOfInstancesRenderingThisFrame;

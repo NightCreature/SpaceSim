@@ -328,9 +328,9 @@ void MapLoader::getCollisionNormal(PlanesMap::const_iterator& it, Vector3& norma
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief This should all move in to the plane class
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement* element )
 {
     const tinyxml2::XMLElement* childElement = element->FirstChildElement();

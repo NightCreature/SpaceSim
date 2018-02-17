@@ -256,10 +256,10 @@ void KeyboardInputDevice::printKeyState( PRAWINPUT prawInput )
     delete buffer;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void KeyboardInputDevice::internalActionSetup( InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input )
 {
     //Setup controller specific action map so it can map it's capabilities to the input the game expects

@@ -17,10 +17,29 @@
 namespace ParticleSystem
 {
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief 
+///! @remark
+///-----------------------------------------------------------------------------
+ParticleEmitterComponentBased::~ParticleEmitterComponentBased()
+{
+    m_particleData.destroyParticles();
+
+    for (size_t counter = 0; counter < m_generators.size(); ++counter)
+    {
+        delete m_generators[counter];
+    }
+
+    for (size_t counter = 0; counter < m_updaters.size(); ++counter)
+    {
+        delete m_updaters[counter];
+    }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ParticleEmitterComponentBased::initialise(Resource* resource)
 {
     uint32 numberParticles = 100000;
@@ -58,6 +77,10 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
         indecis[counter + 4] = (counter / 6 * 4) + 2;
         indecis[counter + 5] = (counter / 6 * 4) + 3;
     }
+    IndexBuffer indexbuffer;
+    indexbuffer.createBuffer(resourceHelper.getWriteableResource().getDeviceManager(), 6 * numberParticles, indecis, false);
+    //GeometryInstance geomInstance(nullptr, &indexbuffer);
+    
     D3D11_SUBRESOURCE_DATA initData;
     ZeroMemory(&initData, sizeof(D3D11_SUBRESOURCE_DATA));
     initData.pSysMem = indecis;
@@ -107,21 +130,15 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     D3DDebugHelperFunctions::SetDebugChildName(m_constantBuffers[1], "Constant Buffer 1  Particle System");
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& view, const Matrix44& projection, const Matrix44& inverseView)
 {
     size_t numberOfParticlesToGenerate = static_cast<size_t>(elapsedTime * m_emmisionRate);
     size_t startingParticleIndex = m_particleData.m_aliveParticles;
     size_t lastParticleIndex = std::min(startingParticleIndex + numberOfParticlesToGenerate, m_particleData.m_maxParticles - 1);
-
-
-    WVPBufferContent wvp;
-    wvp.m_world.identity();
-    wvp.m_view = view;
-    wvp.m_projection = projection;
 
     for (auto&& generator : m_generators)
     {
@@ -185,6 +202,11 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
     
     //This is test code to draw should be really refactored
     {
+        WVPBufferContent wvp;
+        wvp.m_world.identity();
+        wvp.m_view = view;
+        wvp.m_projection = projection;
+
         PROFILE_EVENT("ParticleEmitter::SubmitInstance", DarkBlue);
 
         const Effect* effect = helper.getResource().getEffectCache().getEffect(hashString("ParticleSystem.xml"));
@@ -217,12 +239,17 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
             deviceContext->DrawIndexed((uint32)m_particleData.m_aliveParticles * generateVerticesCount, 0, 0);
         }
     }
+
+    //Reset use of VSConstant Buffers slots.
+    ID3D11Buffer* nullBuffer = nullptr;
+    deviceContext->VSSetConstantBuffers(0, 1, &nullBuffer);
+    deviceContext->VSSetConstantBuffers(1, 1, &nullBuffer);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Simple Euler motion updater
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Simple Euler motion updater
+///! @remark
+///-----------------------------------------------------------------------------
 void EulerUpdater::update(double elapsedTime, const ParticleData& particleData)
 {
     float dt = static_cast<float>(elapsedTime);
@@ -238,10 +265,10 @@ void EulerUpdater::update(double elapsedTime, const ParticleData& particleData)
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Simple single point spawner
-//! @remark  Only updates the start position of a particle
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Simple single point spawner
+///! @remark  Only updates the start position of a particle
+///-----------------------------------------------------------------------------
 void PointGenerator::generate(size_t start, size_t end, const ParticleData& particleData)
 {
     for (size_t counter = start; counter < end; ++counter)

@@ -7,10 +7,10 @@
 
 #include "Graphics/D3DDebugHelperFunctions.h"
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDeclarationDescriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob)
 {
     D3D11_BUFFER_DESC bufferDescriptor;
@@ -49,10 +49,10 @@ bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceMana
 
     return true;
 }
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool VertexBuffer::createVertexInputLayout( const DeviceManager& deviceManager, ID3DBlob* vertexShaderCodeBlob, const std::vector<D3D11_INPUT_ELEMENT_DESC>& inputElements )
 {
     HRESULT hr = deviceManager.getDevice()->CreateInputLayout(&inputElements[0], (unsigned int)inputElements.size(), vertexShaderCodeBlob->GetBufferPointer(), vertexShaderCodeBlob->GetBufferSize(), &m_inputLayout );
@@ -65,10 +65,10 @@ bool VertexBuffer::createVertexInputLayout( const DeviceManager& deviceManager, 
 
     return true;
 }
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 const std::vector<D3D11_INPUT_ELEMENT_DESC> VertexDeclarationDescriptor::createInputElementLayout(size_t& vertexStride) const
 {
     std::vector<D3D11_INPUT_ELEMENT_DESC> vertexDataLayoutElements;

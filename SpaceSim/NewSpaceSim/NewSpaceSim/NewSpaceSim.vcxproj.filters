@@ -752,6 +752,9 @@
     <ClCompile Include="..\..\Loader\ResourceLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Graphics\ShaderInstance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Core\StringOperations\StringTemplate.inl">
@@ -760,6 +763,5 @@
     <None Include="..\..\..\bin\Maps\Entrance.dat">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

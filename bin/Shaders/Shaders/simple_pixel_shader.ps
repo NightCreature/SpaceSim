@@ -1,31 +1,9 @@
-//--------------------------------------------------------------------------------------
+#define LIGHTING
+#include "CommonConstantBuffers.ips"
+
+///--------------------------------------------------------------------------------------
 // Constant Buffer Variables
-//--------------------------------------------------------------------------------------
-cbuffer MaterialConstants : register(b0)
-{
-    float4 ambient;
-    float4 diffuse;
-    float4 specular;
-    float4 emissive;
-    float shininess;
-};
-
-struct LightConstants
-{
-    float4 m_position;
-    float4 m_direction;
-    float4 m_diffuse;
-    float4 m_specular;
-    float4 m_attenuationFallOff;
-    float4 m_range;
-};
-
-cbuffer LightParamters: register(b1)
-{
-    //float3 eyePosition;
-    LightConstants m_lights[8];
-    float3 camera_position;
-}
+///--------------------------------------------------------------------------------------
 
 Texture2D<float4> shaderTextures : register(t8);
 SamplerState SampleType : register (s0);
@@ -35,7 +13,7 @@ Texture2D<float4> shadowMap : register(t33);
 SamplerState ShadowSampleType : register (s1);
 
 
-//--------------------------------------------------------------------------------------
+///--------------------------------------------------------------------------------------
 struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
@@ -63,9 +41,9 @@ float4 doLightCalculation(LightConstants light, float3 lightDir, float3 nnormal,
     return color;
 }
 
-//--------------------------------------------------------------------------------------
+///--------------------------------------------------------------------------------------
 // Pixel Shader
-//--------------------------------------------------------------------------------------
+///--------------------------------------------------------------------------------------
 float4 ps_main( PS_INPUT input) : SV_Target
 {
     float3 vertexPos = input.WorldPos;
@@ -91,7 +69,7 @@ float4 ps_main( PS_INPUT input) : SV_Target
                     float2 shadowMapTex;
                     shadowMapTex.x =  input.LightToPixel.x / input.LightToPixel.w / 2.0f + 0.5f;
                     shadowMapTex.y = -input.LightToPixel.y / input.LightToPixel.w / 2.0f + 0.5f;
-                    float pixelDepth = input.LightToPixel.z - 0.0025;// / input.LightToPixel.w ;//- 0.005;
+                    float pixelDepth = input.LightToPixel.z - 0.0025;// / input.LightToPixel.w ;///- 0.005;
 
                     float4 shadow = shadowMap.Sample(ShadowSampleType, shadowMapTex);
                     if (pixelDepth < shadow.r)

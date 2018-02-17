@@ -5,10 +5,10 @@
 
 //Need to assign input states to players to use
 
-//-----------------------------------------------------------------------------
-//! @brief   Container class to collect all input from all connected controllers
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Container class to collect all input from all connected controllers
+///! @remark
+///-----------------------------------------------------------------------------
 class Input
 {
 public:

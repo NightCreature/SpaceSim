@@ -11,10 +11,10 @@
 
 #include "Loader/ResourceLoadRequests.h"
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ResourceLoader::update()
 {
     m_isUpdating = true;
@@ -59,10 +59,10 @@ void ResourceLoader::update()
     m_isUpdating = false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
 {
     const MessageSystem::LoadResourceRequest& crrmsg = static_cast<const MessageSystem::LoadResourceRequest&>(msg);
@@ -73,13 +73,17 @@ void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
     request.m_loadData = static_cast<void*>(new char[crrmsg.GetImplementationDataSize()]);
     memcpy(request.m_loadData, crrmsg.GetImplementationData(), crrmsg.GetImplementationDataSize());
 
+#ifdef _DEBUG
+    request.m_sourceInfo = SourceInfo(msg.m_sourceInfo.getSourceFileName().c_str(), msg.m_sourceInfo.getSourceFileLineNumber());
+#endif
+
     m_requests.push_back(request);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ResourceLoader::AddLoadRequest(const LoadRequest& request)
 {
     if (m_isUpdating)

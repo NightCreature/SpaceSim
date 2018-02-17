@@ -8,10 +8,10 @@
 
 bool GameWindow::m_destroyable = false;
 
-//-----------------------------------------------------------------------------
-//! @brief  Constructor GameWindow
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Constructor GameWindow
+///! @remark
+///-----------------------------------------------------------------------------
 GameWindow::GameWindow()
 {
     m_destroyable = false;
@@ -23,10 +23,10 @@ GameWindow::GameWindow()
     m_hasFocus = false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief  Setup a win32 window
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Setup a win32 window
+///! @remark
+///-----------------------------------------------------------------------------
 bool GameWindow::createWindow( const std::string& applicationName, const std::string windowTitle )
 {
     MSG_TRACE_CHANNEL("GAMEWINDOW", "Creating Window");
@@ -89,20 +89,20 @@ bool GameWindow::createWindow( const std::string& applicationName, const std::st
     return true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief  Show the window that was created
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Show the window that was created
+///! @remark
+///-----------------------------------------------------------------------------
 void GameWindow::showWindow()
 {
     ShowWindow   (m_windowHandle, SW_SHOW);
     UpdateWindow (m_windowHandle);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void GameWindow::update( float elapsedTime, double time )
 {
     calculateFPS(elapsedTime);
@@ -110,9 +110,9 @@ void GameWindow::update( float elapsedTime, double time )
     time = 0.0;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief Calculate the frames per second
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief Calculate the frames per second
+///-----------------------------------------------------------------------------
 void GameWindow::calculateFPS(float elapsedTime)
 {
     if (m_timeAmount < 1.0f)
@@ -129,9 +129,9 @@ void GameWindow::calculateFPS(float elapsedTime)
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Change the window title to include the fps
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Change the window title to include the fps
+///-----------------------------------------------------------------------------
 void GameWindow::setFpsInWindowTitle(float elpasedTime)
 {
     PROFILE_EVENT("GameWindow::setFpsInWindowTitle", Brown);
@@ -146,18 +146,18 @@ void GameWindow::setFpsInWindowTitle(float elpasedTime)
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void GameWindow::initialise()
 {
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void GameWindow::messageHandler( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     if (message == WM_CLOSE)

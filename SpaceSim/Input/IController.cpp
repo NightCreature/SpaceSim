@@ -2,10 +2,10 @@
 #include "Input/InputSystem.h"
 #include "Core/Types/TypeHelpers.h"
 #include "Core/StringOperations/HashString.h"
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void IInputDevice::deserialise( const tinyxml2::XMLElement* element, const InputSystem& inputSystem )
 {
     UNUSEDPARAM(inputSystem);

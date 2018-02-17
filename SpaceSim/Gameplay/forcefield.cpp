@@ -27,10 +27,10 @@ GameObject(resource)
     m_nameHash = hashString(m_name);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder)
 {
 	UNUSEDPARAM(shaderInstance);
@@ -45,7 +45,7 @@ void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWin
     //m_drawableObject = face.model;
     //m_active = true;
 
-    MessageSystem::CreateRenderResource<Face::CreationParams> createPlaneModel = CREATERENDERRESOURCEMESSAGE(Face::CreationParams);
+    DECLAREANDCREATERESOURCEMESSAGE(createPlaneModel, Face::CreationParams);
     createPlaneModel.SetData(params);
     createPlaneModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
     GameResourceHelper(m_resource).getWriteableResource().m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); //Init isnt done here because we are waiting for a response from the render thread
@@ -53,9 +53,9 @@ void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWin
     //Super::initialise(shaderInstance);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance ForceField::deserialise( const tinyxml2::XMLElement* element)
 {
     ShaderInstance shaderInstance;
@@ -87,9 +87,9 @@ const ShaderInstance ForceField::deserialise( const tinyxml2::XMLElement* elemen
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void ForceField::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     //React to input before doing the draw update below
@@ -116,9 +116,9 @@ void ForceField::update( RenderInstanceTree& renderInstances, float elapsedTime,
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void ForceField::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);

@@ -35,13 +35,13 @@ bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, const std:
     if (extension == "dds")
     {
         hr = DirectX::CreateDDSTextureFromFile(device, wfilename.c_str(), 0, &m_textureShaderResourceView);
-        D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("SRV for Texture %s", filename.c_str()));
+        //D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("SRV for Texture %s", filename.c_str()));
     }
     else
     {
 
         hr = DirectX::CreateWICTextureFromFile(device, deviceManager.getDeviceContext(), wfilename.c_str(), 0, &m_textureShaderResourceView, 0);
-        D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("RTV for Texture %s", filename.c_str()));
+        //D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("RTV for Texture %s", filename.c_str()));
     }
 
     if (FAILED(hr))
@@ -62,15 +62,15 @@ bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, const std:
         MSG_TRACE_CHANNEL("ERROR", "Failed to create Sampler State" )
     }
     
-    D3DDebugHelperFunctions::SetDebugChildName(m_textureSamplerState, FormatString("Sampler for Texture %s", filename.c_str()));
+    //D3DDebugHelperFunctions::SetDebugChildName(m_textureSamplerState, FormatString("Sampler for Texture %s", filename.c_str()));
 
 	return true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Texture::cleanup()
 {
     //if (!m_renderTargetViews.empty())

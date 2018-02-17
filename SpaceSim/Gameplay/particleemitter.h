@@ -55,6 +55,7 @@ struct ParticleEmitterData
 class ParticleEmitterComponentBased
 {
 public:
+    ~ParticleEmitterComponentBased();
 
     void initialise(Resource* resource);
 

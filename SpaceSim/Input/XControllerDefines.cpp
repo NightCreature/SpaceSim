@@ -6,10 +6,10 @@
 
 namespace InputDefines
 {
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 XControllerDefines::XControllerDefines()
 {
     m_inputNameHash[LeftStickPositiveX] = hashString("left_stick_positive_x");
@@ -38,10 +38,10 @@ XControllerDefines::XControllerDefines()
     m_inputNameHash[RightStickClick] = hashString("right_stick_click");
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 XControllerDefines::XControllerInput XControllerDefines::FindControllerInputIdForHashId(unsigned int hashId) const
 {
     for (short counter = 0; counter < NumInputActions; ++counter)

@@ -1,12 +1,15 @@
 #include "Graphics/MeshGroupCreator.h"
+#include "Graphics/EffectCache.h"
 #include "Graphics/ShaderCache.h"
+#include "Graphics/Texture.h"
+#include "Graphics/texturemanager.h"
 
 #include "assert.h"
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
 {
     CreatedMeshGroup meshGroup;
@@ -61,18 +64,24 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
         texCoordDimensions.push_back(2);
     }
     vertexData = vertexData - bufferSize;
-    const Technique* technique = params.m_shaderInstance.getMaterial().getEffect()->getTechnique("default");
-    RenderResource& renderResource= RenderResourceHelper(params.m_resource).getWriteableResource();
+    RenderResource& renderResource = RenderResourceHelper(params.m_resource).getWriteableResource();
+    const EffectCache& effectCache = renderResource.getEffectCache();
+    const Effect* effect = effectCache.getEffect(params.mat.getEffectHash());
+    const Technique* technique = effect->getTechnique(params.mat.getTechnique());
+    
     const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
     assert(shader);
     vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
     delete[] vertexData;
 
     ib->setNumberOfIndecis((unsigned int)params.m_indices.size());
-    ib->createBuffer(renderResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false, D3D11_BIND_INDEX_BUFFER);
+    ib->createBuffer(renderResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false);
 
-    
-    meshGroup.meshGroup = new MeshGroup(vb, ib, params.m_shaderInstance);
+    meshGroup.meshGroup = new MeshGroup(vb, ib, params.mat, renderResource.getDeviceManager());
+
+    //Add a binding to the shadow map
+    //shaderInstance.AddPsSRV(m_shadowMapRenderer->getShadowMap());
+
     return meshGroup;
 }
 

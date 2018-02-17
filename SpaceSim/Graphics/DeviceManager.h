@@ -7,10 +7,10 @@
 #include <d3d11.h>
 #include <vector>
 
-//-----------------------------------------------------------------------------
-//! @brief  Manager to manage d3d device or OGL context and the CG context when CG shaders are used
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Manager to manage d3d device or OGL context and the CG context when CG shaders are used
+///! @remark
+///-----------------------------------------------------------------------------
 class DeviceManager 
 {
 public:

@@ -9,6 +9,7 @@
 
 #include "Application/BaseApplication.h" //Hack for now
 #include "Core/Types/TypeHelpers.h" //Hack for now
+#include "Graphics/MeshGroupCreator.h"
 #include "Graphics/ShaderInstance.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
@@ -20,22 +21,22 @@ namespace Face
 
 const size_t numberOfTexcoords = 1;
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 CreatedModel CreateFace(const CreationParams& params, Resource* resource)
 {
     RenderResourceHelper renderResourceHelper(resource);
     const RenderResource& renderResource = renderResourceHelper.getResource();
     //const ShaderInstance& shaderInstance = *(params.shaderInstance);
 
-    ShaderInstance shaderInstance;
     Material mat;
-    mat.setEffect(renderResource.getEffectCache().getEffect(params.m_materialParameters.m_effectHash));
+    mat.setEffectHash(params.m_materialParameters.m_effectHash);
     mat.setMaterialContent(params.m_materialParameters.m_materialContent);
     mat.setBlendState(params.m_materialParameters.m_alphaBlend);
     mat.setTechnique(params.m_materialParameters.m_techniqueHash);
+    mat.setEffectHash(params.m_materialParameters.m_effectHash);
     //Fix up texture references here
     for (auto counter = 0; counter < Material::TextureSlotMapping::NumSlots; ++counter) 
     {
@@ -50,7 +51,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
             renderResourceHelper.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
         }
     }
-    shaderInstance.setMaterial(mat);
+
 
     CreatedModel face;
     face.model = new Model();
@@ -62,13 +63,9 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
 
     if (face.model->getMeshData().empty())
     {
-        MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), shaderInstance);
+        MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), mat, renderResourceHelper.getWriteableResource().getDeviceManager());
+
         face.model->getMeshData().push_back(group);
-        face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
-        if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
-            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.xml"));
-        }
 
         VertexBuffer* vb = face.model->getMeshData()[0]->getGeometryInstance().getVB();
         IndexBuffer* ib = face.model->getMeshData()[0]->getGeometryInstance().getIB();
@@ -101,7 +98,10 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
         createVertexData(params, vertexData, face.boundingBox, corridorheight, corridorwidth, rows, columns);
 
         //Move pointer to start of vertex array  
-        const Technique* technique = face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect()->getTechnique("default");
+        const EffectCache& effectCache = renderResource.getEffectCache();
+        const Effect* effect = effectCache.getEffect(mat.getEffectHash());
+        const Technique* technique = effect->getTechnique(mat.getTechnique());
+
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.position = 3;
         vertexDesc.normal = true;
@@ -125,7 +125,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
         unsigned int* startOfIndexData = indecis;
         createIndexData(indecis, params.changeWindingOrder, rows, columns);
 
-        ib->createBuffer(renderResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false, D3D11_BIND_INDEX_BUFFER);
+        ib->createBuffer(renderResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false);
         delete[] startOfIndexData; //cleanup
         indecis = nullptr;
         startOfIndexData = nullptr;
@@ -136,11 +136,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     }
     else
     {
-        face.model->getMeshData()[0]->setShaderInstance(shaderInstance);
-        if (face.model->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        {
-            face.model->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(renderResource.getEffectCache().getEffect("simple_effect.fx"));
-        }
+
     }
 
     face.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -148,10 +144,10 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     return face;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns)
 {
     if (0 == rows || 0 == columns)
@@ -242,10 +238,10 @@ void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbo
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Face::createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns)
 {
     unsigned int nrcolumns = static_cast<unsigned int>(columns);

@@ -6,6 +6,8 @@
 
 #include <D3Dcompiler.h>
 #include <fstream>
+#include <numeric>
+#include <limits>
 
 HASH_ELEMENT_IMPLEMENTATION(VertexShader);
 HASH_ELEMENT_IMPLEMENTATION(HullShader);
@@ -24,10 +26,10 @@ enum ShaderType
     eComputeShader
 };
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void getProfileName(const DeviceManager& deviceManager, ShaderType type, std::string &profileName, const std::string profileVersion = std::string())
 {
     D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
@@ -109,10 +111,10 @@ void getProfileName(const DeviceManager& deviceManager, ShaderType type, std::st
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 char* getShaderBuffer(const std::string& fileName, size_t& length)
 {
     std::fstream shaderStream;
@@ -121,23 +123,24 @@ char* getShaderBuffer(const std::string& fileName, size_t& length)
     char * buffer = nullptr;
     if (shaderStream.is_open())
     {
-        shaderStream.seekg(0, std::fstream::end);
-        length = shaderStream.tellg();
-        shaderStream.seekg(0, std::fstream::beg);
+        shaderStream.ignore(std::numeric_limits<std::streamsize>::max());
+        length = shaderStream.gcount();
+        shaderStream.clear();   //  Since ignore will have set eof.
+        shaderStream.seekg(0, std::ios_base::beg);
 
         // allocate memory:
        buffer = new char[length];
 
-        // read data as a block:
+       // read data as a block:
         shaderStream.read(buffer, length);
         shaderStream.close();
         char* endChar = buffer + length;
         while (*endChar != '}')
         {
             --endChar;
+            --length;
         }
-        ++endChar;
-        *endChar = '\0';
+        ++length; //Found last } so add 1 to be at the end of the shader code
     }
     else
     {
@@ -176,20 +179,20 @@ DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRI
 DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES;
 #endif
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void VertexShader::deserialise(const tinyxml2::XMLElement* element)
 {
     deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool VertexShader::createShader(const DeviceManager& deviceManager)
 {
     size_t length = 0;
@@ -221,7 +224,7 @@ bool VertexShader::createShader(const DeviceManager& deviceManager)
 #ifdef _DEBUG
         if (m_shader != nullptr)
         {
-            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+            //m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
         }
 #endif
         return true;
@@ -230,19 +233,19 @@ bool VertexShader::createShader(const DeviceManager& deviceManager)
     return false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void HullShader::deserialise(const tinyxml2::XMLElement* element)
 {
     deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool HullShader::createShader(const DeviceManager& deviceManager)
 {
     D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
@@ -289,19 +292,19 @@ bool HullShader::createShader(const DeviceManager& deviceManager)
     return false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void DomainShader::deserialise(const tinyxml2::XMLElement* element)
 {
     deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool DomainShader::createShader(const DeviceManager& deviceManager)
 {
     D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
@@ -348,19 +351,19 @@ bool DomainShader::createShader(const DeviceManager& deviceManager)
     return false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void GeometryShader::deserialise(const tinyxml2::XMLElement* element)
 {
     deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool GeometryShader::createShader(const DeviceManager& deviceManager)
 {
     D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
@@ -408,19 +411,19 @@ bool GeometryShader::createShader(const DeviceManager& deviceManager)
     return false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void PixelShader::deserialise(const tinyxml2::XMLElement* element)
 {
     deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool PixelShader::createShader(const DeviceManager& deviceManager)
 {
     size_t length = 0;
@@ -452,7 +455,7 @@ bool PixelShader::createShader(const DeviceManager& deviceManager)
 #ifdef _DEBUG
         if (m_shader != nullptr)
         {
-            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
+            //m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
         }
 #endif
         return true;
@@ -461,19 +464,19 @@ bool PixelShader::createShader(const DeviceManager& deviceManager)
     return false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void ComputeShader::deserialise(const tinyxml2::XMLElement* element)
 {
     deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool ComputeShader::createShader(const DeviceManager& deviceManager)
 {
     D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();

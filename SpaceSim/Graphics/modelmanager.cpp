@@ -31,9 +31,9 @@ void ModelManager::cleanup()
     m_models.clear();
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 size_t ModelManager::LoadModel( void* data )
 {
     auto modelData = static_cast<MessageSystem::CreateRenderResource<LoadModelResource>::ResourceData<LoadModelResource>*>(data);
@@ -78,10 +78,10 @@ size_t ModelManager::LoadModel( void* data )
     return renderResourceId;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 size_t ModelManager::AddFace(void* data)
 {
     auto creationParams = static_cast<MessageSystem::CreateRenderResource<Face::CreationParams>::ResourceData<Face::CreationParams>*>(data);
@@ -95,20 +95,20 @@ size_t ModelManager::AddFace(void* data)
     return renderResourceId;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 bool ModelManager::HasRenderResource(size_t resource_id) const
 {
     return (std::find_if(cbegin(m_models), cend(m_models), [resource_id](const auto& entry) { return entry.m_resourceId == resource_id; })) != cend(m_models);
 
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourceId)
 {
     if (!HasRenderResource(renderResourceId))
@@ -121,10 +121,10 @@ void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourc
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 const CreatedModel* ModelManager::GetRenderResource(size_t renderResourceId) const
 {
     ModelsArray::const_iterator it = std::find_if(cbegin(m_models), cend(m_models), [renderResourceId](const auto& entry) { return entry.m_resourceId == renderResourceId; });

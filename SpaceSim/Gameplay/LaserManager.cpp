@@ -8,9 +8,9 @@
 
 const size_t maxNumberRenderInstances = 1024;
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 LaserManager::LaserManager() : m_enemyLaser(nullptr), m_playerLaser(nullptr), m_currentNumberOfEnemyLasers(0), m_currentNumberOfPlayerLasers(0)
 {
     ShaderInstance instance;
@@ -22,9 +22,9 @@ LaserManager::LaserManager() : m_enemyLaser(nullptr), m_playerLaser(nullptr), m_
 }
 
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 LaserManager::~LaserManager()
 {
     if (m_enemyLaser != nullptr)
@@ -53,9 +53,9 @@ LaserManager::~LaserManager()
     m_renderInstances.clear();
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void LaserManager::initialise(Resource* resource)
 {
     UNUSEDPARAM(resource);
@@ -67,9 +67,9 @@ void LaserManager::initialise(Resource* resource)
     //m_geometry->initialise(shaderInstance);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void LaserManager::addInstance( const Vector3& position, const Vector3& direction, const ShaderInstance& shaderInstance, bool player_laser /*= false*/)
 {
     //probably need to rotate the laser to the requested direction currently its standing straight up from 0,0,0 along the y-axis
@@ -99,9 +99,9 @@ void LaserManager::addInstance( const Vector3& position, const Vector3& directio
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void LaserManager::update(RenderInstanceTree& renderInstances, float time, const Matrix44& view, const Matrix44& projection)
 {
     PROFILE_EVENT("LaserManager::update", PaleGreen)

@@ -29,9 +29,9 @@
 #include <Graphics/Frustum.h>
 #include "Graphics/D3DDebugHelperFunctions.h"
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState* alphaBlendState, ID3D11BlendState* blendState, unsigned int cubeMapWidhtHeight /*= 1024*/) :
     m_alphaBlendState(alphaBlendState),
     m_blendState(blendState)
@@ -82,7 +82,7 @@ CubeMapRenderer::CubeMapRenderer(DeviceManager& deviceManager, ID3D11BlendState*
     m_cubeViewPort.TopLeftX = 0;
     m_cubeViewPort.TopLeftY = 0;
 
-    m_cubeProjection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 2.0f, 1.0f, 1.0f, 500.0f);
+    m_cubeProjection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 2.0f, 1.0f, 500.0f, 1.0f); //Reverse Z trick
 
     D3D11_BUFFER_DESC lightContantsDescriptor;
     ZeroMemory(&lightContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
@@ -97,10 +97,10 @@ CubeMapRenderer::~CubeMapRenderer()
 {
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void CubeMapRenderer::cleanup()
 {
     m_depthStencil->Release();
@@ -114,10 +114,10 @@ void CubeMapRenderer::initialise(Vector3 position)
     createViewArray(position);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void CubeMapRenderer::CheckVisibility(RenderInstanceTree& visibleRenderInstances, const RenderInstanceTree& renderInstances, const Matrix44& viewMatrix)
 {
 
@@ -156,6 +156,7 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
     deviceContext->PSSetConstantBuffers(1, 1, &m_perFrameConstants);
 
     const ShaderCache& shaderCache = RenderResourceHelper(resource).getResource().getShaderCache();
+    const EffectCache& effectCache = RenderResourceHelper(resource).getResource().getEffectCache();
 
     std::vector<ID3D11SamplerState*> samplerStates;
     samplerStates.reserve(1);
@@ -173,7 +174,7 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
 
         ID3D11RenderTargetView* aRTViews[1] = { renderTarget->getRenderTargetView(rtCounter) };
         deviceContext->OMSetRenderTargets(sizeof(aRTViews) / sizeof(aRTViews[0]), aRTViews, m_depthStencilView);
-        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0);
+        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 0.0f, 0);
 
         RenderInstanceTree::const_iterator renderInstanceIt = visibleRenderInstances.begin();
         RenderInstanceTree::const_iterator renderInstanceEnd = visibleRenderInstances.end();
@@ -188,76 +189,79 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
             resourceViews.clear();
             RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 
-            const Material& material = renderInstance.getShaderInstance().getMaterial();
-            const Effect* effect = material.getEffect();
-            const Technique* technique = effect->getTechnique(material.getTechnique());
-            technique->setMaterialContent(deviceManager, material.getMaterialCB());
-            WVPBufferContent wvpConstants = renderInstance.getShaderInstance().getWVPConstants();
-            wvpConstants.m_projection = m_cubeProjection;
-            wvpConstants.m_view = m_viewArray[rtCounter];
-            technique->setWVPContent(deviceManager, wvpConstants);
+            //This should transform into this but need to take care of the view projection stuff for the cubemap technique, might need special shaders :)
+            const auto shaderInstance = renderInstance.getShaderInstance();
+            const Effect* effect = effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());
+            const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
 
-	        const std::vector<Material::TextureSlotMapping>& textureHashes = material.getTextureHashes();
-	        //const std::vector<ID3D11SamplerState*>& samplerStates = renderInstance.getMaterial().getTextureSamplers();
-
-            size_t currentTextureIndex = 0;
-            for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots && currentTextureIndex < textureHashes.size(); ++counter) //We assume these are put in as order for the slots demand
+            if (technique)
             {
-                const Texture* texture = nullptr;
-                if (static_cast<Material::TextureSlotMapping::TextureSlot>(counter) == textureHashes[currentTextureIndex].m_textureSlot)
+                if (!shaderInstance.getVSConstantBufferSetup().empty())
                 {
-                    texture = textureManager.getTexture(textureHashes[currentTextureIndex].m_textureHash);
-                    ++currentTextureIndex;
+                    deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
                 }
-                ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-                resourceViews.push_back(srv);
-            }
+                if (!shaderInstance.getPSConstantBufferSetup().empty())
+                {
+                    deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+                }
 
-            if (!resourceViews.empty())
-            {
-                deviceContext->PSSetShaderResources(0, static_cast<uint32>(resourceViews.size()), &resourceViews[0]);
-            }
+                if (!shaderInstance.getVSSRVSetup().empty())
+                {
+                    deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
+                }
+                if (!shaderInstance.getPSSRVSetup().empty())
+                {
+                    deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+                }
 
-            if (technique->getTechniqueId() != oldTechniqueId)
-            {
-                //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-                deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
-                oldTechniqueId = technique->getTechniqueId();
-            }
+                //The special sauce for this renderer
+                //WVPBufferContent wvpConstants = renderInstance.getShaderInstance().getWVPConstants();
+                //wvpConstants.m_projection = m_cubeProjection;
+                //wvpConstants.m_view = m_viewArray[rtCounter];
+                //technique->setWVPContent(deviceManager, wvpConstants);
 
-            technique->setupTechnique();
 
-	        if (material.getBlendState())
-	        {
-	            deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
-	        }
-	        else
-	        {
-	            deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
-	        }
+                if (technique->getTechniqueId() != oldTechniqueId)
+                {
+                    //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
+                    deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+                    deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+                    oldTechniqueId = technique->getTechniqueId();
+                }
+                technique->setupTechnique();
 
-            // Set vertex buffer stride and offset.
-            const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
-            ID3D11Buffer* buffer = vb->getBuffer();
-            stride = static_cast<unsigned int>(vb->getVertexStride());
-            if (renderInstance.getGeometryInstance().getIB() != nullptr)
-            {
-                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-                deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
-                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
-            }
-            else
-            {
-                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
+                //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
+                if (shaderInstance.getAlphaBlend())
+                {
+                    deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
+                }
+                else
+                {
+                    deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
+                }
+
+                // Set vertex buffer stride and offset.
+                const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
+                ID3D11Buffer* buffer = vb->getBuffer();
+                stride = static_cast<unsigned int>(vb->getVertexStride());
+                if (renderInstance.getGeometryInstance().getIB() != nullptr)
+                {
+                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                    deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
+                    deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                    deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
+                }
+                else
+                {
+                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                    deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                    deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
+                }
             }
         }
         deviceContext->Flush();
@@ -271,9 +275,9 @@ void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, c
     deviceContext->GenerateMips(renderTarget->getShaderResourceView());
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void CubeMapRenderer::createViewArray(Vector3 position)
 {
     Camera viewArray[6];

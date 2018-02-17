@@ -2,20 +2,20 @@
 #include "Core/tinyxml2.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void DeserialisableSetting::deserialise( const tinyxml2::XMLElement* element)
 {
     m_settingName = element->Attribute("name");
     m_type = eUserType;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void RenderSetting::deserialise( const tinyxml2::XMLElement* element)
 {
     DeserialisableSetting::deserialise(element);
@@ -54,10 +54,10 @@ void RenderSetting::deserialise( const tinyxml2::XMLElement* element)
         }
     }
 }
-//-----------------------------------------------------------------------------
-//! @brief   Deserialise a material from an xml node
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Deserialise a material from an xml node
+///! @remark
+///-----------------------------------------------------------------------------
 //void MaterialSetting::deserialise( const tinyxml2::XMLElement* element)
 //{
 //    DeserialisableSetting::deserialise(element);
@@ -112,10 +112,10 @@ void RenderSetting::deserialise( const tinyxml2::XMLElement* element)
 //        }
 //    }
 //}
-//-----------------------------------------------------------------------------
-//! @brief   deserialise a vector in from xml
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   deserialise a vector in from xml
+///! @remark
+///-----------------------------------------------------------------------------
 void VectorSetting::deserialise( const tinyxml2::XMLElement* element)
 {
     DeserialisableSetting::deserialise(element);

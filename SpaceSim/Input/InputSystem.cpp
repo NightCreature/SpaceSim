@@ -13,17 +13,17 @@ std::vector<RAWINPUT> InputSystem::m_rawKeyBoardInput;
 std::vector<RAWINPUT> InputSystem::m_rawMouseInput;
 std::vector<RAWINPUT> InputSystem::m_rawHidInput;
 
-    //-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+    ///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 InputSystem::InputSystem()
 {
 }
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 InputSystem::~InputSystem()
 {
     ControllersAndStateIt it = m_controllers.begin();
@@ -35,10 +35,10 @@ InputSystem::~InputSystem()
     m_controllers.clear();
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 IInputDevice* InputSystem::createController(const ControllerType type)
 {
     IInputDevice* controller = nullptr;
@@ -64,10 +64,10 @@ IInputDevice* InputSystem::createController(const ControllerType type)
     return controller;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void InputSystem::update( float elapsedTime, double time )
 {
     for (ControllersAndStateIt it = m_controllers.begin(); it != m_controllers.end(); ++it)
@@ -84,10 +84,10 @@ void InputSystem::update( float elapsedTime, double time )
     time = 0.0;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void InputSystem::initialise( const std::string& inputMapFileName, HWND hwnd )
 {
     tinyxml2::XMLDocument actionsDoc;
@@ -146,10 +146,10 @@ void InputSystem::initialise( const std::string& inputMapFileName, HWND hwnd )
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 ControllerType InputSystem::stringToControllerType( const std::string& controllerName )
 {
     size_t controllerNameHash = hashString(controllerName);
@@ -169,10 +169,10 @@ ControllerType InputSystem::stringToControllerType( const std::string& controlle
     return Gamepad;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 //InputActions::ActionType InputSystem::getInputActionFromName( unsigned int actionName )
 bool InputSystem::getInputActionFromName(unsigned int actionName, InputActions::ActionType& actionType)
 {

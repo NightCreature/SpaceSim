@@ -4,10 +4,10 @@
 namespace InputDefines
 {
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 MouseControlDefinitions::MouseControlDefinitions()
 {
     m_inputNameHash[PositiveX] = hashString("positive_x");
@@ -23,10 +23,10 @@ MouseControlDefinitions::MouseControlDefinitions()
     m_inputNameHash[MouseWheelDown] = hashString("wheel_down");
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 MouseControlDefinitions::MouseInput MouseControlDefinitions::FindControllerInputIdForHashId(unsigned int hashId) const
 {
     for (short counter = 0; counter < NumInputActions; ++counter)

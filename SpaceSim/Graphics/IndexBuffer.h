@@ -10,7 +10,7 @@ public:
     IndexBuffer(void) { m_buffer = 0;}
     ~IndexBuffer(void) { cleanup(); }
 
-    void createBuffer(const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic, unsigned int bindFlag );
+    void createBuffer(const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic );
     void cleanup();
 
     ID3D11Buffer* getBuffer() const { return m_buffer; }

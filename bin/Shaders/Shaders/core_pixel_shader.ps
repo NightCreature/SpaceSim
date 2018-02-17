@@ -1,32 +1,8 @@
+#define LIGHTING
+#include "CommonConstantBuffers.ips"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer MaterialConstants : register(b0)
-{
-    float4 ambient;
-    float4 diffuse;
-    float4 specular;
-    float4 emissive;
-    float shininess;
-};
-
-struct LightConstants
-{
-    float4 m_position;
-    float4 m_direction;
-    float4 m_diffuse;
-    float4 m_specular;
-    float4 m_attenuationFallOff;
-    float4 m_range;
-};
-
-cbuffer LightParamters: register(b1)
-{
-    //float3 eyePosition;
-    LightConstants m_lights[8];
-    float3 camera_position;
-}
-
 
 SamplerState SampleType
 {

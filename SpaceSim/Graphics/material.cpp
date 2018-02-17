@@ -42,16 +42,16 @@ m_techniqueHash(hashString("default"))
 
 Material::Material(const Material& material)
 {
-    m_effect = material.m_effect;
     m_materialCB = material.m_materialCB;
     m_texture.insert(m_texture.begin(), material.m_texture.begin(), material.m_texture.end());
     m_alphaBlend = material.m_alphaBlend;
     m_techniqueHash = material.getTechnique();
+    m_effectHash = material.getEffectHash();
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Material::deserialise( Resource* resource, const DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node )
 {
     node = node->FirstChildElement();
@@ -116,8 +116,7 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
             const tinyxml2::XMLAttribute* attribute = node->FindAttribute("file_name");
             if (attribute)
             {
-                RenderResourceHelper helper(resource);
-                m_effect = const_cast<Effect*>(helper.getWriteableResource().getEffectCache().createEffect(resource, attribute->Value()));
+                m_effectHash = hashString( getResourceNameFromFileName(attribute->Value()) );
             }
             attribute = node->FindAttribute("technique_name");
             if (attribute)
@@ -136,13 +135,14 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
         }
     }
 
+    UNUSEDPARAM(resource);
     UNUSEDPARAM(lightManager);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XMLElement* childElement)
 {
     MaterialParameters returnVal;
@@ -240,4 +240,3 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
 
     return returnVal;
 }
-

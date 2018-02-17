@@ -9,9 +9,10 @@
 #endif
 #include "Core/Profiler/ProfilerMacros.h"
 
-//-------------------------------------------------------------------------
+#include "Core/Resource/RenderResource.h"
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 MeshGroup::~MeshGroup()
 {
     if (m_renderInstance != nullptr)
@@ -21,9 +22,9 @@ MeshGroup::~MeshGroup()
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box )
 {
     PROFILE_EVENT("MeshGroup::update", Aqua);
@@ -45,11 +46,30 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
 #endif
 		}
 
-        WVPBufferContent& wvpConstants = m_renderInstance->GetShaderInstance().getWVPConstants();
+        WVPBufferContent wvpConstants; //= m_renderInstance->GetShaderInstance().getWVPConstants();
         wvpConstants.m_projection = projection;
         wvpConstants.m_view = view;
         wvpConstants.m_world = m_world * world; 
+        auto vsConstants = m_renderInstance->GetShaderInstance().getVSConstantBufferSetup();
+        RenderResourceHelper resourceHelper(resource);
+        if (!vsConstants.empty())
+        {
+            resourceHelper.getResource().getDeviceManager().getDeviceContext()->UpdateSubresource(vsConstants[0], 0, 0, (void*)&wvpConstants, 0, 0); //Not sure about this
+        }
+
+        //Fix shader resource view references for the material.
+        m_renderInstance->GetShaderInstance().FixSrvReferences(resourceHelper.getWriteableResource());
+
+        auto psConstants = m_renderInstance->GetShaderInstance().getPSConstantBufferSetup();
+        if (!psConstants.empty())
+        {
+            resourceHelper.getResource().getDeviceManager().getDeviceContext()->UpdateSubresource(psConstants[0], 0, 0, (void*)&m_material.getMaterialCB(), 0, 0); //Not sure about this
+        }
+
         UNUSEDPARAM(resource);
+        UNUSEDPARAM(world);
+        UNUSEDPARAM(view);
+        UNUSEDPARAM(projection);
     //}
     
     if (m_renderInstance != nullptr)
@@ -61,9 +81,9 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
     UNUSEDPARAM(elapsedTime);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 MeshGroup::MeshGroup( const MeshGroup& source )
 {
     m_world = source.m_world;

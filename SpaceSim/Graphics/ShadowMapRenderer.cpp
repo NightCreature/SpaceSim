@@ -33,10 +33,10 @@
 
 static const unsigned int shadowMapTechniqueHash = hashString("shadow_map");
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendState* alphaBlendState, ID3D11BlendState* blendState, unsigned int shadowMapWidhtHeight /*= 1024*/) :
     m_blendState(blendState),
     m_alphaBlendState(alphaBlendState)
@@ -141,26 +141,26 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
      m_lightViewPort.TopLeftX = 0;
      m_lightViewPort.TopLeftY = 0;
 
-     m_shadowMVP.m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI * 0.5f, 1.0f, 0.1f, 500.0f);
+     m_shadowMVP.m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI * 0.5f, 1.0f, 500.0f, 0.1f);
 #ifdef _DEBUG
      hr = deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
 #endif
 
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 ShadowMapRenderer::~ShadowMapRenderer()
 {
 
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ShadowMapRenderer::cleanup()
 {
     m_depthStencil->Release();
@@ -175,10 +175,10 @@ void ShadowMapRenderer::cleanup()
 #endif
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, const RenderInstanceTree& renderInstances)
 {
     PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
@@ -193,10 +193,10 @@ void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, c
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light)
 {
     PROFILE_EVENT("ShadowMapRenderer::renderShadowMap", Blue);
@@ -220,7 +220,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
 
         float clearColor[4] = { std::numeric_limits<float>::max(), 1.0f, 1.0f, 1.0f };
         deviceContext->ClearRenderTargetView(m_shadowMapView, clearColor);
-        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 
         RenderInstanceTree visibleRenderInstances;
         visibleRenderInstances.reserve(renderInstances.size());
@@ -233,6 +233,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
 
         RenderResourceHelper gameResource = { resource };
         const ShaderCache& shaderCache = gameResource.getResource().getShaderCache();
+        const EffectCache& effectCache = gameResource.getResource().getEffectCache();
 
         size_t oldTechniqueId = 0;
         std::vector<ID3D11ShaderResourceView*> resourceViews;
@@ -259,13 +260,33 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
             }
 #endif
 
-            const Material& material = renderInstance.getShaderInstance().getMaterial();
-            const Effect* effect = material.getEffect();
-            const Technique* technique = effect->getTechnique(shadowMapTechniqueHash);
+            const auto shaderInstance = renderInstance.getShaderInstance();
+            const Effect* effect = effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());
+            const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
+
             if (technique)
             {
-                m_shadowMVP.m_world = renderInstance.getShaderInstance().getWVPConstants().m_world;
-                deviceManager.getDeviceContext()->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&m_shadowMVP, 0, 0);
+                //Special bit for shadow map rendering we need
+                if (!shaderInstance.getVSConstantBufferSetup().empty())
+                {
+                    deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
+                }
+                if (!shaderInstance.getPSConstantBufferSetup().empty())
+                {
+                    deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+                }
+
+                if (!shaderInstance.getVSSRVSetup().empty())
+                {
+                    deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
+                }
+                if (!shaderInstance.getPSSRVSetup().empty())
+                {
+                    deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+                }
+
+                //m_shadowMVP.m_world = renderInstance.getShaderInstance().getWVPConstants().m_world;
+                //deviceManager.getDeviceContext()->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&m_shadowMVP, 0, 0);
 
                 if (technique->getTechniqueId() != oldTechniqueId)
                 {
@@ -277,9 +298,10 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
                     deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
                     oldTechniqueId = technique->getTechniqueId();
                 }
-                deviceContext->VSSetConstantBuffers(0, 1, &m_perFrameConstants);
+                technique->setupTechnique();
 
-                if (material.getBlendState())
+                //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
+                if (shaderInstance.getAlphaBlend())
                 {
                     deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
                 }
@@ -287,6 +309,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
                 {
                     deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
                 }
+
 
                 // Set vertex buffer stride and offset.
                 const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();

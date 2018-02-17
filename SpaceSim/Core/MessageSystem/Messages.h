@@ -4,6 +4,10 @@
 
 #include <string>
 
+#ifdef _DEBUG
+#include "SourceInformation/SourceInfo.h"
+#endif
+
 #define MESSAGE_ID(message_name) hashString(#message_name)
 
 namespace MessageSystem
@@ -39,6 +43,11 @@ protected:
     MessageId m_MessageId;
     MessageData* m_implementationData;
     size_t m_implementationDataSize;
+
+#ifdef _DEBUG
+public:
+    SourceInfo m_sourceInfo;
+#endif
 };
 
 }

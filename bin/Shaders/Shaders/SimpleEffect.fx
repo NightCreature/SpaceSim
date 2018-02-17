@@ -1,13 +1,8 @@
+#include "CommonConstantBuffers.ivs"
+
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer WVPConstants : register(b0)
-{
-    float4x4 World;
-    float4x4 UnusedView;
-    float4x4 Projection;
-};
-
 cbuffer GSViewMatrices : register(b1)
 {
     float4x4 viewMatrix[6];
@@ -22,22 +17,6 @@ cbuffer MaterialConstants : register(b0)
     float shininess;
 };
 
-struct LightConstants
-{
-    float4 m_position;
-    float4 m_direction;
-    float4 m_diffuse;
-    float4 m_specular;
-    float4 m_attenuationFallOff;
-    float4 m_range;
-};
-
-cbuffer LightParamters: register(b1)
-{
-    //float3 eyePosition;
-    LightConstants m_lights[8];
-    float3 camera_position;
-}
 
 Texture2D<float4> shaderTextures;
 SamplerState SampleType

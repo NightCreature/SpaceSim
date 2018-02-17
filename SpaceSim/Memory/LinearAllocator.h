@@ -16,10 +16,10 @@ public:
         currentPosition = reinterpret_cast<void*>(PointerMath::alignPointer(m_start, alignment));
     }
 
-    //-----------------------------------------------------------------------------
-    //! @brief   TODO enter a description
-    //! @remark
-    //-----------------------------------------------------------------------------
+    ///-----------------------------------------------------------------------------
+    ///! @brief   TODO enter a description
+    ///! @remark
+    ///-----------------------------------------------------------------------------
     virtual void* allocate(size_t size) override
     {
         if (m_usedMemory + size > m_size)
@@ -36,10 +36,10 @@ public:
         return returnAddress;
     }
 
-    //-----------------------------------------------------------------------------
-    //! @brief   TODO enter a description
-    //! @remark
-    //-----------------------------------------------------------------------------
+    ///-----------------------------------------------------------------------------
+    ///! @brief   TODO enter a description
+    ///! @remark
+    ///-----------------------------------------------------------------------------
     virtual void deallocate(void* p) override
     {
         UNUSEDPARAM(p);

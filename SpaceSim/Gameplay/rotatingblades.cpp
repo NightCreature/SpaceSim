@@ -21,9 +21,9 @@ GameObject(resource)
 	m_active = true;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* element)
 {
     ShaderInstance shaderInstance;
@@ -47,17 +47,17 @@ const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* el
         }
         else if (Vector3::m_hash == typeHash)
         {
-            m_position.deserialise(element);
-            translate(m_world, m_position.x(), m_position.y(), m_position.z());
-            Matrix44 transform;
-            translate(transform, 0.0f, 0.0f, -25.0f);
-            Matrix44 world = m_world;
-            shaderInstance.setWorld(m_world * transform);
-            Matrix44 transform2;
-            rotate(transform2, Vector3::yAxis(), 90);
-            Matrix44 translateX;
-            translate(translateX, 25.0f, 0.0f, 0.0f);
-            Matrix44 temp = transform2 * translateX * m_world;
+            //m_position.deserialise(element);
+            //translate(m_world, m_position.x(), m_position.y(), m_position.z());
+            //Matrix44 transform;
+            //translate(transform, 0.0f, 0.0f, -25.0f);
+            //Matrix44 world = m_world;
+            //shaderInstance.setWorld(m_world * transform);
+            //Matrix44 transform2;
+            //rotate(transform2, Vector3::yAxis(), 90);
+            //Matrix44 translateX;
+            //translate(translateX, 25.0f, 0.0f, 0.0f);
+            //Matrix44 temp = transform2 * translateX * m_world;
             //m_rotatingblades2.setWorld(temp);
         }
     }
@@ -65,9 +65,9 @@ const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* el
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     m_angle += 25.0f*elapsedTime;
@@ -127,9 +127,9 @@ void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedT
     UNUSEDPARAM(elapsedTime);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void RotatingBlades::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);

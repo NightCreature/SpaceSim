@@ -1,10 +1,10 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Application/BaseApplication.h"
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void convertToCString(const std::wstring& str, std::string& out)
 {
     char buffer[4096];
@@ -25,10 +25,10 @@ void convertToCString(const std::wstring& str, std::string& out)
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void convertToWideString(const std::string& str, std::wstring& out)
 {
     wchar_t buffer[4096];
@@ -48,10 +48,10 @@ void convertToWideString(const std::string& str, std::wstring& out)
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void convertToUTF16String(const std::string& str, std::wstring& out)
 {
     wchar_t buffer[4096];
@@ -71,10 +71,10 @@ void convertToUTF16String(const std::string& str, std::wstring& out)
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void debugOutput(TraceSeverity severity, const std::string& prefix, const char* file, int line, const char * format, ...)
 {
     static char buf[4096];
@@ -109,10 +109,10 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
     Application::m_logger.LogMessage(debugOutputStr);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 std::string FormatString(const char* format, ...)
 {
     static char buf[2048];
@@ -124,10 +124,10 @@ std::string FormatString(const char* format, ...)
     return buf;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool isReletiveFileName(const std::string& file_name)
 {
     if (file_name[0] == '.' && file_name[1] == '.')
@@ -138,10 +138,10 @@ bool isReletiveFileName(const std::string& file_name)
     return false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 std::string makeAbsolutePath(const std::string& filename)
 {
     std::string file_name = filename;
@@ -156,10 +156,10 @@ std::string makeAbsolutePath(const std::string& filename)
     return file_name;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a 1200
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a 1200
+///! @remark
+///-----------------------------------------------------------------------------
 char* getLastErrorMessage(DWORD nErrorCode)
 {
     char* msg = nullptr;

@@ -1,10 +1,10 @@
 #include "Timer.h"
 #include <MMSystem.h>
 
-//-----------------------------------------------------------------------------
-//! @brief  Performance timer Constructor
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Performance timer Constructor
+///! @remark
+///-----------------------------------------------------------------------------
 PerformanceTimer::PerformanceTimer()
 {
     LARGE_INTEGER frequency = {0};
@@ -15,19 +15,19 @@ PerformanceTimer::PerformanceTimer()
     limitThreadToProc();
 }
 
-//-----------------------------------------------------------------------------
-//! @brief  Get the actual time
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Get the actual time
+///! @remark
+///-----------------------------------------------------------------------------
 void PerformanceTimer::getNow()
 {
     QueryPerformanceCounter(&m_now);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief  update the timer, gets triggered every update loop
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  update the timer, gets triggered every update loop
+///! @remark
+///-----------------------------------------------------------------------------
 void PerformanceTimer::update()
 {
     getNow();
@@ -42,10 +42,10 @@ void PerformanceTimer::update()
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief  limit the timer to calling thread
-//! @remark This function should be called after construction
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  limit the timer to calling thread
+///! @remark This function should be called after construction
+///-----------------------------------------------------------------------------
 void PerformanceTimer::limitThreadToProc()
 {
     HANDLE hCurrentProcess = GetCurrentProcess();

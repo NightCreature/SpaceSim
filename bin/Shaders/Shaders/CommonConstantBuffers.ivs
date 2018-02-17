@@ -1,0 +1,28 @@
+#include "CommonStructures.ifx"
+//--------------------------------------------------------------------------------------
+// Constant Buffer Variables
+//--------------------------------------------------------------------------------------
+cbuffer WVPConstants : register(b2)
+{
+    float4x4 World;
+    float4x4 View;
+    float4x4 Projection;
+};
+
+#ifdef LIGHTING
+cbuffer LightParamters: register(b0)
+{
+    //float3 eyePosition;
+    LightConstants m_lights[8];
+    float3 camera_position;
+}
+#endif
+
+#ifdef SHADOW
+cbuffer ShadowConstants : register(b1)
+{
+	float4x4 ShadowWorld;
+	float4x4 ShadowView;
+	float4x4 ShadowProjection;
+}
+#endif

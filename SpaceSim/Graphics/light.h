@@ -10,7 +10,7 @@
 
 namespace tinyxml2
 {
-    XMLElement;
+    class XMLElement;
 }
 
 class Light

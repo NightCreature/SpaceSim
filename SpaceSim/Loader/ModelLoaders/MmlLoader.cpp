@@ -9,10 +9,10 @@
 
 const unsigned int c_ModelHash = hashString("Model");
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData)
 {
     if (loadData.m_fileName.empty())

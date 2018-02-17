@@ -10,11 +10,13 @@
 namespace MeshGroupCreator
 {
     typedef std::vector<Vector3> TexCoords;
+
     typedef std::vector<TexCoords> MultiTexCoords;
 
     struct CreationParams : public Model::CreationParams
     {
         ShaderInstance m_shaderInstance;
+        Material mat;
         VertexDeclarationDescriptor m_vertexDeclaration;
         std::vector<Vector3>		 m_vertices;
         std::vector<Vector3>		 m_normals;

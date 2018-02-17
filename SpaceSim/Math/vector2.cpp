@@ -90,9 +90,9 @@ bool Vector2::equal(const Vector2& v) const
 	return false;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Vector2::deserialise( const tinyxml2::XMLElement* childElement )
 {
     const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("x");

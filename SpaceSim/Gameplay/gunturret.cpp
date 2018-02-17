@@ -44,10 +44,10 @@ GunTurret::~GunTurret()
     cleanup();
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void GunTurret::initialise(const ShaderInstance& shaderInstance)
 {
     UNUSEDPARAM(shaderInstance);
@@ -197,8 +197,7 @@ void GunTurret::updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/)
                     //    continue;
                     //}
                     //l->move(elapsedtime);
-
-                    MessageSystem::CreateRenderResource<ParticleSystem::ParticleEmitterData> message = CREATERENDERRESOURCEMESSAGE(ParticleSystem::ParticleEmitterData);
+                    DECLAREANDCREATERESOURCEMESSAGE(message, ParticleSystem::ParticleEmitterData);
                     ParticleSystem::ParticleEmitterData data;
                     data.m_maxNumberOfParticles = 25;
                     data.m_emissionRate = 5;
@@ -249,9 +248,9 @@ void GunTurret::createScorchMark(const Vector3 &pos, const Vector3 &normal)
     m_scorchmarks.push_back(new ScorchMark(m_resource, pos, normal, 5.0f));
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element)
 {
     ShaderInstance shaderInstance;
@@ -297,7 +296,7 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
                 MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
 
                 auto resource = GameResourceHelper(m_resource).getWriteableResource();
-                MessageSystem::CreateRenderResource<LoadModelResource> createModel = CREATERENDERRESOURCEMESSAGE(LoadModelResource);
+                DECLAREANDCREATERESOURCEMESSAGE(createModel, LoadModelResource);
                 LoadModelResource param;
                 stringCopy(param.m_fileName, attribute->Value());
                 createModel.SetData(param);
@@ -318,9 +317,9 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
     return shaderInstance;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     //From draw
@@ -421,9 +420,9 @@ void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, 
     //}
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void GunTurret::handleMessage( const MessageSystem::Message& msg )
 {
     if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))

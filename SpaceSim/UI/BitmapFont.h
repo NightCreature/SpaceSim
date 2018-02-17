@@ -10,10 +10,10 @@ class Resource;
 namespace Text
 {
 
-//-----------------------------------------------------------------------------
-//! @brief   structure that represents the kerning data for glyphs
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   structure that represents the kerning data for glyphs
+///! @remark
+///-----------------------------------------------------------------------------
 struct KerningInformation
 {
     KerningInformation() : m_secondId(-1), m_ammount(0.0f) {}
@@ -29,10 +29,10 @@ struct KerningInformation
 };
 
 
-//-----------------------------------------------------------------------------
-//! @brief   structure that represents a glyph from a bitmap font
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   structure that represents a glyph from a bitmap font
+///! @remark
+///-----------------------------------------------------------------------------
 struct Glyph
 {
 public:
@@ -150,10 +150,10 @@ struct Pages
     std::vector<PageInfo> m_pages;
 };
 
-//-----------------------------------------------------------------------------
-//! @brief   Class that represents a bitmap font or SDF font
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Class that represents a bitmap font or SDF font
+///! @remark
+///-----------------------------------------------------------------------------
 class BitmapFont
 {
 public:

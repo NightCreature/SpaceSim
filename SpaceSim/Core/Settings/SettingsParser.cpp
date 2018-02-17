@@ -4,10 +4,10 @@
 #include "Core/tinyxml2.h"
 #include <iostream>
 
-//-----------------------------------------------------------------------------
-//! @brief   SettingsParser Constructor
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   SettingsParser Constructor
+///! @remark
+///-----------------------------------------------------------------------------
 SettingsParser::SettingsParser(SettingsManager* settingsMananger) :
 m_settingsMananger(settingsMananger),
 m_root(0)
@@ -15,10 +15,10 @@ m_root(0)
 }
 
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool SettingsParser::loadFile( const std::string& fileName )
 {
     m_fileName = fileName;
@@ -42,19 +42,19 @@ bool SettingsParser::loadFile( const std::string& fileName )
     return true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Cleanup the settings
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Cleanup the settings
+///! @remark
+///-----------------------------------------------------------------------------
 void SettingsParser::cleanup()
 {
 
 }
 
-//-----------------------------------------------------------------------------
-//! @brief  Skip the comment nodes until we find another none comment node
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Skip the comment nodes until we find another none comment node
+///! @remark
+///-----------------------------------------------------------------------------
 tinyxml2::XMLNode* SettingsParser::skipComments( tinyxml2::XMLNode* node )
 {
     while (node && node->ToComment())
@@ -65,10 +65,10 @@ tinyxml2::XMLNode* SettingsParser::skipComments( tinyxml2::XMLNode* node )
     return node;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void SettingsParser::readStringValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
@@ -81,10 +81,10 @@ void SettingsParser::readStringValues( tinyxml2::XMLElement* element )
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void SettingsParser::readBooleanValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
@@ -102,10 +102,10 @@ void SettingsParser::readBooleanValues( tinyxml2::XMLElement* element )
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void SettingsParser::readintegerValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
@@ -119,10 +119,10 @@ void SettingsParser::readintegerValues( tinyxml2::XMLElement* element )
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void SettingsParser::readUnsignedintegerValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
@@ -136,10 +136,10 @@ void SettingsParser::readUnsignedintegerValues( tinyxml2::XMLElement* element )
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void SettingsParser::readfloatValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
@@ -153,10 +153,10 @@ void SettingsParser::readfloatValues( tinyxml2::XMLElement* element )
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void SettingsParser::readDoubleValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
@@ -170,10 +170,10 @@ void SettingsParser::readDoubleValues( tinyxml2::XMLElement* element )
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Read default data sections
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Read default data sections
+///! @remark
+///-----------------------------------------------------------------------------
 tinyxml2::XMLElement* SettingsParser::readDataSections( tinyxml2::XMLElement* element, tinyxml2::XMLNode* node )
 {
     element = node->ToElement();

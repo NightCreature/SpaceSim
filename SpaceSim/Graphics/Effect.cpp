@@ -18,10 +18,10 @@ HASH_ELEMENT_IMPLEMENTATION(Effect)
 HASH_ELEMENT_IMPLEMENTATION(Technique)
 
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Effect::setupEffect() const
 {
     //ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
@@ -31,9 +31,9 @@ void Effect::setupEffect() const
     //deviceContext->PSSetShader( m_pixelShader, NULL, 0 );
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Effect::deserialise(const tinyxml2::XMLElement* node, Resource* resource)
 {
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement())
@@ -48,17 +48,17 @@ void Effect::deserialise(const tinyxml2::XMLElement* node, Resource* resource)
     }
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const Technique* Effect::getTechnique(const std::string& techniqueName) const
 {
     return getTechnique(hashString(techniqueName));
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const Technique* Effect::getTechnique(const unsigned int techniqueName) const
 {
     auto it = m_techniques.find(techniqueName);
@@ -70,9 +70,9 @@ const Technique* Effect::getTechnique(const unsigned int techniqueName) const
     return nullptr;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Technique::deserialise(const tinyxml2::XMLElement* element)
 {
     RenderResourceHelper renderResource = { m_resource };
@@ -148,19 +148,19 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
     D3DDebugHelperFunctions::SetDebugChildName(m_constantBuffers[1], FormatString("Constant Buffer 1 Technique %s has: vs: %ull, ps: %ull", techniqueName.c_str(), m_vertexShader, m_pixelShader));
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Technique::setWVPContent(const DeviceManager& deviceManager, const WVPBufferContent& wvpContent) const
 {
     deviceManager.getDeviceContext()->UpdateSubresource(m_constantBuffers[0], 0, 0, (void*)&wvpContent, 0, 0);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void Technique::setMaterialContent(const DeviceManager& deviceManager, const MaterialContent& materialContent) const
 {
     deviceManager.getDeviceContext()->UpdateSubresource(m_constantBuffers[1], 0, 0, (void*)&materialContent, 0, 0);

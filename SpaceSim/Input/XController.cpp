@@ -1,4 +1,4 @@
-//!#include "DXUT.h"
+///!#include "DXUT.h"
 #include "XController.h"
 #include <cmath>
 #include <XInput.h>
@@ -16,9 +16,9 @@ HASH_ELEMENT_IMPLEMENTATION(XInputDevice)
 #pragma warning( push )
 #pragma warning( disable: 4995 )
 
-//!-----------------------------------------------------------------------------
-//!! @brief Constructor
-//!-----------------------------------------------------------------------------
+///!-----------------------------------------------------------------------------
+///!! @brief Constructor
+///!-----------------------------------------------------------------------------
 XInputDevice::XInputDevice(const int controllerNr) :
 m_controllerIndex(controllerNr),
 m_controllerActive(false),
@@ -52,21 +52,21 @@ m_vibration(false)
     }
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   Initialise the controller and add the capabilities to the inputState
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Initialise the controller and add the capabilities to the inputState
+///! @remark
+///-----------------------------------------------------------------------------
 void XInputDevice::initialise(HWND hwnd)
 {
     UNUSEDPARAM(hwnd);
 }
 
-//!-----------------------------------------------------------------------------
-//!! @brief Update the gamepad state
-//!! @return
-//!! @remarks Need to implement setting the values in the InputState
+///!-----------------------------------------------------------------------------
+///!! @brief Update the gamepad state
+///!! @return
+///!! @remarks Need to implement setting the values in the InputState
 // Need to actually only call this when a device is attached seems to be expensive when device is not there 6.9% of cpu trace
-//!-----------------------------------------------------------------------------
+///!-----------------------------------------------------------------------------
 const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput)
 {
     PROFILE_EVENT("XInputDevice::update", LightGoldenRodYellow)
@@ -110,7 +110,7 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
             float TriggerLeft = gamepadState.bLeftTrigger / (float)(0xff / 2);
             float TriggerRight = gamepadState.bRightTrigger / (float)(0xff / 2);
 
-            //!Replace previous state with current state for none delta enabled getting of stuff
+            ///!Replace previous state with current state for none delta enabled getting of stuff
             m_gamepadState = gamepadState;
             m_gamepadStatefloat.leftXAxis = ThumbLX;
             m_gamepadStatefloat.leftYAxis = ThumbLY;
@@ -218,10 +218,10 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
     return m_controllerState;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void XInputDevice::internalActionSetup(InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input)
 {
     //Setup controller specific action map so it can map it's capabilities to the input the game expects
@@ -232,10 +232,10 @@ void XInputDevice::internalActionSetup(InputActions::ActionType inputAction, con
     m_PhysicalInputState[xControllerInput] = inputAction; //no need for a map just a single array is enough
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void XInputDevice::calculateThumbStickDirectionAndMagnitude(float stickX, float stickY, bool isLeftStick, Vector4& directionAndMagnitude)
 {
     float magnitude = sqrt(stickX*stickX + stickY*stickY);

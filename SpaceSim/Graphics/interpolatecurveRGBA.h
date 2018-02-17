@@ -78,7 +78,7 @@ inline const Vector4& interpolateCurveRGBA::GetValue(float pos) const
 //00351     z = v0.z + ((z - v0.z) * lerpVal);
 //00352 }
 //00353 
-//00354 //------------------------------------------------------------------------------
+//00354 ///------------------------------------------------------------------------------
 //00357 inline
 //00358 void
 //00359 _vector3::lerp(const _vector3& v0, const _vector3& v1, float lerpVal)

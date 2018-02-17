@@ -1,13 +1,8 @@
+#include "CommonConstantBuffers.ivs"
+
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer WVPConstants : register(b0)
-{
-    float4x4 World;
-    float4x4 View;
-    float4x4 Projection;
-};
-
 cbuffer InverseView : register(b1)
 {
 	float4x4 InverseView;
@@ -17,7 +12,7 @@ struct ParticleData
 {
 	float4 position;
 	float4 color;
-	float size;
+	float4 size;
 };
 
 StructuredBuffer<ParticleData> data : register(t0);

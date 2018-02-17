@@ -5,13 +5,13 @@
 
 #include "Graphics/D3DDebugHelperFunctions.h"
 
-void IndexBuffer::createBuffer( const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic, unsigned int bindFlag )
+void IndexBuffer::createBuffer( const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic )
 {
     D3D11_BUFFER_DESC bufferDescriptor;
     ZeroMemory(&bufferDescriptor, sizeof(D3D11_BUFFER_DESC));
     bufferDescriptor.Usage = D3D11_USAGE_IMMUTABLE;
     bufferDescriptor.ByteWidth = bufferSize;
-    bufferDescriptor.BindFlags = bindFlag;
+    bufferDescriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
     bufferDescriptor.CPUAccessFlags = 0;
     bufferDescriptor.MiscFlags = 0;
 
@@ -32,10 +32,10 @@ void IndexBuffer::createBuffer( const DeviceManager& deviceManager, unsigned int
     D3DDebugHelperFunctions::SetDebugChildName(m_buffer, FormatString("Index buffer size: %d, no. indecis: %d", bufferSize, bufferSize / (sizeof(unsigned int))));
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void IndexBuffer::cleanup()
 {
     if (m_buffer)

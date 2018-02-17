@@ -1,0 +1,20 @@
+#include "CommonStructures.ifx"
+
+cbuffer MaterialConstants : register(b0)
+{
+    float4 ambient;
+    float4 diffuse;
+    float4 specular;
+    float4 emissive;
+    float shininess;
+};
+
+
+#ifdef LIGHTING
+cbuffer LightParamters: register(b1)
+{
+    //float3 eyePosition;
+    LightConstants m_lights[8];
+    float3 camera_position;
+}
+#endif

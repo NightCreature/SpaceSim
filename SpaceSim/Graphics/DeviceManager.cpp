@@ -6,10 +6,10 @@
 
 
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool DeviceManager::createDevice(IDXGIAdapter* adapter)
 {
     MSG_TRACE_CHANNEL("DEVICEMANAGER", "Creating Device");
@@ -44,10 +44,10 @@ bool DeviceManager::createDevice(IDXGIAdapter* adapter)
     return true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief  Cleanup the device, D3D object and swap chains
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief  Cleanup the device, D3D object and swap chains
+///! @remark
+///-----------------------------------------------------------------------------
 void DeviceManager::cleanup()
 {
     ID3D11Debug* debugInterface = nullptr;

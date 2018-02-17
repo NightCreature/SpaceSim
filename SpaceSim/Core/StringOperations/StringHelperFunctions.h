@@ -41,10 +41,10 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
 
 std::string FormatString(const char* format, ...);
 
-//-----------------------------------------------------------------------------
-//! @brief   Case insensitive hash function
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Case insensitive hash function
+///! @remark
+///-----------------------------------------------------------------------------
 inline unsigned int hashString(const std::string& sourceStr)
 {
     PROFILE_EVENT("HashString", Brown);
@@ -73,9 +73,9 @@ inline size_t hashBinaryData(const char* data, size_t size)
 
 #define HASH_STRING(x) hashString(#x)
 #define HASH_BINARY(x) hashBinaryData(reinterpret_cast<const char*>(x), sizeof(*x))
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief Safe string copy
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 template <size_t charCount>
 void stringCopy(char (&output)[charCount], const char* source)
 {
@@ -83,10 +83,10 @@ void stringCopy(char (&output)[charCount], const char* source)
     output[charCount -1] = 0;
 }
 
-////-----------------------------------------------------------------------------
-////! @brief   Case sensitive hash function const_expr
-////! @remark
-////-----------------------------------------------------------------------------
+/////-----------------------------------------------------------------------------
+/////! @brief   Case sensitive hash function const_expr
+/////! @remark
+/////-----------------------------------------------------------------------------
 //unsigned int constexpr compileHashString(const char* sourceStr, unsigned int hash_value = c_fnvHashOffset)
 //{
 //    return sourceStr != nullptr ? compileHashString( sourceStr + 1, (hash_value ^ static_cast<unsigned int>(*sourceStr)) * c_fnvHashPrime) : hash_value;
@@ -181,9 +181,9 @@ inline std::string getResourceNameFromFileName(const std::string& fileName)
     return std::string(startOfFileName);
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief Filename can't contain "." in the name, relative path is fine
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 inline std::string extractExtensionFromFileName( const std::string &fileName )
 {
     std::string::const_reverse_iterator it = fileName.rbegin();
@@ -199,9 +199,9 @@ inline std::string extractExtensionFromFileName( const std::string &fileName )
     return fileName.substr(counter + 1, fileName.size());
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief Filename can't contain "." in the name, relative path is fine
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 inline std::string extractPathFromFileName( const std::string &fileName )
 {
     std::string::const_reverse_iterator it = fileName.rbegin();

@@ -20,10 +20,10 @@
 namespace Text
 {
 
-//-----------------------------------------------------------------------------
-//! @brief   Maybe this should move to a font cache
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   Maybe this should move to a font cache
+///! @remark
+///-----------------------------------------------------------------------------
 bool TextBlockCache::addFont(const std::string& fileName)
 {
     BitmapFont font;
@@ -40,10 +40,10 @@ bool TextBlockCache::addFont(const std::string& fileName)
     return true;
 }
 
-    //-----------------------------------------------------------------------------
-//! @brief   Calculates where the text is in the rectangle specified, might scale the text to fit
-//! @remark
-//-----------------------------------------------------------------------------
+    ///-----------------------------------------------------------------------------
+///! @brief   Calculates where the text is in the rectangle specified, might scale the text to fit
+///! @remark
+///-----------------------------------------------------------------------------
 bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Align m_alignment, size_t fontHash, float size, bool kerning)
 {
     if (m_maxTextBlocks <= m_textBlocks.size())
@@ -77,19 +77,19 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
     return false;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 size_t TextBlockCache::getTextIndex(const std::string& text)
 {
     return getTextIndex(hashString(text));
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 size_t TextBlockCache::getTextIndex(size_t textHash)
 {
     for (size_t counter = 0; counter < m_textBlocks.size(); ++counter)
@@ -103,19 +103,19 @@ size_t TextBlockCache::getTextIndex(size_t textHash)
 }
 
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool TextBlockCache::removeText(const std::string& text)
 {
     return removeText(hashString(text));
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool TextBlockCache::removeText(size_t text)
 {
     size_t counter = 0;
@@ -138,20 +138,20 @@ bool TextBlockCache::removeText(size_t text)
     return true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void TextBlockCache::removeAllTexts()
 {
     std::vector<TextBlockInfo> empty;
     m_textBlocks.swap(empty);
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 {
 	//Should only really do this for blocks that are active
@@ -168,10 +168,10 @@ void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 	}
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 BitmapFont* TextBlockCache::getBitmapFont(size_t fontNameHash)
 {
     for (BitmapFont& font : m_fonts)
@@ -185,10 +185,10 @@ BitmapFont* TextBlockCache::getBitmapFont(size_t fontNameHash)
     return nullptr;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 bool TextBlockInfo::ProcessText(Resource* resource)
 {
     float x = m_textBlockSize.x();
@@ -522,10 +522,10 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 	return true;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
 	RenderResourceHelper gameResource(resource);
@@ -553,7 +553,7 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 			indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
 		}
 	}
-	ib.createBuffer(gameResource.getResource().getDeviceManager(), static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer, false, D3D11_BIND_INDEX_BUFFER);
+	ib.createBuffer(gameResource.getResource().getDeviceManager(), static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer, false);
 	ib.setNumberOfIndecis(static_cast<unsigned int>(numberIndecis));
 
 	m_geometryInstance.setVB(&vb);
@@ -562,33 +562,32 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 	delete [] indexBuffer;
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void TextBlockInfo::CreateShaderSetup(Resource* resource)
 {
 	Material mat;
 	RenderResourceHelper gameResource(resource);
-	const Effect* effect = gameResource.getResource().getEffectCache().getEffect("sdf_font_effect.xml");
-	mat.setEffect(effect);
+    mat.setEffectHash(hashString("sdf_font_effect.xml"));
 	mat.setBlendState(true);
 	//Should fix this if we have more than one page somehow
 	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
 	mat.setTechnique(hashString("default"));
-	m_shaderInstance.setMaterial(mat);
-	WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
+	//m_shaderInstance.setMaterial(mat);
+	//WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
     //TODO FIX ME SHOULD ASK RENDER SYSTEM FOR VIEW AND PROJECTION
 	//wvpConstants.m_projection = Application::m_projection; //math::createOrthoGraphicProjection(1280.0f, 720.0f, 0.1f, 1000.0f);
 	//wvpConstants.m_view = Application::m_view; //gameResource.getResource().getCameraManager().getCamera("text_block_camera")->getCamera();
-	wvpConstants.m_world.identity();
+	//wvpConstants.m_world.identity();
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void GlyphQuad::setY(float value, TextBlockInfo& textBlock)
 {
 	for (size_t counter = 0; counter < 4; ++counter)
@@ -598,10 +597,10 @@ void GlyphQuad::setY(float value, TextBlockInfo& textBlock)
 	}
 }
 
-//-----------------------------------------------------------------------------
-//! @brief   TODO enter a description
-//! @remark
-//-----------------------------------------------------------------------------
+///-----------------------------------------------------------------------------
+///! @brief   TODO enter a description
+///! @remark
+///-----------------------------------------------------------------------------
 void GlyphQuad::setX(float value, TextBlockInfo& textBlock)
 {
 	for (size_t counter = 0; counter < 4; ++counter)

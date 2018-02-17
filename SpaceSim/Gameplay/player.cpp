@@ -320,9 +320,9 @@ void Player::createScorchMark(const Vector3 &pos, const Vector3 &normal)
     m_scorchmarks.push_back(new ScorchMark(m_resource, pos, normal, 5.0f));
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
 {
     PROFILE_EVENT("Player::update", Green);
@@ -349,9 +349,9 @@ void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, con
     m_lasergentime += elapsedTime;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 const ShaderInstance Player::deserialise( const tinyxml2::XMLElement* node )
 {
     const tinyxml2::XMLAttribute* attribute = node->FindAttribute("name");
@@ -392,9 +392,9 @@ const ShaderInstance Player::deserialise( const tinyxml2::XMLElement* node )
     return ShaderInstance();
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 bool Player::collision( const Bbox& bbox, const Vector3& dir )
 {
     UNUSEDPARAM(bbox);
@@ -402,9 +402,9 @@ bool Player::collision( const Bbox& bbox, const Vector3& dir )
     return false;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 float Player::collision( const Vector3& position, const Vector3& dir, Vector3& normal )
 {
     UNUSEDPARAM(position);
@@ -413,9 +413,9 @@ float Player::collision( const Vector3& position, const Vector3& dir, Vector3& n
     return -1.0f;
 }
 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 // @brief 
-//-------------------------------------------------------------------------
+///-------------------------------------------------------------------------
 void Player::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);
