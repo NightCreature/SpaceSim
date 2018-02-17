@@ -347,7 +347,7 @@ void RenderSystem::initialise(Resource* resource)
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(this, &RenderSystem::CreateRenderList));
 
-    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 0.001f, 1500.0f);
+    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 1500.0f, 0.001f);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
 
     m_emmiter.initialise(m_renderResource);
