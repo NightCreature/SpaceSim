@@ -45,6 +45,7 @@ void CubeRendererInitialiseData::deserialise(const tinyxml2::XMLElement* element
 ///-----------------------------------------------------------------------------
 RenderSystem::RenderSystem() :
 m_lightConstantBuffer(nullptr),
+m_shadowConstantBuffer(nullptr),
 m_numberOfInstancesRenderingThisFrame(0),
 m_totalNumberOfInstancesRendered(0),
 m_averageNumberOfInstancesRenderingPerFrame(0),
@@ -72,6 +73,12 @@ RenderSystem::~RenderSystem()
     {
         m_lightConstantBuffer->Release();
         m_lightConstantBuffer = nullptr;
+    }
+
+    if (m_shadowConstantBuffer != nullptr)
+    {
+        m_shadowConstantBuffer->Release();
+        m_shadowConstantBuffer = nullptr;
     }
 
     if (m_cubeMapRenderer != nullptr)
@@ -288,6 +295,13 @@ void RenderSystem::initialise(Resource* resource)
     lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = device->CreateBuffer(&lightContantsDescriptor, 0, &m_lightConstantBuffer);
     D3DDebugHelperFunctions::SetDebugChildName(m_lightConstantBuffer, "RenderSystem Light Constant buffer");
+
+    D3D11_BUFFER_DESC shadowContantsDescriptor;
+    ZeroMemory(&shadowContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
+    shadowContantsDescriptor.ByteWidth = 3 * 16 * sizeof(float);
+    shadowContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    hr = device->CreateBuffer(&shadowContantsDescriptor, 0, &m_shadowConstantBuffer);
+    D3DDebugHelperFunctions::SetDebugChildName(m_shadowConstantBuffer, "RenderSystem Light Constant buffer");
 
     D3D11_SAMPLER_DESC samplerStateDesc;
     samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -781,7 +795,14 @@ void RenderSystem::beginDraw()
 
     CheckVisibility(m_renderInstances);
 
+    WVPBufferContent shadowWVP = m_shadowMapRenderer->getShadowMapMVP();
+    deviceContext->UpdateSubresource(m_shadowConstantBuffer, 0, 0, (void*)&shadowWVP, 0, 0);
+    deviceContext->VSSetConstantBuffers(1, 1, &m_shadowConstantBuffer);
+    
 
+    //Setup shadow map SRV, since we only have one we can set it here
+    ID3D11ShaderResourceView* shadowMapSRV = m_shadowMapRenderer->getShadowMap();
+    deviceContext->PSSetShaderResources(33, 1, &shadowMapSRV);
 
 
 }
