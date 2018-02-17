@@ -447,7 +447,7 @@ void RenderSystem::update(float elapsedTime, double time)
                 deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
                 oldTechniqueId = technique->getTechniqueId();
             }
-            technique->setupTechnique();
+            //technique->setupTechnique(); NOt needed any more this fucks with the shader resource we set above here
 
             //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
             if (shaderInstance.getAlphaBlend())

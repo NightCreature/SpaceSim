@@ -60,6 +60,12 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
         //Fix shader resource view references for the material.
         m_renderInstance->GetShaderInstance().FixSrvReferences(resourceHelper.getWriteableResource());
 
+        auto psConstants = m_renderInstance->GetShaderInstance().getPSConstantBufferSetup();
+        if (!psConstants.empty())
+        {
+            resourceHelper.getResource().getDeviceManager().getDeviceContext()->UpdateSubresource(psConstants[0], 0, 0, (void*)&m_material.getMaterialCB(), 0, 0); //Not sure about this
+        }
+
         UNUSEDPARAM(resource);
         UNUSEDPARAM(world);
         UNUSEDPARAM(view);
