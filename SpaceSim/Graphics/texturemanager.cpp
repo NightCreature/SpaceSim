@@ -18,7 +18,7 @@ void TextureManager::setMipMapSettings(bool canautomipmap, bool generatemipmaps)
 
 bool TextureManager::find(const std::string& filename) const //Should be texture name without path here
 {
-    unsigned int textureFileNameHash = hashString(filename);
+    auto textureFileNameHash = hashString(filename);
 	if (m_textures.find(textureFileNameHash) != m_textures.end())
 		return true;
 	return false;
@@ -26,11 +26,11 @@ bool TextureManager::find(const std::string& filename) const //Should be texture
 
 const Texture* TextureManager::getTexture(const std::string& filename) const
 {
-    unsigned int textureFileNameHash = hashString(filename);
+    auto textureFileNameHash = hashString(filename);
     return getTexture(textureFileNameHash);
 }
 
-const Texture* TextureManager::getTexture(const unsigned int textureNameHash) const
+const Texture* TextureManager::getTexture(const size_t textureNameHash) const
 {    
     TextureMap::const_iterator tmit = m_textures.find(textureNameHash);
     if (tmit != m_textures.end())
@@ -59,7 +59,7 @@ void TextureManager::addLoad(const DeviceManager& deviceManager, const std::stri
         MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s", filename.c_str());
     }
 
-    unsigned int textureFileNameHash = hashString(texureName);
+    auto textureFileNameHash = hashString(texureName);
 	m_textures.insert(std::make_pair(textureFileNameHash, tex));
 }
 
@@ -163,7 +163,7 @@ Material::TextureSlotMapping TextureManager::deserialise( const DeviceManager& d
 ///-------------------------------------------------------------------------
 void TextureManager::addTexture( const std::string& textureName, const Texture& texture )
 {
-    unsigned int textureNameHash = hashString(textureName);
+    auto textureNameHash = hashString(textureName);
     if (!find(textureName))
     {
         m_textures.insert(std::make_pair(textureNameHash, texture));

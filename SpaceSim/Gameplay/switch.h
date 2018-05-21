@@ -42,7 +42,7 @@ public:
     ///-------------------------------------------------------------------------
     virtual void handleMessage( const MessageSystem::Message& msg );
 
-    HASH_ELEMENT_DEFINITION
+    HASH_ELEMENT_DEFINITION(Switch)
 protected:
 private:
 	bool m_activemat;

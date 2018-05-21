@@ -2,7 +2,7 @@
 #include <Core/tinyxml2.h>
 
 
-HASH_ELEMENT_IMPLEMENTATION(Light) 
+
 
 Light::Light()
 {
@@ -10,13 +10,13 @@ Light::Light()
 	m_position = Vector3(0.0, 0.0, 0.0);
 	m_diffuse = Color::black();
 	m_specular = Color::black();
-	m_lightType = DIRECTIONAL;
+	m_lightType = LightType::DIRECTIONAL;
 }
 
 Light::Light(float range)
 {
 	m_range = range;
-	m_lightType = DIRECTIONAL;
+	m_lightType = LightType::DIRECTIONAL;
 }
 
 Light::Light(float range, const Vector3& position, const Color& diffuse, const Color& specular, LightType lighttype)
@@ -82,7 +82,7 @@ void Light::deserialise( const tinyxml2::XMLElement* element )
     int colorCounter = 0;
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        unsigned int elementHash = hashString(element->Value());
+        auto elementHash = hashString(element->Value());
         if (elementHash == Vector3::m_hash)
         {
             if (vector3Counter == 0)

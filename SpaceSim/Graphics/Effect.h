@@ -91,17 +91,17 @@ public:
 
     void deserialise(const tinyxml2::XMLElement* element);
 
-    unsigned int getNameHash() const { return m_nameHash; }
+    size_t getNameHash() const { return m_nameHash; }
 
     void setWVPContent(const DeviceManager& deviceManager, const WVPBufferContent& wvpContent) const;
     void setMaterialContent(const DeviceManager& deviceManager, const MaterialContent& materialContent) const;
 
-    unsigned int getVertexShader() const { return m_vertexShader; }
-    unsigned int getHullShader() const { return m_hullShader; }
-    unsigned int getDomainShader() const { return m_domainShader; }
-    unsigned int getGeometryShader() const { return m_geometryShader; }
-    unsigned int getPixelShader() const { return m_pixelShader; }
-    unsigned int getComputeShader() const { return m_computeShader; }
+    size_t getVertexShader() const { return m_vertexShader; }
+    size_t getHullShader() const { return m_hullShader; }
+    size_t getDomainShader() const { return m_domainShader; }
+    size_t getGeometryShader() const { return m_geometryShader; }
+    size_t getPixelShader() const { return m_pixelShader; }
+    size_t getComputeShader() const { return m_computeShader; }
 
     //ID3D11VertexShader* getD3DVertexShader() const { return m_vertexShader ? m_vertexShader->getShader() : nullptr; }
     //ID3D11HullShader* getD3DHullShader() const { return m_hullShader ? m_hullShader->getShader() : nullptr; }
@@ -124,19 +124,19 @@ public:
 
     size_t getTechniqueId() const { return m_techniqueId; }
 
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(Technique);
 private:
 #ifdef _DEBUG
     std::string m_name; //This should be compiled out in release
 #endif
     size_t m_techniqueId;
-    unsigned int m_nameHash;
-    unsigned int m_vertexShader;
-    unsigned int m_hullShader;
-    unsigned int m_domainShader;
-    unsigned int m_geometryShader;
-    unsigned int m_pixelShader;
-    unsigned int m_computeShader;
+    size_t m_nameHash;
+    size_t m_vertexShader;
+    size_t m_hullShader;
+    size_t m_domainShader;
+    size_t m_geometryShader;
+    size_t m_pixelShader;
+    size_t m_computeShader;
     Resource* m_resource;
 public: //TODO remove
     ID3D11Buffer* m_constantBuffers[2]; //Contains the projection, view and world matrices, these should move in to something called constant buffer which can be set by the model
@@ -178,8 +178,8 @@ public:
     void deserialise(const tinyxml2::XMLElement* node, Resource* resource);
     void setupEffect() const;
     const Technique* getTechnique(const std::string& techniqueName) const;
-    const Technique* getTechnique(const unsigned int techniqueName) const;
-    HASH_ELEMENT_DEFINITION;
+    const Technique* getTechnique(const size_t techniqueName) const;
+    HASH_ELEMENT_DEFINITION(Effect);
 private:
-    std::map<unsigned int, Technique> m_techniques;
+    std::map<size_t, Technique> m_techniques;
 };

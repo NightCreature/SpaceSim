@@ -28,8 +28,8 @@ public:
 
     void dispatchMessage(const MessageSystem::Message& message);
 private:
-    typedef std::map< unsigned int, Light> LightMap;
-    typedef std::pair< unsigned int, Light> LightPair;
+    typedef std::map< size_t, Light> LightMap;
+    typedef std::pair< size_t, Light> LightPair;
 
     LightMap m_lights;
 };

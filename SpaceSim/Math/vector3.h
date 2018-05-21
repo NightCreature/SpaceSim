@@ -53,7 +53,7 @@ private:
     float m_x, m_y, m_z;
     static const float EQUALPRECISION3;
 public:
-    static const unsigned int m_hash;
+    HASH_ELEMENT_DEFINITION(Vector3)
 };
 
 inline Vector3 Vector3::findOrthogonal() const

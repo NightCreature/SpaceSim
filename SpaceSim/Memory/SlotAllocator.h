@@ -36,6 +36,12 @@ public:
         m_freeList.pop_back();
         m_usedMemory += blockSize;
         ++m_numAllocations;
+
+#ifdef MEMORY_PROFILING
+        //Tell mtuner about the allocation
+        rmemAlloc(0, returnSlot, size, 0);
+#endif
+
         return returnSlot;
     }
 
@@ -44,6 +50,11 @@ public:
         m_freeList.push_back(p);
         --m_numAllocations;
         m_usedMemory -= blockSize;
+
+#ifdef MEMORY_PROFILING
+        //Tell mtuner about the allocation
+        rmemFree(0, p);
+#endif
     }
 private:
     std::vector<void*> m_freeList;

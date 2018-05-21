@@ -9,7 +9,7 @@
 void DeserialisableSetting::deserialise( const tinyxml2::XMLElement* element)
 {
     m_settingName = element->Attribute("name");
-    m_type = eUserType;
+    m_type = ISettingBase::SettingType::eUserType;
 }
 
 ///-----------------------------------------------------------------------------
@@ -44,7 +44,7 @@ void RenderSetting::deserialise( const tinyxml2::XMLElement* element)
                 }
                 else if (strICmp(attribute->Name(), "height") == 0)
                 {
-                    m_resolutionHeight = (RendererType)attribute->IntValue();
+                    m_resolutionHeight = static_cast<unsigned int>(attribute->IntValue());
                 }
                 else if (strICmp(attribute->Name(), "window_name") == 0)
                 {

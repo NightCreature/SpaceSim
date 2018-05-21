@@ -9,7 +9,7 @@ class MouseControlDefinitions
 public:
     MouseControlDefinitions();
     ~MouseControlDefinitions() {}
-    enum MouseInput
+    enum class MouseInput : unsigned int
     {
         PositiveX,
         NegativeX,
@@ -25,9 +25,9 @@ public:
 
         NumInputActions
     };
-    MouseInput FindControllerInputIdForHashId(unsigned int hashId) const;
+    MouseInput FindControllerInputIdForHashId(size_t hashId) const;
 private:
-    unsigned int m_inputNameHash[NumInputActions];
-    MouseInput m_xControllerInputId[NumInputActions];
+    size_t m_inputNameHash[MouseInput::NumInputActions];
+    MouseInput m_xControllerInputId[MouseInput::NumInputActions];
 };
 }

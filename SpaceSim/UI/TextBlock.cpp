@@ -532,7 +532,7 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 	VertexDeclarationDescriptor descriptor;
 	descriptor.position = 3;
 	descriptor.textureCoordinateDimensions.push_back(2);
-	unsigned int vertexShaderHash = hashString("simple_2d_vertex_shader.vs");
+	auto vertexShaderHash = hashString("simple_2d_vertex_shader.vs");
 	const VertexShader* sdfVertexShader = gameResource.getResource().getShaderCache().getVertexShader(vertexShaderHash);
 	
 	vb.createBufferAndLayoutElements(gameResource.getResource().getDeviceManager(), sizeof(GlyphVertex) * m_glyphVerts.size(), &m_glyphVerts[0], false, descriptor, sdfVertexShader->getShaderBlob());

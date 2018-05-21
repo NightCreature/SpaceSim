@@ -289,10 +289,10 @@ Bbox::sideplane Bbox::classifyPlane(const Vector3 &normal, float d) const
 	}
 
 	if (mind >= d)
-		return FRONT;
+		return sideplane::FRONT;
 	if (maxd <= d)
-		return BACK;
-	return intERSECT;
+		return sideplane::BACK;
+	return sideplane::intERSECT;
 }
 
 ///-----------------------------------------------------------------------------

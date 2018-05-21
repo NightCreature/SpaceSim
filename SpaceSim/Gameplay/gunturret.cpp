@@ -24,7 +24,7 @@
 #include "Core/MessageSystem/RenderMessages.h"
 #include "Loader/ModelLoaders/ModelLoader.h"
 
-HASH_ELEMENT_IMPLEMENTATION(GunTurret)
+
 
 
 GunTurret::GunTurret(Resource* resource, const Vector3& position, const Vector3& direction):
@@ -264,7 +264,7 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
     Matrix44 scaleTransform, translation, rotation;
     for (const tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())
     {
-        unsigned int childElementHash = hashString(childElement->Value());
+        auto childElementHash = hashString(childElement->Value());
         if (childElementHash == Vector3::m_hash)
         {
             const tinyxml2::XMLAttribute* nameAttribute = childElement->FindAttribute("name"); //This material needs a name to distinguish between normal and glowing versions of the material

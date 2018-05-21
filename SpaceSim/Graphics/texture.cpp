@@ -11,7 +11,7 @@
 #include <sstream>
 
 
-HASH_ELEMENT_IMPLEMENTATION(Texture)
+
 Texture::Texture()
 {
     m_textureShaderResourceView = nullptr;

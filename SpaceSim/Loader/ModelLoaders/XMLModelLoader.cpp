@@ -30,9 +30,9 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
     tinyxml2::XMLElement* element;
     element = doc.FirstChildElement();
 
-    unsigned int meshFaceHash = hashString("MeshFace");
-    unsigned int meshVertexHash = hashString("MeshVertex");
-    unsigned int meshIndecisHash = hashString("MeshIndices");
+    constexpr auto meshFaceHash = "MeshFace"_hash;
+    constexpr auto meshVertexHash = "MeshVertex"_hash;
+    constexpr auto meshIndecisHash = "MeshIndices"_hash;
 
     MeshGroupCreator::CreationParams params;
     params.m_resource = resource;
@@ -49,7 +49,7 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
     element = element->FirstChildElement();
     for (;element; element = element->NextSiblingElement())
     {
-        unsigned int typeHash = hashString(element->Value());
+        auto typeHash = hashString(element->Value());
         if (meshFaceHash == typeHash)
         {
             for (tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())

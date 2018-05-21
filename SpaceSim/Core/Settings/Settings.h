@@ -11,7 +11,7 @@ class tinyxml2::XMLElement;
 class ISettingBase
 {
 public:
-    enum SettingType
+    enum class SettingType
     {
         efloat = 0,
         eint,
@@ -24,11 +24,11 @@ public:
     virtual ~ISettingBase() {}
 
     const std::string& getSettingName() const { return m_settingName; }
-    const unsigned int getHashValue() const { return m_settingNameHash; }
+    const size_t getHashValue() const { return m_settingNameHash; }
     const SettingType getSettingType() const { return m_type; }
 protected:	
     std::string m_settingName;
-    unsigned int m_settingNameHash;
+    size_t m_settingNameHash;
     SettingType m_type;
 private:
 };
@@ -42,24 +42,24 @@ public:
     {
         if (typeid(T) == typeid(int))
         {
-            m_type = eint;
+            m_type = ISettingBase::SettingType::eint;
         }
         else if (typeid(T) == typeid(float))
         {
-            m_type = efloat;
+            m_type = ISettingBase::SettingType::efloat;
         }
         else if (typeid(T) == typeid(bool))
         {
-            m_type = eBool;
+            m_type = ISettingBase::SettingType::eBool;
         }
         else if (typeid(T) == typeid(std::string))
         {
-            m_type = eString;
+            m_type = ISettingBase::SettingType::eString;
         }
         else
         {
             MSG_TRACE_CHANNEL("SETTING", "Warning: UserType Setting detected with type T defined as: %s", typeid(T).name() )
-            m_type = eUserType;
+            m_type = ISettingBase::SettingType::eUserType;
         }
     }
     ~ISetting() {}
@@ -86,7 +86,7 @@ class RenderSetting : public DeserialisableSetting
 {
 public:
 
-    enum RendererType
+    enum class RendererType
     {
         D3D9 = 0,
         D3D10,
@@ -94,7 +94,7 @@ public:
         OGL,
     };
 
-    RenderSetting() { m_type = eUserType; }
+    RenderSetting() { m_type = ISettingBase::SettingType::eUserType; }
     ~RenderSetting() {}
 
     void deserialise( const tinyxml2::XMLElement* element);

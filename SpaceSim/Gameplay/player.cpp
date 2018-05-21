@@ -29,7 +29,7 @@ void Player::initialize(const CameraManager& cameraManager)
     m_lasergentime = 0;
     m_camera = cameraManager.getCamera("player_camera");
     m_hit = false;
-    m_camstate = firstperson;
+    m_camstate = camstate::firstperson;
     m_ffangle = 0.0f;
     const ISetting<std::string>* fileNameSettings = m_resource->m_settingsManager->getSetting<std::string>("PlayerSettingsFile");
     if (fileNameSettings != nullptr)
@@ -140,15 +140,15 @@ bool Player::isPlayerDead()
 
 void Player::switchviews()
 {
-    if (m_camstate == firstperson)
-        m_camstate = thirdperson;
-    else if (m_camstate == thirdperson)
-        m_camstate = firstperson;
+    if (m_camstate == camstate::firstperson)
+        m_camstate = camstate::thirdperson;
+    else if (m_camstate == camstate::thirdperson)
+        m_camstate = camstate::firstperson;
 }
 
 void Player::draw()
 {
-    if (m_camstate == thirdperson)
+    if (m_camstate == camstate::thirdperson)
     {
         //glPushMatrix();
         //glLoadIdentity();
@@ -377,7 +377,7 @@ const ShaderInstance Player::deserialise( const tinyxml2::XMLElement* node )
 
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement())
     {
-        unsigned int childElementHash = hashString(childElement->Value());
+        auto childElementHash = hashString(childElement->Value());
         if ( Vector3::m_hash == childElementHash )
         {
             const tinyxml2::XMLAttribute* childAttribute = childElement->FindAttribute("name");

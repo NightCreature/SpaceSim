@@ -138,7 +138,7 @@ const ShaderInstance Plane::deserialise( const tinyxml2::XMLElement* node )
     ShaderInstance shaderInstance;
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != 0; childElement = childElement->NextSiblingElement())
     {
-        unsigned int childElementHash = hashString(childElement->Value());
+        auto childElementHash = hashString(childElement->Value());
         if (Material::m_hash == childElementHash)
         {
             m_materialParameters = Material::GetMaterialParameters(childElement);

@@ -31,7 +31,7 @@ public:
         }
         m_textureShaderResourceView = srView;
     }
-    HASH_ELEMENT_DEFINITION
+    HASH_ELEMENT_DEFINITION(Texture)
 protected:
 private:
     ID3D11Texture2D* m_texture;

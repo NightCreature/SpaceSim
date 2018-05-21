@@ -16,7 +16,7 @@ namespace tinyxml2
 class Light
 {
 public:
-	enum LightType
+	enum class LightType
 	{
 	SPOT = 0,
 	DIRECTIONAL,
@@ -56,7 +56,7 @@ public:
 	void setFallOff(float fallOff) { m_fallOff = fallOff;}
 	void setDirection(const Vector3& direction) {m_direction = direction;}
     LightConstants getLightConstants() const;
-    HASH_ELEMENT_DEFINITION
+    HASH_ELEMENT_DEFINITION(Light)
 protected:
 private:
 	Vector3		m_position;

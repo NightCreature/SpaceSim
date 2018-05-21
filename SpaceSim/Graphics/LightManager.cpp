@@ -8,7 +8,7 @@
 ///-------------------------------------------------------------------------
 void LightManager::addLight( const std::string& name, const Light& light )
 {
-    unsigned int hashedName = hashString(name);
+    auto hashedName = hashString(name);
     LightMap::const_iterator it = m_lights.find(hashedName);
     if (it == m_lights.end())
     {
@@ -21,7 +21,7 @@ void LightManager::addLight( const std::string& name, const Light& light )
 ///-------------------------------------------------------------------------
 const Light* LightManager::getLight( const std::string& name ) const
 {
-    unsigned int hashedName = hashString(name);
+    auto hashedName = hashString(name);
     LightMap::const_iterator it = m_lights.find(hashedName);
     if (it != m_lights.end())
     {
@@ -36,7 +36,7 @@ const Light* LightManager::getLight( const std::string& name ) const
 ///-------------------------------------------------------------------------
 Light* LightManager::getLight( const std::string& name )
 {
-    unsigned int hashedName = hashString(name);
+    auto hashedName = hashString(name);
     LightMap::iterator it = m_lights.find(hashedName);
     if (it != m_lights.end())
     {

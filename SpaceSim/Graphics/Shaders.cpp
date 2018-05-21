@@ -9,14 +9,7 @@
 #include <numeric>
 #include <limits>
 
-HASH_ELEMENT_IMPLEMENTATION(VertexShader);
-HASH_ELEMENT_IMPLEMENTATION(HullShader);
-HASH_ELEMENT_IMPLEMENTATION(DomainShader);
-HASH_ELEMENT_IMPLEMENTATION(GeometryShader);
-HASH_ELEMENT_IMPLEMENTATION(PixelShader);
-HASH_ELEMENT_IMPLEMENTATION(ComputeShader);
-
-enum ShaderType
+enum class ShaderType
 {
     eVertexShader = 0,
     eHullShader,
@@ -36,32 +29,32 @@ void getProfileName(const DeviceManager& deviceManager, ShaderType type, std::st
 
     switch (type)
     {
-    case eVertexShader:
+    case ShaderType::eVertexShader:
     {
         profileName = "vs";
     }
     break;
-    case eHullShader:
+    case ShaderType::eHullShader:
     {
         profileName = "hs";
     }
     break;
-    case eDomainShader:
+    case ShaderType::eDomainShader:
     {
         profileName = "ds";
     }
     break;
-    case eGeometryShader:
+    case ShaderType::eGeometryShader:
     {
         profileName = "gs";
     }
     break;
-    case ePixelShader:
+    case ShaderType::ePixelShader:
     {
         profileName = "ps";
     }
     break;
-    case eComputeShader:
+    case ShaderType::eComputeShader:
     {
         profileName = "cs";
     }
@@ -200,7 +193,7 @@ bool VertexShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, eVertexShader, profileName);
+        getProfileName(deviceManager, ShaderType::eVertexShader, profileName);
         ID3DBlob* errorBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &m_vertexShaderBlob, &errorBlob);
         if (FAILED(hr))
@@ -259,7 +252,7 @@ bool HullShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, eHullShader, profileName, m_profileVersion);
+        getProfileName(deviceManager, ShaderType::eHullShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
@@ -318,7 +311,7 @@ bool DomainShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, eDomainShader, profileName, m_profileVersion);
+        getProfileName(deviceManager, ShaderType::eDomainShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
@@ -378,7 +371,7 @@ bool GeometryShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, eGeometryShader, profileName, m_profileVersion);
+        getProfileName(deviceManager, ShaderType::eGeometryShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
@@ -431,7 +424,7 @@ bool PixelShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, ePixelShader, profileName, m_profileVersion);
+        getProfileName(deviceManager, ShaderType::ePixelShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
@@ -490,7 +483,7 @@ bool ComputeShader::createShader(const DeviceManager& deviceManager)
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, eComputeShader, profileName, m_profileVersion);
+        getProfileName(deviceManager, ShaderType::eComputeShader, profileName, m_profileVersion);
         ID3DBlob* errorBlob;
         ID3DBlob* shaderBlob;
         HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);

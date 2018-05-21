@@ -28,7 +28,7 @@ private:
 
        void NormalizePlane();
 
-       enum Halfspace
+       enum class Halfspace
        {
            NEGATIVE = -1,
            ON_PLANE = 0,

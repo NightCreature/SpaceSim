@@ -41,7 +41,7 @@ class Message;
 
 struct CubeRendererInitialiseData
 {
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(CubeRendererInitialiseData);
     void deserialise(const tinyxml2::XMLElement* node);
     std::string m_texutureResourceName;
     Vector3 m_position;

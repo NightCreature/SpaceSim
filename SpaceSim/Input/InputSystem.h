@@ -35,7 +35,7 @@ public:
     }
 
 	//Expensive function
-    static bool getInputActionFromName(unsigned int actionName, InputActions::ActionType& actionType);
+    static bool getInputActionFromName(size_t actionName, InputActions::ActionType& actionType);
 
     typedef std::map<IInputDevice*, InputState> ControllersAndState;
     typedef std::map<IInputDevice*, InputState>::iterator ControllersAndStateIt;

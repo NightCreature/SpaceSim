@@ -9,7 +9,7 @@
 void IInputDevice::deserialise( const tinyxml2::XMLElement* element, const InputSystem& inputSystem )
 {
     UNUSEDPARAM(inputSystem);
-    unsigned int inputActionHash = hashString("InputAction");
+    auto inputActionHash = "InputAction"_hash;
     for (; element; element = element->NextSiblingElement())
     {
         if (hashString(element->Value()) == inputActionHash)

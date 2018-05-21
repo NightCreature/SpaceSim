@@ -21,7 +21,7 @@ class CameraManager;
 class Player : public GameObject
 {
 public:
-    enum camstate
+    enum class camstate
     {
         firstperson,
         thirdperson,

@@ -3,6 +3,10 @@
 #include "StringHelperFunctions.h"
 #include <string>
 
+///-----------------------------------------------------------------------------
+///! @brief This is not the best use of a hashed string we need, this is not compile time setup
+///! @remark
+///-----------------------------------------------------------------------------
 class HashString
 {
 public:
@@ -13,8 +17,8 @@ public:
         m_hash(hashString(str)) {}
     ~HashString() {}
 
-    unsigned int getHash() const { return m_hash; }
-    operator unsigned int() const { return m_hash; }
+    size_t getHash() const { return m_hash; }
+    operator size_t() const { return m_hash; }
 #ifdef _DEBUG
     const std::string& getString() const { return m_string; }
 #endif
@@ -22,6 +26,6 @@ private:
 #ifdef _DEBUG
     std::string m_string;
 #endif
-    unsigned int m_hash;
+   size_t m_hash;
 };
 

@@ -49,7 +49,7 @@ public:
     ///-------------------------------------------------------------------------
     virtual void handleMessage( const MessageSystem::Message& msg );
 
-    HASH_ELEMENT_DEFINITION
+    HASH_ELEMENT_DEFINITION(RotatingBlades)
 protected:
 private:
 	Vector3 m_position;

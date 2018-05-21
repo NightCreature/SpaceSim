@@ -57,7 +57,7 @@ protected:
 private:
     int getSettingIndex(const std::string& settingName) const 
     {
-        unsigned int hashedSettingName = hashString(settingName);
+        size_t hashedSettingName = hashString(settingName);
         for (int counter = 0; counter < (int)m_settings.size(); ++counter)
         {
             if (m_settings[counter]->getHashValue() == hashedSettingName)

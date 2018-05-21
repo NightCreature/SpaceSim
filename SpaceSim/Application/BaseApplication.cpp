@@ -29,8 +29,6 @@
 
 class RenderInstance;
 
-HashString exitGame("exit_game");
-
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Logger Application::m_logger;
 
@@ -179,6 +177,7 @@ void Application::mainGameLoop()
                 //m_view = cam->getCamera();
 
                 m_UpdateThread.setInput(input);
+                MSG_TRACE_CHANNEL("APPLICATION", "Updating render system with the input");
                 m_renderSystem.setInput(input);
 
                 m_UpdateThread.SetElapsedTime(m_elapsedTime, m_time);
@@ -195,7 +194,7 @@ void Application::mainGameLoop()
             m_renderSystem.endDraw();
 
             InputActions::ActionType inputAction;
-            InputSystem::getInputActionFromName(exitGame, inputAction);
+            InputSystem::getInputActionFromName("exit_game"_hash, inputAction);
             if (input.getInput(0) && input.getInput(0)->getActionValue(inputAction))
             {
                 PostQuitMessage(0);

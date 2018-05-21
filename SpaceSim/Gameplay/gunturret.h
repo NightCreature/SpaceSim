@@ -33,7 +33,7 @@ public:
 	void updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/);
 	void createScorchMark(const Vector3& pos, const Vector3 &normal);
     const ShaderInstance deserialise( const tinyxml2::XMLElement* element );
-    HASH_ELEMENT_DEFINITION
+    HASH_ELEMENT_DEFINITION(GunTurret)
 protected:
 private:
 	bool checkLaserCollisionPlayer(const Laser& l, Player& p);

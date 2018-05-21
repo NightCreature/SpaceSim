@@ -14,8 +14,8 @@
 #include "Graphics/ShaderCache.h"
 #include <stdio.h>
 
-HASH_ELEMENT_IMPLEMENTATION(Effect)
-HASH_ELEMENT_IMPLEMENTATION(Technique)
+
+
 
 
 ///-----------------------------------------------------------------------------
@@ -38,12 +38,12 @@ void Effect::deserialise(const tinyxml2::XMLElement* node, Resource* resource)
 {
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement())
     {
-        unsigned int elmentHash = hashString(childElement->Value());
+        auto elmentHash = hashString(childElement->Value());
         if (Technique::m_hash == elmentHash)
         {
             Technique technique(resource);
             technique.deserialise(childElement);
-            m_techniques.emplace( std::pair<unsigned int, Technique>(technique.getNameHash(), technique) );
+            m_techniques.emplace( std::pair<size_t, Technique>(technique.getNameHash(), technique) );
         }
     }
 }
@@ -59,7 +59,7 @@ const Technique* Effect::getTechnique(const std::string& techniqueName) const
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const Technique* Effect::getTechnique(const unsigned int techniqueName) const
+const Technique* Effect::getTechnique(const size_t techniqueName) const
 {
     auto it = m_techniques.find(techniqueName);
     if (it != end(m_techniques))
@@ -93,7 +93,7 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
 
     for (const tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement())
     {
-        unsigned int elmentHash = hashString(childElement->Value());
+        auto elmentHash = hashString(childElement->Value());
         if (VertexShader::m_hash == elmentHash)
         {
             m_vertexShader = shaderCache.getVertexShader(childElement, deviceManager);

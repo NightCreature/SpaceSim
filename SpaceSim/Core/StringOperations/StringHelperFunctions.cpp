@@ -92,15 +92,15 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
     switch (severity)
     {
     default:
-    case EDEBUG:
-    case ELOG:
+    case TraceSeverity::EDEBUG:
+    case TraceSeverity::ELOG:
         outputFormatString = "%s(%d): [%s]  %s\n";
         break;
-    case EWARN:
+    case TraceSeverity::EWARN:
 
         outputFormatString = "%s(%d): [%s] WARNING : %s\n";
         break;
-    case EASSERT:
+    case TraceSeverity::EASSERT:
 
         outputFormatString = "%s(%d): [%s] : ASSERT : %s\n";
         break;

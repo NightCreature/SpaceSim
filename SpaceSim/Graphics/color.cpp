@@ -1,7 +1,7 @@
 #include "Graphics/color.h"
 #include "Core/tinyxml2.h"
 
-HASH_ELEMENT_IMPLEMENTATION(Color)
+
 
 Color::Color()
 {

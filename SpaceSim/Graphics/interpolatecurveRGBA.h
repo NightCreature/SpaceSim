@@ -16,12 +16,8 @@ public:
 	void SetParameters(const interpolateCurveRGBA& src);
 	const Vector4& GetValue(float pos) const;
 
-	enum
-	{
-		NumValues = 4,
-	};
 private:
-	Vector4 m_keyFrameValues[NumValues];
+	Vector4 m_keyFrameValues[4];
 	float m_keyFramePos1, m_keyFramePos2;
 };
 

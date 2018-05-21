@@ -18,7 +18,7 @@
 #include "Core/MessageSystem/GameMessages.h"
 #include "Graphics/D3DDebugHelperFunctions.h"
 
-HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
+
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -375,7 +375,7 @@ void RenderSystem::update(float elapsedTime, double time)
     pPerf->BeginEvent(L"RenderSystem::Update");
 #endif
 
-    static const unsigned int defaultTechniqueHash = hashString("default");
+    const auto defaultTechniqueHash = "default"_hash;
     m_window.update(elapsedTime, time);
 
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
@@ -763,6 +763,15 @@ void RenderSystem::beginDraw()
     static int counter = 0;
     if (counter > 15)
     {
+        Light* light0 = lm.getLight("light_0");
+        if (light0 != nullptr)
+        {
+            Color diffuse = light0->getDiffuse();
+            diffuse.setBlue(diffuse.b() > 1.0f ? 0.0f : diffuse.b() + 0.1f);
+            diffuse.setRed(diffuse.r() < 0.0f ? 1.0f : diffuse.r() - 0.1f);
+            light0->setDiffuse(diffuse);
+        }
+
         //Loop over rts here and render to all of them
         TextureManager& tm = helper.getWriteableResource().getTextureManager();
         static size_t rtCounter = 0;
@@ -890,7 +899,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
     element = element->FirstChildElement();
     for (element; element; element = element->NextSiblingElement())
     {
-        unsigned int elementHash = hashString(element->Value());
+        auto elementHash = hashString(element->Value());
         if (elementHash == CubeRendererInitialiseData::m_hash)
         {
             CubeRendererInitialiseData currentCubeSetting;
