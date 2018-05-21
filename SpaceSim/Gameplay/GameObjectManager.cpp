@@ -104,9 +104,10 @@ void GameObjectManager::handleMessage( const MessageSystem::Message& message )
     { 
         auto msg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(message);
         auto data = msg.GetData();
-        if (m_gameObjects[static_cast<unsigned int>(data->m_gameObjectId)] != nullptr)
+        GameObjectMap::iterator it = m_gameObjects.find(data->m_gameObjectId);
+        if (it != m_gameObjects.end())
         {
-            m_gameObjects[static_cast<unsigned int>(data->m_gameObjectId)]->handleMessage(message);
+            it->second->handleMessage(message);
         }
     }
 }
