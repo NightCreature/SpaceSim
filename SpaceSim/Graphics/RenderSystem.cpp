@@ -51,7 +51,6 @@ m_totalNumberOfInstancesRendered(0),
 m_averageNumberOfInstancesRenderingPerFrame(0),
 m_totalNumberOfRenderedFrames(0)
 {
-    ZeroMemory(&m_swapChainDescriptor, sizeof(DXGI_SWAP_CHAIN_DESC));
     m_wireFrame = false;
 }
 
@@ -97,8 +96,6 @@ RenderSystem::~RenderSystem()
     m_modelManger.cleanup(); //just to see if it matters in the live objects list
     m_shaderCache.cleanup();
     m_effectCache.cleanup();
-
-    m_dxgiFactory->Release();
    
 
 #ifdef _DEBUG
@@ -136,50 +133,10 @@ void RenderSystem::initialise(Resource* resource)
         m_window.showWindow();
     }
 
-    IDXGIAdapter* adapter = nullptr;
-    IDXGIFactory * pFactory;
-    HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory));
-    if (hr == S_OK)
-    {
-        for (size_t counter = 0; hr == S_OK; ++counter)
-        {
-            adapter = nullptr;
-            hr = pFactory->EnumAdapters((UINT)counter, &adapter);
-            MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "%d", counter);
-            if (adapter != nullptr)
-            {
-                DXGI_ADAPTER_DESC adapterDesc;
-                adapter->GetDesc(&adapterDesc);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "vendor id: %x", adapterDesc.VendorId);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "device id: %x", adapterDesc.DeviceId);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "subsytem id: %x", adapterDesc.SubSysId);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "revision: %d", adapterDesc.Revision);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated VRAM: %llu MiB", adapterDesc.DedicatedVideoMemory / (1024 * 1024));
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated RAM: %llu MiB", adapterDesc.DedicatedSystemMemory / (1024 * 1024));
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Shared RAM: %llu MiB", adapterDesc.SharedSystemMemory / (1024 * 1024));
-                std::string str;
-                convertToCString(adapterDesc.Description, str);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());
-
-                if (adapterDesc.VendorId != 0x8086)
-                {
-                    break;
-                }
-            }
-        }
-
-        pFactory->Release();
-    }
-
-    if (!m_deviceManager.createDevice(adapter))
+    if (!m_deviceManager.createDevice())
     {
         ExitProcess(1); //Fix this exit cleanly
     }
-    adapter->Release();
-
-    ID3D11Device* device = m_deviceManager.getDevice();
-    //Patch up the factory
-    patchUpDXGIFactory(device);
 
     int windowWidth = 1280;
     int windowHeight = 720;
@@ -201,8 +158,12 @@ void RenderSystem::initialise(Resource* resource)
     windowWidth = rect.right - rect.left;
     windowHeight = rect.bottom - rect.top;
 
-    createSwapChain(device, windowWidth, windowHeight);
+    if (m_deviceManager.createSwapChain(m_window.getWindowHandle(), windowWidth, windowHeight))
+    {
+        m_swapChain = m_deviceManager.GetSwapChain();
+    }
 
+    auto device = m_deviceManager.getDevice();
     setupSwapChainForRendering(device, m_deviceManager.getDeviceContext(), windowWidth, windowHeight);
 
     //Everything is in GL format so turn off culling
@@ -217,7 +178,7 @@ void RenderSystem::initialise(Resource* resource)
     rasterizerStateDesc.ScissorEnable = false;
     rasterizerStateDesc.SlopeScaledDepthBias = 0.0f;
     rasterizerStateDesc.DepthClipEnable = false;
-    hr = device->CreateRasterizerState(&rasterizerStateDesc, &m_rasteriserState);
+    HRESULT hr = device->CreateRasterizerState(&rasterizerStateDesc, &m_rasteriserState);
     D3DDebugHelperFunctions::SetDebugChildName(m_rasteriserState, "RenderSystem RasterizerState");
 
     D3D11_RASTERIZER_DESC rasterizerWireStateDesc;
@@ -301,7 +262,7 @@ void RenderSystem::initialise(Resource* resource)
     shadowContantsDescriptor.ByteWidth = 3 * 16 * sizeof(float);
     shadowContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = device->CreateBuffer(&shadowContantsDescriptor, 0, &m_shadowConstantBuffer);
-    D3DDebugHelperFunctions::SetDebugChildName(m_shadowConstantBuffer, "RenderSystem Light Constant buffer");
+    D3DDebugHelperFunctions::SetDebugChildName(m_shadowConstantBuffer, "RenderSystem Shadow Constant buffer");
 
     D3D11_SAMPLER_DESC samplerStateDesc;
     samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -512,58 +473,6 @@ void RenderSystem::update(float elapsedTime, double time)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-bool RenderSystem::createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight)
-{
-    DXGI_MODE_DESC bufferDescription;
-    ZeroMemory(&bufferDescription, sizeof(DXGI_MODE_DESC));
-    bufferDescription.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    bufferDescription.Height = windowHeight;
-    bufferDescription.Width = windowWidth;
-    bufferDescription.RefreshRate.Numerator = 60;
-    bufferDescription.RefreshRate.Denominator = 1;
-
-    m_swapChainDescriptor.BufferCount = 1;
-    m_swapChainDescriptor.BufferDesc = bufferDescription;
-    m_swapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    m_swapChainDescriptor.OutputWindow = m_window.getWindowHandle();
-    m_swapChainDescriptor.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-    m_swapChainDescriptor.SampleDesc.Count = 1;
-    m_swapChainDescriptor.SampleDesc.Quality = 0;
-    m_swapChainDescriptor.Windowed = true;
-
-    if (FAILED(m_dxgiFactory->CreateSwapChain((IUnknown*)device, &m_swapChainDescriptor, &m_swapChain)))
-    {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to create a swapchain")
-            return false;
-    }
-
-    return true;
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   Because the device is created elsewhere(DeviceManager) the DXGIFactory
-///!          needs to be patched. Otherwise other resources can't be created through it.
-///! @remark
-///-----------------------------------------------------------------------------
-void RenderSystem::patchUpDXGIFactory(ID3D11Device* device)
-{
-    IDXGIDevice * pDXGIDevice;
-    IUnknown* deviceinterface = (IUnknown*)device;
-    HRESULT hr = deviceinterface->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice);
-    IDXGIAdapter * pDXGIAdapter;
-    hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), (void **)&pDXGIAdapter);
-    if (FAILED(hr))
-    {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to path the DXGI Factory");
-        return;
-    }
-    pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&m_dxgiFactory);
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
 void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight)
 {
     // Create a render target view
@@ -646,14 +555,6 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
 ///-----------------------------------------------------------------------------
 void RenderSystem::cleanup()
 {
-    if (m_dxgiFactory)
-    {
-        m_dxgiFactory->Release();
-    }
-    if (m_swapChain)
-    {
-        m_swapChain->Release();
-    }
     if (m_depthStencilBuffer)
     {
         m_depthStencilBuffer->Release();
@@ -738,32 +639,30 @@ void RenderSystem::beginDraw()
     const CameraManager& cm = helper.getResource().getCameraManager();
     const Camera* cam = cm.getCamera("global");
 
+    PROFILE_EVENT("RenderSystem::beginDraw::LightUpdate", DarkRed);
+    //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
+    if (cam != nullptr)
     {
-        PROFILE_EVENT("RenderSystem::beginDraw::LightUpdate", DarkRed);
-        //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
-        if (cam != nullptr)
-        {
-            camPos = cam->getEye();
-        }
+        camPos = cam->getEye();
+    }
 
-        Light* light0 = lm.getLight("light_0");
-        if (light0 != nullptr)
-        {
-            light0->setPosition(camPos);
-        }
+    Light* light0 = lm.getLight("light_0");
+    if (light0 != nullptr)
+    {
+        light0->setPosition(camPos);
+    }
 
-        unsigned int lightCounter = 0;
-        for (auto light : lm.getLights())
-        {
-            perFrameConstants.m_lightConstants[lightCounter] = light->getLightConstants();
-            ++lightCounter;
-        }
+    unsigned int lightCounter = 0;
+    for (auto light : lm.getLights())
+    {
+        perFrameConstants.m_lightConstants[lightCounter] = light->getLightConstants();
+        ++lightCounter;
     }
 
     static int counter = 0;
     if (counter > 15)
     {
-        Light* light0 = lm.getLight("light_0");
+        light0 = lm.getLight("light_0");
         if (light0 != nullptr)
         {
             Color diffuse = light0->getDiffuse();

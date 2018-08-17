@@ -149,5 +149,5 @@ void MouseController::internalActionSetup(InputActions::ActionType inputAction, 
     auto inputHash = hashString(input->Value());
     InputDefines::MouseControlDefinitions::MouseInput mouseInput = mouseDefinitions.FindControllerInputIdForHashId(inputHash);
 
-    m_physicalKeyToAction.insert(PhysicalInputPair(static_cast<unsigned int>(mouseInput), inputAction));
+    m_physicalKeyToAction.insert(PhysicalInputPair(castToUnderlyingType(mouseInput), inputAction));
 }

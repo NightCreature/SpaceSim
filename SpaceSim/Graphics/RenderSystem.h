@@ -72,7 +72,6 @@ public:
     void endDraw();
 
     HWND getWindowHandle() const { return m_window.getWindowHandle(); }
-    const IDXGIFactory* getDXGIFactory() const { return m_dxgiFactory; }
 
     void flipWireFrameMod() { m_wireFrame = !m_wireFrame; }
 
@@ -87,8 +86,6 @@ public:
     void setInput(Input input) { m_input = input; }
 protected:
 private:
-    bool createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight);
-    void patchUpDXGIFactory(ID3D11Device* device);
     void setupSwapChainForRendering( ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight );
     void initialiseCubemapRendererAndResources( Resource* resource );
     
@@ -110,11 +107,9 @@ private:
     GameWindow m_window;
     ResourceLoader m_resourceLoader;
     std::string m_appName;
-	std::string m_windowName;
+    std::string m_windowName;
 
-    IDXGIFactory* m_dxgiFactory;
-    IDXGISwapChain* m_swapChain;
-    DXGI_SWAP_CHAIN_DESC m_swapChainDescriptor;
+    IDXGISwapChain* m_swapChain; //Non owning pointer
 
     ID3D11Texture2D* m_backBuffer;
     ID3D11Texture2D* m_depthStencilBuffer;

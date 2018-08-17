@@ -34,6 +34,12 @@ ParticleEmitterComponentBased::~ParticleEmitterComponentBased()
     {
         delete m_updaters[counter];
     }
+
+    m_particleDataBuffer->Release();
+    m_srv->Release();
+    m_indexBuffer->Release();
+    m_constantBuffers[0]->Release();
+    m_constantBuffers[1]->Release();
 }
 
 ///-----------------------------------------------------------------------------
@@ -58,6 +64,7 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     auto resourceHelper = RenderResourceHelper(m_resource);
     ID3D11Device* deviceContext = resourceHelper.getWriteableResource().getDeviceManager().getDevice();
     deviceContext->CreateBuffer(&bufferDescriptor, 0, &m_particleDataBuffer);
+    D3DDebugHelperFunctions::SetDebugChildName(m_particleDataBuffer, "Vertex Buffer Particle System");
 
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDescriptor;
     ZeroMemory(&srvDescriptor, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
@@ -65,6 +72,7 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     srvDescriptor.Buffer.FirstElement = 0;
     srvDescriptor.Buffer.NumElements = static_cast<uint32>(numberParticles);
     deviceContext->CreateShaderResourceView(m_particleDataBuffer, &srvDescriptor, &m_srv);
+    D3DDebugHelperFunctions::SetDebugChildName(m_srv, "SRV Particle System");
 
 
     uint32* indecis = new uint32[6 * numberParticles];
@@ -95,6 +103,7 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     indexBufferDescriptor.CPUAccessFlags = 0;
     indexBufferDescriptor.MiscFlags = 0;
     deviceContext->CreateBuffer(&indexBufferDescriptor, &initData, &m_indexBuffer);
+    D3DDebugHelperFunctions::SetDebugChildName(m_indexBuffer, "Index Buffer Particle System");
 
     delete[] indecis;
 
@@ -114,7 +123,6 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
         MSG_TRACE_CHANNEL("PARTICLE SYSTEM ERROR", "failed to create the World, View and Porjection buffer for this effect");
         return;
     }
-
     D3DDebugHelperFunctions::SetDebugChildName(m_constantBuffers[0], "Constant Buffer 0  Particle System");
 
     D3D11_BUFFER_DESC materialDescriptor;
