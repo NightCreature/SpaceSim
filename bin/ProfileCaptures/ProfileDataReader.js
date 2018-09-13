@@ -41,7 +41,7 @@ class ProfilerDataReader
 				table.appendChild(row);
 			}
 
-			var infoDiv = document.getElementById("info");
+			var infoDiv = document.getElementById("EventDescriptors");
 			infoDiv.appendChild(table);
 	}
 

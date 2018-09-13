@@ -201,7 +201,12 @@ void Application::mainGameLoop()
             m_renderSystem.update(m_elapsedTime, m_time);
             m_renderSystem.endDraw();
 
-            profiler.WriteFile();
+            static size_t updateLoopCount = 0;
+            if (updateLoopCount == 2)
+            {
+                profiler.WriteFile();
+            }
+            updateLoopCount++;
 
             InputActions::ActionType inputAction;
             InputSystem::getInputActionFromName("exit_game"_hash, inputAction);

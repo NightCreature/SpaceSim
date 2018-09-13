@@ -106,12 +106,8 @@ void Profiler::Cleanup()
 ///-----------------------------------------------------------------------------
 void Profiler::FlushToFile()
 {
-    std::ofstream outputFile;
-    std::ios_base::openmode openMode = std::ios_base::out;
-    if (!m_firstFlush)
-    {
-        openMode |= std::ios_base::app;
-    }
+    std::fstream outputFile;
+    std::ios_base::openmode openMode = std::ios_base::out | std::ios_base::in;
     
     std::string fileName;// = "/ProfileCaptures/";
     fileName += m_fileNameForSession;
@@ -125,7 +121,8 @@ void Profiler::FlushToFile()
         
         if (m_firstFlush) //Stream out the descriptors we need these to track what each event means in the file
         {
-            m_firstFlush = false;
+            json_data["TimerResolution"] = m_timer.getResolution();
+
             for (auto& descriptor : m_eventDescriptors)
             {
                 nlohmann::json eventDescriptor;
@@ -137,7 +134,6 @@ void Profiler::FlushToFile()
                 json_data["EventDescriptors"].push_back(eventDescriptor);
             }
 
-            json_data["TimerResolution"] = m_timer.getResolution();
         }
         //else
         //{
