@@ -1,0 +1,145 @@
+{
+"EventDescriptors"
+[
+{"EventName" : "XInputDevice::update", "FileName" : "d:\sdk\demo\spacesim\spacesim\input\xcontroller.cpp", "FunctionName" : "XInputDevice::update, "LineNumber" : 74, "Hash" : 12692840573622922217},
+{"EventName" : "SingleThreadedUpdate", "FileName" : "d:\sdk\demo\spacesim\spacesim\application\baseapplication.cpp", "FunctionName" : "Application::mainGameLoop, "LineNumber" : 181, "Hash" : 7949890984811595415},
+{"EventName" : "RenderSystem::beginDraw", "FileName" : "d:\sdk\demo\spacesim\spacesim\graphics\rendersystem.cpp", "FunctionName" : "RenderSystem::beginDraw, "LineNumber" : 622, "Hash" : 126884847910281901},
+{"EventName" : "DispatchMessages", "FileName" : "d:\sdk\demo\spacesim\spacesim\core\messagesystem\messageobserver.cpp", "FunctionName" : "MessageSystem::MessageObserver::DispatchMessages, "LineNumber" : 49, "Hash" : 3812563885465958220},
+{"EventName" : "GameObjectManagerUpdate", "FileName" : "d:\sdk\demo\spacesim\spacesim\gameplay\gameobjectmanager.cpp", "FunctionName" : "GameObjectManager::update, "LineNumber" : 86, "Hash" : 100513040000468021},
+{"EventName" : "LaserManager::update", "FileName" : "d:\sdk\demo\spacesim\spacesim\gameplay\lasermanager.cpp", "FunctionName" : "LaserManager::update, "LineNumber" : 107, "Hash" : 6724986594741878999},
+{"EventName" : "ResourceLoader::update", "FileName" : "d:\sdk\demo\spacesim\spacesim\loader\resourceloader.cpp", "FunctionName" : "ResourceLoader::update, "LineNumber" : 21, "Hash" : 1695965132072470081},
+{"EventName" : "RenderSystem::beginDraw::MaterialSorting", "FileName" : "d:\sdk\demo\spacesim\spacesim\graphics\rendersystem.cpp", "FunctionName" : "RenderSystem::beginDraw, "LineNumber" : 659, "Hash" : 14999740206619166116},
+{"EventName" : "RenderSystem::beginDraw::LightUpdate", "FileName" : "d:\sdk\demo\spacesim\spacesim\graphics\rendersystem.cpp", "FunctionName" : "RenderSystem::beginDraw, "LineNumber" : 683, "Hash" : 9654633205452096262},
+{"EventName" : "ShadowMapRenderer::renderShadowMap", "FileName" : "d:\sdk\demo\spacesim\spacesim\graphics\shadowmaprenderer.cpp", "FunctionName" : "ShadowMapRenderer::renderShadowMap, "LineNumber" : 202, "Hash" : 4232082527248110039},
+{"EventName" : "RenderSystem::CheckVisibility", "FileName" : "d:\sdk\demo\spacesim\spacesim\graphics\shadowmaprenderer.cpp", "FunctionName" : "ShadowMapRenderer::CheckVisibility, "LineNumber" : 184, "Hash" : 14943783338719096905},
+{"EventName" : "RenderSystem::CheckVisibility", "FileName" : "d:\sdk\demo\spacesim\spacesim\graphics\rendersystem.cpp", "FunctionName" : "RenderSystem::CheckVisibility, "LineNumber" : 768, "Hash" : 13308466410251516333},
+{"EventName" : "RenderSystem::Update", "FileName" : "d:\sdk\demo\spacesim\spacesim\graphics\rendersystem.cpp", "FunctionName" : "RenderSystem::update, "LineNumber" : 354, "Hash" : 15234671569096822493},
+{"EventName" : "RenderSystem::ReserveVectors", "FileName" : "d:\sdk\demo\spacesim\spacesim\graphics\rendersystem.cpp", "FunctionName" : "RenderSystem::update, "LineNumber" : 380, "Hash" : 16073495973407608930},
+{"EventName" : "RenderSystem::endDraw", "FileName" : "d:\sdk\demo\spacesim\spacesim\graphics\rendersystem.cpp", "FunctionName" : "RenderSystem::endDraw, "LineNumber" : 785, "Hash" : 7466109327046708997}
+]
+}
+{"Frames"
+[
+"Events"
+[
+{"DescriptorHash" : 12692840573622922217, "StartTimeStamp" : 33431840116, "EndTimeStamp" : 33431840420},
+{"DescriptorHash" : 7949890984811595415, "StartTimeStamp" : 33431841059, "EndTimeStamp" : 33431842711},
+{"DescriptorHash" : 126884847910281901, "StartTimeStamp" : 33431843075, "EndTimeStamp" : 0},
+{"DescriptorHash" : 3812563885465958220, "StartTimeStamp" : 33431844817, "EndTimeStamp" : 0},
+{"DescriptorHash" : 3812563885465958220, "StartTimeStamp" : 33431847901, "EndTimeStamp" : 33431847902},
+{"DescriptorHash" : 100513040000468021, "StartTimeStamp" : 33431848673, "EndTimeStamp" : 33431848766},
+{"DescriptorHash" : 6724986594741878999, "StartTimeStamp" : 33431849073, "EndTimeStamp" : 33431849083},
+{"DescriptorHash" : 1695965132072470081, "StartTimeStamp" : 33431878140, "EndTimeStamp" : 33433415690},
+{"DescriptorHash" : 14999740206619166116, "StartTimeStamp" : 33433416067, "EndTimeStamp" : 33433416087},
+{"DescriptorHash" : 9654633205452096262, "StartTimeStamp" : 33433416588, "EndTimeStamp" : 33433420544},
+{"DescriptorHash" : 4232082527248110039, "StartTimeStamp" : 33433417237, "EndTimeStamp" : 33433420034},
+{"DescriptorHash" : 14943783338719096905, "StartTimeStamp" : 33433417573, "EndTimeStamp" : 33433417590},
+{"DescriptorHash" : 13308466410251516333, "StartTimeStamp" : 33433420462, "EndTimeStamp" : 33433420479},
+{"DescriptorHash" : 15234671569096822493, "StartTimeStamp" : 33433421000, "EndTimeStamp" : 33433421633},
+{"DescriptorHash" : 16073495973407608930, "StartTimeStamp" : 33433421499, "EndTimeStamp" : 33433421600},
+{"DescriptorHash" : 7466109327046708997, "StartTimeStamp" : 33433421947, "EndTimeStamp" : 33433440267},
+]
+"Histogram"
+[
+{"HistogramKey" : 100513040000468021, "HistogramValue" : 1},
+{"HistogramKey" : 7949890984811595415, "HistogramValue" : 1},
+{"HistogramKey" : 12692840573622922217, "HistogramValue" : 1},
+{"HistogramKey" : 3812563885465958220, "HistogramValue" : 2},
+{"HistogramKey" : 126884847910281901, "HistogramValue" : 1},
+{"HistogramKey" : 6724986594741878999, "HistogramValue" : 1},
+{"HistogramKey" : 1695965132072470081, "HistogramValue" : 1},
+{"HistogramKey" : 9654633205452096262, "HistogramValue" : 1},
+{"HistogramKey" : 14999740206619166116, "HistogramValue" : 1},
+{"HistogramKey" : 4232082527248110039, "HistogramValue" : 1},
+{"HistogramKey" : 14943783338719096905, "HistogramValue" : 1},
+{"HistogramKey" : 13308466410251516333, "HistogramValue" : 1},
+{"HistogramKey" : 15234671569096822493, "HistogramValue" : 1},
+{"HistogramKey" : 16073495973407608930, "HistogramValue" : 1},
+{"HistogramKey" : 7466109327046708997, "HistogramValue" : 1},
+]
+]
+}
+{"Frames"
+[
+"Events"
+[
+{"DescriptorHash" : 12692840573622922217, "StartTimeStamp" : 33431840116, "EndTimeStamp" : 33431840420},
+{"DescriptorHash" : 7949890984811595415, "StartTimeStamp" : 33431841059, "EndTimeStamp" : 33431842711},
+{"DescriptorHash" : 126884847910281901, "StartTimeStamp" : 33431843075, "EndTimeStamp" : 0},
+{"DescriptorHash" : 3812563885465958220, "StartTimeStamp" : 33431844817, "EndTimeStamp" : 0},
+{"DescriptorHash" : 3812563885465958220, "StartTimeStamp" : 33431847901, "EndTimeStamp" : 33431847902},
+{"DescriptorHash" : 100513040000468021, "StartTimeStamp" : 33431848673, "EndTimeStamp" : 33431848766},
+{"DescriptorHash" : 6724986594741878999, "StartTimeStamp" : 33431849073, "EndTimeStamp" : 33431849083},
+{"DescriptorHash" : 1695965132072470081, "StartTimeStamp" : 33431878140, "EndTimeStamp" : 33433415690},
+{"DescriptorHash" : 14999740206619166116, "StartTimeStamp" : 33433416067, "EndTimeStamp" : 33433416087},
+{"DescriptorHash" : 9654633205452096262, "StartTimeStamp" : 33433416588, "EndTimeStamp" : 33433420544},
+{"DescriptorHash" : 4232082527248110039, "StartTimeStamp" : 33433417237, "EndTimeStamp" : 33433420034},
+{"DescriptorHash" : 14943783338719096905, "StartTimeStamp" : 33433417573, "EndTimeStamp" : 33433417590},
+{"DescriptorHash" : 13308466410251516333, "StartTimeStamp" : 33433420462, "EndTimeStamp" : 33433420479},
+{"DescriptorHash" : 15234671569096822493, "StartTimeStamp" : 33433421000, "EndTimeStamp" : 33433421633},
+{"DescriptorHash" : 16073495973407608930, "StartTimeStamp" : 33433421499, "EndTimeStamp" : 33433421600},
+{"DescriptorHash" : 7466109327046708997, "StartTimeStamp" : 33433421947, "EndTimeStamp" : 33433440267},
+]
+"Histogram"
+[
+{"HistogramKey" : 100513040000468021, "HistogramValue" : 1},
+{"HistogramKey" : 7949890984811595415, "HistogramValue" : 1},
+{"HistogramKey" : 12692840573622922217, "HistogramValue" : 1},
+{"HistogramKey" : 3812563885465958220, "HistogramValue" : 2},
+{"HistogramKey" : 126884847910281901, "HistogramValue" : 1},
+{"HistogramKey" : 6724986594741878999, "HistogramValue" : 1},
+{"HistogramKey" : 1695965132072470081, "HistogramValue" : 1},
+{"HistogramKey" : 9654633205452096262, "HistogramValue" : 1},
+{"HistogramKey" : 14999740206619166116, "HistogramValue" : 1},
+{"HistogramKey" : 4232082527248110039, "HistogramValue" : 1},
+{"HistogramKey" : 14943783338719096905, "HistogramValue" : 1},
+{"HistogramKey" : 13308466410251516333, "HistogramValue" : 1},
+{"HistogramKey" : 15234671569096822493, "HistogramValue" : 1},
+{"HistogramKey" : 16073495973407608930, "HistogramValue" : 1},
+{"HistogramKey" : 7466109327046708997, "HistogramValue" : 1},
+]
+"Events"
+[
+{"DescriptorHash" : 12692840573622922217, "StartTimeStamp" : 33439177104, "EndTimeStamp" : 33439177425},
+{"DescriptorHash" : 7949890984811595415, "StartTimeStamp" : 33439178206, "EndTimeStamp" : 33439179299},
+{"DescriptorHash" : 126884847910281901, "StartTimeStamp" : 33439179404, "EndTimeStamp" : 0},
+{"DescriptorHash" : 3812563885465958220, "StartTimeStamp" : 33439180123, "EndTimeStamp" : 0},
+{"DescriptorHash" : 3812563885465958220, "StartTimeStamp" : 33439207240, "EndTimeStamp" : 33439207241},
+{"DescriptorHash" : 1695965132072470081, "StartTimeStamp" : 0, "EndTimeStamp" : 0},
+{"DescriptorHash" : 100513040000468021, "StartTimeStamp" : 33439217567, "EndTimeStamp" : 33439245848},
+{"DescriptorHash" : 6724986594741878999, "StartTimeStamp" : 33439245960, "EndTimeStamp" : 33439245976},
+{"DescriptorHash" : 14999740206619166116, "StartTimeStamp" : 33439940263, "EndTimeStamp" : 33439940282},
+{"DescriptorHash" : 9654633205452096262, "StartTimeStamp" : 33439940611, "EndTimeStamp" : 33439942607},
+{"DescriptorHash" : 4232082527248110039, "StartTimeStamp" : 33439940929, "EndTimeStamp" : 33439942458},
+{"DescriptorHash" : 14943783338719096905, "StartTimeStamp" : 33439941048, "EndTimeStamp" : 33439941066},
+{"DescriptorHash" : 13308466410251516333, "StartTimeStamp" : 33439942580, "EndTimeStamp" : 33439942595},
+{"DescriptorHash" : 15234671569096822493, "StartTimeStamp" : 33439942713, "EndTimeStamp" : 33439945684},
+{"DescriptorHash" : 13793168985705400819, "StartTimeStamp" : 33439943301, "EndTimeStamp" : 33439944466},
+{"DescriptorHash" : 11659892370603567301, "StartTimeStamp" : 33439943660, "EndTimeStamp" : 33439944019},
+{"DescriptorHash" : 11353895883635175682, "StartTimeStamp" : 33439944255, "EndTimeStamp" : 33439944457},
+{"DescriptorHash" : 16073495973407608930, "StartTimeStamp" : 33439944593, "EndTimeStamp" : 33439944710},
+{"DescriptorHash" : 7466109327046708997, "StartTimeStamp" : 33439945774, "EndTimeStamp" : 33439984649},
+]
+"Histogram"
+[
+{"HistogramKey" : 100513040000468021, "HistogramValue" : 1},
+{"HistogramKey" : 7949890984811595415, "HistogramValue" : 1},
+{"HistogramKey" : 12692840573622922217, "HistogramValue" : 1},
+{"HistogramKey" : 3812563885465958220, "HistogramValue" : 2},
+{"HistogramKey" : 126884847910281901, "HistogramValue" : 1},
+{"HistogramKey" : 1695965132072470081, "HistogramValue" : 1},
+{"HistogramKey" : 6724986594741878999, "HistogramValue" : 1},
+{"HistogramKey" : 9654633205452096262, "HistogramValue" : 1},
+{"HistogramKey" : 14999740206619166116, "HistogramValue" : 1},
+{"HistogramKey" : 4232082527248110039, "HistogramValue" : 1},
+{"HistogramKey" : 14943783338719096905, "HistogramValue" : 1},
+{"HistogramKey" : 13308466410251516333, "HistogramValue" : 1},
+{"HistogramKey" : 15234671569096822493, "HistogramValue" : 1},
+{"HistogramKey" : 13793168985705400819, "HistogramValue" : 1},
+{"HistogramKey" : 11659892370603567301, "HistogramValue" : 1},
+{"HistogramKey" : 11353895883635175682, "HistogramValue" : 1},
+{"HistogramKey" : 16073495973407608930, "HistogramValue" : 1},
+{"HistogramKey" : 7466109327046708997, "HistogramValue" : 1},
+]
+]
+}

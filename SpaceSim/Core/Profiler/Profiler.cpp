@@ -136,6 +136,8 @@ void Profiler::FlushToFile()
                 eventDescriptor["Event Hash"] = descriptor.getHash();
                 json_data["EventDescriptors"].push_back(eventDescriptor);
             }
+
+            json_data["TimerResolution"] = m_timer.getResolution();
         }
         //else
         //{

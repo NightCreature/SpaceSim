@@ -123,6 +123,18 @@ private:
     ID3D11DepthStencilState* m_depthStencilState;
     ID3D11Buffer* m_lightConstantBuffer;
     ID3D11Buffer* m_shadowConstantBuffer;
+
+    ID3D11Query* m_beginDrawQuery;
+    ID3D11Query* m_endDrawQuery;
+    ID3D11Query* m_cubemapBeginDrawQuery;
+    ID3D11Query* m_cubemapEndDrawQuery;
+    ID3D11Query* m_shadoBeginDrawQuery;
+    ID3D11Query* m_shadoEndDrawQuery;
+    ID3D11Query* m_mainBeginDrawQuery;
+    ID3D11Query* m_mainEndDrawQuery;
+    ID3D11Query* m_timeDisjointQuery;
+
+    ID3D11Query* m_pipeLineStatistics;
     bool m_wireFrame;
 
     size_t m_numberOfInstancesRenderingThisFrame;

@@ -45,7 +45,7 @@ public:
         UNUSEDPARAM(typeName); //work arround for compile error parameter is used
     }
 
-    virtual void CleanupImplementationData() { delete static_cast<ResourceData<T>*>(m_implementationData); }
+    //virtual void CleanupImplementationData() { delete static_cast<ResourceData<T>*>(m_implementationData); m_implementationData = nullptr; }
 
     void SetData(const T& data) { ResourceData<T>* dataPtr = static_cast<ResourceData<T>*>(m_implementationData); (*dataPtr).m_fixedData = data; }
     const ResourceData<T>* GetData() const { return static_cast<ResourceData<T>*>(m_implementationData); }
@@ -69,7 +69,7 @@ public:
         m_implementationDataSize = sizeof(RenderInfo);
     }
 
-    virtual void CleanupImplementationData() { delete static_cast<RenderInfo*>(m_implementationData); }
+    //virtual void CleanupImplementationData() { delete static_cast<RenderInfo*>(m_implementationData); m_implementationData = nullptr; }
 
     const RenderInfo* GetData() const { return static_cast<RenderInfo*>(m_implementationData); }
     void SetData(const RenderInfo& data) { (*static_cast<RenderInfo*>(m_implementationData)) = data; }

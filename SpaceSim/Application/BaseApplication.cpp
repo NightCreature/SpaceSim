@@ -24,6 +24,7 @@
 #include "UI/TextBlock.h"
 
 #include "Core/Profiler/ProfilerMacros.h" 
+#include "Core/Profiler/Profiler.h"
 
 #include "vld.h"
 
@@ -164,6 +165,11 @@ void Application::mainGameLoop()
         else
         {
             PROFILE_FRAME("NewSpaceSim Frame Marker");
+
+            Profiling::Profiler& profiler = Profiling::Profiler::GetInstance();
+            profiler.BeginFrame();
+            
+
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();
@@ -171,8 +177,10 @@ void Application::mainGameLoop()
             Input input = m_inputSystem.getInput();
             //THis needs to happen in single threaded update
             {
-                PROFILE_EVENT("SingleThreadedUpdate", Green);
                 m_UpdateThread.LockCriticalSection();
+
+                PROFILE_EVENT("SingleThreadedUpdate", Green);
+
                 //const Camera* cam = m_cameraSystem.getCamera("global");
                 //m_view = cam->getCamera();
 
@@ -192,6 +200,8 @@ void Application::mainGameLoop()
             m_renderSystem.beginDraw();
             m_renderSystem.update(m_elapsedTime, m_time);
             m_renderSystem.endDraw();
+
+            profiler.WriteFile();
 
             InputActions::ActionType inputAction;
             InputSystem::getInputActionFromName("exit_game"_hash, inputAction);
@@ -237,6 +247,10 @@ void Application::cleanup()
     m_renderSystem.cleanup();
     m_gameResource->getGameObjectManager().cleanup();
     m_settingsManager.cleanup();
+
+    Profiling::Profiler& profiler = Profiling::Profiler::GetInstance();
+
+    profiler.Cleanup();
 
     //Need to add a cleanup call to the cache
     //delete cache;

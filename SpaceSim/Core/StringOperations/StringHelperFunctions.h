@@ -9,8 +9,6 @@
 #include <Windows.h>
 #include <Stringapiset.h>
 
-#include "Core/Profiler/ProfilerMacros.h"
-
 const size_t c_fnvHashOffset = 2166136261;
 const size_t c_fnvHashPrime = 16777619;
 
@@ -55,7 +53,6 @@ constexpr char toLowerConstExpr(const char c)
 ///-----------------------------------------------------------------------------
 inline constexpr size_t hashString(const char* sourceStr, size_t size)
 {
-    PROFILE_EVENT("HashString", Brown);
     size_t returnHash = c_fnvHashOffset;
     for (size_t counter = 0; counter < size; ++counter)
     {
@@ -86,7 +83,6 @@ inline size_t hashString(const std::string& sourceStr)
 
 inline constexpr size_t hashBinaryData(const char* data, size_t size)
 {
-    PROFILE_EVENT("hashBinaryData", Brown);
     size_t returnHash = c_fnvHashOffset;
     for (size_t counter = 0; counter < size; ++counter)
     {

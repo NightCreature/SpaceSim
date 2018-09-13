@@ -1,0 +1,549 @@
+{
+    "EventDescriptors": [
+        {
+            "Event Hash": 12692840573622922217,
+            "Event Name": "XInputDevice::update",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\input\\xcontroller.cpp",
+            "Function Name": "XInputDevice::update",
+            "Line Number": 74
+        },
+        {
+            "Event Hash": 7949890984811595415,
+            "Event Name": "SingleThreadedUpdate",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\application\\baseapplication.cpp",
+            "Function Name": "Application::mainGameLoop",
+            "Line Number": 182
+        },
+        {
+            "Event Hash": 126884847910281901,
+            "Event Name": "RenderSystem::beginDraw",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\graphics\\rendersystem.cpp",
+            "Function Name": "RenderSystem::beginDraw",
+            "Line Number": 622
+        },
+        {
+            "Event Hash": 3812563885465958220,
+            "Event Name": "DispatchMessages",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\core\\messagesystem\\messageobserver.cpp",
+            "Function Name": "MessageSystem::MessageObserver::DispatchMessages",
+            "Line Number": 49
+        },
+        {
+            "Event Hash": 100513040000468021,
+            "Event Name": "GameObjectManagerUpdate",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\gameplay\\gameobjectmanager.cpp",
+            "Function Name": "GameObjectManager::update",
+            "Line Number": 86
+        },
+        {
+            "Event Hash": 6724986594741878999,
+            "Event Name": "LaserManager::update",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\gameplay\\lasermanager.cpp",
+            "Function Name": "LaserManager::update",
+            "Line Number": 107
+        },
+        {
+            "Event Hash": 1695965132072470081,
+            "Event Name": "ResourceLoader::update",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\loader\\resourceloader.cpp",
+            "Function Name": "ResourceLoader::update",
+            "Line Number": 21
+        },
+        {
+            "Event Hash": 14999740206619166116,
+            "Event Name": "RenderSystem::beginDraw::MaterialSorting",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\graphics\\rendersystem.cpp",
+            "Function Name": "RenderSystem::beginDraw",
+            "Line Number": 659
+        },
+        {
+            "Event Hash": 9654633205452096262,
+            "Event Name": "RenderSystem::beginDraw::LightUpdate",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\graphics\\rendersystem.cpp",
+            "Function Name": "RenderSystem::beginDraw",
+            "Line Number": 683
+        },
+        {
+            "Event Hash": 4232082527248110039,
+            "Event Name": "ShadowMapRenderer::renderShadowMap",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\graphics\\shadowmaprenderer.cpp",
+            "Function Name": "ShadowMapRenderer::renderShadowMap",
+            "Line Number": 202
+        },
+        {
+            "Event Hash": 14943783338719096905,
+            "Event Name": "RenderSystem::CheckVisibility",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\graphics\\shadowmaprenderer.cpp",
+            "Function Name": "ShadowMapRenderer::CheckVisibility",
+            "Line Number": 184
+        },
+        {
+            "Event Hash": 13308466410251516333,
+            "Event Name": "RenderSystem::CheckVisibility",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\graphics\\rendersystem.cpp",
+            "Function Name": "RenderSystem::CheckVisibility",
+            "Line Number": 768
+        },
+        {
+            "Event Hash": 15234671569096822493,
+            "Event Name": "RenderSystem::Update",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\graphics\\rendersystem.cpp",
+            "Function Name": "RenderSystem::update",
+            "Line Number": 354
+        },
+        {
+            "Event Hash": 16073495973407608930,
+            "Event Name": "RenderSystem::ReserveVectors",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\graphics\\rendersystem.cpp",
+            "Function Name": "RenderSystem::update",
+            "Line Number": 380
+        },
+        {
+            "Event Hash": 7466109327046708997,
+            "Event Name": "RenderSystem::endDraw",
+            "File Name": "d:\\sdk\\demo\\spacesim\\spacesim\\graphics\\rendersystem.cpp",
+            "Function Name": "RenderSystem::endDraw",
+            "Line Number": 785
+        }
+    ],
+    "Frames": [
+        {
+            "Events": [
+                {
+                    "End Timestamp": 119351215589,
+                    "Event Hash": 12692840573622922217,
+                    "Start Timestamp": 119351215297
+                },
+                {
+                    "End Timestamp": 119351246148,
+                    "Event Hash": 7949890984811595415,
+                    "Start Timestamp": 119351217036
+                },
+                {
+                    "End Timestamp": 0,
+                    "Event Hash": 126884847910281901,
+                    "Start Timestamp": 119351248114
+                },
+                {
+                    "End Timestamp": 119351248222,
+                    "Event Hash": 3812563885465958220,
+                    "Start Timestamp": 119351248221
+                },
+                {
+                    "End Timestamp": 119351249400,
+                    "Event Hash": 100513040000468021,
+                    "Start Timestamp": 119351249308
+                },
+                {
+                    "End Timestamp": 0,
+                    "Event Hash": 3812563885465958220,
+                    "Start Timestamp": 119351249467
+                },
+                {
+                    "End Timestamp": 119351250373,
+                    "Event Hash": 6724986594741878999,
+                    "Start Timestamp": 119351250349
+                },
+                {
+                    "End Timestamp": 119352723344,
+                    "Event Hash": 1695965132072470081,
+                    "Start Timestamp": 119351283271
+                },
+                {
+                    "End Timestamp": 119352724283,
+                    "Event Hash": 14999740206619166116,
+                    "Start Timestamp": 119352724260
+                },
+                {
+                    "End Timestamp": 119352731843,
+                    "Event Hash": 9654633205452096262,
+                    "Start Timestamp": 119352725211
+                },
+                {
+                    "End Timestamp": 119352730505,
+                    "Event Hash": 4232082527248110039,
+                    "Start Timestamp": 119352727066
+                },
+                {
+                    "End Timestamp": 119352727959,
+                    "Event Hash": 14943783338719096905,
+                    "Start Timestamp": 119352727931
+                },
+                {
+                    "End Timestamp": 119352731750,
+                    "Event Hash": 13308466410251516333,
+                    "Start Timestamp": 119352731731
+                },
+                {
+                    "End Timestamp": 119352735578,
+                    "Event Hash": 15234671569096822493,
+                    "Start Timestamp": 119352732650
+                },
+                {
+                    "End Timestamp": 119352735530,
+                    "Event Hash": 16073495973407608930,
+                    "Start Timestamp": 119352735393
+                },
+                {
+                    "End Timestamp": 119352753909,
+                    "Event Hash": 7466109327046708997,
+                    "Start Timestamp": 119352736288
+                }
+            ],
+            "Histogram": [
+                {
+                    "Count": 1,
+                    "Event Hash": 100513040000468021
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 7949890984811595415
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 12692840573622922217
+                },
+                {
+                    "Count": 2,
+                    "Event Hash": 3812563885465958220
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 126884847910281901
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 6724986594741878999
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 1695965132072470081
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 9654633205452096262
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 14999740206619166116
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 4232082527248110039
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 14943783338719096905
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 13308466410251516333
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 15234671569096822493
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 16073495973407608930
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 7466109327046708997
+                }
+            ]
+        },
+        {
+            "Events": [
+                {
+                    "End Timestamp": 119351215589,
+                    "Event Hash": 12692840573622922217,
+                    "Start Timestamp": 119351215297
+                },
+                {
+                    "End Timestamp": 119351246148,
+                    "Event Hash": 7949890984811595415,
+                    "Start Timestamp": 119351217036
+                },
+                {
+                    "End Timestamp": 0,
+                    "Event Hash": 126884847910281901,
+                    "Start Timestamp": 119351248114
+                },
+                {
+                    "End Timestamp": 119351248222,
+                    "Event Hash": 3812563885465958220,
+                    "Start Timestamp": 119351248221
+                },
+                {
+                    "End Timestamp": 119351249400,
+                    "Event Hash": 100513040000468021,
+                    "Start Timestamp": 119351249308
+                },
+                {
+                    "End Timestamp": 0,
+                    "Event Hash": 3812563885465958220,
+                    "Start Timestamp": 119351249467
+                },
+                {
+                    "End Timestamp": 119351250373,
+                    "Event Hash": 6724986594741878999,
+                    "Start Timestamp": 119351250349
+                },
+                {
+                    "End Timestamp": 119352723344,
+                    "Event Hash": 1695965132072470081,
+                    "Start Timestamp": 119351283271
+                },
+                {
+                    "End Timestamp": 119352724283,
+                    "Event Hash": 14999740206619166116,
+                    "Start Timestamp": 119352724260
+                },
+                {
+                    "End Timestamp": 119352731843,
+                    "Event Hash": 9654633205452096262,
+                    "Start Timestamp": 119352725211
+                },
+                {
+                    "End Timestamp": 119352730505,
+                    "Event Hash": 4232082527248110039,
+                    "Start Timestamp": 119352727066
+                },
+                {
+                    "End Timestamp": 119352727959,
+                    "Event Hash": 14943783338719096905,
+                    "Start Timestamp": 119352727931
+                },
+                {
+                    "End Timestamp": 119352731750,
+                    "Event Hash": 13308466410251516333,
+                    "Start Timestamp": 119352731731
+                },
+                {
+                    "End Timestamp": 119352735578,
+                    "Event Hash": 15234671569096822493,
+                    "Start Timestamp": 119352732650
+                },
+                {
+                    "End Timestamp": 119352735530,
+                    "Event Hash": 16073495973407608930,
+                    "Start Timestamp": 119352735393
+                },
+                {
+                    "End Timestamp": 119352753909,
+                    "Event Hash": 7466109327046708997,
+                    "Start Timestamp": 119352736288
+                }
+            ],
+            "Histogram": [
+                {
+                    "Count": 1,
+                    "Event Hash": 100513040000468021
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 7949890984811595415
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 12692840573622922217
+                },
+                {
+                    "Count": 2,
+                    "Event Hash": 3812563885465958220
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 126884847910281901
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 6724986594741878999
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 1695965132072470081
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 9654633205452096262
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 14999740206619166116
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 4232082527248110039
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 14943783338719096905
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 13308466410251516333
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 15234671569096822493
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 16073495973407608930
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 7466109327046708997
+                }
+            ]
+        },
+        {
+            "Events": [
+                {
+                    "End Timestamp": 119351215589,
+                    "Event Hash": 12692840573622922217,
+                    "Start Timestamp": 119351215297
+                },
+                {
+                    "End Timestamp": 119351246148,
+                    "Event Hash": 7949890984811595415,
+                    "Start Timestamp": 119351217036
+                },
+                {
+                    "End Timestamp": 0,
+                    "Event Hash": 126884847910281901,
+                    "Start Timestamp": 119351248114
+                },
+                {
+                    "End Timestamp": 119351248222,
+                    "Event Hash": 3812563885465958220,
+                    "Start Timestamp": 119351248221
+                },
+                {
+                    "End Timestamp": 119351249400,
+                    "Event Hash": 100513040000468021,
+                    "Start Timestamp": 119351249308
+                },
+                {
+                    "End Timestamp": 0,
+                    "Event Hash": 3812563885465958220,
+                    "Start Timestamp": 119351249467
+                },
+                {
+                    "End Timestamp": 119351250373,
+                    "Event Hash": 6724986594741878999,
+                    "Start Timestamp": 119351250349
+                },
+                {
+                    "End Timestamp": 119352723344,
+                    "Event Hash": 1695965132072470081,
+                    "Start Timestamp": 119351283271
+                },
+                {
+                    "End Timestamp": 119352724283,
+                    "Event Hash": 14999740206619166116,
+                    "Start Timestamp": 119352724260
+                },
+                {
+                    "End Timestamp": 119352731843,
+                    "Event Hash": 9654633205452096262,
+                    "Start Timestamp": 119352725211
+                },
+                {
+                    "End Timestamp": 119352730505,
+                    "Event Hash": 4232082527248110039,
+                    "Start Timestamp": 119352727066
+                },
+                {
+                    "End Timestamp": 119352727959,
+                    "Event Hash": 14943783338719096905,
+                    "Start Timestamp": 119352727931
+                },
+                {
+                    "End Timestamp": 119352731750,
+                    "Event Hash": 13308466410251516333,
+                    "Start Timestamp": 119352731731
+                },
+                {
+                    "End Timestamp": 119352735578,
+                    "Event Hash": 15234671569096822493,
+                    "Start Timestamp": 119352732650
+                },
+                {
+                    "End Timestamp": 119352735530,
+                    "Event Hash": 16073495973407608930,
+                    "Start Timestamp": 119352735393
+                },
+                {
+                    "End Timestamp": 119352753909,
+                    "Event Hash": 7466109327046708997,
+                    "Start Timestamp": 119352736288
+                }
+            ],
+            "Histogram": [
+                {
+                    "Count": 1,
+                    "Event Hash": 100513040000468021
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 7949890984811595415
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 12692840573622922217
+                },
+                {
+                    "Count": 2,
+                    "Event Hash": 3812563885465958220
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 126884847910281901
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 6724986594741878999
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 1695965132072470081
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 9654633205452096262
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 14999740206619166116
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 4232082527248110039
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 14943783338719096905
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 13308466410251516333
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 15234671569096822493
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 16073495973407608930
+                },
+                {
+                    "Count": 1,
+                    "Event Hash": 7466109327046708997
+                }
+            ]
+        }
+    ]
+}

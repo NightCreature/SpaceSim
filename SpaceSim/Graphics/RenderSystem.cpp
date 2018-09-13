@@ -312,6 +312,27 @@ void RenderSystem::initialise(Resource* resource)
     m_view = m_cameraSystem.getCamera("global")->getCamera();
 
     m_emmiter.initialise(m_renderResource);
+
+    //Create some querries
+    D3D11_QUERY_DESC queryDescriptor;
+    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
+    queryDescriptor.Query = D3D11_QUERY_TIMESTAMP;
+    device->CreateQuery(&queryDescriptor, &m_beginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_endDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_cubemapBeginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_cubemapEndDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_shadoBeginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_shadoEndDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_mainBeginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_mainEndDrawQuery);
+
+    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
+    queryDescriptor.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
+    device->CreateQuery(&queryDescriptor, &m_timeDisjointQuery);
+
+    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
+    queryDescriptor.Query = D3D11_QUERY_PIPELINE_STATISTICS;
+    device->CreateQuery(&queryDescriptor, &m_pipeLineStatistics);
 }
 
 ///-----------------------------------------------------------------------------
@@ -331,6 +352,8 @@ void RenderSystem::update(float elapsedTime, double time)
 //    }
 //
     PROFILE_EVENT("RenderSystem::Update", Blue);
+    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    deviceContext->End(m_mainBeginDrawQuery);
 
 #ifdef _DEBUG
     pPerf->BeginEvent(L"RenderSystem::Update");
@@ -339,7 +362,7 @@ void RenderSystem::update(float elapsedTime, double time)
     const auto defaultTechniqueHash = "default"_hash;
     m_window.update(elapsedTime, time);
 
-    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    
     deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
 
     RenderInstanceTree::iterator renderInstanceIt = visibleInstances.begin();
@@ -467,6 +490,8 @@ void RenderSystem::update(float elapsedTime, double time)
 
     m_numberOfInstancesRenderingThisFrame = visibleInstances.size();
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
+
+    deviceContext->End(m_mainEndDrawQuery);
 }
 
 ///-----------------------------------------------------------------------------
@@ -575,6 +600,17 @@ void RenderSystem::cleanup()
     m_alphaBlendState->Release();
     m_samplerState->Release();
 
+    m_beginDrawQuery->Release();
+    m_endDrawQuery->Release();
+    m_cubemapBeginDrawQuery->Release();
+    m_cubemapEndDrawQuery->Release();
+    m_shadoBeginDrawQuery->Release();
+    m_shadoEndDrawQuery->Release();
+    m_mainBeginDrawQuery->Release();
+    m_mainEndDrawQuery->Release();
+
+    m_timeDisjointQuery->Release();
+
     delete m_renderResource;
 }
 
@@ -584,6 +620,11 @@ void RenderSystem::cleanup()
 void RenderSystem::beginDraw()
 {
     PROFILE_EVENT("RenderSystem::beginDraw", Orange);
+    
+    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    deviceContext->Begin(m_timeDisjointQuery);
+    deviceContext->End(m_beginDrawQuery);
+    deviceContext->Begin(m_pipeLineStatistics);
 
     m_numberOfInstancePerFrame = 0;
 
@@ -600,7 +641,7 @@ void RenderSystem::beginDraw()
     m_resourceLoader.update();
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 0.0f }; //Reverse Z so clear to 0 instead of 1 leads to a linear depth pass
-    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    
     deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
     deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
     if (!m_wireFrame)
@@ -659,6 +700,7 @@ void RenderSystem::beginDraw()
         ++lightCounter;
     }
 
+    deviceContext->End(m_cubemapBeginDrawQuery);
     static int counter = 0;
     if (counter > 15)
     {
@@ -687,12 +729,15 @@ void RenderSystem::beginDraw()
         counter = 0;
     }
     ++counter;
+    deviceContext->End(m_cubemapEndDrawQuery);
 
+    deviceContext->End(m_shadoBeginDrawQuery);
     //Do shadowmap update here too to begin with
     ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     deviceContext->PSSetShaderResources(0, 40, srv);
     m_shadowMapRenderer->renderShadowMap(m_renderResource, m_renderInstances, m_deviceManager, lm.getLight("light_1"));
     deviceContext->PSSetShaderResources(0, 40, srv);
+    deviceContext->End(m_shadoEndDrawQuery);
 
     perFrameConstants.m_cameraPosition[0] = camPos.x();
     perFrameConstants.m_cameraPosition[1] = camPos.y();
@@ -711,7 +756,6 @@ void RenderSystem::beginDraw()
     //Setup shadow map SRV, since we only have one we can set it here
     ID3D11ShaderResourceView* shadowMapSRV = m_shadowMapRenderer->getShadowMap();
     deviceContext->PSSetShaderResources(33, 1, &shadowMapSRV);
-
 
 }
 
@@ -755,6 +799,76 @@ void RenderSystem::endDraw()
             //assert(false);
         }
     }
+
+    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    deviceContext->End(m_endDrawQuery);
+    deviceContext->End(m_timeDisjointQuery);
+    deviceContext->End(m_pipeLineStatistics);
+
+    while (deviceContext->GetData(m_timeDisjointQuery, NULL, 0, 0) == S_FALSE)
+    {
+        Sleep(1);       // Wait a bit, but give other threads a chance to run
+    }
+
+    // Check whether timestamps were disjoint during the last frame
+    D3D10_QUERY_DATA_TIMESTAMP_DISJOINT tsDisjoint;
+    deviceContext->GetData(m_timeDisjointQuery, &tsDisjoint, sizeof(tsDisjoint), 0);
+    if (tsDisjoint.Disjoint)
+    {
+        return;
+    }
+
+    UINT64 beginDrawQueryTimeStamp; //Begining of frame
+    UINT64 endDrawQueryTimeStamp;
+    UINT64 cubemapBeginDrawQueryTimeStamp;
+    UINT64 cubemapEndDrawQueryTimeStamp;
+    UINT64 shadoBeginDrawQueryTimeStamp;
+    UINT64 shadoEndDrawQueryTimeStamp;
+    UINT64 mainBeginDrawQueryTimeStamp;
+    UINT64 mainEndDrawQueryTimeStamp;
+
+    deviceContext->GetData(m_beginDrawQuery, &beginDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_endDrawQuery, &endDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_cubemapBeginDrawQuery, &cubemapBeginDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_cubemapEndDrawQuery, &cubemapEndDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_shadoBeginDrawQuery, &shadoBeginDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_shadoEndDrawQuery, &shadoEndDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_mainBeginDrawQuery, &mainBeginDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_mainEndDrawQuery, &mainEndDrawQueryTimeStamp, sizeof(UINT64), 0);
+
+    D3D11_QUERY_DATA_PIPELINE_STATISTICS pipeLineStats;
+    ZeroMemory(&pipeLineStats, sizeof(pipeLineStats));
+    deviceContext->GetData(m_pipeLineStatistics, &pipeLineStats, sizeof(pipeLineStats), 0);
+
+    // Convert to real time
+    float cubeMapBeginTime = float(cubemapBeginDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+    float cubeMapEndTime = float(cubemapEndDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+
+    float shadowMapBeginTime = float(shadoBeginDrawQueryTimeStamp -beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+    float shadowMapEndTime = float(shadoEndDrawQueryTimeStamp -beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+
+    float mainBeginTime = float(mainBeginDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+    float mainEndTime = float(mainEndDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+
+    float EndFrameTime = float(endDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Frame timings");
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "CubeMap Generation time: %f ms", cubeMapEndTime - cubeMapBeginTime);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Shadow Generation time : %f ms", shadowMapEndTime - shadowMapBeginTime);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Main render time       : %f ms", mainEndTime - mainBeginTime);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Frame time             : %f ms", EndFrameTime);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "PipeLineStatistics:");
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "IAVertices: %u", pipeLineStats.IAVertices);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "IAPrimitives: %u", pipeLineStats.IAPrimitives);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "VSInvocations: %u", pipeLineStats.VSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "GSInvocations: %u", pipeLineStats.GSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "GSPrimitives: %u", pipeLineStats.GSPrimitives);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "CInvocations: %u", pipeLineStats.CInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "CPrimitives: %u", pipeLineStats.CPrimitives);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "PSInvocations: %u", pipeLineStats.PSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "HSInvocations: %u", pipeLineStats.HSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "DSInvocations: %u", pipeLineStats.DSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "CSInvocations: %u", pipeLineStats.CSInvocations);
 }
 
 ///-----------------------------------------------------------------------------
