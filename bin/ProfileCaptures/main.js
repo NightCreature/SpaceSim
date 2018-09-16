@@ -66,7 +66,10 @@ function ProcessFrameData()
                 cell.textContent = descriptor["Event Name"];
                 row.appendChild(cell);
                 cell = document.createElement('td');
-                cell.textContent = (event["End Timestamp"] - event["Start Timestamp"]) * 1000 / profilerData.TimerResolution + " ms";
+                let numberOfTicks = event["End Timestamp"] - event["Start Timestamp"];
+                let date = new Timespan(numberOfTicks, profilerData.TimerResolution );
+                //cell.textContent = (event["End Timestamp"] - event["Start Timestamp"]) * 1000 / profilerData.TimerResolution + " ms  ";
+                cell.textContent += date.GetTimeString() + " (" + numberOfTicks + " ticks)";
                 row.appendChild(cell);
                 eventTable.appendChild(row);
             }
