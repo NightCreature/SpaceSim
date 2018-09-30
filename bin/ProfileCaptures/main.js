@@ -83,7 +83,7 @@ function ProcessFrameData()
     
     let paragraph = document.createElement('p');
     paragraph.textContent = "Trace contains " + frames.length + " Frames ";
-    paragraph.textContent += "CPU Frequency is: " + profilerData.TimerResolution + " Ticks per second";
+    paragraph.textContent += "CPU Frequency is: " + profilerData.TimerResolution + " QueryPerformance Counter Ticks per second (Not actual ticks / instructions)";
     
     let infoDiv = document.getElementById('info');
     infoDiv.appendChild(paragraph);
