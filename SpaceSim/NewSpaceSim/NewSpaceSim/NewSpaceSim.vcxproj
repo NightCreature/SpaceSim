@@ -105,18 +105,24 @@
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
+    <CodeAnalysisRuleSet>CoreC++Rules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>SpaceSim_x64</TargetName>
     <OutDir>$(SolutionDir)..\..\bin</OutDir>
     <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <CodeAnalysisRuleSet>CoreC++Rules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'">
     <TargetName>SpaceSim_x64p</TargetName>
     <OutDir>$(SolutionDir)..\..\bin</OutDir>
     <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <CodeAnalysisRuleSet>CoreC++Rules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -136,6 +142,7 @@
       <PreprocessToFile>false</PreprocessToFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -179,6 +186,7 @@
       <DisableSpecificWarnings>4820;4324;4307</DisableSpecificWarnings>
       <PreprocessorDefinitions>NOMINMAX;USE_PROFILER 1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -197,6 +205,7 @@
       <DisableSpecificWarnings>4820;4324</DisableSpecificWarnings>
       <PreprocessorDefinitions>NOMINMAX; PROFILING; USE_PROFILER 1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -340,6 +349,12 @@
     <ClInclude Include="..\..\Memory\MemoryArena.h" />
     <ClInclude Include="..\..\Memory\PointerArithmetic.h" />
     <ClInclude Include="..\..\Memory\SlotAllocator.h" />
+    <ClInclude Include="..\..\NodeGraph\Graph.h" />
+    <ClInclude Include="..\..\NodeGraph\GraphConnection.h" />
+    <ClInclude Include="..\..\NodeGraph\GraphNode.h" />
+    <ClInclude Include="..\..\NodeGraph\GraphNodeDefinition.h" />
+    <ClInclude Include="..\..\NodeGraph\GraphNodePin.h" />
+    <ClInclude Include="..\..\NodeGraph\Nodes\AddNode.h" />
     <ClInclude Include="..\..\Physics\PhysicsManager.h" />
     <ClInclude Include="..\..\SourceInformation\SourceInfo.h" />
     <ClInclude Include="..\..\UI\BitmapFont.h" />
@@ -455,6 +470,12 @@
     <ClCompile Include="..\..\Math\vector3.cpp" />
     <ClCompile Include="..\..\Math\vector4.cpp" />
     <ClCompile Include="..\..\Memory\Allocator.cpp" />
+    <ClCompile Include="..\..\NodeGraph\Graph.cpp" />
+    <ClCompile Include="..\..\NodeGraph\GraphConnection.cpp" />
+    <ClCompile Include="..\..\NodeGraph\GraphNode.cpp" />
+    <ClCompile Include="..\..\NodeGraph\GraphNodeDefinition.cpp" />
+    <ClCompile Include="..\..\NodeGraph\GraphNodePin.cpp" />
+    <ClCompile Include="..\..\NodeGraph\Nodes\AddNode.cpp" />
     <ClCompile Include="..\..\Physics\PhysicsManager.cpp" />
     <ClCompile Include="..\..\UI\BitmapFont.cpp" />
     <ClCompile Include="..\..\UI\Messages.cpp" />
