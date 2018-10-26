@@ -3,13 +3,15 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "NodeGraph/GraphNode.h"
 
+#include "Core/tinyxml2.h"
+
 namespace NodeGraph
 {
 
 class PinDefinition
 {
 public:
-    enum class Type : int
+    enum class Type : unsigned int
     {
         Bool,
         Int,
@@ -24,11 +26,13 @@ public:
     PinDefinition() = default;
     PinDefinition(Type type, bool isInPin) : m_type(type), m_isInPin(isInPin) {}
 
+    void Deserialise(const tinyxml2::XMLElement& pinDefinition);
+
     Type GetType() const { return m_type; }
     bool IsInPin() const { return m_isInPin; }
 private:
-    Type m_type;
-    bool m_isInPin;
+    Type m_type = Type::Count;
+    bool m_isInPin = false;
 };
 
 class PinBase
