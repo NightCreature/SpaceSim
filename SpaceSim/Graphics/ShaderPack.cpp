@@ -13,8 +13,8 @@ bool ShaderPack::loadShaderPack( std::string shaderPack )
     EffectCache& effectCache = helper.getWriteableResource().getEffectCache();
 
     tinyxml2::XMLDocument doc;
-    std::string fileName = paths->getEffectShaderPath() + shaderPack;
-    if (doc.LoadFile(fileName.c_str()) != tinyxml2::XML_NO_ERROR)
+    auto fileName = paths->getEffectShaderPath() / shaderPack;
+    if (doc.LoadFile(fileName.string().c_str()) != tinyxml2::XML_NO_ERROR)
     {
         MSG_TRACE_CHANNEL("ShaderPack Error", "Failed to load %s\nWith error: %d", fileName.c_str(), doc.ErrorID() )
         return false;

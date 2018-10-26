@@ -896,9 +896,9 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
     m_cubeMapRenderer = new CubeMapRenderer(m_deviceManager, m_alphaBlendState, m_blendState);
 
     const Paths* path = resource->m_paths;
-    std::string cubeRenderSettingsFileName = path->getSettingsPath() + "cube_map_renderers.xml";
+    auto cubeRenderSettingsFileName = path->getSettingsPath() / "cube_map_renderers.xml";
     tinyxml2::XMLDocument doc;
-    if (tinyxml2::XML_NO_ERROR != doc.LoadFile(cubeRenderSettingsFileName.c_str()))
+    if (tinyxml2::XML_NO_ERROR != doc.LoadFile(cubeRenderSettingsFileName.string().c_str()))
     {
         MSG_TRACE_CHANNEL("RENDERSYSTEM ERROR", "Failed to load %s because %s (%s)", cubeRenderSettingsFileName.c_str(), doc.GetErrorStr1(), doc.GetErrorStr2());
     }

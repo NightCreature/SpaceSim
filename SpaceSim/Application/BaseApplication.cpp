@@ -55,7 +55,7 @@ Text::TextBlockCache* cache;
 bool Application::initialise()
 {
     m_logger.addLogger(new OutputDebugLog());
-    FileLogger* file_logger = new FileLogger(m_paths.getLogPath());
+    FileLogger* file_logger = new FileLogger(m_paths.getLogPathStr());
     if (file_logger->is_open())
     {
         m_logger.addLogger(file_logger);
@@ -87,7 +87,8 @@ bool Application::initialise()
     }
 
     SettingsParser settings(&m_settingsManager);
-    if (!settings.loadFile(m_paths.getSettingsPath() + "settings.cfg"))
+    auto settingsPath = m_paths.getSettingsPath() / "settings.cfg";
+    if (!settings.loadFile(settingsPath.string()))
     {
         MSG_TRACE_CHANNEL("BASEAPPLICATION", "Failed to load the settings file" )
         //terminate application if we fail to find the settings file
@@ -97,7 +98,8 @@ bool Application::initialise()
     //m_uiManager.initialise();
     m_renderSystem.initialise(m_gameResource);
     //m_inputSystem.createController(Gamepad);
-    m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml", m_renderSystem.getWindowHandle());
+    auto inputMapPath = m_paths.getSettingsPath() / "Input Maps\\input_mapping.xml";
+    m_inputSystem.initialise(inputMapPath.string(), m_renderSystem.getWindowHandle());
     m_inputDispatch = &InputSystem::SetRawInput;
 
     m_laserManager.initialise(m_gameResource);
