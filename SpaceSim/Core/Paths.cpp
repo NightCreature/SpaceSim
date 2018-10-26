@@ -7,7 +7,6 @@
 Paths::Paths()
 {
     m_path = std::filesystem::current_path();
-    MSG_TRACE("path: %s", m_path.string().c_str());
     m_modelpath = m_path / "Models";
     m_texturespath = m_path / "Textures";
     m_logpath = m_path / "Logs";
