@@ -471,6 +471,9 @@
     <ClInclude Include="..\..\NodeGraph\GraphNodeDefinition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\NodeGraph\GraphDefinitionReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Application\BaseApplication.cpp">
@@ -819,6 +822,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\NodeGraph\GraphNodeDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\NodeGraph\GraphDefinitionReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

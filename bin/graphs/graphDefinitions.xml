@@ -1,0 +1,19 @@
+<xml>
+	<NodeDefinition nodeType="1234567899"> <!--nodeType is a hash of the actual node type-->
+		<InputPins>
+			<PinDefinition type="1" isInPin="true"/>
+			<PinDefinition type="2" isInPin="true"/>
+			<PinDefinition type="3" isInPin="true"/>
+			<PinDefinition type="4" isInPin="true"/>
+		</InputPins>
+		<OutputPins>
+			<PinDefinition type="1" isInPin="false"/>
+			<PinDefinition type="2" isInPin="false"/>
+			<PinDefinition type="3" isInPin="false"/>
+			<PinDefinition type="4" isInPin="false"/>
+		</OutputPins>
+	</NodeDefinition>
+
+
+	<!--Need to come up with how we store connections between the nodes here nodes might need to have names-->
+</xml>
