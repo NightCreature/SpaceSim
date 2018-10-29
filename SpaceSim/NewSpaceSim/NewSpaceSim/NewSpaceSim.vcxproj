@@ -351,6 +351,7 @@
     <ClInclude Include="..\..\Memory\SlotAllocator.h" />
     <ClInclude Include="..\..\NodeGraph\Graph.h" />
     <ClInclude Include="..\..\NodeGraph\GraphConnection.h" />
+    <ClInclude Include="..\..\NodeGraph\GraphConnectionDefinition.h" />
     <ClInclude Include="..\..\NodeGraph\GraphDefinitionReader.h" />
     <ClInclude Include="..\..\NodeGraph\GraphNode.h" />
     <ClInclude Include="..\..\NodeGraph\GraphNodeDefinition.h" />
@@ -473,6 +474,7 @@
     <ClCompile Include="..\..\Memory\Allocator.cpp" />
     <ClCompile Include="..\..\NodeGraph\Graph.cpp" />
     <ClCompile Include="..\..\NodeGraph\GraphConnection.cpp" />
+    <ClCompile Include="..\..\NodeGraph\GraphConnectionDefinition.cpp" />
     <ClCompile Include="..\..\NodeGraph\GraphDefinitionReader.cpp" />
     <ClCompile Include="..\..\NodeGraph\GraphNode.cpp" />
     <ClCompile Include="..\..\NodeGraph\GraphNodeDefinition.cpp" />

@@ -20,7 +20,7 @@ void ReadPindefinitions(const tinyxml2::XMLElement* pins, std::vector<PinDefinit
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
-///! <NodeDefinition nodeType = "1234567899"> <!--nodeType is a hash of the actual node type-->
+///! <NodeDefinition id="1" nodeType = "1234567899"> <!--nodeType is a hash of the actual node type-->
 ///!     <InputPins>
 ///!         <PinDefinition ...>
 ///!     < / InputPins>
@@ -34,9 +34,20 @@ void NodeDefinition::Deserialise(const tinyxml2::XMLElement& nodeDefinition)
 {
     for (auto attribute = nodeDefinition.FirstAttribute(); attribute; attribute = attribute->Next())
     {
-        if (hashString(attribute->Name()) == "nodeType"_hash)
+        switch (hashString(attribute->Name()))
+        {
+        case "nodeType"_hash:
         {
             m_nodeDefinition = attribute->IntValue();
+        }
+        break;
+        case "id"_hash:
+        {
+            m_id = attribute->IntValue();
+        }
+        break;
+        default:
+            break;
         }
     }
 

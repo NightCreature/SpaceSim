@@ -1,19 +1,37 @@
 <xml>
-	<NodeDefinition nodeType="1234567899"> <!--nodeType is a hash of the actual node type-->
+	<NodeDefinition id="1" nodeType="1234567899"> <!--nodeType is a hash of the actual node type-->
 		<InputPins>
-			<PinDefinition type="1" isInPin="true"/>
-			<PinDefinition type="2" isInPin="true"/>
-			<PinDefinition type="3" isInPin="true"/>
-			<PinDefinition type="4" isInPin="true"/>
+			<PinDefinition id="1" type="1" isInPin="true"/>
+			<PinDefinition id="2" type="2" isInPin="true"/>
+			<PinDefinition id="3" type="3" isInPin="true"/>
+			<PinDefinition id="4" type="4" isInPin="true"/>
 		</InputPins>
 		<OutputPins>
-			<PinDefinition type="1" isInPin="false"/>
-			<PinDefinition type="2" isInPin="false"/>
-			<PinDefinition type="3" isInPin="false"/>
-			<PinDefinition type="4" isInPin="false"/>
+			<PinDefinition id="5" type="1" isInPin="false"/>
+			<PinDefinition id="6" type="2" isInPin="false"/>
+			<PinDefinition id="7" type="3" isInPin="false"/>
+			<PinDefinition id="8" type="4" isInPin="false"/>
 		</OutputPins>
 	</NodeDefinition>
 
+	<NodeDefinition id="2" nodeType="1234567899"> <!--nodeType is a hash of the actual node type-->
+		<InputPins>
+			<PinDefinition id="1" type="1" isInPin="true"/>
+			<PinDefinition id="2" type="2" isInPin="true"/>
+			<PinDefinition id="3" type="3" isInPin="true"/>
+			<PinDefinition id="4" type="4" isInPin="true"/>
+		</InputPins>
+		<OutputPins>
+			<PinDefinition id="5" type="1" isInPin="false"/>
+			<PinDefinition id="6" type="2" isInPin="false"/>
+			<PinDefinition id="7" type="3" isInPin="false"/>
+			<PinDefinition id="8" type="4" isInPin="false"/>
+		</OutputPins>
+	</NodeDefinition>
+
+	<Connections> <!--Defines which node are connected to each other and which pins they are connected on this might need to move to a graph file instead of the definitions file, also means we dont need an id in the node definition-->
+		<ConnectionDefinition node1Id="1" node2Id="2" node1PinId="5" node2PinId="1" />
+	</Connections>
 
 	<!--Need to come up with how we store connections between the nodes here nodes might need to have names-->
 </xml>

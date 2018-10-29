@@ -31,6 +31,7 @@ public:
     Type GetType() const { return m_type; }
     bool IsInPin() const { return m_isInPin; }
 private:
+    size_t m_id = 0;
     Type m_type = Type::Count;
     bool m_isInPin = false;
 };

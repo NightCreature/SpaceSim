@@ -27,6 +27,7 @@
 #include "Core/Profiler/Profiler.h"
 
 #include "vld.h"
+#include "../NodeGraph/GraphDefinitionReader.h"
 
 class RenderInstance;
 
@@ -109,6 +110,11 @@ bool Application::initialise()
     //player->initialize(m_cameraSystem);
     m_gameObjectManager.addGameObject(player);
 
+
+    auto graphPath = m_paths.getPath() / "graphs";
+    auto graphFilename = graphPath / "graphDefinitions.xml";
+    NodeGraph::GraphReader graphReader;
+    graphReader.readGraphDefinition(graphFilename);
 
     //Test Code
     //m_cameraSystem.update(m_elapsedTime, m_time);
