@@ -69,6 +69,7 @@ bool Application::initialise()
     
     //cache = new Text::TextBlockCache(1000, m_gameResource);
 
+
     m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
         &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
     
