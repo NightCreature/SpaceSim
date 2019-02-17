@@ -20,7 +20,7 @@ public:
     bool RemoveMountPoint(const std::filesystem::path& mount);
 
     //this all redirects to the mount points the filesystem is aware off.
-    std::vector<std::filesystem::path>& ListFiles();
+    std::vector<std::filesystem::path> ListFiles();
     File CreateFile(const std::filesystem::path& name);
     File CreateDirectory(const std::filesystem::path& name);
     File OpenFile(const std::filesystem::path& name);

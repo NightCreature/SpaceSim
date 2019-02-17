@@ -12,13 +12,17 @@ namespace VFS
 ///-----------------------------------------------------------------------------
 MountPointWin::MountPointWin(const std::filesystem::path& path) : MountPoint(path)
 {
-    //make sure this path actually exists
-    WIN32_FILE_ATTRIBUTE_DATA fileAttributeData;
-    ZeroMemory(&fileAttributeData, sizeof(WIN32_FILE_ATTRIBUTE_DATA));
-    if ( GetFileAttributesEx(path.string().c_str(), GetFileExInfoStandard, static_cast<void*>(&fileAttributeData)) != 0 )
+    
+    if (m_rootPath.is_absolute())
     {
-        m_valid = fileAttributeData.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY;
-        //Could open handle here if needed
+        //make sure this path actually exists
+        WIN32_FILE_ATTRIBUTE_DATA fileAttributeData;
+        ZeroMemory(&fileAttributeData, sizeof(WIN32_FILE_ATTRIBUTE_DATA));
+        if (GetFileAttributesEx(path.string().c_str(), GetFileExInfoStandard, static_cast<void*>(&fileAttributeData)) != 0)
+        {
+            m_valid = fileAttributeData.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY;
+            //Could open handle here if needed
+        }
     }
 }
 
@@ -38,6 +42,27 @@ MountPointWin::~MountPointWin()
 std::vector<std::filesystem::path> MountPointWin::ListFiles()
 {
     std::vector<std::filesystem::path> paths;
+
+
+    WIN32_FIND_DATA ffd;
+    HANDLE hFind = INVALID_HANDLE_VALUE;
+
+    // Find the first file in the directory.
+    auto searchPath = m_rootPath / "*"; 
+    hFind = FindFirstFile(searchPath.string().c_str(), &ffd);
+
+    if (INVALID_HANDLE_VALUE != hFind)
+    {
+        paths.push_back(std::filesystem::path(ffd.cFileName));
+        do
+        {
+            paths.push_back(std::filesystem::path(ffd.cFileName));
+        }
+        while (FindNextFile(hFind, &ffd) != 0);
+
+    }
+
+    FindClose(hFind);
 
     return paths;
 }
