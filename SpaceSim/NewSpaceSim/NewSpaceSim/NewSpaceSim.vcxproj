@@ -29,46 +29,46 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{61BFD15B-55F2-4621-B9DF-5CC9D2BAA035}</ProjectGuid>
     <RootNamespace>NewSpaceSim</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -144,7 +144,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnablePREfast>true</EnablePREfast>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <ExceptionHandling>false</ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -227,6 +227,9 @@
     <ClInclude Include="..\..\Application\GameWindow.h" />
     <ClInclude Include="..\..\Application\UpdateThread.h" />
     <ClInclude Include="..\..\Core\FileSystem\File.h" />
+    <ClInclude Include="..\..\Core\FileSystem\FileSystem.h" />
+    <ClInclude Include="..\..\Core\FileSystem\MountPoint.h" />
+    <ClInclude Include="..\..\Core\FileSystem\Platform\Win\MountPointWin.h" />
     <ClInclude Include="..\..\Core\ICommand.h" />
     <ClInclude Include="..\..\Core\MessageSystem\GameMessages.h" />
     <ClInclude Include="..\..\Core\MessageSystem\MessageObserver.h" />
@@ -362,6 +365,7 @@
     <ClInclude Include="..\..\NodeGraph\GraphNode.h" />
     <ClInclude Include="..\..\NodeGraph\GraphNodeDefinition.h" />
     <ClInclude Include="..\..\NodeGraph\GraphNodePin.h" />
+    <ClInclude Include="..\..\NodeGraph\NodeFactory.h" />
     <ClInclude Include="..\..\NodeGraph\Nodes\AddNode.h" />
     <ClInclude Include="..\..\Physics\PhysicsManager.h" />
     <ClInclude Include="..\..\SourceInformation\SourceInfo.h" />
@@ -381,6 +385,8 @@
     <ClCompile Include="..\..\Application\GameWindow.cpp" />
     <ClCompile Include="..\..\Application\main.cpp" />
     <ClCompile Include="..\..\Application\UpdateThread.cpp" />
+    <ClCompile Include="..\..\Core\FileSystem\FileSystem.cpp" />
+    <ClCompile Include="..\..\Core\FileSystem\Platform\Win\MountPointWin.cpp" />
     <ClCompile Include="..\..\Core\MessageSystem\MessageObserver.cpp" />
     <ClCompile Include="..\..\Core\Paths.cpp" />
     <ClCompile Include="..\..\Core\Profiler\Event.cpp" />
@@ -485,6 +491,7 @@
     <ClCompile Include="..\..\NodeGraph\GraphNode.cpp" />
     <ClCompile Include="..\..\NodeGraph\GraphNodeDefinition.cpp" />
     <ClCompile Include="..\..\NodeGraph\GraphNodePin.cpp" />
+    <ClCompile Include="..\..\NodeGraph\NodeFactory.cpp" />
     <ClCompile Include="..\..\NodeGraph\Nodes\AddNode.cpp" />
     <ClCompile Include="..\..\Physics\PhysicsManager.cpp" />
     <ClCompile Include="..\..\UI\BitmapFont.cpp" />

@@ -28,6 +28,8 @@
 
 #include "vld.h"
 #include "../NodeGraph/GraphDefinitionReader.h"
+#include "../Core/FileSystem/FileSystem.h"
+#include "../Core/FileSystem/Platform/Win/MountPointWin.h"
 
 class RenderInstance;
 
@@ -55,6 +57,9 @@ Text::TextBlockCache* cache;
 ///-----------------------------------------------------------------------------
 bool Application::initialise()
 {
+    VFS::FileSystem m_fileSystem;
+    m_fileSystem.AddMountPoint(new VFS::MountPointWin(m_paths.getModelPath()));
+
     m_logger.addLogger(new OutputDebugLog());
     FileLogger* file_logger = new FileLogger(m_paths.getLogPathStr());
     if (file_logger->is_open())
@@ -122,10 +127,10 @@ bool Application::initialise()
     //const Camera* cam = m_cameraSystem.getCamera("global");
     //m_view = cam->getCamera();
 
-    //Text::BitmapFont bitmapFont;
-    //bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt", m_gameResource);
-    //cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt");
-    //cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 48.0f, true);
+    Text::BitmapFont bitmapFont;
+    bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt", m_gameResource);
+    cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt");
+    cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 48.0f, true);
 
     ///!!This needs to move
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");

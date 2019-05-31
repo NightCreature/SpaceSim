@@ -22,9 +22,9 @@ public:
     virtual ~MountPointWin();
 
     virtual std::vector<std::filesystem::path> ListFiles() override;
-    virtual File FileCreate(const std::filesystem::path& name) override;
-    virtual File DirectoryCreate(const std::filesystem::path& name) override;
-    virtual File OpenFile(const std::filesystem::path& name) override;
+    virtual File* FileCreate(const std::filesystem::path& name) override;
+    virtual File* DirectoryCreate(const std::filesystem::path& name) override;
+    virtual File* OpenFile(const std::filesystem::path& name) override;
     virtual bool FileExists(const std::filesystem::path& name) override;
     virtual bool DirectoryExists(const std::filesystem::path& name) override;
 

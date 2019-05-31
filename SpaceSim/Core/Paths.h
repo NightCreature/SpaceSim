@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <string>
 
+//This class should generate mount points instead
 class Paths
 {
 public:

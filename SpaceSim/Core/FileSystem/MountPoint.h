@@ -21,9 +21,9 @@ public:
     bool IsValid() { return m_valid; }
 
     virtual std::vector<std::filesystem::path> ListFiles() = 0;
-    virtual File FileCreate(const std::filesystem::path& name) = 0;
-    virtual File DirectoryCreate(const std::filesystem::path& name) = 0;
-    virtual File OpenFile(const std::filesystem::path& name) = 0;
+    virtual File* FileCreate(const std::filesystem::path& name) = 0;
+    virtual File* DirectoryCreate(const std::filesystem::path& name) = 0;
+    virtual File* OpenFile(const std::filesystem::path& name) = 0;
 
     virtual bool FileExists(const std::filesystem::path& name) = 0;
     virtual bool DirectoryExists(const std::filesystem::path& name) = 0;

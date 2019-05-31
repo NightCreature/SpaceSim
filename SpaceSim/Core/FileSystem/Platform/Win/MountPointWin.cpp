@@ -71,33 +71,35 @@ std::vector<std::filesystem::path> MountPointWin::ListFiles()
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-VFS::File MountPointWin::FileCreate(const std::filesystem::path& name)
+VFS::File* MountPointWin::FileCreate(const std::filesystem::path& name)
 {
     UNUSEDPARAM(name);
 
-    return File();
+    return nullptr;
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-VFS::File MountPointWin::DirectoryCreate(const std::filesystem::path& name)
+VFS::File* MountPointWin::DirectoryCreate(const std::filesystem::path& name)
 {
     UNUSEDPARAM(name);
 
-    return File();
+    return nullptr;
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-VFS::File MountPointWin::OpenFile(const std::filesystem::path& name)
+VFS::File* MountPointWin::OpenFile(const std::filesystem::path& name)
 {
     UNUSEDPARAM(name);
 
-    return File();
+    //This opens a file seeing the file is an interface too 
+
+    return nullptr;
 }
 
 ///-----------------------------------------------------------------------------
