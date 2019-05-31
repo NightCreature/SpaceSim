@@ -20,6 +20,9 @@ void NodeGraph::AddNode::Invoke()
         MSG_TRACE_CHANNEL("Node Graph", "Node %s has too many or too few output pins", GetNodeName().c_str());
     }
 
-    //m_ouputPins[0].SetValue(m_inputPins[0].GetValue() + m_inputPins[1].GetValue());
+    //This will not work
+	//auto value1 = m_inputPins[0].GetValue();
+	//auto value2 = m_inputPins[1].GetValue();
+	//m_ouputPins[0].SetValue(value1 + value2);
 
 }

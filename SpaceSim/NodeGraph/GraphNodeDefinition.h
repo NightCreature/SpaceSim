@@ -15,6 +15,8 @@ public:
     ~NodeDefinition() = default;
 
     void Deserialise(const tinyxml2::XMLElement& nodeDefinition);
+
+	HASH_ELEMENT_DEFINITION(NodeDefinition)
 private:
     std::vector<PinDefinition> m_inputPins;
     std::vector<PinDefinition> m_outputPins;
