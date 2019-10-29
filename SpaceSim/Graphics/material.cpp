@@ -8,7 +8,7 @@
 #include "Graphics/LightManager.h"
 #include "Core/Types/TypeHelpers.h"
 
-HASH_ELEMENT_IMPLEMENTATION(Material)
+
 
 Material::Material() :
 m_materialCB(),
@@ -55,12 +55,12 @@ Material::Material(const Material& material)
 void Material::deserialise( Resource* resource, const DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node )
 {
     node = node->FirstChildElement();
-    static unsigned int shininessHash = hashString("Shininess");
-    static unsigned int alphaBlend = hashString("AlphaBlend");
+    const auto shininessHash = "Shininess"_hash;
+    const auto alphaBlend = "AlphaBlend"_hash;
     unsigned int numberOfColorsDeserialised = 1;
     for(;node; node = node->NextSiblingElement())
     {
-        unsigned int elementHash = hashString(node->Value());
+        auto elementHash = hashString(node->Value());
         if( Color::m_hash == elementHash)
         {
             Color temp;
@@ -147,12 +147,12 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
 {
     MaterialParameters returnVal;
     childElement = childElement->FirstChildElement();
-    static unsigned int shininessHash = hashString("Shininess");
-    static unsigned int alphaBlend = hashString("AlphaBlend");
+    const auto shininessHash = "Shininess"_hash;
+    const auto alphaBlend = "AlphaBlend"_hash;
     unsigned int numberOfColorsDeserialised = 1;
     for (; childElement; childElement = childElement->NextSiblingElement())
     {
-        unsigned int elementHash = hashString(childElement->Value());
+        auto elementHash = hashString(childElement->Value());
         if (Color::m_hash == elementHash)
         {
             Color temp;

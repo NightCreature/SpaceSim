@@ -105,7 +105,7 @@ protected:
     std::string m_name;
     Resource* m_resource;
     size_t m_renderHandle;
-    unsigned int m_nameHash;
+    size_t m_nameHash;
     bool m_active;
     bool m_worldhaschanged;
     bool m_initialisationDone;

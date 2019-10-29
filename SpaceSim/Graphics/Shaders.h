@@ -23,7 +23,7 @@ public:
 
     ID3D11VertexShader* getShader() const { return m_shader; }
 
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(VertexShader);
 private:
     ID3DBlob* m_vertexShaderBlob;
     ID3D11VertexShader* m_shader;
@@ -44,7 +44,7 @@ public:
 
     ID3D11HullShader* getShader() const { return m_shader; }
 
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(HullShader);
 private:
     ID3D11HullShader* m_shader;
     std::string m_fileName;
@@ -64,7 +64,7 @@ public:
 
     ID3D11DomainShader* getShader() const { return m_shader; }
 
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(DomainShader);
 private:
     ID3D11DomainShader* m_shader;
     std::string m_fileName;
@@ -84,7 +84,7 @@ public:
 
     ID3D11GeometryShader* getShader() const { return m_shader; }
 
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(GeometryShader);
 private:
     ID3D11GeometryShader* m_shader;
     std::string m_fileName;
@@ -104,7 +104,7 @@ public:
 
     ID3D11PixelShader* getShader() const { return m_shader; }
 
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(PixelShader);
 private:
     ID3D11PixelShader* m_shader;
     std::string m_fileName;
@@ -124,7 +124,7 @@ public:
 
     ID3D11ComputeShader* getShader() const { return m_shader; }
 
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(ComputeShader);
 private:
     ID3D11ComputeShader* m_shader;
     std::string m_fileName;

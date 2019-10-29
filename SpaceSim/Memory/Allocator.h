@@ -5,6 +5,11 @@
 #include <assert.h>
 #include <malloc.h>
 
+#define MEMORY_PROFILING
+#ifdef MEMORY_PROFILING
+#include "D:\SDK\Demo\SpaceSim\SDK\MTuner\SDK\inc\rmem.h"
+#endif
+
 namespace Allocator
 {
 

@@ -24,12 +24,14 @@
 #include "UI/TextBlock.h"
 
 #include "Core/Profiler/ProfilerMacros.h" 
+#include "Core/Profiler/Profiler.h"
 
 #include "vld.h"
+#include "../NodeGraph/GraphDefinitionReader.h"
+#include "../Core/FileSystem/FileSystem.h"
+#include "../Core/FileSystem/Platform/Win/MountPointWin.h"
 
 class RenderInstance;
-
-HashString exitGame("exit_game");
 
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Logger Application::m_logger;
@@ -55,8 +57,11 @@ Text::TextBlockCache* cache;
 ///-----------------------------------------------------------------------------
 bool Application::initialise()
 {
+    VFS::FileSystem m_fileSystem;
+    m_fileSystem.AddMountPoint(new VFS::MountPointWin(m_paths.getModelPath()));
+
     m_logger.addLogger(new OutputDebugLog());
-    FileLogger* file_logger = new FileLogger(m_paths.getLogPath());
+    FileLogger* file_logger = new FileLogger(m_paths.getLogPathStr());
     if (file_logger->is_open())
     {
         m_logger.addLogger(file_logger);
@@ -68,6 +73,7 @@ bool Application::initialise()
     //m_logger.addLogger(new HttpDebugLog());
     
     //cache = new Text::TextBlockCache(1000, m_gameResource);
+
 
     m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
         &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
@@ -88,7 +94,8 @@ bool Application::initialise()
     }
 
     SettingsParser settings(&m_settingsManager);
-    if (!settings.loadFile(m_paths.getSettingsPath() + "settings.cfg"))
+    auto settingsPath = m_paths.getSettingsPath() / "settings.cfg";
+    if (!settings.loadFile(settingsPath.string()))
     {
         MSG_TRACE_CHANNEL("BASEAPPLICATION", "Failed to load the settings file" )
         //terminate application if we fail to find the settings file
@@ -98,7 +105,8 @@ bool Application::initialise()
     //m_uiManager.initialise();
     m_renderSystem.initialise(m_gameResource);
     //m_inputSystem.createController(Gamepad);
-    m_inputSystem.initialise(m_paths.getSettingsPath() + "Input Maps\\input_mapping.xml", m_renderSystem.getWindowHandle());
+    auto inputMapPath = m_paths.getSettingsPath() / "Input Maps\\input_mapping.xml";
+    m_inputSystem.initialise(inputMapPath.string(), m_renderSystem.getWindowHandle());
     m_inputDispatch = &InputSystem::SetRawInput;
 
     m_laserManager.initialise(m_gameResource);
@@ -109,15 +117,20 @@ bool Application::initialise()
     m_gameObjectManager.addGameObject(player);
 
 
+    auto graphPath = m_paths.getPath() / "graphs";
+    auto graphFilename = graphPath / "graphDefinitions.xml";
+    NodeGraph::GraphReader graphReader;
+    graphReader.readGraphDefinition(graphFilename);
+
     //Test Code
     //m_cameraSystem.update(m_elapsedTime, m_time);
     //const Camera* cam = m_cameraSystem.getCamera("global");
     //m_view = cam->getCamera();
 
-    //Text::BitmapFont bitmapFont;
-    //bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt", m_gameResource);
-    //cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt");
-    //cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 48.0f, true);
+    Text::BitmapFont bitmapFont;
+    bitmapFont.openFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt", m_gameResource);
+    cache->addFont("D:/SDK/Demo/SpaceSim/bin/FE/franklin.fnt.conv.fnt");
+    cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 48.0f, true);
 
     ///!!This needs to move
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");
@@ -166,6 +179,11 @@ void Application::mainGameLoop()
         else
         {
             PROFILE_FRAME("NewSpaceSim Frame Marker");
+
+            Profiling::Profiler& profiler = Profiling::Profiler::GetInstance();
+            profiler.BeginFrame();
+            
+
             m_performanceTimer.update();
             m_elapsedTime = m_performanceTimer.getElapsedTime();
             m_time = m_performanceTimer.getTime();
@@ -173,12 +191,15 @@ void Application::mainGameLoop()
             Input input = m_inputSystem.getInput();
             //THis needs to happen in single threaded update
             {
-                PROFILE_EVENT("SingleThreadedUpdate", Green);
                 m_UpdateThread.LockCriticalSection();
+
+                PROFILE_EVENT("SingleThreadedUpdate", Green);
+
                 //const Camera* cam = m_cameraSystem.getCamera("global");
                 //m_view = cam->getCamera();
 
                 m_UpdateThread.setInput(input);
+                MSG_TRACE_CHANNEL("APPLICATION", "Updating render system with the input");
                 m_renderSystem.setInput(input);
 
                 m_UpdateThread.SetElapsedTime(m_elapsedTime, m_time);
@@ -194,8 +215,15 @@ void Application::mainGameLoop()
             m_renderSystem.update(m_elapsedTime, m_time);
             m_renderSystem.endDraw();
 
+            static size_t updateLoopCount = 0;
+            if (updateLoopCount == 2)
+            {
+                profiler.WriteFile();
+            }
+            updateLoopCount++;
+
             InputActions::ActionType inputAction;
-            InputSystem::getInputActionFromName(exitGame, inputAction);
+            InputSystem::getInputActionFromName("exit_game"_hash, inputAction);
             if (input.getInput(0) && input.getInput(0)->getActionValue(inputAction))
             {
                 PostQuitMessage(0);
@@ -238,6 +266,10 @@ void Application::cleanup()
     m_renderSystem.cleanup();
     m_gameResource->getGameObjectManager().cleanup();
     m_settingsManager.cleanup();
+
+    Profiling::Profiler& profiler = Profiling::Profiler::GetInstance();
+
+    profiler.Cleanup();
 
     //Need to add a cleanup call to the cache
     //delete cache;

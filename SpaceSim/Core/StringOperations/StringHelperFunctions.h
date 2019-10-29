@@ -9,12 +9,10 @@
 #include <Windows.h>
 #include <Stringapiset.h>
 
-#include "Core/Profiler/ProfilerMacros.h"
+const size_t c_fnvHashOffset = 2166136261;
+const size_t c_fnvHashPrime = 16777619;
 
-const unsigned int c_fnvHashOffset = 2166136261;
-const unsigned int c_fnvHashPrime = 16777619;
-
-enum TraceSeverity
+enum class TraceSeverity
 {
     EDEBUG,
     ELOG,
@@ -32,37 +30,61 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
 //#define MSG_TRACE(message_string, ...) 
 //#define MSG_TRACE_CHANNEL(channel, msg, ...) 
 //#else
-#define MSG_TRACE(message_string, ...) MSG_TRACE_WITH_FILE_LINENUMBER(EDEBUG, "", message_string, __VA_ARGS__);
-#define MSG_TRACE_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(EDEBUG, channel, msg, __VA_ARGS__);
+#define MSG_TRACE(message_string, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EDEBUG, "", message_string, __VA_ARGS__);
+#define MSG_TRACE_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EDEBUG, channel, msg, __VA_ARGS__);
 //#endif
 
-#define HASH_ELEMENT_DEFINITION static const unsigned int m_hash;
-#define HASH_ELEMENT_IMPLEMENTATION(CLASS) const unsigned int CLASS::m_hash = hashString( #CLASS );
+#define HASH_ELEMENT_DEFINITION(CLASS) static constexpr size_t m_hash = #CLASS##_hash;
 
 std::string FormatString(const char* format, ...);
 
-///-----------------------------------------------------------------------------
-///! @brief   Case insensitive hash function
-///! @remark
-///-----------------------------------------------------------------------------
-inline unsigned int hashString(const std::string& sourceStr)
+constexpr char toLowerConstExpr(const char c) 
 {
-    PROFILE_EVENT("HashString", Brown);
-    unsigned int returnHash = c_fnvHashOffset;
-    for(unsigned int counter = 0; counter < sourceStr.size(); ++ counter)
+    if (c >= 'A' && c <= 'Z')
     {
-        returnHash = returnHash ^ tolower(sourceStr[counter]);
+        return c + ('a' - 'A');
+    }
+    return c;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   Case insensitive hash function constexpr version
+///! @remark  This wont cope with UTF encoded strings
+///-----------------------------------------------------------------------------
+inline constexpr size_t hashString(const char* sourceStr, size_t size)
+{
+    size_t returnHash = c_fnvHashOffset;
+    for (size_t counter = 0; counter < size; ++counter)
+    {
+        returnHash = returnHash ^ toLowerConstExpr(sourceStr[counter]);
         returnHash = returnHash * c_fnvHashPrime;
     }
 
     return returnHash;
 }
 
-inline size_t hashBinaryData(const char* data, size_t size)
+///-----------------------------------------------------------------------------
+///! @brief User defined hash literal, hashes the string with constexpr
+///! @remark
+///-----------------------------------------------------------------------------
+constexpr size_t operator ""_hash(const char* str, size_t size)
 {
-    PROFILE_EVENT("hashBinaryData", Brown);
-    unsigned int returnHash = c_fnvHashOffset;
-    for (unsigned int counter = 0; counter < size; ++counter)
+    return hashString(str, size);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   Case insensitive hash function, uses the const expression version
+///! @remark
+///-----------------------------------------------------------------------------
+inline size_t hashString(const std::string& sourceStr)
+{
+    return hashString(sourceStr.c_str(), sourceStr.size());
+}
+
+inline constexpr size_t hashBinaryData(const char* data, size_t size)
+{
+    size_t returnHash = c_fnvHashOffset;
+    for (size_t counter = 0; counter < size; ++counter)
     {
         returnHash = returnHash ^ data[counter];
         returnHash = returnHash * c_fnvHashPrime;
@@ -142,7 +164,7 @@ inline float strTofloat(const std::string& str, bool hex = false)
 inline std::string toLowerCase(const std::string& str)
 {
     std::string result = str;
-    std::transform(str.begin(), str.end(), result.begin(), [](char c) { return static_cast<char>(::tolower(c)); });
+    std::transform(str.begin(), str.end(), result.begin(), [](char c) { return static_cast<char>(std::tolower(c)); });
     return result;
 }
 

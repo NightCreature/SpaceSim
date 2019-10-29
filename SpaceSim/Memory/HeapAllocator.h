@@ -81,6 +81,11 @@ public:
 
             ASSERT(PointerMath::findAdjustmentForAligmentFromCurrentPtr((void*)aligned_address, alignment) == 0, "Allocation address is not aligned");
 
+#ifdef MEMORY_PROFILING
+            //Tell mtuner about the allocation
+            rmemAlloc(0, aligned_address, size, allocationSizeNeeded - size);
+#endif
+
             return (void*)aligned_address;
         }
 
@@ -143,6 +148,11 @@ public:
 
         m_numAllocations--;
         m_usedMemory -= block_size;
+
+#ifdef MEMORY_PROFILING
+        //Tell mtuner about the allocation
+        rmemFree(0, p);
+#endif
     }
 
 private:

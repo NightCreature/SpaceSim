@@ -7,7 +7,7 @@
 #include "Loader/ModelLoaders/AssimpModelLoader.h"
 #include <string>
 
-const unsigned int c_ModelHash = hashString("Model");
+constexpr auto c_ModelHash = "Model"_hash;
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
@@ -37,7 +37,7 @@ CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData)
     element = document.FirstChildElement();
     for (element = element->FirstChildElement(); element != nullptr; element = element->NextSiblingElement())
     {
-        unsigned int element_hash = hashString(element->Name());
+        auto element_hash = hashString(element->Name());
 
         if (element_hash == c_ModelHash)
         {

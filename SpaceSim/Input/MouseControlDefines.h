@@ -1,15 +1,15 @@
 #pragma once
 
-#include <map>
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 namespace InputDefines
 {
 class MouseControlDefinitions
 {
 public:
-    MouseControlDefinitions();
+    MouseControlDefinitions() {}
     ~MouseControlDefinitions() {}
-    enum MouseInput
+    enum class MouseInput : unsigned int
     {
         PositiveX,
         NegativeX,
@@ -25,9 +25,34 @@ public:
 
         NumInputActions
     };
-    MouseInput FindControllerInputIdForHashId(unsigned int hashId) const;
+
+    constexpr MouseControlDefinitions::MouseInput FindControllerInputIdForHashId(size_t hashId) const
+    {
+        for (short counter = 0; counter < static_cast<short>(MouseInput::NumInputActions); ++counter)
+        {
+            if (m_inputNameHash[counter] == hashId)
+            {
+                return static_cast<MouseInput>(counter);
+            }
+        }
+
+        return MouseInput::NumInputActions;
+    }
+
 private:
-    unsigned int m_inputNameHash[NumInputActions];
-    MouseInput m_xControllerInputId[NumInputActions];
+    static constexpr size_t m_inputNameHash[MouseInput::NumInputActions] =
+    {
+        "positive_x"_hash,
+        "negative_x"_hash,
+        "positive_y"_hash,
+        "negative_y"_hash,
+        "button_1"_hash,
+        "button_2"_hash,
+        "button_3"_hash,
+        "button_4"_hash,
+        "button_5"_hash,
+        "wheel_up"_hash,
+        "wheel_down"_hash
+    };
 };
 }

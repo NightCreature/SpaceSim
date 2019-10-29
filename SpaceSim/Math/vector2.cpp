@@ -3,7 +3,7 @@
 
 const float Vector2::EQUALPRECISION2 = 0.00001f;
 
-HASH_ELEMENT_IMPLEMENTATION(Vector2);
+
 
 Vector2::Vector2()
 {

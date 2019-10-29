@@ -24,13 +24,6 @@
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/RenderMessages.h"
 
-const unsigned int MapLoader::m_wallHash = hashString("Wall");
-const unsigned int MapLoader::m_doorHash = hashString("Door");
-const unsigned int MapLoader::m_rotatingBladesHash = hashString("RotatingBlades");
-const unsigned int MapLoader::m_switchHash = hashString("Switch");
-const unsigned int MapLoader::m_coreHash = hashString("Core");
-const unsigned int MapLoader::m_forceFieldHash = hashString("ForceField");
-
 MapLoader::~MapLoader()
 {
     cleanup();
@@ -67,7 +60,7 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
 
     while (element != 0)
     {
-        unsigned int elementHash = hashString( element->Value() );
+        size_t elementHash = hashString( element->Value() );
         if ( MapLoader::m_wallHash == elementHash )
         {
             readWallElement(resource, element);
@@ -339,7 +332,7 @@ void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement*
     unsigned int numberCornersRead = 0;
     while (childElement != 0)
     {
-        unsigned int childElementHash = hashString(childElement->Value());
+        auto childElementHash = hashString(childElement->Value());
         if (Vector3::m_hash == childElementHash)
         {
             corners[numberCornersRead].deserialise(childElement);

@@ -38,7 +38,7 @@ public:
 	static Vector2 xAxis() {return Vector2(1.0f, 0.0f);}
 	static Vector2 yAxis() {return Vector2(0.0f, 1.0f);}
 
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(Vector2);
 protected:
 private:
 	float m_x, m_y;

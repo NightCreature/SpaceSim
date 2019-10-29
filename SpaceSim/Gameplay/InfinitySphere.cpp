@@ -3,7 +3,7 @@
 #include "Graphics/CameraManager.h"
 #include "Graphics/ModelManager.h"
 
-HASH_ELEMENT_IMPLEMENTATION(InfinitySphere);
+
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -13,16 +13,15 @@ const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* nod
     m_name = "skydome";
     ShaderInstance shaderInstance;
 
-    const unsigned int modelHash = hashString("Model");
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())
     {
-        unsigned int childElementHash = hashString(childElement->Value());
+        auto childElementHash = hashString(childElement->Value());
         if (childElementHash == Material::m_hash)
         {
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
             //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), childElement);
         }
-        else if (childElementHash == modelHash)
+        else if (childElementHash == "Model"_hash)
         {
             const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("file");
             if (attribute != nullptr)

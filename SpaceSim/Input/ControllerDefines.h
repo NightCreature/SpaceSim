@@ -2,7 +2,7 @@
 
 #include "InputState.h"
 
-enum ControllerType
+enum class ControllerType
 {
     Gamepad = 0,
     Joystick,

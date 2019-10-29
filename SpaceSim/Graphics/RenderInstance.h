@@ -24,6 +24,7 @@ public:
     {}
     ~RenderInstance(void)
     {
+        m_shaderInstance.Cleanup();
     }
 
 #ifdef _DEBUG

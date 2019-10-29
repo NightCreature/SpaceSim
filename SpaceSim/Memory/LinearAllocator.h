@@ -33,6 +33,11 @@ public:
         m_usedMemory += reinterpret_cast<uintptr_t>(currentPosition) - reinterpret_cast<uintptr_t>(returnAddress);
         ++m_numAllocations;
 
+#ifdef MEMORY_PROFILING
+        //Tell mtuner about the allocation
+        rmemAlloc(0, returnAddress, size, m_usedMemory - size);
+#endif
+
         return returnAddress;
     }
 
@@ -43,6 +48,10 @@ public:
     virtual void deallocate(void* p) override
     {
         UNUSEDPARAM(p);
+#ifdef MEMORY_PROFILING
+        //Tell mtuner about the allocation
+        rmemFree(0, p);
+#endif
     }
 
     void clear()

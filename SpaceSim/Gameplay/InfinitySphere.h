@@ -11,7 +11,7 @@ public:
     virtual void initialise(const ShaderInstance& shaderInstance);
     //virtual void deserialise(const tinyxml2::XMLElement* xmlNode) = 0;
     virtual void update(RenderInstanceTree& renderInstances, float elapsedTime, const Input& input);
-    HASH_ELEMENT_DEFINITION
+    HASH_ELEMENT_DEFINITION(InfinitySphere)
 protected:
     virtual void handleMessage(const MessageSystem::Message& msg);
 private:

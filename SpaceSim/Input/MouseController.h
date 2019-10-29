@@ -11,7 +11,7 @@ public:
     virtual void initialise(HWND hwnd) override;
     virtual const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput) override;
 
-    HASH_ELEMENT_DEFINITION
+    HASH_ELEMENT_DEFINITION(MouseController)
 private:
     virtual void internalActionSetup(InputActions::ActionType inputAction, const tinyxml2::XMLAttribute* input) override;
 

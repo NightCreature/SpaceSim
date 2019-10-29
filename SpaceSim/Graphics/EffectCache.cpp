@@ -26,12 +26,12 @@ const Effect* EffectCache::createEffect(Resource* resource, const std::string& r
         const tinyxml2::XMLElement* element;
         element = doc.FirstChildElement(); //skip xml element
         element = element->FirstChildElement();
-        unsigned int elementHash = hashString(element->Value());
+        auto elementHash = hashString(element->Value());
         if (Effect::m_hash == elementHash)
         {
             Effect effect;
             effect.deserialise(element, resource);
-            m_effects.emplace(std::pair<unsigned int, Effect>(hashString(resourceName), effect));
+            m_effects.emplace(std::pair<size_t, Effect>(hashString(resourceName), effect));
             returnValue = getEffect(resourceName);
         }
     }
@@ -44,14 +44,14 @@ const Effect* EffectCache::getEffect(const std::string& name) const
     return getEffect(hashString(name));
 }
 
-const Effect* EffectCache::getEffect(unsigned int effectHash) const
+const Effect* EffectCache::getEffect(size_t effectHash) const
 {
     if (m_effects.empty())
     {
         return nullptr;
     }
 
-    std::map<unsigned int, Effect>::const_iterator it = m_effects.find(effectHash);
+    std::map<size_t, Effect>::const_iterator it = m_effects.find(effectHash);
     if (it == m_effects.end())
     {
         return nullptr;
@@ -62,9 +62,9 @@ const Effect* EffectCache::getEffect(unsigned int effectHash) const
 
 void EffectCache::addEffect(const std::string& name, const Effect& effect)
 {
-    std::map<unsigned int, Effect>::const_iterator it = m_effects.find(hashString(name));
+    std::map<size_t, Effect>::const_iterator it = m_effects.find(hashString(name));
     if (it == m_effects.end())
     {
-        m_effects.emplace(std::pair<unsigned int, Effect>(hashString(name), effect));
+        m_effects.emplace(std::pair<size_t, Effect>(hashString(name), effect));
     }
 }

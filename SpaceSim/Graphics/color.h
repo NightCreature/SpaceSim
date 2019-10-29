@@ -42,7 +42,7 @@ public:
     static Color magenta();
     static Color darkgray() { return Color(0.25f, 0.25f, 0.25f, 1.0f); }
 
-    HASH_ELEMENT_DEFINITION
+    HASH_ELEMENT_DEFINITION(Color)
 protected:
 private:
     float m_rgba[4];

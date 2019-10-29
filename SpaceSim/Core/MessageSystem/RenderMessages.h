@@ -20,9 +20,12 @@ public:
 
     void SetupLightData(const Light& light, const std::string& str) 
     {
-        LightMessageData* data = static_cast<LightMessageData*>(m_implementationData);
-        data->m_light = light;
-        data->m_lightName = str;
+        if (m_implementationData)
+        {
+            LightMessageData* data = static_cast<LightMessageData*>(m_implementationData);
+            data->m_light = light;
+            data->m_lightName = str;
+        }
     }
 
     const MessageSystem::CreateLightMessage::LightMessageData* getLightData() const

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Types/TypeHelpers.h"
+#include <string>
 
 namespace D3DDebugHelperFunctions
 {

@@ -33,6 +33,38 @@ ID3D11Buffer* CreateD3DBuffer(size_t bufferSize, DeviceManager &deviceManager, c
 
 
 ///-----------------------------------------------------------------------------
+///! @brief 
+///! @remark
+///-----------------------------------------------------------------------------
+ShaderInstance::~ShaderInstance()
+{
+}
+
+///-----------------------------------------------------------------------------
+///! @brief 
+///! @remark
+///-----------------------------------------------------------------------------
+void ShaderInstance::Cleanup()
+{
+    for (auto it : m_psConstantBuffers)
+    {
+        it->Release();
+    }
+    for (auto it : m_vsConstantBuffers)
+    {
+        it->Release();
+    }
+    //for (auto it : m_psSvData)
+    //{
+    //    it->Release();
+    //}
+    //for (auto it : m_vsSvData)
+    //{
+    //    it->Release();
+    //}
+}
+
+///-----------------------------------------------------------------------------
 ///! @brief bufferSize is in bytes, so should be the amount of floats we need for this buffer
 ///! @remark returns the index at which location this buffer is stored
 ///-----------------------------------------------------------------------------
@@ -73,7 +105,7 @@ size_t ShaderInstance::AddVsConstantBuffer(size_t bufferSize, DeviceManager& dev
 ///-----------------------------------------------------------------------------
 void ShaderInstance::FixSrvReferences(RenderResource& resource)
 {
-    if (m_material.getTextureHashes().size() > m_psSvData.size())
+    if (m_material.getTextureHashes().size() > m_psSrvData.size())
     {
         ShaderInstanceHelpers::FixTextureSRVReferences(*this, m_material, resource);
     }

@@ -27,7 +27,6 @@
 
 #include "Core/MessageSystem/MessageQueue.h"
 
-
 ///-----------------------------------------------------------------------------
 ///! @brief   Base class for an application object
 ///! @remark  Defines the wndProc used in the Window class it contains

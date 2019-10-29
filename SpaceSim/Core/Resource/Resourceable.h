@@ -97,7 +97,7 @@ public: \
 class name\
 {\
 public:\
-    name(Resource* resource) : m_resource(resource) { PROFILE_EVENT(#name, Cyan); }\
+    name(Resource* resource) : m_resource(resource) {  }\
     name(const Resource* resource) : m_resource(const_cast<Resource*>(resource)) {}\
     ~name() {}\
 \

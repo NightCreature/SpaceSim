@@ -13,7 +13,7 @@
 
 #include "Gameplay/box.h"
 
-HASH_ELEMENT_IMPLEMENTATION(ForceField)
+
 
 ForceField::ForceField(Resource* resource, const Vector3& position):
 GameObject(resource)
@@ -69,7 +69,7 @@ const ShaderInstance ForceField::deserialise( const tinyxml2::XMLElement* elemen
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        unsigned int typeHash = hashString(element->Value());
+        auto typeHash = hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");

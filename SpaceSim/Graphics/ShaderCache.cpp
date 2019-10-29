@@ -59,11 +59,11 @@ void ShaderCache::cleanup()
 // @brief 
 ///-------------------------------------------------------------------------
 
-const unsigned int ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     VertexShader shader;
     shader.deserialise(element);
-    unsigned int resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
+    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getVertexShader(resourceName) == nullptr)
     {
         if (shader.createShader(deviceManager))
@@ -78,11 +78,11 @@ const unsigned int ShaderCache::getVertexShader(const tinyxml2::XMLElement* elem
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const unsigned int ShaderCache::getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     HullShader shader;
     shader.deserialise(element);
-    unsigned int resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
+    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getHullShader(resourceName) == nullptr)
     {
         if (shader.createShader(deviceManager))
@@ -97,11 +97,11 @@ const unsigned int ShaderCache::getHullShader(const tinyxml2::XMLElement* elemen
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const unsigned int ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     DomainShader shader;
     shader.deserialise(element);
-    unsigned int resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
+    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getDomainShader(resourceName) == nullptr)
     {
         if (shader.createShader(deviceManager))
@@ -116,11 +116,11 @@ const unsigned int ShaderCache::getDomainShader(const tinyxml2::XMLElement* elem
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const unsigned int ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     GeometryShader shader;
     shader.deserialise(element);
-    unsigned int resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
+    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getGeometryShader(resourceName) == nullptr)
     {
         if (shader.createShader(deviceManager))
@@ -135,11 +135,11 @@ const unsigned int ShaderCache::getGeometryShader(const tinyxml2::XMLElement* el
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const unsigned int ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     PixelShader shader;
     shader.deserialise(element);
-    unsigned int resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
+    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getPixelShader(resourceName) == nullptr)
     {
         if (shader.createShader(deviceManager))
@@ -154,11 +154,11 @@ const unsigned int ShaderCache::getPixelShader(const tinyxml2::XMLElement* eleme
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const unsigned int  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+const size_t  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     ComputeShader shader;
     shader.deserialise(element);
-    unsigned int resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
+    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getComputeShader(resourceName) == nullptr)
     {
         if (shader.createShader(deviceManager))
@@ -173,14 +173,14 @@ const unsigned int  ShaderCache::getComputeShader(const tinyxml2::XMLElement* el
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const VertexShader* ShaderCache::getVertexShader(unsigned int resourceName) const
+const VertexShader* ShaderCache::getVertexShader(size_t resourceName) const
 {
     if (m_vertexShaders.empty())
     {
         return nullptr;
     }
 
-    unsigned int hashedFileName = resourceName;
+    size_t hashedFileName = resourceName;
     VertexShaders::const_iterator it = m_vertexShaders.find(hashedFileName);
     if (it != m_vertexShaders.end())
     {
@@ -193,14 +193,14 @@ const VertexShader* ShaderCache::getVertexShader(unsigned int resourceName) cons
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const HullShader* ShaderCache::getHullShader(unsigned int resourceName) const
+const HullShader* ShaderCache::getHullShader(size_t resourceName) const
 {
     if (m_hullShaders.empty())
     {
         return nullptr;
     }
 
-    unsigned int hashedFileName = resourceName;
+    size_t hashedFileName = resourceName;
     HullShaders::const_iterator it = m_hullShaders.find(hashedFileName);
     if (it != m_hullShaders.end())
     {
@@ -212,14 +212,14 @@ const HullShader* ShaderCache::getHullShader(unsigned int resourceName) const
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const DomainShader* ShaderCache::getDomainShader(unsigned int resourceName) const
+const DomainShader* ShaderCache::getDomainShader(size_t resourceName) const
 {
     if (m_domainShaders.empty())
     {
         return nullptr;
     }
 
-    unsigned int hashedFileName = resourceName;
+    size_t hashedFileName = resourceName;
     DomainShaders::const_iterator it = m_domainShaders.find(hashedFileName);
     if (it != m_domainShaders.end())
     {
@@ -231,14 +231,14 @@ const DomainShader* ShaderCache::getDomainShader(unsigned int resourceName) cons
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const GeometryShader* ShaderCache::getGeometryShader(unsigned int resourceName) const
+const GeometryShader* ShaderCache::getGeometryShader(size_t resourceName) const
 {
     if (m_geometryShaders.empty())
     {
         return nullptr;
     }
 
-    unsigned int hashedFileName = resourceName;
+    size_t hashedFileName = resourceName;
     GeometryShaders::const_iterator it = m_geometryShaders.find(hashedFileName);
     if (it != m_geometryShaders.end())
     {
@@ -250,14 +250,14 @@ const GeometryShader* ShaderCache::getGeometryShader(unsigned int resourceName) 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const PixelShader* ShaderCache::getPixelShader(unsigned int resourceName) const
+const PixelShader* ShaderCache::getPixelShader(size_t resourceName) const
 {
     if (m_pixelShaders.empty())
     {
         return nullptr;
     }
 
-    unsigned int hashedFileName = resourceName;
+    size_t hashedFileName = resourceName;
     PixelShaders::const_iterator it = m_pixelShaders.find(hashedFileName);
     if (it != m_pixelShaders.end())
     {
@@ -269,14 +269,14 @@ const PixelShader* ShaderCache::getPixelShader(unsigned int resourceName) const
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ComputeShader* ShaderCache::getComputeShader(unsigned int resourceName) const
+const ComputeShader* ShaderCache::getComputeShader(size_t resourceName) const
 {
     if (m_computeShaders.empty())
     {
         return nullptr;
     }
 
-    unsigned int hashedFileName = resourceName;
+    size_t hashedFileName = resourceName;
     ComputeShaders::const_iterator it = m_computeShaders.find(hashedFileName);
     if (it != m_computeShaders.end())
     {

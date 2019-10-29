@@ -22,7 +22,7 @@ public:
 	bool find(const std::string& filename) const;
 	void addLoad(const DeviceManager& deviceManager, const std::string& filename);
 	const Texture* getTexture(const std::string& filename) const;
-    const Texture* getTexture(const unsigned int textureNameHash) const;
+    const Texture* getTexture(const size_t textureNameHash) const;
 	long getTexMemUsed() const;
 
 	bool activateTexture(const std::string& filename);
@@ -35,8 +35,8 @@ protected:
 private:
 	bool m_generatemipmaps;
 	bool m_autogeneratemipmaps;
-    typedef std::pair<unsigned int, Texture> TexturePair;
-	typedef std::map<unsigned int, Texture> TextureMap;
+    typedef std::pair<size_t, Texture> TexturePair;
+	typedef std::map<size_t, Texture> TextureMap;
 	TextureMap m_textures;	
     ID3D11SamplerState* m_samplerState;
 };

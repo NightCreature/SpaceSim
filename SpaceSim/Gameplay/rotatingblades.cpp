@@ -10,7 +10,7 @@
 #include <iostream>
 
 
-HASH_ELEMENT_IMPLEMENTATION(RotatingBlades)
+
 
 RotatingBlades::RotatingBlades(Resource* resource, const Vector3& position) :
 GameObject(resource)
@@ -36,7 +36,7 @@ const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* el
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        unsigned int typeHash = hashString(element->Value());
+        auto typeHash = hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
             //This all needs to be a message to the renderer to create a render object

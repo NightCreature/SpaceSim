@@ -10,7 +10,7 @@
 #include "Core/Types/TypeHelpers.h"
 #include "Graphics/DebugBox.h"
 
-HASH_ELEMENT_IMPLEMENTATION(Switch)
+
 
 Switch::Switch(Resource* resource, Vector3 position, GameObject* associatedspecial):
 GameObject(resource)
@@ -53,10 +53,9 @@ const ShaderInstance Switch::deserialise( const tinyxml2::XMLElement* element)
         m_name = attribute->Value();
     }
 
-    unsigned int linkHash = hashString("Link");
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        unsigned int typeHash = hashString(element->Value());
+        auto typeHash = hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
@@ -73,7 +72,7 @@ const ShaderInstance Switch::deserialise( const tinyxml2::XMLElement* element)
             translate(transform ,m_position.x(), m_position.y(), m_position.z());
             m_world = rotated * transform;
         }
-        else if( linkHash == typeHash)
+        else if( "Link"_hash == typeHash)
         {
             const char* linkedSpecial = element->Attribute("link");
             MSG_TRACE_CHANNEL( "SWITCH", "Hash this name to get a link to the object from the object manager: %s, %d", linkedSpecial, hashString(linkedSpecial) );

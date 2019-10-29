@@ -8,7 +8,7 @@
 class Bbox
 {
 public:
-	enum sideplane
+	enum class sideplane
 	{
 		FRONT,
 		BACK,

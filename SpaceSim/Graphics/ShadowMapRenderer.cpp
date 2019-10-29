@@ -31,7 +31,7 @@
 #include "ScreenGrab.h"
 #endif
 
-static const unsigned int shadowMapTechniqueHash = hashString("shadow_map");
+static const size_t shadowMapTechniqueHash = "shadow_map"_hash;
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description

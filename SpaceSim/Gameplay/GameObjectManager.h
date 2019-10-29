@@ -25,8 +25,8 @@ public:
     void handleMessage( const MessageSystem::Message& message );
     void addMessage(const Message& message);
 private:
-    typedef std::pair<unsigned int, GameObject*> ModelPair;
-    typedef std::map<unsigned int, GameObject*> GameObjectMap;
+    typedef std::pair<size_t, GameObject*> ModelPair;
+    typedef std::map<size_t, GameObject*> GameObjectMap;
     //struct DispatchFunctor
     //{
     //    explicit DispatchFunctor(const Message& message) : m_msg(message) {}

@@ -5,9 +5,11 @@
 #include "Graphics/texturemanager.h"
 #include <iostream>
 #include "Core/Resource/renderResource.h"
+#include "../Graphics/material.h"
+#include "../Math/vector3.h"
 
 
-HASH_ELEMENT_IMPLEMENTATION(Core)
+
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -92,7 +94,7 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
 
     for (const tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())
     {
-        unsigned int childElementHash = hashString(childElement->Value());
+        auto childElementHash = hashString(childElement->Value());
         if (childElementHash == Material::m_hash)
         {
             const tinyxml2::XMLAttribute* nameAttribute = childElement->FindAttribute("name"); //This material needs a name to distinguish between normal and glowing versions of the material
@@ -112,7 +114,7 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
                 }
             }
         }
-        else if (childElementHash == hashString("Model"))
+        else if (childElementHash == "Model"_hash)
         {
             attribute = childElement->FindAttribute("file_name");
             if (attribute != nullptr)

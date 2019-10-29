@@ -3,7 +3,7 @@
 #include "Input/MouseControlDefines.h"
 #include "Math/MathUtilityFunctions.h"
 
-HASH_ELEMENT_IMPLEMENTATION(MouseController);
+
 
 MouseController::MouseController()
 {
@@ -91,47 +91,47 @@ const InputState& MouseController::update(const std::vector<RAWINPUT>& keyboardI
 
     if (mouseX < 0)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::NegativeX], math::clamp((float)-mouseX, 0.0f, 1.0f));
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::NegativeX)], math::clamp((float)-mouseX, 0.0f, 1.0f));
     }
     else if (mouseX > 0)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::PositiveX], math::clamp((float)mouseX, 0.0f, 1.0f));
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::PositiveX)], math::clamp((float)mouseX, 0.0f, 1.0f));
     }
     else
     {
         //Reset the values
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::NegativeX], 0.0f);
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::PositiveX], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::NegativeX)], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::PositiveX)], 0.0f);
     }
 
     if (mouseY < 0)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::NegativeY], math::clamp((float)-mouseY, 0.0f, 1.0f));
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::NegativeY)], math::clamp((float)-mouseY, 0.0f, 1.0f));
     }
     else if (mouseY > 0)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::PositiveY], math::clamp((float)mouseY, 0.0f, 1.0f));
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::PositiveY)], math::clamp((float)mouseY, 0.0f, 1.0f));
     }
     else
     {
         //Reset the values
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::NegativeY], 0.0f);
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::PositiveY], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::NegativeY)], 0.0f);
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::PositiveY)], 0.0f);
     }
 
-    m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::MouseButton1], (float)(mouseButton1));
-    m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::MouseButton2], (float)(mouseButton2));
-    m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::MouseButton3], (float)(mouseButton3));
-    m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::MouseButton4], (float)(mouseButton4));
-    m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::MouseButton5], (float)(mouseButton5));
+    m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::MouseButton1)], (float)(mouseButton1));
+    m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::MouseButton2)], (float)(mouseButton2));
+    m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::MouseButton3)], (float)(mouseButton3));
+    m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::MouseButton4)], (float)(mouseButton4));
+    m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::MouseButton5)], (float)(mouseButton5));
 
     if (wheelData > 0)
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::MouseWheelUp], (float)(wheelData));
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::MouseWheelUp)], (float)(wheelData));
     }
     else
     {
-        m_controllerState.setActionValue(m_physicalKeyToAction[InputDefines::MouseControlDefinitions::MouseWheelDown], (float)(-wheelData));
+        m_controllerState.setActionValue(m_physicalKeyToAction[static_cast<unsigned int>(InputDefines::MouseControlDefinitions::MouseInput::MouseWheelDown)], (float)(-wheelData));
     }
 
     return m_controllerState;
@@ -146,8 +146,8 @@ void MouseController::internalActionSetup(InputActions::ActionType inputAction, 
     UNUSEDPARAM(inputAction);
 
     InputDefines::MouseControlDefinitions mouseDefinitions;
-    unsigned int inputHash = hashString(input->Value());
+    auto inputHash = hashString(input->Value());
     InputDefines::MouseControlDefinitions::MouseInput mouseInput = mouseDefinitions.FindControllerInputIdForHashId(inputHash);
 
-    m_physicalKeyToAction.insert(PhysicalInputPair(mouseInput, inputAction));
+    m_physicalKeyToAction.insert(PhysicalInputPair(castToUnderlyingType(mouseInput), inputAction));
 }

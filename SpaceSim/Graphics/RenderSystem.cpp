@@ -18,7 +18,7 @@
 #include "Core/MessageSystem/GameMessages.h"
 #include "Graphics/D3DDebugHelperFunctions.h"
 
-HASH_ELEMENT_IMPLEMENTATION(CubeRendererInitialiseData);
+
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -51,7 +51,6 @@ m_totalNumberOfInstancesRendered(0),
 m_averageNumberOfInstancesRenderingPerFrame(0),
 m_totalNumberOfRenderedFrames(0)
 {
-    ZeroMemory(&m_swapChainDescriptor, sizeof(DXGI_SWAP_CHAIN_DESC));
     m_wireFrame = false;
 }
 
@@ -97,8 +96,6 @@ RenderSystem::~RenderSystem()
     m_modelManger.cleanup(); //just to see if it matters in the live objects list
     m_shaderCache.cleanup();
     m_effectCache.cleanup();
-
-    m_dxgiFactory->Release();
    
 
 #ifdef _DEBUG
@@ -136,50 +133,10 @@ void RenderSystem::initialise(Resource* resource)
         m_window.showWindow();
     }
 
-    IDXGIAdapter* adapter = nullptr;
-    IDXGIFactory * pFactory;
-    HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory));
-    if (hr == S_OK)
-    {
-        for (size_t counter = 0; hr == S_OK; ++counter)
-        {
-            adapter = nullptr;
-            hr = pFactory->EnumAdapters((UINT)counter, &adapter);
-            MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "%d", counter);
-            if (adapter != nullptr)
-            {
-                DXGI_ADAPTER_DESC adapterDesc;
-                adapter->GetDesc(&adapterDesc);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "vendor id: %x", adapterDesc.VendorId);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "device id: %x", adapterDesc.DeviceId);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "subsytem id: %x", adapterDesc.SubSysId);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "revision: %d", adapterDesc.Revision);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated VRAM: %llu MiB", adapterDesc.DedicatedVideoMemory / (1024 * 1024));
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Dedicated RAM: %llu MiB", adapterDesc.DedicatedSystemMemory / (1024 * 1024));
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "Shared RAM: %llu MiB", adapterDesc.SharedSystemMemory / (1024 * 1024));
-                std::string str;
-                convertToCString(adapterDesc.Description, str);
-                MSG_TRACE_CHANNEL("RENDER SYSTEM ADAPTER INFO:", "description: %s", str.c_str());
-
-                if (adapterDesc.VendorId != 0x8086)
-                {
-                    break;
-                }
-            }
-        }
-
-        pFactory->Release();
-    }
-
-    if (!m_deviceManager.createDevice(adapter))
+    if (!m_deviceManager.createDevice())
     {
         ExitProcess(1); //Fix this exit cleanly
     }
-    adapter->Release();
-
-    ID3D11Device* device = m_deviceManager.getDevice();
-    //Patch up the factory
-    patchUpDXGIFactory(device);
 
     int windowWidth = 1280;
     int windowHeight = 720;
@@ -201,8 +158,12 @@ void RenderSystem::initialise(Resource* resource)
     windowWidth = rect.right - rect.left;
     windowHeight = rect.bottom - rect.top;
 
-    createSwapChain(device, windowWidth, windowHeight);
+    if (m_deviceManager.createSwapChain(m_window.getWindowHandle(), windowWidth, windowHeight))
+    {
+        m_swapChain = m_deviceManager.GetSwapChain();
+    }
 
+    auto device = m_deviceManager.getDevice();
     setupSwapChainForRendering(device, m_deviceManager.getDeviceContext(), windowWidth, windowHeight);
 
     //Everything is in GL format so turn off culling
@@ -217,7 +178,7 @@ void RenderSystem::initialise(Resource* resource)
     rasterizerStateDesc.ScissorEnable = false;
     rasterizerStateDesc.SlopeScaledDepthBias = 0.0f;
     rasterizerStateDesc.DepthClipEnable = false;
-    hr = device->CreateRasterizerState(&rasterizerStateDesc, &m_rasteriserState);
+    HRESULT hr = device->CreateRasterizerState(&rasterizerStateDesc, &m_rasteriserState);
     D3DDebugHelperFunctions::SetDebugChildName(m_rasteriserState, "RenderSystem RasterizerState");
 
     D3D11_RASTERIZER_DESC rasterizerWireStateDesc;
@@ -301,7 +262,7 @@ void RenderSystem::initialise(Resource* resource)
     shadowContantsDescriptor.ByteWidth = 3 * 16 * sizeof(float);
     shadowContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = device->CreateBuffer(&shadowContantsDescriptor, 0, &m_shadowConstantBuffer);
-    D3DDebugHelperFunctions::SetDebugChildName(m_shadowConstantBuffer, "RenderSystem Light Constant buffer");
+    D3DDebugHelperFunctions::SetDebugChildName(m_shadowConstantBuffer, "RenderSystem Shadow Constant buffer");
 
     D3D11_SAMPLER_DESC samplerStateDesc;
     samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -351,6 +312,27 @@ void RenderSystem::initialise(Resource* resource)
     m_view = m_cameraSystem.getCamera("global")->getCamera();
 
     m_emmiter.initialise(m_renderResource);
+
+    //Create some querries
+    D3D11_QUERY_DESC queryDescriptor;
+    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
+    queryDescriptor.Query = D3D11_QUERY_TIMESTAMP;
+    device->CreateQuery(&queryDescriptor, &m_beginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_endDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_cubemapBeginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_cubemapEndDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_shadoBeginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_shadoEndDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_mainBeginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_mainEndDrawQuery);
+
+    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
+    queryDescriptor.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
+    device->CreateQuery(&queryDescriptor, &m_timeDisjointQuery);
+
+    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
+    queryDescriptor.Query = D3D11_QUERY_PIPELINE_STATISTICS;
+    device->CreateQuery(&queryDescriptor, &m_pipeLineStatistics);
 }
 
 ///-----------------------------------------------------------------------------
@@ -370,15 +352,17 @@ void RenderSystem::update(float elapsedTime, double time)
 //    }
 //
     PROFILE_EVENT("RenderSystem::Update", Blue);
+    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    deviceContext->End(m_mainBeginDrawQuery);
 
 #ifdef _DEBUG
     pPerf->BeginEvent(L"RenderSystem::Update");
 #endif
 
-    static const unsigned int defaultTechniqueHash = hashString("default");
+    const auto defaultTechniqueHash = "default"_hash;
     m_window.update(elapsedTime, time);
 
-    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    
     deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
 
     RenderInstanceTree::iterator renderInstanceIt = visibleInstances.begin();
@@ -506,58 +490,8 @@ void RenderSystem::update(float elapsedTime, double time)
 
     m_numberOfInstancesRenderingThisFrame = visibleInstances.size();
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
-}
 
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-bool RenderSystem::createSwapChain(ID3D11Device* device, int windowWidth, int windowHeight)
-{
-    DXGI_MODE_DESC bufferDescription;
-    ZeroMemory(&bufferDescription, sizeof(DXGI_MODE_DESC));
-    bufferDescription.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    bufferDescription.Height = windowHeight;
-    bufferDescription.Width = windowWidth;
-    bufferDescription.RefreshRate.Numerator = 60;
-    bufferDescription.RefreshRate.Denominator = 1;
-
-    m_swapChainDescriptor.BufferCount = 1;
-    m_swapChainDescriptor.BufferDesc = bufferDescription;
-    m_swapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    m_swapChainDescriptor.OutputWindow = m_window.getWindowHandle();
-    m_swapChainDescriptor.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-    m_swapChainDescriptor.SampleDesc.Count = 1;
-    m_swapChainDescriptor.SampleDesc.Quality = 0;
-    m_swapChainDescriptor.Windowed = true;
-
-    if (FAILED(m_dxgiFactory->CreateSwapChain((IUnknown*)device, &m_swapChainDescriptor, &m_swapChain)))
-    {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to create a swapchain")
-            return false;
-    }
-
-    return true;
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   Because the device is created elsewhere(DeviceManager) the DXGIFactory
-///!          needs to be patched. Otherwise other resources can't be created through it.
-///! @remark
-///-----------------------------------------------------------------------------
-void RenderSystem::patchUpDXGIFactory(ID3D11Device* device)
-{
-    IDXGIDevice * pDXGIDevice;
-    IUnknown* deviceinterface = (IUnknown*)device;
-    HRESULT hr = deviceinterface->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice);
-    IDXGIAdapter * pDXGIAdapter;
-    hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), (void **)&pDXGIAdapter);
-    if (FAILED(hr))
-    {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to path the DXGI Factory");
-        return;
-    }
-    pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&m_dxgiFactory);
+    deviceContext->End(m_mainEndDrawQuery);
 }
 
 ///-----------------------------------------------------------------------------
@@ -646,14 +580,6 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
 ///-----------------------------------------------------------------------------
 void RenderSystem::cleanup()
 {
-    if (m_dxgiFactory)
-    {
-        m_dxgiFactory->Release();
-    }
-    if (m_swapChain)
-    {
-        m_swapChain->Release();
-    }
     if (m_depthStencilBuffer)
     {
         m_depthStencilBuffer->Release();
@@ -674,6 +600,17 @@ void RenderSystem::cleanup()
     m_alphaBlendState->Release();
     m_samplerState->Release();
 
+    m_beginDrawQuery->Release();
+    m_endDrawQuery->Release();
+    m_cubemapBeginDrawQuery->Release();
+    m_cubemapEndDrawQuery->Release();
+    m_shadoBeginDrawQuery->Release();
+    m_shadoEndDrawQuery->Release();
+    m_mainBeginDrawQuery->Release();
+    m_mainEndDrawQuery->Release();
+
+    m_timeDisjointQuery->Release();
+
     delete m_renderResource;
 }
 
@@ -683,6 +620,11 @@ void RenderSystem::cleanup()
 void RenderSystem::beginDraw()
 {
     PROFILE_EVENT("RenderSystem::beginDraw", Orange);
+    
+    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    deviceContext->Begin(m_timeDisjointQuery);
+    deviceContext->End(m_beginDrawQuery);
+    deviceContext->Begin(m_pipeLineStatistics);
 
     m_numberOfInstancePerFrame = 0;
 
@@ -699,7 +641,7 @@ void RenderSystem::beginDraw()
     m_resourceLoader.update();
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 0.0f }; //Reverse Z so clear to 0 instead of 1 leads to a linear depth pass
-    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    
     deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
     deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
     if (!m_wireFrame)
@@ -738,31 +680,39 @@ void RenderSystem::beginDraw()
     const CameraManager& cm = helper.getResource().getCameraManager();
     const Camera* cam = cm.getCamera("global");
 
+    PROFILE_EVENT("RenderSystem::beginDraw::LightUpdate", DarkRed);
+    //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
+    if (cam != nullptr)
     {
-        PROFILE_EVENT("RenderSystem::beginDraw::LightUpdate", DarkRed);
-        //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
-        if (cam != nullptr)
-        {
-            camPos = cam->getEye();
-        }
-
-        Light* light0 = lm.getLight("light_0");
-        if (light0 != nullptr)
-        {
-            light0->setPosition(camPos);
-        }
-
-        unsigned int lightCounter = 0;
-        for (auto light : lm.getLights())
-        {
-            perFrameConstants.m_lightConstants[lightCounter] = light->getLightConstants();
-            ++lightCounter;
-        }
+        camPos = cam->getEye();
     }
 
+    Light* light0 = lm.getLight("light_0");
+    if (light0 != nullptr)
+    {
+        light0->setPosition(camPos);
+    }
+
+    unsigned int lightCounter = 0;
+    for (auto light : lm.getLights())
+    {
+        perFrameConstants.m_lightConstants[lightCounter] = light->getLightConstants();
+        ++lightCounter;
+    }
+
+    deviceContext->End(m_cubemapBeginDrawQuery);
     static int counter = 0;
     if (counter > 15)
     {
+        light0 = lm.getLight("light_0");
+        if (light0 != nullptr)
+        {
+            Color diffuse = light0->getDiffuse();
+            diffuse.setBlue(diffuse.b() > 1.0f ? 0.0f : diffuse.b() + 0.1f);
+            diffuse.setRed(diffuse.r() < 0.0f ? 1.0f : diffuse.r() - 0.1f);
+            light0->setDiffuse(diffuse);
+        }
+
         //Loop over rts here and render to all of them
         TextureManager& tm = helper.getWriteableResource().getTextureManager();
         static size_t rtCounter = 0;
@@ -779,12 +729,15 @@ void RenderSystem::beginDraw()
         counter = 0;
     }
     ++counter;
+    deviceContext->End(m_cubemapEndDrawQuery);
 
+    deviceContext->End(m_shadoBeginDrawQuery);
     //Do shadowmap update here too to begin with
     ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     deviceContext->PSSetShaderResources(0, 40, srv);
     m_shadowMapRenderer->renderShadowMap(m_renderResource, m_renderInstances, m_deviceManager, lm.getLight("light_1"));
     deviceContext->PSSetShaderResources(0, 40, srv);
+    deviceContext->End(m_shadoEndDrawQuery);
 
     perFrameConstants.m_cameraPosition[0] = camPos.x();
     perFrameConstants.m_cameraPosition[1] = camPos.y();
@@ -803,7 +756,6 @@ void RenderSystem::beginDraw()
     //Setup shadow map SRV, since we only have one we can set it here
     ID3D11ShaderResourceView* shadowMapSRV = m_shadowMapRenderer->getShadowMap();
     deviceContext->PSSetShaderResources(33, 1, &shadowMapSRV);
-
 
 }
 
@@ -847,6 +799,76 @@ void RenderSystem::endDraw()
             //assert(false);
         }
     }
+
+    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    deviceContext->End(m_endDrawQuery);
+    deviceContext->End(m_timeDisjointQuery);
+    deviceContext->End(m_pipeLineStatistics);
+
+    while (deviceContext->GetData(m_timeDisjointQuery, NULL, 0, 0) == S_FALSE)
+    {
+        Sleep(1);       // Wait a bit, but give other threads a chance to run
+    }
+
+    // Check whether timestamps were disjoint during the last frame
+    D3D10_QUERY_DATA_TIMESTAMP_DISJOINT tsDisjoint;
+    deviceContext->GetData(m_timeDisjointQuery, &tsDisjoint, sizeof(tsDisjoint), 0);
+    if (tsDisjoint.Disjoint)
+    {
+        return;
+    }
+
+    UINT64 beginDrawQueryTimeStamp; //Begining of frame
+    UINT64 endDrawQueryTimeStamp;
+    UINT64 cubemapBeginDrawQueryTimeStamp;
+    UINT64 cubemapEndDrawQueryTimeStamp;
+    UINT64 shadoBeginDrawQueryTimeStamp;
+    UINT64 shadoEndDrawQueryTimeStamp;
+    UINT64 mainBeginDrawQueryTimeStamp;
+    UINT64 mainEndDrawQueryTimeStamp;
+
+    deviceContext->GetData(m_beginDrawQuery, &beginDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_endDrawQuery, &endDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_cubemapBeginDrawQuery, &cubemapBeginDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_cubemapEndDrawQuery, &cubemapEndDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_shadoBeginDrawQuery, &shadoBeginDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_shadoEndDrawQuery, &shadoEndDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_mainBeginDrawQuery, &mainBeginDrawQueryTimeStamp, sizeof(UINT64), 0);
+    deviceContext->GetData(m_mainEndDrawQuery, &mainEndDrawQueryTimeStamp, sizeof(UINT64), 0);
+
+    D3D11_QUERY_DATA_PIPELINE_STATISTICS pipeLineStats;
+    ZeroMemory(&pipeLineStats, sizeof(pipeLineStats));
+    deviceContext->GetData(m_pipeLineStatistics, &pipeLineStats, sizeof(pipeLineStats), 0);
+
+    // Convert to real time
+    float cubeMapBeginTime = float(cubemapBeginDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+    float cubeMapEndTime = float(cubemapEndDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+
+    float shadowMapBeginTime = float(shadoBeginDrawQueryTimeStamp -beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+    float shadowMapEndTime = float(shadoEndDrawQueryTimeStamp -beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+
+    float mainBeginTime = float(mainBeginDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+    float mainEndTime = float(mainEndDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+
+    float EndFrameTime = float(endDrawQueryTimeStamp - beginDrawQueryTimeStamp) / float(tsDisjoint.Frequency) * 1000.0f;
+
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Frame timings");
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "CubeMap Generation time: %f ms", cubeMapEndTime - cubeMapBeginTime);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Shadow Generation time : %f ms", shadowMapEndTime - shadowMapBeginTime);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Main render time       : %f ms", mainEndTime - mainBeginTime);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "Frame time             : %f ms", EndFrameTime);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "PipeLineStatistics:");
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "IAVertices: %u", pipeLineStats.IAVertices);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "IAPrimitives: %u", pipeLineStats.IAPrimitives);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "VSInvocations: %u", pipeLineStats.VSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "GSInvocations: %u", pipeLineStats.GSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "GSPrimitives: %u", pipeLineStats.GSPrimitives);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "CInvocations: %u", pipeLineStats.CInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "CPrimitives: %u", pipeLineStats.CPrimitives);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "PSInvocations: %u", pipeLineStats.PSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "HSInvocations: %u", pipeLineStats.HSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "DSInvocations: %u", pipeLineStats.DSInvocations);
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "CSInvocations: %u", pipeLineStats.CSInvocations);
 }
 
 ///-----------------------------------------------------------------------------
@@ -874,9 +896,9 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
     m_cubeMapRenderer = new CubeMapRenderer(m_deviceManager, m_alphaBlendState, m_blendState);
 
     const Paths* path = resource->m_paths;
-    std::string cubeRenderSettingsFileName = path->getSettingsPath() + "cube_map_renderers.xml";
+    auto cubeRenderSettingsFileName = path->getSettingsPath() / "cube_map_renderers.xml";
     tinyxml2::XMLDocument doc;
-    if (tinyxml2::XML_NO_ERROR != doc.LoadFile(cubeRenderSettingsFileName.c_str()))
+    if (tinyxml2::XML_NO_ERROR != doc.LoadFile(cubeRenderSettingsFileName.string().c_str()))
     {
         MSG_TRACE_CHANNEL("RENDERSYSTEM ERROR", "Failed to load %s because %s (%s)", cubeRenderSettingsFileName.c_str(), doc.GetErrorStr1(), doc.GetErrorStr2());
     }
@@ -890,7 +912,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
     element = element->FirstChildElement();
     for (element; element; element = element->NextSiblingElement())
     {
-        unsigned int elementHash = hashString(element->Value());
+        auto elementHash = hashString(element->Value());
         if (elementHash == CubeRendererInitialiseData::m_hash)
         {
             CubeRendererInitialiseData currentCubeSetting;

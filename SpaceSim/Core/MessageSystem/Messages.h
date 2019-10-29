@@ -38,7 +38,7 @@ public:
     void* GetImplementationData() const { return m_implementationData; }
     size_t GetImplementationDataSize() const { return m_implementationDataSize; }
 
-    void CleanupImplementationData() { delete m_implementationData; }
+    void CleanupImplementationData() { delete m_implementationData; m_implementationData = nullptr; m_implementationDataSize = 0; }
 protected:
     MessageId m_MessageId;
     MessageData* m_implementationData;

@@ -12,7 +12,7 @@
 #include <D3D11.h>
 
 
-HASH_ELEMENT_IMPLEMENTATION(Door) 
+
 
 Door::Door(Resource* resource, const Vector3& position):
 GameObject(resource)
@@ -67,7 +67,7 @@ const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        unsigned int typeHash = hashString(element->Value());
+        auto typeHash = hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");

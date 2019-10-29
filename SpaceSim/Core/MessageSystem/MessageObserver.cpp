@@ -1,5 +1,6 @@
 #include "Core\MessageSystem\MessageObserver.h"
 
+#include "Core/Types/TypeHelpers.h"
 #include "Core/Profiler/ProfilerMacros.h"
 
 namespace MessageSystem
@@ -37,7 +38,8 @@ void MessageObserver::AddDispatchFunction(const Message::MessageId& type, const 
 ///-----------------------------------------------------------------------------
 void MessageObserver::RemoveDispatchFunction(const fastdelegate::FastDelegate1<const Message&>& dispatchFunction)
 {
-    std::remove_if(begin(m_bindings), end(m_bindings), [dispatchFunction](const auto& binding) { return binding.m_dispatchFunction == dispatchFunction; });
+    auto it = std::remove_if(begin(m_bindings), end(m_bindings), [dispatchFunction](const auto& binding) { return binding.m_dispatchFunction == dispatchFunction; });
+    UNUSEDPARAM(it);
 }
 
 ///-----------------------------------------------------------------------------
@@ -46,7 +48,7 @@ void MessageObserver::RemoveDispatchFunction(const fastdelegate::FastDelegate1<c
 ///-----------------------------------------------------------------------------
 void MessageObserver::DispatchMessages(const MessageQueue& messageQueue)
 {
-    PROFILE_EVENT("DispatchMessages", Gray);
+    //PROFILE_EVENT("DispatchMessages", Gray);
     const MessageQueue::Messages& messages = messageQueue.getMessages();
     for (size_t counter = 0; counter < messageQueue.numberOfMessagages(); ++counter)
     {

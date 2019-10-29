@@ -4,7 +4,7 @@
 
 #include <limits>
 
-HASH_ELEMENT_IMPLEMENTATION(KeyboardInputDevice)
+
 
 KeyboardInputDevice::KeyboardInputDevice(void)
 {

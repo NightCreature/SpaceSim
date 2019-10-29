@@ -43,6 +43,8 @@ public:
     ~PerformanceTimer() {}
 
     virtual void update();
+
+    size_t getTimeStamp() { getNow(); return static_cast<size_t>(m_now.QuadPart); }
 protected:
 private:
     void limitThreadToProc();

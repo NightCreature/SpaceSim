@@ -19,7 +19,7 @@ public:
     virtual void initialise(HWND hwnd) override;
     virtual const InputState& update(const std::vector<RAWINPUT>& keyboardInput, const std::vector<RAWINPUT>& mouseInput, const std::vector<RAWINPUT>& hidInput) override;
 
-    HASH_ELEMENT_DEFINITION
+    HASH_ELEMENT_DEFINITION(KeyboardInputDevice)
 private:
     RAWKEYBOARD rawInputFixup(RAWKEYBOARD input);
     void getHumanReadableChar(char*& buffer, unsigned int flags, unsigned int scanCode, bool isE0); 

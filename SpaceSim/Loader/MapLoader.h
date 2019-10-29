@@ -100,12 +100,12 @@ private:
     void readWallElement( Resource* resource, const tinyxml2::XMLElement* element );
 
     //Static const members
-    static const unsigned int m_wallHash;
-    static const unsigned int m_doorHash;
-    static const unsigned int m_rotatingBladesHash;
-    static const unsigned int m_switchHash;
-    static const unsigned int m_coreHash;
-    static const unsigned int m_forceFieldHash;
+    static constexpr size_t MapLoader::m_wallHash = "Wall"_hash;
+    static constexpr size_t MapLoader::m_doorHash = "Door"_hash;
+    static constexpr size_t MapLoader::m_rotatingBladesHash = "RotatingBlades"_hash;
+    static constexpr size_t MapLoader::m_switchHash = "Switch"_hash;
+    static constexpr size_t MapLoader::m_coreHash = "Core"_hash;
+    static constexpr size_t MapLoader::m_forceFieldHash = "ForceField"_hash;
 
 	//members
 	std::string m_filename;

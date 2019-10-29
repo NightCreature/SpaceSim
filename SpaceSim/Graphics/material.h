@@ -21,6 +21,8 @@ class Material
 {
 public:
 
+    HASH_ELEMENT_DEFINITION(Material)
+
     struct TextureSlotMapping
     {
         //Might need to add which uv channel to use for which slot
@@ -68,9 +70,9 @@ public:
 
         static_assert(NumSlots < 128, "Defining more than 128 input texture slots, DX11 doesn't support this");
 
-        TextureSlotMapping(unsigned int textureHash, TextureSlot textureSlot) : m_textureHash(textureHash), m_textureSlot(textureSlot) {}
+        TextureSlotMapping(size_t textureHash, TextureSlot textureSlot) : m_textureHash(textureHash), m_textureSlot(textureSlot) {}
 
-        unsigned int m_textureHash;
+        size_t m_textureHash;
         TextureSlot m_textureSlot;
     };
 
@@ -103,14 +105,14 @@ public:
     void addTextureReference( const TextureSlotMapping& textureSlot) { m_texture.push_back(textureSlot); }
     const std::vector<TextureSlotMapping>& getTextureHashes() const { return m_texture; }
 
-    static const unsigned int m_hash;
+    //static const size_t m_hash;
     const MaterialContent& getMaterialCB() const { return m_materialCB; }
     void setBlendState(bool alphaBlendEnabled) { m_alphaBlend = alphaBlendEnabled; }
     bool getBlendState() const { return m_alphaBlend; }
     
-    unsigned int getEffectHash() const { return m_effectHash; }
-	unsigned int getTechnique() const { return m_techniqueHash; }
-	void setTechnique(unsigned int techniqueHash) { m_techniqueHash = techniqueHash; }
+    size_t getEffectHash() const { return m_effectHash; }
+	size_t getTechnique() const { return m_techniqueHash; }
+	void setTechnique(size_t techniqueHash) { m_techniqueHash = techniqueHash; }
 
     struct MaterialParameters
     {
@@ -122,17 +124,17 @@ public:
         char m_textureNames[Material::TextureSlotMapping::NumSlots][256];
         //std::vector< TextureData > m_texture;
         MaterialContent m_materialContent;
-        unsigned int m_effectHash;
-        unsigned int m_techniqueHash;
+        size_t m_effectHash;
+        size_t m_techniqueHash;
         bool m_alphaBlend;
     };
 
     static MaterialParameters GetMaterialParameters(const tinyxml2::XMLElement* childElement);
-    void setEffectHash(unsigned int effectHash) { m_effectHash = effectHash; }
+    void setEffectHash(size_t effectHash) { m_effectHash = effectHash; }
 protected:
 private:
-    unsigned int m_techniqueHash;
-    unsigned int m_effectHash;
+    size_t m_techniqueHash;
+    size_t m_effectHash;
     MaterialContent m_materialCB;
     std::vector<TextureSlotMapping> m_texture;//Order is sampler order as well
     bool m_alphaBlend;

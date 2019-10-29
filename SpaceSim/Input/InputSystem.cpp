@@ -42,15 +42,15 @@ InputSystem::~InputSystem()
 IInputDevice* InputSystem::createController(const ControllerType type)
 {
     IInputDevice* controller = nullptr;
-    if (type == Gamepad)
+    if (type == ControllerType::Gamepad)
     {
         controller = new XInputDevice(0);
     }
-    else if (type == Keyboard)
+    else if (type == ControllerType::Keyboard)
     {
         controller = new KeyboardInputDevice();
     }
-    else if (type == Mouse)
+    else if (type == ControllerType::Mouse)
     {
         controller = new MouseController();
     }
@@ -155,18 +155,18 @@ ControllerType InputSystem::stringToControllerType( const std::string& controlle
     size_t controllerNameHash = hashString(controllerName);
     if (controllerNameHash == XInputDevice::m_hash)
     {
-        return Gamepad;
+        return ControllerType::Gamepad;
     }
     else if (controllerNameHash ==  KeyboardInputDevice::m_hash)
     {
-        return Keyboard;
+        return ControllerType::Keyboard;
     } 
     else if (controllerNameHash == MouseController::m_hash)
     {
-        return Mouse;
+        return ControllerType::Mouse;
     }
 
-    return Gamepad;
+    return ControllerType::Gamepad;
 }
 
 ///-----------------------------------------------------------------------------
@@ -174,7 +174,7 @@ ControllerType InputSystem::stringToControllerType( const std::string& controlle
 ///! @remark
 ///-----------------------------------------------------------------------------
 //InputActions::ActionType InputSystem::getInputActionFromName( unsigned int actionName )
-bool InputSystem::getInputActionFromName(unsigned int actionName, InputActions::ActionType& actionType)
+bool InputSystem::getInputActionFromName(size_t actionName, InputActions::ActionType& actionType)
 {
     for (AvailableActions::const_iterator it = m_availableActions.begin(); it != m_availableActions.end(); ++it)
     {

@@ -69,13 +69,13 @@ public:
     void setMinorMotor(const float value) { m_minorMotor = value; }
     void setBigMotor(const float value) { m_bigMotor = value; }
 
-    HASH_ELEMENT_DEFINITION;
+    HASH_ELEMENT_DEFINITION(XInputDevice);
 protected:
 private:
     virtual void internalActionSetup(InputActions::ActionType, const tinyxml2::XMLAttribute* input) override;
     void calculateThumbStickDirectionAndMagnitude(float stickX, float stickY, bool isLeftStick, Vector4& directionAndMagnitude);
 
-    InputActions::ActionType m_PhysicalInputState[InputDefines::XControllerDefines::NumInputActions];
+    InputActions::ActionType m_PhysicalInputState[InputDefines::XControllerDefines::XControllerInput::NumInputActions];
 
     int            m_controllerIndex;
     bool           m_controllerActive;
