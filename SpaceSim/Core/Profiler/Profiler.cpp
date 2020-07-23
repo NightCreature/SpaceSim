@@ -28,7 +28,7 @@ Profiler::Profiler() : m_fileNameForSession(""), m_shouldFlushToFile(0), m_first
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
     std::stringstream fileNameForSession;
-    fileNameForSession<< "profiling";
+    fileNameForSession << "profiling";
     fileNameForSession << std::put_time(std::localtime(&now), "%F %T");
     fileNameForSession << ".prf";
 
@@ -36,11 +36,11 @@ Profiler::Profiler() : m_fileNameForSession(""), m_shouldFlushToFile(0), m_first
 
     m_fileNameForSession.erase(
         std::remove_if(m_fileNameForSession.begin(), m_fileNameForSession.end(),
-            [](char &c) { return std::isspace<char>(c, std::locale::classic()); })
+            [](char& c) { return std::isspace<char>(c, std::locale::classic()); })
         , m_fileNameForSession.end());
     m_fileNameForSession.erase(
         std::remove_if(m_fileNameForSession.begin(), m_fileNameForSession.end(),
-            [](char &c) { return c == ':'; })
+            [](char& c) { return c == ':'; })
         , m_fileNameForSession.end());
 }
 
@@ -106,78 +106,78 @@ void Profiler::Cleanup()
 ///-----------------------------------------------------------------------------
 void Profiler::FlushToFile()
 {
-    std::fstream outputFile;
-    std::ios_base::openmode openMode = std::ios_base::out | std::ios_base::in;
-    
-    std::string fileName;// = "/ProfileCaptures/";
-    fileName += m_fileNameForSession;
+    //std::fstream outputFile;
+    //std::ios_base::openmode openMode = std::ios_base::out | std::ios_base::in;
+    //
+    //std::string fileName;// = "/ProfileCaptures/";
+    //fileName += m_fileNameForSession;
 
-    fileName = "ProfileCaptures.prf";
+    //fileName = "ProfileCaptures.prf";
 
-    outputFile.open(fileName, openMode); //Should probably grab this from the paths thing but that would require profiler to know about resource
-    if (outputFile.is_open())
-    {
-        nlohmann::json json_data;
-        
-        if (m_firstFlush) //Stream out the descriptors we need these to track what each event means in the file
-        {
-            json_data["TimerResolution"] = m_timer.getResolution();
+    //outputFile.open(fileName, openMode); //Should probably grab this from the paths thing but that would require profiler to know about resource
+    //if (outputFile.is_open())
+    //{
+    //    nlohmann::json json_data;
+    //    
+    //    if (m_firstFlush) //Stream out the descriptors we need these to track what each event means in the file
+    //    {
+    //        json_data["TimerResolution"] = m_timer.getResolution();
 
-            for (auto& descriptor : m_eventDescriptors)
-            {
-                nlohmann::json eventDescriptor;
-                eventDescriptor["Event Name"] = descriptor.getEventName();
-                eventDescriptor["File Name"] = descriptor.getFileName();
-                eventDescriptor["Function Name"] = descriptor.getFunctioName();
-                eventDescriptor["Line Number"] = descriptor.getLineNumber();
-                eventDescriptor["Event Hash"] = descriptor.getHash();
-                json_data["EventDescriptors"].push_back(eventDescriptor);
-            }
+    //        for (auto& descriptor : m_eventDescriptors)
+    //        {
+    //            nlohmann::json eventDescriptor;
+    //            eventDescriptor["Event Name"] = descriptor.getEventName();
+    //            eventDescriptor["File Name"] = descriptor.getFileName();
+    //            eventDescriptor["Function Name"] = descriptor.getFunctioName();
+    //            eventDescriptor["Line Number"] = descriptor.getLineNumber();
+    //            eventDescriptor["Event Hash"] = descriptor.getHash();
+    //            json_data["EventDescriptors"].push_back(eventDescriptor);
+    //        }
 
-        }
-        //else
-        //{
-        //    json_data << outputFile;
-        //}
+    //    }
+    //    //else
+    //    //{
+    //    //    json_data << outputFile;
+    //    //}
 
-        nlohmann::json framesArray;
+    //    nlohmann::json framesArray;
 
-        for (auto& frameCaputre : m_frames)
-        {
-            nlohmann::json frameObject;
-            for (auto& event : frameCaputre.m_events)
-            {
-                nlohmann::json eventData;
-                eventData["Event Hash"] = event.m_descriptorHash;
-                eventData["Start Timestamp"] = event.m_beginTimeStamp;
-                eventData["End Timestamp"] = event.m_endTimeStamp;
-                frameObject["Events"].push_back(eventData);
-            }
+    //    for (auto& frameCaputre : m_frames)
+    //    {
+    //        nlohmann::json frameObject;
+    //        for (auto& event : frameCaputre.m_events)
+    //        {
+    //            nlohmann::json eventData;
+    //            eventData["Event Hash"] = event.m_descriptorHash;
+    //            eventData["Start Timestamp"] = event.m_beginTimeStamp;
+    //            eventData["End Timestamp"] = event.m_endTimeStamp;
+    //            frameObject["Events"].push_back(eventData);
+    //        }
 
-            for (auto& histogram : frameCaputre.m_eventHistogram)
-            {
-                nlohmann::json histogramData;
-                histogramData["Event Hash"] = histogram.first;
-                histogramData["Count"] = histogram.second;
-                frameObject["Histogram"].push_back(histogramData);
-            }
+    //        for (auto& histogram : frameCaputre.m_eventHistogram)
+    //        {
+    //            nlohmann::json histogramData;
+    //            histogramData["Event Hash"] = histogram.first;
+    //            histogramData["Count"] = histogram.second;
+    //            frameObject["Histogram"].push_back(histogramData);
+    //        }
 
-            framesArray.push_back(frameObject);
-        }
+    //        framesArray.push_back(frameObject);
+    //    }
 
-        json_data["Frames"] = framesArray;
+    //    json_data["Frames"] = framesArray;
 
-        outputFile << std::setw(4) << json_data;
+    //    outputFile << std::setw(4) << json_data;
 
-        outputFile.close();
+    //    outputFile.close();
 
-        //m_eventDescriptors.clear();
-        //m_frames.clear();
-    }
-    else
-    {
-        MSG_TRACE("Failed to open File stream with error: %s", std::strerror(errno));
-    }
+    //    //m_eventDescriptors.clear();
+    //    //m_frames.clear();
+    //}
+    //else
+    //{
+    //    MSG_TRACE("Failed to open File stream with error: %s", std::strerror(errno));
+    //}
 }
 
 }
