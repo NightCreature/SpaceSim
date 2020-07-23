@@ -188,7 +188,7 @@ void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, cons
     data.m_renderObjectid = m_renderHandle;
     data.m_gameobjectid = m_nameHash;
     data.m_world = m_world;
-    data.m_name = m_name;
+    data.m_name = m_name.c_str();
     renderInfo.SetData(data);
     m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
 }

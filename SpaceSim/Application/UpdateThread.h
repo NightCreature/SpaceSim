@@ -26,7 +26,7 @@ public:
 
     void Initialise(Resource* resource);
 
-    virtual int workerFunction() override;
+    virtual int WorkerFunction() override;
 
     void SetElapsedTime(float elapsedTime, double time) { m_elapsedTime = elapsedTime; m_time = time; }
     void UnblockThread() { m_done = false; }

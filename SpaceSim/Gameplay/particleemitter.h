@@ -16,6 +16,7 @@ namespace ParticleSystem
 class IGenerator
 {
 public:
+    virtual ~IGenerator() = default;
     virtual void generate(size_t start, size_t end, const ParticleData& particleData) = 0;
 };
 
@@ -31,6 +32,7 @@ private:
 class IUpdater
 {
 public:
+    virtual ~IUpdater() = default;
     virtual void update(double elapsedTime, const ParticleData& particleData) = 0;
 };
 
@@ -48,8 +50,9 @@ struct ParticleEmitterData
     size_t m_maxNumberOfParticles = 25;
     size_t m_emissionRate;
     //Should really fix this to be something like generator and updater data instead of newing them here
-    std::array<IGenerator*, 32> m_generators; //only allow 32 for now
-    std::array<IUpdater*, 32> m_updaters; //only allow 32 for now
+    static constexpr size_t maxNumberOf = 32;
+    std::array<IGenerator*, maxNumberOf> m_generators; //only allow 32 for now
+    std::array<IUpdater*, maxNumberOf> m_updaters; //only allow 32 for now
 };
 
 class ParticleEmitterComponentBased

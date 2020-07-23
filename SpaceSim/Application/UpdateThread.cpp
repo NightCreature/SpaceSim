@@ -30,7 +30,7 @@ void UpdateThread::Initialise(Resource* resource)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-int UpdateThread::workerFunction()
+int UpdateThread::WorkerFunction()
 {
     while (isAlive())
     {
