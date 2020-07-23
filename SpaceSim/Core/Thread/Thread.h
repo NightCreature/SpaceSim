@@ -21,7 +21,7 @@ public:
     static int __stdcall run(void* parameter);
 
     //Override this method in the derived class to do the work
-    virtual int workerFunction() = 0;// {return 0;}
+    virtual int WorkerFunction() = 0;// {return 0;}
 protected:
     CRITICAL_SECTION m_criticalSection;
 private:
