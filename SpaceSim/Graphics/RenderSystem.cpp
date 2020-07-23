@@ -394,12 +394,12 @@ void RenderSystem::update(float elapsedTime, double time)
 
             RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 #ifdef _DEBUG
-            if (!renderInstance.m_name.empty())
-            {
-                pPerf->BeginEvent(renderInstance.m_name.c_str());
-            }
+            //if (!renderInstance.m_name.empty())
+            //{
+            //    pPerf->BeginEvent(renderInstance.m_name.c_str());
+            //}
 #endif
-            const auto shaderInstance = renderInstance.getShaderInstance();
+            const auto& shaderInstance = renderInstance.getShaderInstance();
             const Effect* effect = m_effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());;
             const Technique* technique = effect->getTechnique(shaderInstance.getMaterial().getTechnique());
             
@@ -475,10 +475,10 @@ void RenderSystem::update(float elapsedTime, double time)
                 deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
             }
 #ifdef _DEBUG
-            if (!renderInstance.m_name.empty())
-            {
-                pPerf->EndEvent();
-            }
+            //if (!renderInstance.m_name.empty())
+            //{
+            //    pPerf->EndEvent();
+            //}
 #endif
             ++m_numberOfInstancePerFrame;
         }
