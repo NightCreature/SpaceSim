@@ -2,8 +2,6 @@
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 
-#include <nlohmann\json.hpp>
-
 #include <algorithm>
 #include <chrono>
 #include <ctime>
@@ -11,6 +9,7 @@
 #include <iomanip>
 #include <locale>
 #include <sstream>
+#include <any>
 
 namespace Profiling
 {
@@ -106,78 +105,86 @@ void Profiler::Cleanup()
 ///-----------------------------------------------------------------------------
 void Profiler::FlushToFile()
 {
-    //std::fstream outputFile;
-    //std::ios_base::openmode openMode = std::ios_base::out | std::ios_base::in;
-    //
-    //std::string fileName;// = "/ProfileCaptures/";
-    //fileName += m_fileNameForSession;
+    std::fstream outputFile;
+    std::ios_base::openmode openMode = std::ios_base::out | std::ios_base::in;
+    
+    std::string fileName;// = "/ProfileCaptures/";
+    fileName += m_fileNameForSession;
 
-    //fileName = "ProfileCaptures.prf";
+    fileName = "ProfileCaptures.prf";
 
-    //outputFile.open(fileName, openMode); //Should probably grab this from the paths thing but that would require profiler to know about resource
-    //if (outputFile.is_open())
-    //{
-    //    nlohmann::json json_data;
-    //    
-    //    if (m_firstFlush) //Stream out the descriptors we need these to track what each event means in the file
-    //    {
-    //        json_data["TimerResolution"] = m_timer.getResolution();
 
-    //        for (auto& descriptor : m_eventDescriptors)
-    //        {
-    //            nlohmann::json eventDescriptor;
-    //            eventDescriptor["Event Name"] = descriptor.getEventName();
-    //            eventDescriptor["File Name"] = descriptor.getFileName();
-    //            eventDescriptor["Function Name"] = descriptor.getFunctioName();
-    //            eventDescriptor["Line Number"] = descriptor.getLineNumber();
-    //            eventDescriptor["Event Hash"] = descriptor.getHash();
-    //            json_data["EventDescriptors"].push_back(eventDescriptor);
-    //        }
+    outputFile.open(fileName, openMode); //Should probably grab this from the paths thing but that would require profiler to know about resource
+    if (outputFile.is_open())
+    {
+        //begin object
+        outputFile << "{\n";
+        
+        if (m_firstFlush) //Stream out the descriptors we need these to track what each event means in the file
+        {
+            
+            outputFile << "\"TimerResolution\": " <<  m_timer.getResolution() << ",\n";
 
-    //    }
-    //    //else
-    //    //{
-    //    //    json_data << outputFile;
-    //    //}
+            outputFile << "\"EventDescriptors\": [\n";
+            size_t counter = 0;
+            for (auto& descriptor : m_eventDescriptors)
+            {
+                descriptor.toJson(outputFile);
+                outputFile << (counter < m_eventDescriptors.size() ? ",\n" : "\n");
+                ++counter;
+            }
+            outputFile << "]\n";
+        }
 
-    //    nlohmann::json framesArray;
+        outputFile << "\"Frames\": [\n";
+        size_t counter = 0;
+        for (auto& frameCaputre : m_frames)
+        {
+            frameCaputre.toJson(outputFile);
+            outputFile << (counter < m_frames.size() ? ",\n" : "\n");
+            ++counter;
+        }
+        
+        outputFile << "]\n";
+        //Finish the whole object
+        outputFile << "}";
 
-    //    for (auto& frameCaputre : m_frames)
-    //    {
-    //        nlohmann::json frameObject;
-    //        for (auto& event : frameCaputre.m_events)
-    //        {
-    //            nlohmann::json eventData;
-    //            eventData["Event Hash"] = event.m_descriptorHash;
-    //            eventData["Start Timestamp"] = event.m_beginTimeStamp;
-    //            eventData["End Timestamp"] = event.m_endTimeStamp;
-    //            frameObject["Events"].push_back(eventData);
-    //        }
+        outputFile.close();
 
-    //        for (auto& histogram : frameCaputre.m_eventHistogram)
-    //        {
-    //            nlohmann::json histogramData;
-    //            histogramData["Event Hash"] = histogram.first;
-    //            histogramData["Count"] = histogram.second;
-    //            frameObject["Histogram"].push_back(histogramData);
-    //        }
+        //m_eventDescriptors.clear();
+        //m_frames.clear();
+    }
+    else
+    {
+        MSG_TRACE("Failed to open File stream with error: %s", std::strerror(errno));
+    }
+}
 
-    //        framesArray.push_back(frameObject);
-    //    }
+void FrameCapture::toJson(std::fstream& stream)
+{
+    stream << "{\n";
 
-    //    json_data["Frames"] = framesArray;
+    stream << "\"Events\": [\n";
+    for (size_t counter = 0; counter < m_events.size(); ++counter)
+    {
+        m_events[counter].toJson(stream);
+        stream << (counter < m_events.size() ? ",\n" : "\n");
+    }
+    stream << "],\n";
 
-    //    outputFile << std::setw(4) << json_data;
+    stream << "\"Histogram\": [\n";
+    size_t histoCounter = 0;
+    for (auto& histogram : m_eventHistogram)
+    {
+        stream << "{\n";
+        stream << "\"Count\": " << histogram.second << ",\n";
+        stream << "\"Event Hash\": " << histogram.first << "\n";
+        stream << "}" << (histoCounter < m_eventHistogram.size() ? ",\n" :"\n");
+        ++histoCounter;
+    }
+    stream << "]";
 
-    //    outputFile.close();
-
-    //    //m_eventDescriptors.clear();
-    //    //m_frames.clear();
-    //}
-    //else
-    //{
-    //    MSG_TRACE("Failed to open File stream with error: %s", std::strerror(errno));
-    //}
+    stream << "}";
 }
 
 }

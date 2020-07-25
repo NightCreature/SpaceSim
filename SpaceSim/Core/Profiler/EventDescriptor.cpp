@@ -30,4 +30,15 @@ size_t Profiling::EventDescriptor::computeHash() const
     return m_hash;
 }
 
+void EventDescriptor::toJson(std::fstream& stream)
+{
+    stream << "{\n";
+    stream << "\"Event Hash\": " << m_hash << ",\n";
+    stream << "\"Event Name\": \""<< m_name.c_str() << "\",\n";
+    stream << "\"File Name\": \""<< m_fileName.c_str() << "\",\n";
+    stream << "\"Function Name\": \""<< m_functionName.c_str() << "\",\n";
+    stream << "\"Line Number\":"<< m_lineNumber << "\n";
+    stream << "}";
+}
+
 }

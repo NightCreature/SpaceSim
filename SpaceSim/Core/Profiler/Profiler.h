@@ -4,7 +4,9 @@
 #include "Core/Profiler/Event.h"
 #include "Core/Thread/Timer.h"
 
+#include <fstream>
 #include <string>
+
 #include <unordered_map>
 #include <vector>
 
@@ -17,6 +19,8 @@ struct FrameCapture
 {
     std::vector<Event> m_events;
     std::unordered_map<size_t, size_t> m_eventHistogram;
+
+    void toJson(std::fstream& stream);
 };
 
 class Profiler
