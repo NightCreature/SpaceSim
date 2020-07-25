@@ -164,15 +164,15 @@ void FrameCapture::toJson(std::fstream& stream)
 {
     stream << "{\n";
 
-    stream << "\"Events\": [";
+    stream << "\"Events\": [\n";
     for (size_t counter = 0; counter < m_events.size(); ++counter)
     {
         m_events[counter].toJson(stream);
         stream << (counter < m_events.size() ? ",\n" : "\n");
     }
-    stream << "]";
+    stream << "],\n";
 
-    stream << "\"Histogram\": [";
+    stream << "\"Histogram\": [\n";
     size_t histoCounter = 0;
     for (auto& histogram : m_eventHistogram)
     {
