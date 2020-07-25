@@ -1,6 +1,6 @@
 #pragma once
 
-//#define PROFILING
+#define PROFILING
 
 #ifdef PROFILING 
 #include "Core/Profiler/Profiler.h"

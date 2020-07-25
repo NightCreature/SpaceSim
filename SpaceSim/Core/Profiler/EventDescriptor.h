@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <string>
 
 namespace Profiling
@@ -17,6 +18,8 @@ public:
     {}
 
     size_t computeHash() const;
+
+    void toJson(std::fstream& stream);
 
     const std::string& getEventName() const { return m_name; }
     const std::string& getFileName() const { return m_fileName; }
