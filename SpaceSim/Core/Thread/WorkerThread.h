@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Threading/Thread.h"
+#include "Core/Thread/Thread.h"
 
 class JobSystem;
 

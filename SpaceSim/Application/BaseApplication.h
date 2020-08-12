@@ -1,18 +1,22 @@
 #pragma once
 
 #include "Application/UpdateThread.h"
+
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/Paths.h"
+#include "Core/Resource/GameResource.h"
+#include "Core/Settings/SettingsParser.h"
+#include "Core/Settings/SettingsManager.h"
+#include "Core/Thread/JobSystem.h"
+#include "Core/Thread/Timer.h"
+
 #include "Graphics/CameraManager.h"
 #include "Graphics/RenderSystem.h"
 #include "Application/GameWindow.h"
-#include "Core/Settings/SettingsParser.h"
-#include "Core/Settings/SettingsManager.h"
 #include "Gameplay/GameObjectManager.h"
 #include "Gameplay/LaserManager.h"
-#include "Core/Resource/GameResource.h"
 #include "Input/InputSystem.h"
 #include "Loader/MapLoader.h"
-#include "Core/Thread/Timer.h"
-#include "Core/Paths.h"
 #include "UI/UIManger.h"
 #include "Gameplay/EntityManager.h"
 
@@ -25,7 +29,7 @@
 
 #include "Logging/Logger.h"
 
-#include "Core/MessageSystem/MessageQueue.h"
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief   Base class for an application object
@@ -52,8 +56,11 @@ public:
     static LRESULT CALLBACK messageHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
     static std::function<void(RAWINPUT*)> m_inputDispatch;
 
-    const GameResource* getResource() const { return m_gameResource; }    
+    const GameResource* getResource() const { return m_gameResource; }
+
+    JobSystem* GetJobSystem() { return &m_jobSystem; }
 private:
+    JobSystem m_jobSystem;
     EntityManager      m_entityManager;
     RenderSystem       m_renderSystem;
     SettingsManager    m_settingsManager;

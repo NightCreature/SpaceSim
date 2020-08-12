@@ -16,6 +16,8 @@ public:
     const JobQueue& GetJobQueue() const { return m_jobQueue; }
     JobQueue& GetJobQueue() { return m_jobQueue; }
 
+    JobQueue* GetJobQueuePtr() { return &m_jobQueue; }
+
     void WorkerThreadSleeping(size_t index);
     void WorkerThreadActive(size_t index);
 

@@ -74,7 +74,7 @@ constexpr size_t operator ""_hash(const char* str, size_t size)
 
 ///-----------------------------------------------------------------------------
 ///! @brief   Case insensitive hash function, uses the const expression version
-///! @remark
+///! @remark  in C++20 this should become a constexpr function, waiting for constexpr containers
 ///-----------------------------------------------------------------------------
 inline size_t hashString(const std::string& sourceStr)
 {

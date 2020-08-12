@@ -1,26 +1,31 @@
 #pragma once
 
 #include "Core/MessageSystem/Messages.h"
+#include "Core/Thread/Job.h"
 
 #include <vector>
 
 class Resource;
 
+namespace MessageSystem
+{
+class LoadResourceRequest;
+}
+
+struct LoadRequest
+{
+    size_t m_resourceType = 0;
+    size_t m_gameObjectId = 0;
+    void* m_loadData = nullptr;
+
+#ifdef _DEBUG
+    SourceInfo m_sourceInfo;
+#endif
+}; 
+
 class ResourceLoader : public MessageSystem::IMessageDispatcher
 {
 public:
-
-    struct LoadRequest
-    {
-        size_t m_resourceType;
-        size_t m_gameObjectId;
-        void* m_loadData;
-
-#ifdef _DEBUG
-        SourceInfo m_sourceInfo;
-#endif
-    };
-
     ResourceLoader() {}
     ~ResourceLoader() {}
 
@@ -28,10 +33,7 @@ public:
     void update();
 
     virtual void dispatchMessage(const MessageSystem::Message & msg) override;
-    void AddLoadRequest(const LoadRequest& request);
+    void ResourceLoader::AddLoadRequest(const LoadRequest& request);
 
-    std::vector<LoadRequest> m_requests;
-    std::vector<LoadRequest> m_newRequestsDuringUpdate;
-    bool m_isUpdating;
     Resource* m_resource;
 };

@@ -43,6 +43,7 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
 			m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
 #ifdef _DEBUG
 			convertToWideString(name, m_renderInstance->m_name); 
+            UNUSEDPARAM(name);
 #else
 			UNUSEDPARAM(name);
 #endif

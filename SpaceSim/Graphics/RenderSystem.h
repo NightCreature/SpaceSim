@@ -3,6 +3,8 @@
 #include "Application/GameWindow.h"
 #include "Input/Input.h"
 #include "Graphics/OrientationAxis.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobSystem.h"
 #include "Core/Types/Types.h"
 #include <d3d11.h>
 #include <dxgi.h>
@@ -106,6 +108,7 @@ private:
     EffectCache m_effectCache;
     GameWindow m_window;
     ResourceLoader m_resourceLoader;
+    JobQueue m_jobQueue;
     std::string m_appName;
     std::string m_windowName;
 

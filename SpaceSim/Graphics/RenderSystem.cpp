@@ -1,24 +1,20 @@
 #include "Graphics/RenderSystem.h"
-#include "Graphics/DeviceManager.h"
-#include "Graphics/Effect.h"
+
+//#include "Application/BaseApplication.h"
+#include "Core/MessageSystem/GameMessages.h"
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/Profiler/ProfilerMacros.h"
+#include "Core/Resource/GameResource.h"
 #include "Core/Settings/Settings.h"
 #include "Core/Settings/SettingsManager.h"
-#include <assert.h>
-
-#include "Application/BaseApplication.h"
-#include "Graphics/RenderInstance.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
-#include "Core/MessageSystem/MessageQueue.h"
-
-#include "Graphics/ShaderPack.h"
-#include "Graphics/Frustum.h"
-
-#include "Core/Profiler/ProfilerMacros.h"
-
-#include "Core/MessageSystem/GameMessages.h"
 #include "Graphics/D3DDebugHelperFunctions.h"
-
-
+#include "Graphics/DeviceManager.h"
+#include "Graphics/Effect.h"
+#include "Graphics/Frustum.h"
+#include "Graphics/RenderInstance.h"
+#include "Graphics/ShaderPack.h"
+#include <assert.h>
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -119,10 +115,12 @@ RenderSystem::~RenderSystem()
 ///-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource)
 {
-    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager);
+    GameResource& gameResource = GameResourceHelper(resource).getWriteableResource();
+    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, &(gameResource.getJobQueue()));
 
     m_modelManger.initialise(m_renderResource);
     m_resourceLoader.initialise(m_renderResource);
+    
 
     m_appName = "Demo app";
     m_windowName = "Demo app";

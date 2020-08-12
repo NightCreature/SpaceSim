@@ -74,7 +74,7 @@ public:
     }
 protected:
     std::vector<MeshGroup*> m_modelData;
-	Bbox m_originalBBox;
+    Bbox m_originalBBox;
     Bbox m_boundingBox;
 };
 

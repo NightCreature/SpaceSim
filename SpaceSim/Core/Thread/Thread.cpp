@@ -1,5 +1,7 @@
 #include "Core/Thread/Thread.h"
 
+#include "Core/Types/TypeHelpers.h"
+
 Thread::~Thread()
 {
     stopThread();
@@ -12,7 +14,7 @@ void Thread::createThread(int stacksize, const std::string& name)
 #ifdef _DEBUG
     m_threadName = name;
 #else
-    //UNUSEDPARAM(name);
+    UNUSEDPARAM(name);
 #endif
     m_thread = CreateThread(NULL, stacksize, (unsigned long(__stdcall *)(void *))this->run, (void *)this, 0, nullptr);
     if (m_thread != 0)
