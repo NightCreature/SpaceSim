@@ -101,7 +101,7 @@ size_t ModelManager::AddFace(void* data)
 ///-----------------------------------------------------------------------------
 bool ModelManager::HasRenderResource(size_t resource_id) const
 {
-    std::scoped_lock<std::mutex> lock(m_mutex);
+    //std::scoped_lock<std::mutex> lock(m_mutex);
     return (std::find_if(cbegin(m_models), cend(m_models), [resource_id](const auto& entry) { return entry.m_resourceId == resource_id; })) != cend(m_models);
 }
 
@@ -128,7 +128,7 @@ void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourc
 ///-----------------------------------------------------------------------------
 const CreatedModel* ModelManager::GetRenderResource(size_t renderResourceId) const
 {
-    std::scoped_lock<std::mutex> lock(m_mutex);
+    //std::scoped_lock<std::mutex> lock(m_mutex);
     ModelsArray::const_iterator it = std::find_if(cbegin(m_models), cend(m_models), [renderResourceId](const auto& entry) { return entry.m_resourceId == renderResourceId; });
     if (it != cend(m_models))
     {
