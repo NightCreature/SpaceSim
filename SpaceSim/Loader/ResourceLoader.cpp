@@ -53,13 +53,13 @@ void ResourceLoader::AddLoadRequest(const LoadRequest& request)
     switch (request.m_resourceType)
     {
     case "Face::CreationParams"_hash:
-        //job = new FaceJob();
+        job = new FaceJob(m_resource, request.m_gameObjectId, request.m_loadData);
     break;
     case "LOAD_TEXTURE"_hash:
-        //job = new LoadTextureJob();
+        job = new LoadTextureJob(m_resource, (char*)(request.m_loadData));
     break;
     case "LoadModelResource"_hash:
-        //job = new LoadModelJob();
+        job = new LoadModelJob(m_resource, request.m_gameObjectId, request.m_loadData);
     break;
     default:
         break;

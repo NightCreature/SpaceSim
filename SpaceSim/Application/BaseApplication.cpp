@@ -214,6 +214,9 @@ void Application::mainGameLoop()
                 m_UpdateThread.UnLockCriticalSection();
             }
             //Unblock simulation here
+            
+            //Signal the job system
+            m_jobSystem.SignalWorkAvailable();
 
             m_renderSystem.beginDraw();
             m_renderSystem.update(m_elapsedTime, m_time);

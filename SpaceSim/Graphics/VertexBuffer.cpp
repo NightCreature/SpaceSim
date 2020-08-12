@@ -7,12 +7,18 @@
 
 #include "Graphics/D3DDebugHelperFunctions.h"
 
+#include <mutex>
+
+static std::mutex vbMutex;
+
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
 bool VertexBuffer::createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDeclarationDescriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob)
 {
+    std::scoped_lock<std::mutex> lock(vbMutex);
+
     D3D11_BUFFER_DESC bufferDescriptor;
     ZeroMemory(&bufferDescriptor, sizeof(D3D11_BUFFER_DESC));
     bufferDescriptor.Usage = D3D11_USAGE_IMMUTABLE;
