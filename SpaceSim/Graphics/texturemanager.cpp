@@ -163,6 +163,7 @@ Material::TextureSlotMapping TextureManager::deserialise( const DeviceManager& d
 ///-------------------------------------------------------------------------
 void TextureManager::addTexture( const std::string& textureName, const Texture& texture )
 {
+    std::scoped_lock<std::mutex> lock(m_mutex);
     auto textureNameHash = hashString(textureName);
     if (!find(textureName))
     {

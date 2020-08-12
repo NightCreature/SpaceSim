@@ -5,6 +5,7 @@
 #include "Graphics/Texture.h"
 #include <d3d11.h>
 #include <map>
+#include <mutex>
 #include <string>
 
 class DeviceManager;
@@ -39,5 +40,7 @@ private:
 	typedef std::map<size_t, Texture> TextureMap;
 	TextureMap m_textures;	
     ID3D11SamplerState* m_samplerState;
+
+	std::mutex m_mutex;
 };
 #endif
