@@ -2,12 +2,12 @@
 #define MODELMANGER_H
 
 #include "Core/MessageSystem/Messages.h"
-
 #include "Graphics/Model.h"
 
+#include <map>
+#include <mutex>
 #include <string>
 #include <vector>
-#include <map>
 
 class Model;
 class Resource;
@@ -39,5 +39,7 @@ private:
     std::vector<ModelResourceHandle> m_models;
 
     Resource* m_resource;
+
+    std::mutex m_mutex;
 };
 #endif

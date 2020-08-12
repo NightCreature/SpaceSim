@@ -44,6 +44,7 @@ Logger Application::m_logger;
 ///! @remark
 ///-----------------------------------------------------------------------------
 Application::Application():
+m_jobSystem(8), //Spawn the job queue with 8 threads
 m_gameResource(nullptr),
 m_previousRenderInstanceListSize(1)
 {
@@ -79,7 +80,7 @@ bool Application::initialise()
 
 
     m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
-        &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger);
+        &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger, m_jobSystem.GetJobQueuePtr());
     
     bool returnValue = true;
 

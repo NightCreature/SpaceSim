@@ -46,12 +46,20 @@ class ResourceLoadJob : public Job
 public:
     ResourceLoadJob(Resource* resource) : m_resource(resource){}
 
-    Resource* m_resource;
+    void SendReturnMsg(size_t gameObjectId, size_t resourceHandle);
+protected:
+    Resource* m_resource = nullptr;
 };
 
 class FaceJob : public ResourceLoadJob
 {
+public:
+    FaceJob(Resource* resource, size_t gameObjectId, void* loadData) : ResourceLoadJob(resource), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
 
+    void Execute(size_t threadIndex) override;
+private:
+    size_t m_gameObjectId = 0;
+    void* m_loadData = nullptr;
 };
 
 class LoadTextureJob : public ResourceLoadJob
@@ -60,7 +68,6 @@ public:
     LoadTextureJob(Resource* resource, const std::string& fileName) : ResourceLoadJob(resource), m_fileName(fileName) {}
 
     void Execute(size_t threadIndex) override;
-
 private:
     std::string m_fileName;
 
@@ -68,5 +75,11 @@ private:
 
 class LoadModelJob : public ResourceLoadJob
 {
+public:
+    LoadModelJob(Resource* resource, size_t gameObjectId, void* loadData) : ResourceLoadJob(resource), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
 
+    void Execute(size_t threadIndex) override;
+private:
+    size_t m_gameObjectId = 0;;
+    void* m_loadData = nullptr;
 };
