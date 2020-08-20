@@ -36,6 +36,8 @@ void FaceJob::Execute(size_t threadIndex)
     RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
     auto resourceHandle = renderResource.getModelManager().AddFace(m_loadData);//needs to be thread safe
     SendReturnMsg(m_gameObjectId, resourceHandle);
+
+    delete m_loadData;
 }
 
 ///-----------------------------------------------------------------------------
@@ -78,5 +80,7 @@ void LoadModelJob::Execute(size_t threadIndex)
     RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
     auto resourceHandle = renderResource.getModelManager().LoadModel(m_loadData);//needs to be thread safe, and should be a job
     SendReturnMsg(m_gameObjectId, resourceHandle);
+
+    delete m_loadData;
 }
 

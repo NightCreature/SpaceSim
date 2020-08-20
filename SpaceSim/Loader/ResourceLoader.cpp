@@ -18,7 +18,23 @@
 ///-----------------------------------------------------------------------------
 void ResourceLoader::update()
 {
+    m_updating = true;
 
+    for (auto* job : m_newJobs)
+    {
+        m_jobs.push_back(job);
+    }
+    m_newJobs.clear();
+
+    for (auto* job : m_jobs)
+    {
+        job->Execute(0);
+        delete job;
+    }
+
+    m_jobs.clear();
+
+    m_updating = false;
 }
 
 ///-----------------------------------------------------------------------------
@@ -56,7 +72,10 @@ void ResourceLoader::AddLoadRequest(const LoadRequest& request)
         job = new FaceJob(m_resource, request.m_gameObjectId, request.m_loadData);
     break;
     case "LOAD_TEXTURE"_hash:
+    {
         job = new LoadTextureJob(m_resource, (char*)(request.m_loadData));
+        delete request.m_loadData;
+    }
     break;
     case "LoadModelResource"_hash:
         job = new LoadModelJob(m_resource, request.m_gameObjectId, request.m_loadData);
@@ -66,8 +85,17 @@ void ResourceLoader::AddLoadRequest(const LoadRequest& request)
     }
 
     if (job != nullptr)
-    {
+    {/*
         RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
-        renderResource.getJobQueue().AddJob(job);
+       renderResource.getJobQueue().AddJob(job);*/
+        if (m_updating)
+        { 
+            m_newJobs.push_back(job);
+        }
+        else
+        {
+            m_jobs.push_back(job);
+        }
+
     }
 }

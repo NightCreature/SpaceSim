@@ -156,7 +156,7 @@ void Profiler::FlushToFile()
     }
     else
     {
-        MSG_TRACE("Failed to open File stream with error: %s", std::strerror(errno));
+        MSG_TRACE("Failed to open File stream with error");
     }
 }
 

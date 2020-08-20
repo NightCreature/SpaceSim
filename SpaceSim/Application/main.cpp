@@ -36,7 +36,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     Application application = Application();
     if( application.initialise() ) //Need to take the path manager from shader engine
     {
-
         application.mainGameLoop();
 
         application.cleanup();

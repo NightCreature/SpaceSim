@@ -36,4 +36,8 @@ public:
     void ResourceLoader::AddLoadRequest(const LoadRequest& request);
 
     Resource* m_resource;
+    std::vector<Job*> m_jobs;
+    std::vector<Job*> m_newJobs;
+
+    bool m_updating = false;
 };

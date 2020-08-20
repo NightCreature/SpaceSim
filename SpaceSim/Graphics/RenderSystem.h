@@ -1,34 +1,31 @@
 #pragma once
 
 #include "Application/GameWindow.h"
-#include "Input/Input.h"
-#include "Graphics/OrientationAxis.h"
+#include "Core/MessageSystem/MessageObserver.h"
+#include "Core/Resource/RenderResource.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobSystem.h"
+#include "Core/Thread/Timer.h"
 #include "Core/Types/Types.h"
-#include <d3d11.h>
-#include <dxgi.h>
-#include <list>
-#include <directxmath.h>
-#include "Graphics/DeviceManager.h"
-#include "Graphics/texturemanager.h"
-#include "Graphics/modelmanager.h"
-#include "Graphics/CubeMapRenderer.h"
-#include "Graphics/ShadowMapRenderer.h"
-
-#include "Graphics/CameraManager.h"
-
+#include "Gameplay/particleemitter.h"
 #include "Gameplay/particlesystemmanager.h" //This should move away from the gameplay directory
-#include "Graphics/LightManager.h"
+#include "Graphics/CameraManager.h"
+#include "Graphics/CubeMapRenderer.h"
+#include "Graphics/DeviceManager.h"
 #include "Graphics/EffectCache.h"
+#include "Graphics/LightManager.h"
+#include "Graphics/OrientationAxis.h"
 #include "Graphics/ShaderCache.h"
-
-#include "Core/Resource/RenderResource.h"
-#include "Core/MessageSystem/MessageObserver.h"
-
+#include "Graphics/ShadowMapRenderer.h"
+#include "Graphics/modelmanager.h"
+#include "Graphics/texturemanager.h"
+#include "Input/Input.h"
 #include "Loader/ResourceLoader.h"
 
-#include "Gameplay/particleemitter.h"
+#include <d3d11.h>
+#include <directxmath.h>
+#include <dxgi.h>
+#include <list>
 
 #ifdef _DEBUG
 #include <d3d11_1.h>
