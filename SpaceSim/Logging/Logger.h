@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -14,6 +15,7 @@ public:
     virtual void LogMessage(const std::string& message) = 0;
 };
 
+static std::mutex logMutex;
 
 class OutputDebugLog : public ILog
 {
@@ -70,6 +72,8 @@ public:
 
     void LogMessage(const std::string& message)
     {
+
+        std::scoped_lock<std::mutex> lock(logMutex);
         for (auto logger : m_logs)
         {
             logger->LogMessage(message);
