@@ -33,8 +33,8 @@ public:
     std::vector<ThreadStatus> m_workerThreads;
     JobQueue m_jobQueue;
 
-    HANDLE m_eventHandle;
-    HANDLE m_workFinishedEvent;
+    HANDLE m_workAvaliable; //Signal event to worker threads that they should wake up
+    HANDLE m_workFinishedEvent; //Signal the job system uses to figure out if all work has been done if we want to block
 
     std::mutex m_finishedMutex;
     std::atomic_size_t m_numberOfSleepingThreads;

@@ -7,6 +7,7 @@ Thread::~Thread()
     stopThread();
 
     DeleteCriticalSection(&m_criticalSection);
+    CoUninitialize();
 }
 
 void Thread::createThread(int stacksize, const std::string& name)

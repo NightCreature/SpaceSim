@@ -12,19 +12,19 @@ JobSystem::JobSystem(size_t numThreads)
     m_workerThreads.resize(numThreads);
     m_numberOfSleepingThreads = 0;
 
-    m_eventHandle = CreateEvent(NULL, TRUE, FALSE, "SignalWorkAvailable");
+    m_workAvaliable = CreateEvent(NULL, TRUE, FALSE, "SignalWorkAvailable");
     m_workFinishedEvent = CreateEvent(NULL, TRUE, FALSE, "WorkFinishedEvent");
 
     size_t index = 0;
     for (auto& threadStatus : m_workerThreads)
     {
-        threadStatus.m_thread.SetJobsystem(this, index, m_eventHandle);
+        threadStatus.m_thread.SetJobsystem(this, index, m_workAvaliable);
         threadStatus.m_working = false;
         ++index;
     }
 
     //Set the work available even to unsignaled
-    ResetEvent(m_eventHandle);
+    ResetEvent(m_workAvaliable);
     ResetEvent(m_workFinishedEvent);
 
     //Start all threads
@@ -44,6 +44,9 @@ JobSystem::JobSystem(size_t numThreads)
 ///-----------------------------------------------------------------------------
 JobSystem::~JobSystem()
 {
+    //in case threads are sleeping flag the conditon that work is available
+    SetEvent(m_workAvaliable);
+
     for (auto& threadStatus : m_workerThreads)
     {
         threadStatus.m_thread.stopThread();
@@ -57,13 +60,23 @@ JobSystem::~JobSystem()
 void JobSystem::WorkerThreadSleeping(size_t index)
 {
     std::scoped_lock<std::mutex> sl(m_finishedMutex);
+
+    if (m_jobQueue.m_jobs.empty())
+    {
+        ResetEvent(m_workAvaliable);
+    }
+
+    
     m_workerThreads[index].m_working = false;
     ++m_numberOfSleepingThreads;
 
     //Should we set the event for all work is done
-    if (m_jobQueue.m_jobs.empty() && m_numberOfSleepingThreads == m_workerThreads.size())
+    if (m_jobQueue.m_jobs.empty())
     {
-        SetEvent(m_workFinishedEvent);
+        if (m_numberOfSleepingThreads == m_workerThreads.size())
+        {
+            SetEvent(m_workFinishedEvent);
+        }
     }
 
 }
@@ -85,8 +98,11 @@ void JobSystem::WorkerThreadActive(size_t index)
 ///-----------------------------------------------------------------------------
 void JobSystem::SignalWorkAvailable()
 {
-    SetEvent(m_eventHandle);
-    ResetEvent(m_workFinishedEvent);
+    if (!m_jobQueue.m_jobs.empty())
+    {
+        SetEvent(m_workAvaliable);
+        ResetEvent(m_workFinishedEvent);
+    }
 }
 
 ///-----------------------------------------------------------------------------
@@ -104,7 +120,11 @@ void JobSystem::WaitfForJobsToFinish()
     OutputDebugString(str.str().c_str());
 
     ResetEvent(m_workFinishedEvent);
-    SetEvent(m_eventHandle);
+    if (!m_jobQueue.m_jobs.empty())
+    {
+        //Jobqeue is not empty so set it to process the jobs
+        SetEvent(m_workAvaliable);
+    }
     DWORD waitReturn = WaitForSingleObject(m_workFinishedEvent, INFINITE);
 
     str.str("");
