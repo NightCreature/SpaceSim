@@ -1,6 +1,6 @@
 class Timespan
 {
-	constructor(timeStamp, resolution)
+	constructor(timeStamp: number, resolution: number)
 	{
 		this.timeStamp = timeStamp;
 		this.resolution = resolution;
@@ -13,7 +13,7 @@ class Timespan
 		let time = Math.abs(this.timeStamp / this.resolution);
 		if (time > 1)
 		{
-			this.seconds = Math.trunc(time);
+			this.seconds = Math.trunc(time)
 			dateString +=  time + " seconds ";
 			time -= Math.trunc(time);
 		}
@@ -22,7 +22,7 @@ class Timespan
 			time *= 1000; //Ms
 			if (time > 1)
 			{
-				this.miliseconds = Math.trunc(time); 
+				this.milliseconds = Math.trunc(time); 
 				dateString += time + " ms ";
 				time -= Math.trunc(time);
 			}
@@ -44,4 +44,11 @@ class Timespan
 		}
 		return dateString;
 	}
+
+	private timeStamp: number;
+	private resolution: number;
+	private seconds: number;
+	private milliseconds: number;
+	private microseconds:number;
+	private nanoseconds:number;
 }

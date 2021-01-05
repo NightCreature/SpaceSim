@@ -1,6 +1,6 @@
 class ProfilerDataReader
 {
-	ParseJsonObject(text)
+	ParseJsonObject(text : string)
 	{
 		this.m_profilerData = JSON.parse(text);
 
@@ -46,4 +46,6 @@ class ProfilerDataReader
 	}
 
 	GetProfilerData() { return this.m_profilerData;}
+
+	private m_profilerData: any;
 }

@@ -39,7 +39,7 @@ function ProcessFrameData()
         let frame = frames[frameCounter];
         let frameRow = document.createElement('tr');
         let frameNumberCell = document.createElement('td');
-        frameNumberCell.textContent = frameCounter;
+        frameNumberCell.textContent = frameCounter.toString();
         frameRow.appendChild(frameNumberCell);
         let frameEventDataCell = document.createElement('td');
 
