@@ -24,13 +24,13 @@ Profiling::EventWrapper PROFILE_CONCAT(event_, line)( PROFILE_CONCAT(eventDesc_,
 #endif
 
 #ifdef PROFILING
-#define PROFILE_FRAME(frame_name) ;//BROFILER_FRAME(frame_name);
+#define PROFILE_FRAME(frame_name) Profiling::Profiler::GetInstance().RegisterFrameName(frame_name);//BROFILER_FRAME(frame_name); 
 #else
 #define PROFILE_FRAME(frame_name) ;
 #endif
 
 #ifdef PROFILING
-#define PROFILE_THREAD(thread_name) ;// BROFILER_THREAD(thread_name);
+#define PROFILE_THREAD(thread_name) Profiling::Profiler::GetInstance().RegisterThreadName(GetCurrentThreadId(), thread_name);// BROFILER_THREAD(thread_name);
 #else
 #define PROFILE_THREAD(thread_name) ;
 #endif

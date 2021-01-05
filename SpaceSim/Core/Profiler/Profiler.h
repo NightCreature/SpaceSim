@@ -31,6 +31,9 @@ public:
     static Profiler& GetInstance() { static Profiler instance; return instance; }
 
     size_t RegisterProfilingEventDescription( const EventDescriptor& eventDescriptor);
+    void RegisterThreadName(size_t threadId, const std::string& threadName);
+    void RegisterFrameName(const std::string& frameName);
+
     Event* Profiler::CaptureEvent(const size_t& eventDescriptorHash);
 
     void BeginFrame();
@@ -47,6 +50,9 @@ private:
 
     std::vector<EventDescriptor> m_eventDescriptors;
     std::vector<FrameCapture> m_frames;
+
+    std::vector<std::pair<size_t, std::string>> m_threadNames;
+    std::vector<std::string> m_frameNames;//This might be useless;
 
     std::string m_fileNameForSession;
 
