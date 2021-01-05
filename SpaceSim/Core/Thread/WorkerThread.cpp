@@ -47,8 +47,6 @@ void WorkerThread::pauzeThread()
     //Probably need to sleep on a condition variable here that the jobsystem can set
     //WaitForSingleObject(m_workAvailableHandle, INFINITE);
 
-    DWORD dwWaitResult = WaitForSingleObject(
-        m_workAvailableHandle, // event handle
-        INFINITE);    // indefinite wait
+    WaitForSingleObject(m_workAvailableHandle, INFINITE);    // indefinite wait
 
 }
