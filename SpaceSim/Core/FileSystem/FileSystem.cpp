@@ -1,16 +1,28 @@
 #include "Core/FileSystem/FileSystem.h"
 
+#include "Core/Platform/Defines.h"
+
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+VFS::FileSystem::FileSystem(const Paths& paths) : m_paths(paths)
+{
+    AddMountPoint(MountPoint(m_paths.getEffectShaderPath()));
+    AddMountPoint(MountPoint(m_paths.getLogPath()));
+    AddMountPoint(MountPoint(m_paths.getModelPath()));
+    AddMountPoint(MountPoint(m_paths.getScenePath()));
+    AddMountPoint(MountPoint(m_paths.getSettingsPath()));
+    AddMountPoint(MountPoint(m_paths.getTexturesPath()));
+}
+
 ///-----------------------------------------------------------------------------
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
 VFS::FileSystem::~FileSystem()
 {
-    for (auto mountPoint : m_mountPoints)
-    {
-        delete mountPoint;
-    }
-
     m_mountPoints.clear();
 }
 
@@ -18,7 +30,7 @@ VFS::FileSystem::~FileSystem()
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-void VFS::FileSystem::AddMountPoint(MountPoint* mount)
+void VFS::FileSystem::AddMountPoint(const MountPoint& mount)
 {
     m_mountPoints.push_back(mount);
 }
@@ -32,9 +44,33 @@ std::vector<std::filesystem::path> VFS::FileSystem::ListFiles()
     std::vector<std::filesystem::path> files;
     for (auto mountPoint : m_mountPoints)
     {
-        auto fileList = mountPoint->ListFiles();
+        auto fileList = mountPoint.ListFiles();
         files.insert(files.end(), fileList.begin(), fileList.end());
     }
 
     return files;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+VFS::File VFS::FileSystem::CreateFile(const std::filesystem::path& name, FileMode createOrOpen)
+{
+    std::filesystem::path fileRootPath = name.parent_path();
+    if (!name.is_absolute())
+    {
+        fileRootPath = m_paths.getPath() / fileRootPath;
+    }
+
+    //have to go through the mount points to see where it should be
+    for (auto& mountPoint : m_mountPoints)
+    {
+        if (mountPoint.IsRootPathOf(fileRootPath))
+        {
+            return mountPoint.FileCreate(name, createOrOpen);
+        }
+    }
+
+    return File();
 }

@@ -25,6 +25,7 @@ public:
     const std::string getEffectShaderPathStr() const { return m_effectshaderpath.string(); }
     const std::string getScenePathStr() const { return m_scenesPath.string(); }
     const std::string getSettingsPathStr() const { return m_settingsPath.string(); }
+    
 protected:
 private:
     std::filesystem::path m_path;

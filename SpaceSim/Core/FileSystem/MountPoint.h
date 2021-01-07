@@ -1,8 +1,11 @@
 #pragma once
 
+#include "Core/FileSystem/Flags.h"
+
 #include <filesystem>
 #include <string>
 #include <vector>
+
 
 namespace VFS
 {
@@ -15,21 +18,33 @@ class File;
 class MountPoint
 {
 public:
-    MountPoint(const std::filesystem::path path) : m_rootPath(path), m_valid(false) {}
-    virtual ~MountPoint() {}
+    MountPoint(const std::filesystem::path path) : m_rootPath(path), m_valid(false) { PlatformSpecificConstruct(); }
+    ~MountPoint() {}
 
     bool IsValid() { return m_valid; }
 
-    virtual std::vector<std::filesystem::path> ListFiles() = 0;
-    virtual File* FileCreate(const std::filesystem::path& name) = 0;
-    virtual File* DirectoryCreate(const std::filesystem::path& name) = 0;
-    virtual File* OpenFile(const std::filesystem::path& name) = 0;
+    std::vector<std::filesystem::path> ListFiles();
+    File FileCreate(const std::filesystem::path& name, FileMode fileMode);
+    File DirectoryCreate(const std::filesystem::path& name);
 
-    virtual bool FileExists(const std::filesystem::path& name) = 0;
-    virtual bool DirectoryExists(const std::filesystem::path& name) = 0;
+    bool FileExists(const std::filesystem::path& name);
+    bool DirectoryExists(const std::filesystem::path& name);
+
+    bool IsRootPathOf(const std::filesystem::path& path) const;
 protected:
+    void PlatformSpecificConstruct();
+
     std::filesystem::path m_rootPath;
     bool m_valid;
 };
+
+///-----------------------------------------------------------------------------
+///! @brief   Checks whether this mount point should represent the given full path
+///! @remark 
+///-----------------------------------------------------------------------------
+inline bool MountPoint::IsRootPathOf(const std::filesystem::path& path) const
+{
+    return m_rootPath <= path;
+}
 
 }
