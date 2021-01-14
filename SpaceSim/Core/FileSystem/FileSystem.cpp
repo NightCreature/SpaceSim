@@ -57,16 +57,10 @@ std::vector<std::filesystem::path> VFS::FileSystem::ListFiles()
 ///-----------------------------------------------------------------------------
 VFS::File VFS::FileSystem::CreateFile(const std::filesystem::path& name, FileMode createOrOpen)
 {
-    std::filesystem::path fileRootPath = name.parent_path();
-    if (!name.is_absolute())
-    {
-        fileRootPath = m_paths.getPath() / fileRootPath;
-    }
-
-    //have to go through the mount points to see where it should be
+        //have to go through the mount points to see where it should be
     for (auto& mountPoint : m_mountPoints)
     {
-        if (mountPoint.IsRootPathOf(fileRootPath))
+        if (mountPoint.IsRootPathOf(name.parent_path()))
         {
             return mountPoint.FileCreate(name, createOrOpen);
         }

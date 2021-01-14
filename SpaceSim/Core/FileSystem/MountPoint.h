@@ -44,7 +44,40 @@ protected:
 ///-----------------------------------------------------------------------------
 inline bool MountPoint::IsRootPathOf(const std::filesystem::path& path) const
 {
-    return m_rootPath <= path;
+    if (path.is_relative())
+    {
+        std::filesystem::path workingPath = "/" / path; //Make sure we have a / at the beginning of the path, if its already there it will ignore it
+
+        std::filesystem::path::const_iterator rootPathEnd = --(m_rootPath.end());
+        if (*rootPathEnd == "")
+        {
+            --rootPathEnd; //Root ends in slash we don't care about finding that
+        }
+        auto rootPathDistance = std::distance(m_rootPath.begin(), rootPathEnd);
+
+        std::filesystem::path::const_iterator pathPart = std::find_if(workingPath.begin(), workingPath.end(), [rootPathEnd](const auto& pathPart) { return *rootPathEnd == pathPart; });
+        if (pathPart != workingPath.end())
+        {
+            if (rootPathDistance >= std::distance(workingPath.begin(), pathPart))
+            {
+                for (; pathPart != workingPath.begin() && rootPathEnd != m_rootPath.begin(); --pathPart, --rootPathEnd)//begin for both paths should be /
+                {
+                    if (*pathPart != *rootPathEnd)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+    else
+    {
+        return m_rootPath <= path;
+    }
 }
 
 }
