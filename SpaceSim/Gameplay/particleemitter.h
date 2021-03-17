@@ -71,6 +71,14 @@ private:
     std::vector<IGenerator*> m_generators;
     std::vector<IUpdater*> m_updaters;
 
+    struct PartticleChacheData
+    {
+        float x, y, z, w;
+        float r, g, b, a;
+        float size;
+    };
+    std::vector<PartticleChacheData> m_cache; //to avoid reallocating this each update
+
     Resource* m_resource;
 
     float m_emmisionRate;

@@ -8,7 +8,7 @@
 
 #include "Core/Resource/RenderResource.h"
 
-#include "D:\SDK\Demo\SpaceSim\SpaceSim\Graphics\D3DDebugHelperFunctions.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
 #include "Graphics/DeviceManager.h"
 #include "Graphics/Effect.h"
 #include "Graphics/EffectCache.h"
@@ -51,6 +51,7 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
     uint32 numberParticles = 100000;
     m_resource = resource;
     m_particleData.createParticles(numberParticles);
+    m_cache.resize(numberParticles);//reserve and allocate the data cache that will go to the renderer
 
     D3D11_BUFFER_DESC bufferDescriptor;
     ZeroMemory(&bufferDescriptor, sizeof(D3D11_BUFFER_DESC));
@@ -174,25 +175,20 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
     }
 
     //Finally extract render information here and send of to render list
-    struct PartticleChacheData
-    {
-        float x, y, z, w;
-        float r, g, b, a;
-        float size;
-    };
-    PartticleChacheData* cache = new PartticleChacheData[m_particleData.m_aliveParticles];
+
+    m_cache.clear();//this should just be reset the size marker
     for (size_t counter = 0; counter < m_particleData.m_aliveParticles; ++counter)
     {
-        cache[counter].x = m_particleData.m_positionData[counter].x();
-        cache[counter].y = m_particleData.m_positionData[counter].y();
-        cache[counter].z = m_particleData.m_positionData[counter].z();
-        
-        cache[counter].a = m_particleData.m_startColor[counter].x();
-        cache[counter].r = m_particleData.m_startColor[counter].y();
-        cache[counter].g = m_particleData.m_startColor[counter].z();
-        cache[counter].b = m_particleData.m_startColor[counter].w();
+        m_cache[counter].x = m_particleData.m_positionData[counter].x();
+        m_cache[counter].y = m_particleData.m_positionData[counter].y();
+        m_cache[counter].z = m_particleData.m_positionData[counter].z();
 
-        cache[counter].size = m_particleData.m_size[counter];
+        m_cache[counter].a = m_particleData.m_startColor[counter].x();
+        m_cache[counter].r = m_particleData.m_startColor[counter].y();
+        m_cache[counter].g = m_particleData.m_startColor[counter].z();
+        m_cache[counter].b = m_particleData.m_startColor[counter].w();
+
+        m_cache[counter].size = m_particleData.m_size[counter];
     }
 
     RenderResourceHelper helper(m_resource);
@@ -204,9 +200,8 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
     {
         MSG_TRACE("Something broke hard");
     }
-    memcpy(out.pData, cache, sizeof(PartticleChacheData) * m_particleData.m_aliveParticles);
+    memcpy(out.pData, &(m_cache[0]), sizeof(PartticleChacheData) * m_particleData.m_aliveParticles);
     deviceContext->Unmap(m_particleDataBuffer, 0);
-    delete[] cache;//shouldn't allocate and destroy memory if we can avoid this
     
     //This is test code to draw should be really refactored
     {
