@@ -16,6 +16,7 @@
 #include "Graphics/ShaderPack.h"
 #include <assert.h>
 
+
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
@@ -61,8 +62,8 @@ RenderSystem::~RenderSystem()
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "Average Number of instances per frame: %d", m_averageNumberOfInstancesRenderingPerFrame)
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "Number of instances rendered last frame: %d", m_numberOfInstancesRenderingThisFrame)
 
-    m_shadowMapRenderer->cleanup();
-    m_cubeMapRenderer->cleanup();
+    //m_shadowMapRenderer->cleanup();
+    //m_cubeMapRenderer->cleanup();
 
     if (m_lightConstantBuffer != nullptr)
     {
@@ -161,18 +162,120 @@ void RenderSystem::initialise(Resource* resource)
         m_swapChain = m_deviceManager.GetSwapChain();
     }
 
+    CreateMainCommandList();
+
     auto device = m_deviceManager.getDevice();
     setupSwapChainForRendering(device, m_deviceManager.getDeviceContext(), windowWidth, windowHeight);
 
+    CreatePipelineStates(device);
+    
+    m_textureManager.createSamplerStates(m_deviceManager);
+
+
+    //Thiss all needs to move
+    //D3D11_BUFFER_DESC lightContantsDescriptor;
+    //ZeroMemory(&lightContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
+    //lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float) + 3 * 16 * sizeof(float);
+    //lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    //HRESULT hr = device->CreateBuffer(&lightContantsDescriptor, 0, &m_lightConstantBuffer);
+    //D3DDebugHelperFunctions::SetDebugChildName(m_lightConstantBuffer, "RenderSystem Light Constant buffer");
+
+    //D3D11_BUFFER_DESC shadowContantsDescriptor;
+    //ZeroMemory(&shadowContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
+    //shadowContantsDescriptor.ByteWidth = 3 * 16 * sizeof(float);
+    //shadowContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    //hr = device->CreateBuffer(&shadowContantsDescriptor, 0, &m_shadowConstantBuffer);
+    //D3DDebugHelperFunctions::SetDebugChildName(m_shadowConstantBuffer, "RenderSystem Shadow Constant buffer");
+
+    //D3D11_SAMPLER_DESC samplerStateDesc;
+    //samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    //samplerStateDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    //samplerStateDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    //samplerStateDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+    //samplerStateDesc.MipLODBias = 0.0f;
+    //samplerStateDesc.MaxAnisotropy = 16;
+    //samplerStateDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    //samplerStateDesc.BorderColor[0] = 0.0f;
+    //samplerStateDesc.BorderColor[1] = 0.0f;
+    //samplerStateDesc.BorderColor[2] = 0.0f;
+    //samplerStateDesc.BorderColor[3] = 0.0f;
+    //samplerStateDesc.MinLOD = -3.402823466e+38F;
+    //samplerStateDesc.MaxLOD = 3.402823466e+38F;
+    //hr = device->CreateSamplerState(&samplerStateDesc, &m_samplerState);
+    //if (FAILED(hr))
+    //{
+    //    MSG_TRACE_CHANNEL("RENDER SYSTEM", "Failed to create sampler state: 0x%x", hr)
+    //}
+    //D3DDebugHelperFunctions::SetDebugChildName(m_samplerState, "RenderSystem SamplerState");
+
+#ifdef _DEBUG
+    m_debugAxis = new OrientationAxis();
+    m_debugAxis->initialise(m_renderResource, m_deviceManager);
+
+
+    hr = m_deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
+#endif
+
+    //ShaderPack shaderPack(m_renderResource);
+    //shaderPack.loadShaderPack("shader_pack.xml");
+
+    MSG_TRACE_CHANNEL("RENDERSYSTEM", "HARDCODED CAMERAS IN USE THESE SHOULD BE CREATED THROUGH MESSAGES");
+    m_cameraSystem.createCamera(*m_renderResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    m_cameraSystem.createCamera(*m_renderResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    m_cameraSystem.createCamera(*m_renderResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+
+    //initialiseCubemapRendererAndResources(m_renderResource);
+    //m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
+
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
+    m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(this, &RenderSystem::CreateRenderList));
+
+    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 1500.0f, 0.001f);
+    m_view = m_cameraSystem.getCamera("global")->getCamera();
+
+    //m_emmiter.initialise(m_renderResource);
+
+#ifdef D3DPROFILING
+    //Create some querries
+    D3D11_QUERY_DESC queryDescriptor;
+    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
+    queryDescriptor.Query = D3D11_QUERY_TIMESTAMP;
+    device->CreateQuery(&queryDescriptor, &m_beginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_endDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_cubemapBeginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_cubemapEndDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_shadoBeginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_shadoEndDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_mainBeginDrawQuery);
+    device->CreateQuery(&queryDescriptor, &m_mainEndDrawQuery);
+
+    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
+    queryDescriptor.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
+    device->CreateQuery(&queryDescriptor, &m_timeDisjointQuery);
+
+    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
+    queryDescriptor.Query = D3D11_QUERY_PIPELINE_STATISTICS;
+    device->CreateQuery(&queryDescriptor, &m_pipeLineStatistics);
+#endif
+}
+
+///-----------------------------------------------------------------------------
+///! @brief 
+///! @remark this is now specific to rendering API
+///-----------------------------------------------------------------------------
+void RenderSystem::CreatePipelineStates(ID3D11Device* device)
+{
+    UNUSEDPARAM(device);
     //Everything is in GL format so turn off culling
-    D3D11_RASTERIZER_DESC rasterizerStateDesc;
+    /*D3D11_RASTERIZER_DESC rasterizerStateDesc;
     rasterizerStateDesc.CullMode = D3D11_CULL_BACK;
     rasterizerStateDesc.FillMode = D3D11_FILL_SOLID;
     rasterizerStateDesc.AntialiasedLineEnable = false;
     rasterizerStateDesc.DepthBias = 0;
     rasterizerStateDesc.DepthBiasClamp = 0.0f;
     rasterizerStateDesc.FrontCounterClockwise = true;
-    rasterizerStateDesc.MultisampleEnable = false;
+    rasterizerStateDesc.MultisampleEnable = true;
     rasterizerStateDesc.ScissorEnable = false;
     rasterizerStateDesc.SlopeScaledDepthBias = 0.0f;
     rasterizerStateDesc.DepthClipEnable = false;
@@ -186,13 +289,13 @@ void RenderSystem::initialise(Resource* resource)
     rasterizerWireStateDesc.DepthBias = 0;
     rasterizerWireStateDesc.DepthBiasClamp = 0.0f;
     rasterizerWireStateDesc.FrontCounterClockwise = true;
-    rasterizerWireStateDesc.MultisampleEnable = false;
+    rasterizerWireStateDesc.MultisampleEnable = true;
     rasterizerWireStateDesc.ScissorEnable = false;
     rasterizerWireStateDesc.SlopeScaledDepthBias = 0.0f;
     rasterizerWireStateDesc.DepthClipEnable = false;
     hr = device->CreateRasterizerState(&rasterizerWireStateDesc, &m_rasteriserWireFrameModeState);
     D3DDebugHelperFunctions::SetDebugChildName(m_rasteriserWireFrameModeState, "RenderSystem WireFrameRasterizerState");
-    
+
     D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
     depthStencilStateDesc.DepthEnable = true;
     depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -244,93 +347,7 @@ void RenderSystem::initialise(Resource* resource)
     }
 
     hr = device->CreateBlendState(&blendDescriptor, &m_alphaBlendState);
-    D3DDebugHelperFunctions::SetDebugChildName(m_alphaBlendState, "RenderSystem AlphaBlendState");
-    
-    m_textureManager.createSamplerStates(m_deviceManager);
-
-    D3D11_BUFFER_DESC lightContantsDescriptor;
-    ZeroMemory(&lightContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
-    lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float) + 3 * 16 * sizeof(float);
-    lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    hr = device->CreateBuffer(&lightContantsDescriptor, 0, &m_lightConstantBuffer);
-    D3DDebugHelperFunctions::SetDebugChildName(m_lightConstantBuffer, "RenderSystem Light Constant buffer");
-
-    D3D11_BUFFER_DESC shadowContantsDescriptor;
-    ZeroMemory(&shadowContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
-    shadowContantsDescriptor.ByteWidth = 3 * 16 * sizeof(float);
-    shadowContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    hr = device->CreateBuffer(&shadowContantsDescriptor, 0, &m_shadowConstantBuffer);
-    D3DDebugHelperFunctions::SetDebugChildName(m_shadowConstantBuffer, "RenderSystem Shadow Constant buffer");
-
-    D3D11_SAMPLER_DESC samplerStateDesc;
-    samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-    samplerStateDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-    samplerStateDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-    samplerStateDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-    samplerStateDesc.MipLODBias = 0.0f;
-    samplerStateDesc.MaxAnisotropy = 16;
-    samplerStateDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    samplerStateDesc.BorderColor[0] = 0.0f;
-    samplerStateDesc.BorderColor[1] = 0.0f;
-    samplerStateDesc.BorderColor[2] = 0.0f;
-    samplerStateDesc.BorderColor[3] = 0.0f;
-    samplerStateDesc.MinLOD = -3.402823466e+38F;
-    samplerStateDesc.MaxLOD = 3.402823466e+38F;
-    hr = device->CreateSamplerState(&samplerStateDesc, &m_samplerState);
-    if (FAILED(hr))
-    {
-        MSG_TRACE_CHANNEL("RENDER SYSTEM", "Failed to create sampler state: 0x%x", hr)
-    }
-    D3DDebugHelperFunctions::SetDebugChildName(m_samplerState, "RenderSystem SamplerState");
-
-#ifdef _DEBUG
-    m_debugAxis = new OrientationAxis();
-    m_debugAxis->initialise(m_renderResource, m_deviceManager);
-
-
-    hr = m_deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
-#endif
-
-    ShaderPack shaderPack(m_renderResource);
-    shaderPack.loadShaderPack("shader_pack.xml");
-
-    MSG_TRACE_CHANNEL("RENDERSYSTEM", "HARDCODED CAMERAS IN USE THESE SHOULD BE CREATED THROUGH MESSAGES");
-    m_cameraSystem.createCamera(*m_renderResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-    m_cameraSystem.createCamera(*m_renderResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-    m_cameraSystem.createCamera(*m_renderResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-
-    initialiseCubemapRendererAndResources(m_renderResource);
-    m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
-
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(this, &RenderSystem::CreateRenderList));
-
-    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 1500.0f, 0.001f);
-    m_view = m_cameraSystem.getCamera("global")->getCamera();
-
-    m_emmiter.initialise(m_renderResource);
-
-    //Create some querries
-    D3D11_QUERY_DESC queryDescriptor;
-    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
-    queryDescriptor.Query = D3D11_QUERY_TIMESTAMP;
-    device->CreateQuery(&queryDescriptor, &m_beginDrawQuery);
-    device->CreateQuery(&queryDescriptor, &m_endDrawQuery);
-    device->CreateQuery(&queryDescriptor, &m_cubemapBeginDrawQuery);
-    device->CreateQuery(&queryDescriptor, &m_cubemapEndDrawQuery);
-    device->CreateQuery(&queryDescriptor, &m_shadoBeginDrawQuery);
-    device->CreateQuery(&queryDescriptor, &m_shadoEndDrawQuery);
-    device->CreateQuery(&queryDescriptor, &m_mainBeginDrawQuery);
-    device->CreateQuery(&queryDescriptor, &m_mainEndDrawQuery);
-
-    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
-    queryDescriptor.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
-    device->CreateQuery(&queryDescriptor, &m_timeDisjointQuery);
-
-    ZeroMemory(&queryDescriptor, sizeof(queryDescriptor));
-    queryDescriptor.Query = D3D11_QUERY_PIPELINE_STATISTICS;
-    device->CreateQuery(&queryDescriptor, &m_pipeLineStatistics);
+    D3DDebugHelperFunctions::SetDebugChildName(m_alphaBlendState, "RenderSystem AlphaBlendState");*/
 }
 
 ///-----------------------------------------------------------------------------
@@ -339,19 +356,21 @@ void RenderSystem::initialise(Resource* resource)
 ///-----------------------------------------------------------------------------
 void RenderSystem::update(float elapsedTime, double time)
 {
-//    {
-//#ifdef _DEBUG
-//        pPerf->BeginEvent(L"Emitter Update");
-//#endif
-//        m_emmiter.update((double)elapsedTime, m_view, m_projection, m_inverseView); //This fucks with the pipeline state :(
-//#ifdef _DEBUG
-//        pPerf->EndEvent();
-//#endif
-//    }
+    {
+#ifdef _DEBUG
+        pPerf->BeginEvent(L"Emitter Update");
+#endif
+        //m_emmiter.update((double)elapsedTime, m_view, m_projection, m_inverseView); //This fucks with the pipeline state :(
+#ifdef _DEBUG
+        pPerf->EndEvent();
+#endif
+    }
 //
     PROFILE_EVENT("RenderSystem::Update", Blue);
-    ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    //ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+#ifdef D3DPROFILING
     deviceContext->End(m_mainBeginDrawQuery);
+#endif
 
 #ifdef _DEBUG
     pPerf->BeginEvent(L"RenderSystem::Update");
@@ -361,34 +380,33 @@ void RenderSystem::update(float elapsedTime, double time)
     m_window.update(elapsedTime, time);
 
     
-    deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
+    //deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
 
     RenderInstanceTree::iterator renderInstanceIt = visibleInstances.begin();
     RenderInstanceTree::iterator renderInstanceEnd = visibleInstances.end();
     unsigned int stride = 0;
     unsigned int offset = 0;
+    UNUSEDPARAM(offset);
 
     RenderResourceHelper gameResource = { m_renderResource };
     const ShaderCache& shaderCache = gameResource.getResource().getShaderCache();
+    UNUSEDPARAM(shaderCache);
     
     size_t oldTechniqueId = 0;
-    std::vector<ID3D11ShaderResourceView*> resourceViews;
     std::vector<ID3D11SamplerState*> samplerStates;
     {
         PROFILE_EVENT("RenderSystem::ReserveVectors", OrangeRed);
-        resourceViews.reserve(128);
         samplerStates.reserve(2);
 
         samplerStates.push_back(m_textureManager.getSamplerState());
         samplerStates.push_back(m_samplerState);
-        deviceContext->PSSetSamplers(0, 2, &samplerStates[0]);
+        //deviceContext->PSSetSamplers(0, 2, &samplerStates[0]);
     }
 
     for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
     {
         {
             PROFILE_EVENT("RenderSystem::SubmitInstance", DarkBlue);
-            resourceViews.clear();
 
             RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 #ifdef _DEBUG
@@ -403,30 +421,30 @@ void RenderSystem::update(float elapsedTime, double time)
             
             if (!shaderInstance.getVSConstantBufferSetup().empty())
             {
-                deviceContext->VSSetConstantBuffers(2, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
+                //deviceContext->VSSetConstantBuffers(2, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
             }
             if (!shaderInstance.getPSConstantBufferSetup().empty())
             {
-                deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+                //deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
             }
 
             if (!shaderInstance.getVSSRVSetup().empty())
             {
-                deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
+                //deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
             }
             if (!shaderInstance.getPSSRVSetup().empty())
             {
-                deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+               // deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
             }
 
             if (technique->getTechniqueId() != oldTechniqueId)
             {
                 //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-                deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-                deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+                //deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+                //deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+                //deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+                //deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+                //deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
                 oldTechniqueId = technique->getTechniqueId();
             }
             //technique->setupTechnique(); NOt needed any more this fucks with the shader resource we set above here
@@ -434,11 +452,11 @@ void RenderSystem::update(float elapsedTime, double time)
             //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
             if (shaderInstance.getAlphaBlend())
             {
-                deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
+                //deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
             }
             else
             {
-                deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
+                //deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
             }
 
             // Set vertex buffer stride and offset.
@@ -450,27 +468,27 @@ void RenderSystem::update(float elapsedTime, double time)
                 uint32 generateVerticesCount = 6; //In the case of a particle system we assume to generate quads in the vertex shader
                 if (buffer != nullptr) //if vb is null we assume the vertex shader to generate the geometry
                 {
-                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                    //deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
 
-                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                    //deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
                     generateVerticesCount = 1; //We don't need to generate geometry in the shader based on the SV_VERTEXID so reset this to 1
                 }
                 else
                 {
-                    deviceContext->IASetInputLayout(nullptr);
-                    deviceContext->IASetVertexBuffers(0, 0, nullptr, 0, 0);
+                    //deviceContext->IASetInputLayout(nullptr);
+                    //deviceContext->IASetVertexBuffers(0, 0, nullptr, 0, 0);
                 }
 
-                deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
-                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis() * generateVerticesCount, 0, 0);
+                //deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
+                //deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                //deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis() * generateVerticesCount, 0, 0);
             }
             else
             {
-                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
+                //deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+                //deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+                //deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+                //deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
             }
 #ifdef _DEBUG
             //if (!renderInstance.m_name.empty())
@@ -489,72 +507,126 @@ void RenderSystem::update(float elapsedTime, double time)
     m_numberOfInstancesRenderingThisFrame = visibleInstances.size();
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
 
+#ifdef D3DPROFILING
     deviceContext->End(m_mainEndDrawQuery);
+#endif
+
+    CommandQueue* commandQueue = m_deviceManager.GetSwapChainCommandQueue();
+    CommandList& commandList = commandQueue->GetCommandList(0);
+
+    commandList.m_alloctor->Reset();
+    commandList.m_list->Reset(commandList.m_alloctor, nullptr);
+
+    D3D12_RESOURCE_BARRIER barrier;
+    ZeroMemory(&barrier, sizeof(D3D12_RESOURCE_BARRIER));
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier.Transition.pResource = m_deviceManager.GetCurrentBackBuffer();
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    commandList.m_list->ResourceBarrier(1, &barrier);
+
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_deviceManager.GetCurrentBackBufferRTVHandle();
+
+
+    // Record commands.
+    const float clearColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
+    commandList.m_list->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+    // Indicate that the back buffer will now be used to present.
+    D3D12_RESOURCE_BARRIER barrier2;
+    ZeroMemory(&barrier2, sizeof(D3D12_RESOURCE_BARRIER));
+    barrier2.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier2.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier2.Transition.pResource = m_deviceManager.GetCurrentBackBuffer();
+    barrier2.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier2.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    commandList.m_list->ResourceBarrier(1, &barrier2);
+
+    commandList.m_list->Close();
+
+
+    // Execute the command list.
+    const auto& commandLists = commandQueue->GetCommandLists();
+    std::vector<ID3D12CommandList*> commandListsVector;
+    for (const auto& commandList1 : commandLists)
+    {
+        if (commandList1.m_alloctor != nullptr && commandList1.m_list != nullptr)
+        {
+            commandListsVector.push_back(commandList1.m_list);
+        }
+    }
+
+    commandQueue->m_queue->ExecuteCommandLists(static_cast<UINT>(commandListsVector.size()), &commandListsVector[0]);
 }
 
 ///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
+///! @brief   Device manager is dealing with this now
 ///! @remark
 ///-----------------------------------------------------------------------------
 void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight)
 {
-    // Create a render target view
-    if (FAILED(m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_backBuffer)))
-    {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to acquire the back buffer pointer")
-            return;
-    }
+    UNUSEDPARAM(device);
+    UNUSEDPARAM(deviceContext);
+    UNUSEDPARAM(windowWidth);
+    UNUSEDPARAM(windowHeight);
+//    if (FAILED(m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_backBuffer)))
+//    {
+//        MSG_TRACE_CHANNEL("ERROR", "Failed to acquire the back buffer pointer")
+//            return;
+//    }
+//
+//    if (FAILED(device->CreateRenderTargetView(m_backBuffer, NULL, &m_renderTargetView)))
+//    {
+//        MSG_TRACE_CHANNEL("ERROR", "Failed to Create the render target view")
+//            return;
+//    }
+//    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem BackBuffer Texture for Swap Chain");
+//    m_backBuffer->Release();
+//    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem RTV for Swap Chain");
+//
+//    // Create depth stencil texture
+//    D3D11_TEXTURE2D_DESC depthBufferDescriptor;
+//    ZeroMemory(&depthBufferDescriptor, sizeof(D3D11_TEXTURE2D_DESC));
+//    depthBufferDescriptor.Width = windowWidth;
+//    depthBufferDescriptor.Height = windowHeight;
+//    depthBufferDescriptor.MipLevels = 1;
+//    depthBufferDescriptor.ArraySize = 1;
+//    depthBufferDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
+//    depthBufferDescriptor.SampleDesc.Count = 4;
+//    depthBufferDescriptor.SampleDesc.Quality = 0;
+//    depthBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
+//    depthBufferDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+//    depthBufferDescriptor.CPUAccessFlags = 0;
+//    depthBufferDescriptor.MiscFlags = 0;
+//    if (FAILED(device->CreateTexture2D(&depthBufferDescriptor, NULL, &m_depthStencilBuffer)))
+//    {
+//        MSG_TRACE_CHANNEL("ERROR", "Failed to create the back buffer")
+//            return;
+//    }
+//
+//    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilBuffer, "RenderSystem DepthStencil Texture");
+//
+//#if _DEBUG //Name the depth Stencil buffer
+//    //m_depthStencilBuffer->SetPrivateData( WKPDID_D3DDebugObjectName, 18, "DepthStencilBuffer" );
+//#endif
+//
+//    // Create the depth stencil view
+//    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor;
+//    ZeroMemory(&depthStencilViewDescriptor, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+//    depthStencilViewDescriptor.Format = depthBufferDescriptor.Format;
+//    depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+//    depthStencilViewDescriptor.Texture2D.MipSlice = 0;
+//    if (FAILED(device->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDescriptor, &m_depthStencilView)))
+//    {
+//        MSG_TRACE_CHANNEL("ERROR", "Failed to create the depth stencil view")
+//            return;
+//    }
+//
+//    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilView, "RenderSystem DepthStencil View");
 
-    if (FAILED(device->CreateRenderTargetView(m_backBuffer, NULL, &m_renderTargetView)))
-    {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to Create the render target view")
-            return;
-    }
-    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem BackBuffer Texture for Swap Chain");
-    m_backBuffer->Release();
-    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem RTV for Swap Chain");
-
-    // Create depth stencil texture
-    D3D11_TEXTURE2D_DESC depthBufferDescriptor;
-    ZeroMemory(&depthBufferDescriptor, sizeof(D3D11_TEXTURE2D_DESC));
-    depthBufferDescriptor.Width = windowWidth;
-    depthBufferDescriptor.Height = windowHeight;
-    depthBufferDescriptor.MipLevels = 1;
-    depthBufferDescriptor.ArraySize = 1;
-    depthBufferDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
-    depthBufferDescriptor.SampleDesc.Count = 1;
-    depthBufferDescriptor.SampleDesc.Quality = 0;
-    depthBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
-    depthBufferDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    depthBufferDescriptor.CPUAccessFlags = 0;
-    depthBufferDescriptor.MiscFlags = 0;
-    if (FAILED(device->CreateTexture2D(&depthBufferDescriptor, NULL, &m_depthStencilBuffer)))
-    {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to create the back buffer")
-            return;
-    }
-
-    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilBuffer, "RenderSystem DepthStencil Texture");
-
-#if _DEBUG //Name the depth Stencil buffer
-    //m_depthStencilBuffer->SetPrivateData( WKPDID_D3DDebugObjectName, 18, "DepthStencilBuffer" );
-#endif
-
-    // Create the depth stencil view
-    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor;
-    ZeroMemory(&depthStencilViewDescriptor, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-    depthStencilViewDescriptor.Format = depthBufferDescriptor.Format;
-    depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    depthStencilViewDescriptor.Texture2D.MipSlice = 0;
-    if (FAILED(device->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDescriptor, &m_depthStencilView)))
-    {
-        MSG_TRACE_CHANNEL("ERROR", "Failed to create the depth stencil view")
-            return;
-    }
-
-    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilView, "RenderSystem DepthStencil View");
-
-    deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+    //We might need to do this at the command list level
+    //deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
 #if _DEBUG //Name the target views
     //m_depthStencilView->SetPrivateData( WKPDID_D3DDebugObjectName, 16, "DepthStencilView" );
@@ -562,14 +634,15 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
 #endif
 
     //// Setup the viewport
-    D3D11_VIEWPORT vp;
-    vp.Width = (float)windowWidth;
-    vp.Height = (float)windowHeight;
-    vp.MinDepth = 0.0f;
-    vp.MaxDepth = 1.0f;
-    vp.TopLeftX = 0;
-    vp.TopLeftY = 0;
-    deviceContext->RSSetViewports(1, &vp);
+    //D3D11_VIEWPORT vp;
+    //vp.Width = (float)windowWidth;
+    //vp.Height = (float)windowHeight;
+    //vp.MinDepth = 0.0f;
+    //vp.MaxDepth = 1.0f;
+    //vp.TopLeftX = 0;
+    //vp.TopLeftY = 0;
+    //deviceContext->RSSetViewports(1, &vp);
+    
 }
 
 ///-----------------------------------------------------------------------------
@@ -591,13 +664,14 @@ void RenderSystem::cleanup()
         m_depthStencilView->Release();
     }
 
-    m_rasteriserState->Release();
-    m_rasteriserWireFrameModeState->Release();
-    m_depthStencilState->Release();
-    m_blendState->Release();
-    m_alphaBlendState->Release();
-    m_samplerState->Release();
+    //m_rasteriserState->Release();
+    //m_rasteriserWireFrameModeState->Release();
+    //m_depthStencilState->Release();
+    //m_blendState->Release();
+    //m_alphaBlendState->Release();
+    //m_samplerState->Release();
 
+#ifdef D3DPROFILING
     m_beginDrawQuery->Release();
     m_endDrawQuery->Release();
     m_cubemapBeginDrawQuery->Release();
@@ -608,6 +682,7 @@ void RenderSystem::cleanup()
     m_mainEndDrawQuery->Release();
 
     m_timeDisjointQuery->Release();
+#endif
 
     delete m_renderResource;
 }
@@ -618,11 +693,14 @@ void RenderSystem::cleanup()
 void RenderSystem::beginDraw()
 {
     PROFILE_EVENT("RenderSystem::beginDraw", Orange);
-    
+
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
+    UNUSEDPARAM(deviceContext);
+#ifdef D3DPROFILING
     deviceContext->Begin(m_timeDisjointQuery);
     deviceContext->End(m_beginDrawQuery);
     deviceContext->Begin(m_pipeLineStatistics);
+#endif
 
     m_numberOfInstancePerFrame = 0;
 
@@ -636,22 +714,22 @@ void RenderSystem::beginDraw()
     m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
 
     //Kick resource loading, potentially this needs to move to its own low priority thread too.
-    m_resourceLoader.update();
+    //m_resourceLoader.update();
 
     float clearColor[4] = { 0.8f, 0.8f, 0.8f, 0.0f }; //Reverse Z so clear to 0 instead of 1 leads to a linear depth pass
     
-    deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
-    deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
+    //deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
+    //deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
     if (!m_wireFrame)
     {
-        deviceContext->RSSetState(m_rasteriserState);
+        //deviceContext->RSSetState(m_rasteriserState);
     }
     else
     {
-        deviceContext->RSSetState(m_rasteriserWireFrameModeState);
+        //deviceContext->RSSetState(m_rasteriserWireFrameModeState);
     }
-    deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
-    deviceContext->OMSetDepthStencilState(m_depthStencilState, 0xffffffff);
+    //deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
+    //deviceContext->OMSetDepthStencilState(m_depthStencilState, 0xffffffff);
 
     {
         PROFILE_EVENT("RenderSystem::beginDraw::MaterialSorting", DarkRed);
@@ -698,7 +776,9 @@ void RenderSystem::beginDraw()
         ++lightCounter;
     }
 
+#ifdef D3DPROFILING
     deviceContext->End(m_cubemapBeginDrawQuery);
+#endif
     static int counter = 0;
     if (counter > 15)
     {
@@ -712,48 +792,52 @@ void RenderSystem::beginDraw()
         }
 
         //Loop over rts here and render to all of them
-        TextureManager& tm = helper.getWriteableResource().getTextureManager();
-        static size_t rtCounter = 0;
-        rtCounter = (++rtCounter) % m_cubeSettings.size();
-        if (m_cubeSettings[rtCounter].m_dynamic || m_cubeSettings[rtCounter].m_hasBeenRenderedTo == false)
-        {
-            ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-            deviceContext->PSSetShaderResources(0, 40, srv);
-            m_cubeMapRenderer->initialise(m_cubeSettings[rtCounter].m_position);
-            m_cubeMapRenderer->renderCubeMap(m_renderResource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), m_renderInstances, m_deviceManager, perFrameConstants, tm);
-            m_cubeSettings[rtCounter].m_hasBeenRenderedTo = true;
-            deviceContext->PSSetShaderResources(0, 40, srv);
-        }
+        //TextureManager& tm = helper.getWriteableResource().getTextureManager();
+        //static size_t rtCounter = 0;
+        //rtCounter = (++rtCounter) % m_cubeSettings.size();
+        //if (m_cubeSettings[rtCounter].m_dynamic || m_cubeSettings[rtCounter].m_hasBeenRenderedTo == false)
+        //{
+        //    ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+        //    //deviceContext->PSSetShaderResources(0, 40, srv);
+        //    //m_cubeMapRenderer->initialise(m_cubeSettings[rtCounter].m_position);
+        //    //m_cubeMapRenderer->renderCubeMap(m_renderResource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), m_renderInstances, m_deviceManager, perFrameConstants, tm);
+        //    //m_cubeSettings[rtCounter].m_hasBeenRenderedTo = true;
+        //    //deviceContext->PSSetShaderResources(0, 40, srv);
+        //}
         counter = 0;
     }
     ++counter;
+#ifdef D3DPROFILING
     deviceContext->End(m_cubemapEndDrawQuery);
 
     deviceContext->End(m_shadoBeginDrawQuery);
+#endif
     //Do shadowmap update here too to begin with
     ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-    deviceContext->PSSetShaderResources(0, 40, srv);
-    m_shadowMapRenderer->renderShadowMap(m_renderResource, m_renderInstances, m_deviceManager, lm.getLight("light_1"));
-    deviceContext->PSSetShaderResources(0, 40, srv);
+    //deviceContext->PSSetShaderResources(0, 40, srv);
+    //m_shadowMapRenderer->renderShadowMap(m_renderResource, m_renderInstances, m_deviceManager, lm.getLight("light_1"));
+    //deviceContext->PSSetShaderResources(0, 40, srv);
+#ifdef D3DPROFILING
     deviceContext->End(m_shadoEndDrawQuery);
+#endif
 
     perFrameConstants.m_cameraPosition[0] = camPos.x();
     perFrameConstants.m_cameraPosition[1] = camPos.y();
     perFrameConstants.m_cameraPosition[2] = camPos.z();
-    perFrameConstants.m_shadowMVP = m_shadowMapRenderer->getShadowMapMVP();
-    deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
-    deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
+    //perFrameConstants.m_shadowMVP = m_shadowMapRenderer->getShadowMapMVP();
+    //deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
+    //deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
 
     CheckVisibility(m_renderInstances);
 
-    WVPBufferContent shadowWVP = m_shadowMapRenderer->getShadowMapMVP();
-    deviceContext->UpdateSubresource(m_shadowConstantBuffer, 0, 0, (void*)&shadowWVP, 0, 0);
-    deviceContext->VSSetConstantBuffers(1, 1, &m_shadowConstantBuffer);
+    //WVPBufferContent shadowWVP = m_shadowMapRenderer->getShadowMapMVP();
+    //deviceContext->UpdateSubresource(m_shadowConstantBuffer, 0, 0, (void*)&shadowWVP, 0, 0);
+    //deviceContext->VSSetConstantBuffers(1, 1, &m_shadowConstantBuffer);
     
 
     //Setup shadow map SRV, since we only have one we can set it here
-    ID3D11ShaderResourceView* shadowMapSRV = m_shadowMapRenderer->getShadowMap();
-    deviceContext->PSSetShaderResources(33, 1, &shadowMapSRV);
+    //ID3D11ShaderResourceView* shadowMapSRV = m_shadowMapRenderer->getShadowMap();
+    //deviceContext->PSSetShaderResources(33, 1, &shadowMapSRV);
 
 }
 
@@ -785,23 +869,46 @@ void RenderSystem::endDraw()
     m_debugAxis->draw(m_deviceManager, m_view, m_projection, m_renderResource);
 #endif
 
-    if (m_numberOfInstancePerFrame > 0)
+    //if (m_numberOfInstancePerFrame > 0)
     {
         HRESULT hr = m_swapChain->Present(0, 0);
-        ++m_totalNumberOfRenderedFrames;
-        m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
+        //++m_totalNumberOfRenderedFrames;
+        //m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
         if (FAILED(hr))
         {
             MSG_TRACE_CHANNEL("ERROR", "Present call failed with error code: 0x%x", hr);
             MSG_TRACE_CHANNEL("ERROR", "Device removed because : 0x%x", m_deviceManager.getDevice()->GetDeviceRemovedReason());
             //assert(false);
         }
+
+        //have to wait for the GPU to be done this is not the best but fuck it for now
+        const UINT64 fence = m_deviceManager.m_fenceValue;
+        auto* commandQueue = m_deviceManager.GetSwapChainCommandQueue();
+        hr = commandQueue->m_queue->Signal(commandQueue->m_fence, fence);
+        if (hr != S_OK)
+        {
+            MSG_TRACE_CHANNEL("ERROR", "Fence Signal failed with error code: 0x%x %s", hr, getLastErrorMessage(hr));
+        }
+        m_deviceManager.m_fenceValue++;
+
+        // Wait until the previous frame is finished.
+        UINT64 fenceValue = commandQueue->m_fence->GetCompletedValue();
+        if (fenceValue < fence)
+        {
+            commandQueue->m_fence->SetEventOnCompletion(fence, commandQueue->m_fenceEvent);
+            WaitForSingleObject(commandQueue->m_fenceEvent, INFINITE);
+        }
+
+        m_deviceManager.SetCurrentFrameBufferIndex(0);
     }
 
+    
+#ifdef D3DPROFILING
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
     deviceContext->End(m_endDrawQuery);
     deviceContext->End(m_timeDisjointQuery);
     deviceContext->End(m_pipeLineStatistics);
+
 
     while (deviceContext->GetData(m_timeDisjointQuery, NULL, 0, 0) == S_FALSE)
     {
@@ -815,6 +922,7 @@ void RenderSystem::endDraw()
     {
         return;
     }
+
 
     UINT64 beginDrawQueryTimeStamp; //Begining of frame
     UINT64 endDrawQueryTimeStamp;
@@ -867,6 +975,7 @@ void RenderSystem::endDraw()
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "HSInvocations: %u", pipeLineStats.HSInvocations);
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "DSInvocations: %u", pipeLineStats.DSInvocations);
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "CSInvocations: %u", pipeLineStats.CSInvocations);
+#endif
 }
 
 ///-----------------------------------------------------------------------------
@@ -1000,4 +1109,14 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
         cubeMap.createRenderTarget(textureResource, rtView, srView);
         tm.addTexture(m_cubeSettings[counter].m_texutureResourceName, cubeMap);
     }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief Creates the main commandqueue and a commandlist on that queue
+///! @remark
+///-----------------------------------------------------------------------------
+void RenderSystem::CreateMainCommandList()
+{
+    m_deviceManager.CreateCommandQueue();
+    m_tempCommandList = m_deviceManager.GetCommandQueue(0).CreateCommandList();
 }

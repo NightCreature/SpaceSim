@@ -12,6 +12,7 @@
 #include "Graphics/CameraManager.h"
 #include "Graphics/CubeMapRenderer.h"
 #include "Graphics/DeviceManager.h"
+#include "Graphics/D3D12/DeviceManagerD3D12.h"
 #include "Graphics/EffectCache.h"
 #include "Graphics/LightManager.h"
 #include "Graphics/OrientationAxis.h"
@@ -59,15 +60,11 @@ public:
     ~RenderSystem();
 
     void initialise(Resource* resource);
-    
+
     void cleanup();
-
     void beginDraw();
-
     void CheckVisibility(RenderInstanceTree& renderInstances);
-
     void update(float elapsedTime, double time);
-
     void endDraw();
 
     HWND getWindowHandle() const { return m_window.getWindowHandle(); }
@@ -86,6 +83,7 @@ public:
 protected:
 private:
     void setupSwapChainForRendering( ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight );
+    void CreatePipelineStates(ID3D11Device* device);
     void initialiseCubemapRendererAndResources( Resource* resource );
     
     Matrix44 m_CullingProjectionMatrix;
@@ -96,6 +94,7 @@ private:
     RenderResource* m_renderResource;
 
     CameraManager      m_cameraSystem;
+    DeviceManagerD3D11 m_deviceManager11;
     DeviceManager m_deviceManager;
     TextureManager m_textureManager;
     ModelManager m_modelManger;
@@ -111,6 +110,7 @@ private:
 
     IDXGISwapChain* m_swapChain; //Non owning pointer
 
+    //This needs to change
     ID3D11Texture2D* m_backBuffer;
     ID3D11Texture2D* m_depthStencilBuffer;
     ID3D11RenderTargetView* m_renderTargetView;
@@ -124,6 +124,7 @@ private:
     ID3D11Buffer* m_lightConstantBuffer;
     ID3D11Buffer* m_shadowConstantBuffer;
 
+#ifdef PROFILING
     ID3D11Query* m_beginDrawQuery;
     ID3D11Query* m_endDrawQuery;
     ID3D11Query* m_cubemapBeginDrawQuery;
@@ -135,6 +136,7 @@ private:
     ID3D11Query* m_timeDisjointQuery;
 
     ID3D11Query* m_pipeLineStatistics;
+#endif
     bool m_wireFrame;
 
     size_t m_numberOfInstancesRenderingThisFrame;
@@ -149,7 +151,7 @@ private:
     std::vector<CubeRendererInitialiseData> m_cubeSettings;
     CubeMapRenderer* m_cubeMapRenderer;
     ShadowMapRenderer* m_shadowMapRenderer;
-    ID3D11SamplerState* m_samplerState;
+    ID3D11SamplerState* m_samplerState; //Fix this
 
     
     RenderInstanceTree visibleInstances;
@@ -168,4 +170,11 @@ private:
 
     //Test shit
     ParticleSystem::ParticleEmitterComponentBased m_emmiter;
+    ///-----------------------------------------------------------------------------
+    ///! @brief 
+    ///! @remark
+    ///-----------------------------------------------------------------------------
+    void CreateMainCommandList();
+
+    size_t m_tempCommandList;
 };

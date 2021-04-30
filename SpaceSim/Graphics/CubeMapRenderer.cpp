@@ -1,5 +1,6 @@
 #include "Graphics/CubeMapRenderer.h"
 #include "Graphics/DeviceManager.h"
+#include "Graphics/D3D12/DeviceManagerD3D12.h"
 #include "Graphics/Effect.h"
 #include "Core/Settings/Settings.h"
 #include "Core/Settings/SettingsManager.h"

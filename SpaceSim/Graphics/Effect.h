@@ -1,6 +1,7 @@
 #pragma once
 #include "Math/matrix44.h"
 #include "Graphics/DeviceManager.h"
+#include "Graphics/D3D12/DeviceManagerD3D12.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Core/Resource/RenderResource.h"
 #include "Graphics/Shaders.h"

@@ -10,6 +10,7 @@
 
 #include "Graphics/D3DDebugHelperFunctions.h"
 #include "Graphics/DeviceManager.h"
+#include "Graphics/D3D12/DeviceManagerD3D12.h"
 #include "Graphics/Effect.h"
 #include "Graphics/EffectCache.h"
 #include "Graphics/ShaderCache.h"
