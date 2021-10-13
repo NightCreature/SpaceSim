@@ -1,5 +1,6 @@
 #include "CommonConstantBuffers.ivs"
 #include "CommonConstantBuffers.ips"
+#include "rootsignatures.ifx"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ float4 checker(float2 uv)
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+[RootSignature(forceFieldRS)]
 PS_INPUT vs_main( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;

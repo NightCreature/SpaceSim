@@ -1,5 +1,5 @@
 #include "CommonConstantBuffers.ivs"
-
+#include "Rootsignatures.ifx"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -23,6 +23,7 @@ struct VSOutput
     float2 Tex : TEXCOORD0;
 };
 
+[RootSignature(particleSystemRS)]
 VSOutput vs_main(uint id:SV_VERTEXID)
 {
 	uint particleIndex = id / 4;

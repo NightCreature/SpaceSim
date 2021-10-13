@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer WVPConstants : register(b2)
+cbuffer WVPConstants : register(b2) //These should probably be root constants the only thing that changes is the world matrix
 {
     float4x4 World;
     float4x4 View;
@@ -10,7 +10,7 @@ cbuffer WVPConstants : register(b2)
 };
 
 #ifdef LIGHTING
-cbuffer LightParamters: register(b0)
+cbuffer LightParamters: register(b0) //This cant be a root constant because the array
 {
     //float3 eyePosition;
     LightConstants m_lights[8];
@@ -19,7 +19,7 @@ cbuffer LightParamters: register(b0)
 #endif
 
 #ifdef SHADOW
-cbuffer ShadowConstants : register(b1)
+cbuffer ShadowConstants : register(b1) //Could be root constant
 {
 	float4x4 ShadowWorld;
 	float4x4 ShadowView;
