@@ -1,10 +1,13 @@
 #pragma once
 
-#include <D3D11.h>
+#include <D3D12.h>
 #include <vector>
+#include "Core/tinyxml2.h"
 
 class DeviceManager;
+struct CommandList;
 
+//This is part of the PSO now, and need serialisation for the shaders that way we can just add this to the effect definition/shader
 struct VertexDeclarationDescriptor
 {
     VertexDeclarationDescriptor() :
@@ -16,19 +19,25 @@ struct VertexDeclarationDescriptor
         textureCoordinateDimensions.clear();
     }
 
-    const std::vector<D3D11_INPUT_ELEMENT_DESC> createInputElementLayout(size_t& vertexStride) const;
+    void Deserialise(const tinyxml2::XMLElement* node);
+
+    const std::vector<D3D12_INPUT_ELEMENT_DESC>& createInputElementLayout(size_t& vertexStride);
+
+    size_t GetVertexStride() const;
 
     size_t position;
     bool normal;
     bool tangent;
     bool vertexColor;
     std::vector<unsigned int> textureCoordinateDimensions;
+
+    std::vector<D3D12_INPUT_ELEMENT_DESC> m_vertexDataLayoutElements;
 };
 
 class VertexBuffer
 {
 public:
-    VertexBuffer(void) : m_inputLayout(0), m_buffer(0), m_vertexStride(0) {}
+    VertexBuffer(void){}
     ~VertexBuffer(void)
     {
         cleanup();
@@ -36,31 +45,33 @@ public:
 
     void cleanup()
     {
-        if (m_buffer)
+        if (m_defaultResource != nullptr)
         {
-            m_buffer->Release();
-            m_buffer = 0;
+            m_defaultResource->Release();
         }
 
-        if (m_inputLayout)
+        if (m_uploadResource != nullptr)
         {
-            m_inputLayout->Release();
-            m_inputLayout = 0;
+            m_uploadResource->Release();
         }
     }
 
-bool createBufferAndLayoutElements(const DeviceManager& deviceManager, size_t bufferSize, void* data, bool dynamic, const VertexDeclarationDescriptor& vertexDeclartion, const ID3DBlob* vertexShaderCodeBlob);
+    void CleanupUploadResource()
+    {
+        if (m_uploadResource != nullptr)
+        {
+            m_uploadResource->Release();
+            m_uploadResource = nullptr;
+        }
+    }
 
-    ID3D11Buffer* getBuffer() const { return m_buffer; }
-    size_t getVertexStride() const { return m_vertexStride; }
-    ID3D11InputLayout* getInputLayout() const { return m_inputLayout; }
-    size_t getVertexCount() const { return m_vertexCount; }
+    void Create(const DeviceManager& deviceManager, CommandList& commandList, size_t bufferSize, void* data, size_t vertexStride);
+
+    const D3D12_VERTEX_BUFFER_VIEW& GetBufferView() const { return m_bufferView; }
+    ID3D12Resource* GetGPUResource() const { return m_defaultResource; }
+    ID3D12Resource* GetCPUResource() const { return m_uploadResource; }
 private:
-    bool createVertexInputLayout(const DeviceManager& deviceManager, ID3DBlob* vertexShaderCodeBlob, const std::vector<D3D11_INPUT_ELEMENT_DESC>& inputElements);
-    
-    ID3D11InputLayout* m_inputLayout;
-    ID3D11Buffer* m_buffer;
-
-    size_t m_vertexStride;
-    size_t m_vertexCount;
+    ID3D12Resource* m_defaultResource = nullptr;
+    ID3D12Resource* m_uploadResource = nullptr;
+    D3D12_VERTEX_BUFFER_VIEW m_bufferView;
 };
