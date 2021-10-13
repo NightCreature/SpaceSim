@@ -24,7 +24,7 @@ int WorkerThread::WorkerFunction()
             workLoad.m_job->Execute(m_index);
 
             //once we are done with the work load get ride of it, this should probably be done better
-            delete workLoad.m_job;
+            //delete workLoad.m_job;
             workLoad.m_job = nullptr;
         }
         else
@@ -43,10 +43,13 @@ int WorkerThread::WorkerFunction()
 ///-----------------------------------------------------------------------------
 void WorkerThread::pauzeThread()
 {
-    m_threadPaused = true;
-    //Probably need to sleep on a condition variable here that the jobsystem can set
-    //WaitForSingleObject(m_workAvailableHandle, INFINITE);
+    if (isAlive())
+    {
+        m_threadPaused = true;
+        //Probably need to sleep on a condition variable here that the jobsystem can set
+        //WaitForSingleObject(m_workAvailableHandle, INFINITE);
 
-    WaitForSingleObject(m_workAvailableHandle, INFINITE);    // indefinite wait
+        WaitForSingleObject(m_workAvailableHandle, INFINITE);    // indefinite wait
+    }
 
 }

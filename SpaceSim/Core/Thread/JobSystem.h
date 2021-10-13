@@ -22,7 +22,9 @@ public:
     void WorkerThreadActive(size_t index);
 
     void SignalWorkAvailable();
-    void WaitfForJobsToFinish();
+    void WaitfForJobsToFinish(); //This doesnt allow you to steal this thread to run a job on it
+
+    void ProcessWork(); //this thread will also be used to execute jobs on
 
     struct ThreadStatus
     {
