@@ -18,7 +18,7 @@ size_t CommandQueue::CreateCommandList()
             MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create command allocator with error: 0x%x, %s", hr, getLastErrorMessage(hr));
             return std::numeric_limits<size_t>::max();
         }
-        hr = m_deviceManager.GetDevice()->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT, D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(&commandList.m_list));
+        hr = m_deviceManager.GetDevice()->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandList.m_alloctor, nullptr, IID_PPV_ARGS(&commandList.m_list));
         if (hr != S_OK)
         {
             MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create closed command list with error: 0x%x, %s", hr, getLastErrorMessage(hr));

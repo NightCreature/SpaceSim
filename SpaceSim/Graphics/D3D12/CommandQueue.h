@@ -24,6 +24,7 @@ struct CommandQueue
 
     CommandQueue(const DeviceManager& deviceManager) : m_deviceManager(deviceManager) {}
 
+
     CommandLists& GetCommandLists() { return m_commandLists; }
     size_t CreateCommandList();
     CommandList& GetCommandList(size_t commandListHandle) { assert(!m_commandLists.empty() && commandListHandle < m_commandLists.size()); return m_commandLists[commandListHandle]; }
@@ -36,4 +37,5 @@ struct CommandQueue
     HANDLE m_fenceEvent = nullptr;
 
     size_t m_commandListHighIndex = 0;
+    size_t m_fenceValue = ~0ull;
 };
