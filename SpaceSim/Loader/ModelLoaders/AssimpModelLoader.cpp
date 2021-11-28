@@ -14,7 +14,7 @@ namespace AssimpModelLoader
 ///! @brief   
 ///! @remark  This needs re writing so we can apply uv transforms to correct streams and embedded correct uv streams in to the vbs.
 ///-----------------------------------------------------------------------------
-CreatedModel LoadModel(Resource* resource, const Material& material, const std::string& fileName)
+CreatedModel LoadModel(Resource* resource, const Material& material, const std::string& fileName, CommandList& commandList)
 {
     UNUSEDPARAM(material);
 
@@ -157,7 +157,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         {
             if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_AMBIENT, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
-                tm.addLoad(dm, path.C_Str());
+                tm.addLoad(dm, path.C_Str()); //This needs to be a load request
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Ambient0 + counter)));
             }
         }
@@ -180,7 +180,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                         textureTransform = *(aiUVTransform*)(property->mData);
                     }
                 }
-                tm.addLoad(dm, path.C_Str());
+                tm.addLoad(dm, path.C_Str()); //This needs to be a load request
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Diffuse0 + counter)));
             }
         }
@@ -188,7 +188,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         {
             if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_EMISSIVE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
-                tm.addLoad(dm, path.C_Str());
+                tm.addLoad(dm, path.C_Str()); //This needs to be a load request
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Emmisive0 + counter)));
             }
         }
@@ -196,18 +196,18 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         {
             if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_SPECULAR, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
             {
-                tm.addLoad(dm, path.C_Str());
+                tm.addLoad(dm, path.C_Str()); //This needs to be a load request
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Specular0 + counter)));
             }
         }
 
         if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_NORMALS, 0, &path, &uvMapping, &uv_index))
         {
-            tm.addLoad(dm, path.C_Str());
+            tm.addLoad(dm, path.C_Str()); //This needs to be a load request
             shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Normals));
         }
         MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to read material %d", aimaterial);
-
+        
         meshGroupParams.m_numtangents = meshGroupParams.m_tangents.size(); //TODO FIX this needs to look at the model to get this.
         meshGroupParams.m_vertexDeclaration.position = 3;
         meshGroupParams.m_vertexDeclaration.normal = meshGroupParams.m_normals.size() > 0;
@@ -219,12 +219,11 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         }
         meshGroupParams.m_vertexDeclaration.vertexColor = false;
         meshGroupParams.m_resource = resource;
+        meshGroupParams.m_commandList = &commandList;
 
         //Add mesh group to the mesh creator params
         params.m_meshGroups.push_back(MeshGroupCreator::CreateMeshGroup(meshGroupParams));
     }
-
-
 
     return  Mesh::CreateMesh(params);
 }

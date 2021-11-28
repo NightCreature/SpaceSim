@@ -2,6 +2,7 @@
 
 #include "Core/Thread/Job.h"
 #include "Core/Resource/Resourceable.h"
+#include "Graphics/D3D12/CommandQueue.h"
 
 
 ////Do actual loading that update usually does 
@@ -44,17 +45,19 @@
 class ResourceLoadJob : public Job
 {
 public:
-    ResourceLoadJob(Resource* resource) : m_resource(resource){}
+    ResourceLoadJob(Resource* resource, size_t queueHandle, size_t commandHandle) : m_resource(resource), m_commandQueueHandle(queueHandle), m_commandListHandle(commandHandle) {}
 
     void SendReturnMsg(size_t gameObjectId, size_t resourceHandle);
 protected:
     Resource* m_resource = nullptr;
+    size_t m_commandQueueHandle;
+    size_t m_commandListHandle;
 };
 
 class FaceJob : public ResourceLoadJob
 {
 public:
-    FaceJob(Resource* resource, size_t gameObjectId, void* loadData) : ResourceLoadJob(resource), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
+    FaceJob(Resource* resource, size_t queueHandle, size_t commandHandle, size_t gameObjectId, void* loadData) : ResourceLoadJob(resource, queueHandle, commandHandle), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
 
     void Execute(size_t threadIndex) override;
 private:
@@ -65,7 +68,7 @@ private:
 class LoadTextureJob : public ResourceLoadJob
 {
 public:
-    LoadTextureJob(Resource* resource, const std::string& fileName) : ResourceLoadJob(resource), m_fileName(fileName) {}
+    LoadTextureJob(Resource* resource, size_t queueHandle, size_t commandHandle, const std::string& fileName) : ResourceLoadJob(resource, queueHandle, commandHandle), m_fileName(fileName) {}
 
     void Execute(size_t threadIndex) override;
 private:
@@ -76,7 +79,7 @@ private:
 class LoadModelJob : public ResourceLoadJob
 {
 public:
-    LoadModelJob(Resource* resource, size_t gameObjectId, void* loadData) : ResourceLoadJob(resource), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
+    LoadModelJob(Resource* resource, size_t queueHandle, size_t commandHandle, size_t gameObjectId, void* loadData) : ResourceLoadJob(resource, queueHandle, commandHandle), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
 
     void Execute(size_t threadIndex) override;
 private:

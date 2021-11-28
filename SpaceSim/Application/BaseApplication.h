@@ -30,7 +30,6 @@
 #include "Logging/Logger.h"
 
 
-
 ///-----------------------------------------------------------------------------
 ///! @brief   Base class for an application object
 ///! @remark  Defines the wndProc used in the Window class it contains
@@ -87,4 +86,7 @@ private:
     //ModelComponentManger m_modelManager;
 public:
     static Logger m_logger;
+
+    int bitField : 2;
+    int bitField1 : 1;
 };

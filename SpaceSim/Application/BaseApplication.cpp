@@ -33,18 +33,22 @@
 #include "../NodeGraph/GraphDefinitionReader.h"
 #include "../Core/FileSystem/FileSystem.h"
 #include "../Core/FileSystem/Platform/Win/MountPointWin.h"
+#include "Generators/MapGenerator.h"
+
+#include "Core/ConstructionFactory.h"
 
 class RenderInstance;
 
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Logger Application::m_logger;
+constexpr size_t numOfJobsToSpawn = 16;
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
 Application::Application():
-m_jobSystem(8), //Spawn the job queue with 8 threads
+m_jobSystem(numOfJobsToSpawn), //Spawn the job queue with 8 threads
 m_gameResource(nullptr),
 m_previousRenderInstanceListSize(1)
 {
@@ -61,9 +65,6 @@ Text::TextBlockCache* cache;
 ///-----------------------------------------------------------------------------
 bool Application::initialise()
 {
-    VFS::FileSystem m_fileSystem;
-    m_fileSystem.AddMountPoint(new VFS::MountPointWin(m_paths.getModelPath()));
-
     m_logger.addLogger(new OutputDebugLog());
     FileLogger* file_logger = new FileLogger(m_paths.getLogPathStr());
     if (file_logger->is_open())
@@ -78,11 +79,24 @@ bool Application::initialise()
     
     //cache = new Text::TextBlockCache(1000, m_gameResource);
 
+    print();
 
     m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
         &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger, m_jobSystem.GetJobQueuePtr());
     
     bool returnValue = true;
+
+    //VFS::FileSystem m_fileSystem(m_paths);
+    //m_fileSystem.AddMountPoint(VFS::MountPoint("//networkshare\\models\\path\\"));
+    ////Constructor by default adds all paths in the path class
+    ////m_fileSystem.AddMountPoint(new VFS::MountPointWin(m_paths.getModelPath()));
+
+    //auto file = m_fileSystem.CreateFile("Logs/Test/test.model", VFS::FileMode::OpenAndCreate);
+    //const char* message = "Hello World File!";
+    //file.Write((byte*)(message), 17);
+    //file.Close();
+
+
 
     int windowWidth = 1280;
     int windowHeight = 720;
@@ -203,7 +217,7 @@ void Application::mainGameLoop()
                 //m_view = cam->getCamera();
 
                 m_UpdateThread.setInput(input);
-                MSG_TRACE_CHANNEL("APPLICATION", "Updating render system with the input");
+
                 m_renderSystem.setInput(input);
 
                 m_UpdateThread.SetElapsedTime(m_elapsedTime, m_time);

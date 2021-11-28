@@ -24,5 +24,6 @@ void NodeGraph::AddNode::Invoke()
 	//auto value1 = m_inputPins[0].GetValue();
 	//auto value2 = m_inputPins[1].GetValue();
 	//m_ouputPins[0].SetValue(value1 + value2);
+    //m_inputPins[0].
 
 }

@@ -15,7 +15,7 @@ XMLModelLoader::~XMLModelLoader(void)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadData)
+CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadData, CommandList& commandList)
 {
     if (loadData.m_fileName.empty())
         return CreatedModel();
@@ -112,6 +112,8 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
             }
         }
     }
+
+    params.m_commandList = &commandList;
 
     Mesh::normalizeNormals(params.m_normals); //Avoid read in errors so that all the normals are actually unit vectors
     //if (mesh->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)

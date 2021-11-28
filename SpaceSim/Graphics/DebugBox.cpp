@@ -8,6 +8,7 @@
 
 #include "Core/Resource/RenderResource.h"
 #include "Graphics/EffectCache.h"
+#include "D3D12/CommandQueue.h"
 
 namespace DebugGraphics
 {
@@ -70,14 +71,14 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
 
         unsigned int numberOfBytes = sizeof(boxVerts);
 
-        RenderResourceHelper renderResource(m_resource);
-        const EffectCache& effectCache = renderResource.getResource().getEffectCache();
-        const Effect* effect = effectCache.getEffect(mat.getEffectHash());
-        const Technique* technique = effect->getTechnique(mat.getTechnique());
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.vertexColor = true;
-        const VertexShader* shader = helper.getResource().getShaderCache().getVertexShader(technique->getVertexShader());
-        vb->createBufferAndLayoutElements(helper.getResource().getDeviceManager(), numberOfBytes, (void*)boxVerts, false, vertexDesc, shader->getShaderBlob());
+        
+
+        auto& commandQueue = helper.getWriteableResource().getDeviceManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
+        auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
+
+        vb->Create(helper.getResource().getDeviceManager(), commandList, numberOfBytes, (void*)boxVerts, vertexDesc.GetVertexStride());
         unsigned int indexData[] =
         {
             0, 2,
@@ -94,7 +95,7 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
             3, 1
         };
 
-        ib->createBuffer(helper.getResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false);
+        ib->Create(helper.getResource().getDeviceManager(), commandList, sizeof(indexData), (void*)&indexData[0]);
         ib->setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
     }
     else

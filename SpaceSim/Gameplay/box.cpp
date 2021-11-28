@@ -238,12 +238,7 @@ CreatedModel CreateBox(const CreationParams& params)
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
 
-        EffectCache& effectCache = renderResource.getEffectCache();
-        const Effect* effect = effectCache.getEffect(material.getEffectHash());
-        const Technique* technique = effect->getTechnique(material.getTechnique());
-        const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader()); //Technique pointer is 0!
-        assert(shader);
-        vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), numberOfBytes, (void*)startOfData, params.m_dynamic, vertexDesc, shader->getShaderBlob());
+        vb->Create(renderResource.getDeviceManager(), *params.m_commandList, numberOfBytes, (void*)startOfData, vertexDesc.GetVertexStride());
         delete[] startOfData;
         data = nullptr;
         startOfData = nullptr;
@@ -257,7 +252,7 @@ CreatedModel CreateBox(const CreationParams& params)
             20, 21, 22, 22, 23, 20 //VF2
         };
 
-        ib->createBuffer(renderResource.getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false);
+        ib->Create(renderResource.getDeviceManager(), *params.m_commandList, sizeof(indexData), (void*)&indexData[0]);
         ib->setNumberOfIndecis(36);
     }
     else

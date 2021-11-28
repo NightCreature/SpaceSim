@@ -65,17 +65,13 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     }
     vertexData = vertexData - bufferSize;
     RenderResource& renderResource = RenderResourceHelper(params.m_resource).getWriteableResource();
-    const EffectCache& effectCache = renderResource.getEffectCache();
-    const Effect* effect = effectCache.getEffect(params.mat.getEffectHash());
-    const Technique* technique = effect->getTechnique(params.mat.getTechnique());
     
-    const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
-    assert(shader);
-    vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
+    vb->Create(renderResource.getDeviceManager(), *params.m_commandList, bufferSize, vertexData, params.m_vertexDeclaration.GetVertexStride());
+    //vb->createBufferAndLayoutElements(, bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
     delete[] vertexData;
 
     ib->setNumberOfIndecis((unsigned int)params.m_indices.size());
-    ib->createBuffer(renderResource.getDeviceManager(), (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0], false);
+    ib->Create(renderResource.getDeviceManager(), *params.m_commandList, (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0]);
 
     meshGroup.meshGroup = new MeshGroup(vb, ib, params.mat, renderResource.getDeviceManager());
 

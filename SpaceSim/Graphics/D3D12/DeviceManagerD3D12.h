@@ -107,6 +107,7 @@ private:
 
     size_t m_frameCount = 3;
     size_t m_currentBackBufferIndex = 0;
+    size_t depthStencilDescriptorIndex = DescriptorHeap::invalidDescriptorIndex;
 
     unsigned int m_qualityLevels = 0;
 };

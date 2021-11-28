@@ -85,10 +85,11 @@ PipelineObject::PipelineObject()
 ///-----------------------------------------------------------------------------
 PipelineObject::~PipelineObject()
 {
-    if (m_pipelineObject != nullptr)
-    {
-        m_pipelineObject->Release();
-    }
+    //if (m_pipelineObject != nullptr)
+    //{
+    //    m_pipelineObject->Release();
+    //    m_pipelineObject = nullptr;
+    //}
 }
 
 ///-----------------------------------------------------------------------------
@@ -97,7 +98,13 @@ PipelineObject::~PipelineObject()
 ///-----------------------------------------------------------------------------
 void PipelineObject::CreatePipelineStateObject(ID3D12Device6* device)
 {
-    HRESULT hr = device->CreateGraphicsPipelineState(&m_pipeLineStateDescriptor, IID_PPV_ARGS(&m_pipelineObject));
+    HRESULT hr  = device->CreateRootSignature(0, m_pipeLineStateDescriptor.VS.pShaderBytecode, m_pipeLineStateDescriptor.VS.BytecodeLength, IID_PPV_ARGS(&m_pipeLineStateDescriptor.pRootSignature));
+    if (hr != S_OK)
+    {
+        MSG_TRACE_CHANNEL("PipelineObject", "Failed to create Root signature from shader data with error: 0x%x, %s", hr, getLastErrorMessage(hr));
+    }
+
+    hr = device->CreateGraphicsPipelineState(&m_pipeLineStateDescriptor, IID_PPV_ARGS(&m_pipelineObject));
 
     if (hr != S_OK)
     {
@@ -141,5 +148,15 @@ void PipelineObject::SetRenderTargetInformation(size_t numRTs, DXGI_FORMAT* rtFo
         m_pipeLineStateDescriptor.RTVFormats[counter] = rtFormats[counter];
     }
     m_pipeLineStateDescriptor.DSVFormat = depthStencilFormat;
+
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void PipelineObject::BindToCommandList(CommandList& commandList)
+{
+    commandList.m_list->SetPipelineState(m_pipelineObject);
 }
 

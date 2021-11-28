@@ -6,6 +6,7 @@
 #include "Graphics/modelmanager.h"
 #include "Loader/ModelLoaders/AssimpModelLoader.h"
 #include <string>
+#include "Graphics/D3D12/CommandQueue.h"
 
 constexpr auto c_ModelHash = "Model"_hash;
 
@@ -13,7 +14,7 @@ constexpr auto c_ModelHash = "Model"_hash;
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData)
+CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData, CommandList& commandList)
 {
     if (loadData.m_fileName.empty())
     {
@@ -29,7 +30,7 @@ CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData)
         return model;
     }
 
-    const RenderResource& gameResource = RenderResourceHelper(resource).getResource();
+    RenderResource& gameResource = RenderResourceHelper(resource).getWriteableResource();
     Material mat;
     std::string modelFileName;
 
@@ -52,7 +53,7 @@ CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData)
 
     if (!modelFileName.empty())
     {
-        model = AssimpModelLoader::LoadModel(resource, mat, modelFileName); //This needs to change to a mesh creation function instead because no more assimp loading on its own
+        model = AssimpModelLoader::LoadModel(resource, mat, modelFileName, commandList); //This needs to change to a mesh creation function instead because no more assimp loading on its own
     }
 
     return model;

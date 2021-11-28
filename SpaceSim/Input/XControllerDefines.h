@@ -12,7 +12,7 @@ public:
     XControllerDefines() {}
     ~XControllerDefines() {}
 
-    enum class XControllerInput
+    enum class XControllerInput : size_t
     {
         LeftStickPositiveX,
         LeftStickNegativeX,
@@ -56,7 +56,7 @@ public:
         return XControllerInput::NumInputActions;
     }
 private:
-    static constexpr size_t m_inputNameHash[XControllerInput::NumInputActions] =
+    static constexpr size_t m_inputNameHash[static_cast<std::underlying_type_t<XControllerInput>>(XControllerInput::NumInputActions)] =
     {
         "left_stick_positive_x"_hash,
         "left_stick_negative_x"_hash,

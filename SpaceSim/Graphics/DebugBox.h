@@ -2,6 +2,8 @@
 
 #include "model.h"
 
+struct CommandList;
+
 namespace DebugGraphics
 {
 

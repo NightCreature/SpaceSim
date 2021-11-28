@@ -136,144 +136,152 @@ void CubeMapRenderer::CheckVisibility(RenderInstanceTree& visibleRenderInstances
 
 void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, PerFrameConstants& perFrameConstants, const TextureManager& textureManager)
 {
-    PROFILE_EVENT("CubeMapRenderer::renderCubeMap", LightBlue);
+    UNUSEDPARAM(resource);
+    UNUSEDPARAM(renderTarget);
+    UNUSEDPARAM(renderInstances);
+    UNUSEDPARAM(deviceManager);
+    UNUSEDPARAM(perFrameConstants);
+    UNUSEDPARAM(textureManager);
 
-    ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
-    ID3D11RenderTargetView* rtView[1] = { nullptr };
-    ID3D11DepthStencilView* dsView = nullptr;
-    deviceContext->OMGetRenderTargets(1, rtView, &dsView);
+    //PROFILE_EVENT("CubeMapRenderer::renderCubeMap", LightBlue);
 
-    D3D11_VIEWPORT OldVP;
-    UINT cRT = 1;
-    deviceContext->RSGetViewports(&cRT, &OldVP);
-    deviceContext->RSSetViewports(1, &m_cubeViewPort);
+    //ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
+    //ID3D11RenderTargetView* rtView[1] = { nullptr };
+    //ID3D11DepthStencilView* dsView = nullptr;
+    //deviceContext->OMGetRenderTargets(1, rtView, &dsView);
 
-    perFrameConstants.m_cameraPosition[0] = m_position.x();
-    perFrameConstants.m_cameraPosition[1] = m_position.y();
-    perFrameConstants.m_cameraPosition[2] = m_position.z();
+    //D3D11_VIEWPORT OldVP;
+    //UINT cRT = 1;
+    //deviceContext->RSGetViewports(&cRT, &OldVP);
+    //deviceContext->RSSetViewports(1, &m_cubeViewPort);
 
-    deviceContext->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&perFrameConstants, 0, 0);
+    //perFrameConstants.m_cameraPosition[0] = m_position.x();
+    //perFrameConstants.m_cameraPosition[1] = m_position.y();
+    //perFrameConstants.m_cameraPosition[2] = m_position.z();
 
-    deviceContext->PSSetConstantBuffers(1, 1, &m_perFrameConstants);
+    //deviceContext->UpdateSubresource(m_perFrameConstants, 0, 0, (void*)&perFrameConstants, 0, 0);
 
-    const ShaderCache& shaderCache = RenderResourceHelper(resource).getResource().getShaderCache();
-    const EffectCache& effectCache = RenderResourceHelper(resource).getResource().getEffectCache();
+    //deviceContext->PSSetConstantBuffers(1, 1, &m_perFrameConstants);
 
-    std::vector<ID3D11SamplerState*> samplerStates;
-    samplerStates.reserve(1);
-    samplerStates.push_back(textureManager.getSamplerState());
-    deviceContext->PSSetSamplers(0, 1, &samplerStates[0]);
-    RenderInstanceTree visibleRenderInstances;
-    visibleRenderInstances.reserve(renderInstances.size());
+    //const ShaderCache& shaderCache = RenderResourceHelper(resource).getResource().getShaderCache();
+    //UNUSEDPARAM(shaderCache);
+    //const EffectCache& effectCache = RenderResourceHelper(resource).getResource().getEffectCache();
 
-    for (size_t rtCounter = 0; rtCounter < 6; ++rtCounter)
-    {
-        PROFILE_EVENT("CubeMapRenderer::renderFace", LightBlue);
+    //std::vector<ID3D11SamplerState*> samplerStates;
+    //samplerStates.reserve(1);
+    //samplerStates.push_back(textureManager.getSamplerState());
+    //deviceContext->PSSetSamplers(0, 1, &samplerStates[0]);
+    //RenderInstanceTree visibleRenderInstances;
+    //visibleRenderInstances.reserve(renderInstances.size());
 
-        visibleRenderInstances.clear();
-        CheckVisibility(visibleRenderInstances, renderInstances, m_viewArray[rtCounter]);
+    //for (size_t rtCounter = 0; rtCounter < 6; ++rtCounter)
+    //{
+    //    PROFILE_EVENT("CubeMapRenderer::renderFace", LightBlue);
 
-        ID3D11RenderTargetView* aRTViews[1] = { renderTarget->getRenderTargetView(rtCounter) };
-        deviceContext->OMSetRenderTargets(sizeof(aRTViews) / sizeof(aRTViews[0]), aRTViews, m_depthStencilView);
-        deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 0.0f, 0);
+    //    visibleRenderInstances.clear();
+    //    CheckVisibility(visibleRenderInstances, renderInstances, m_viewArray[rtCounter]);
 
-        RenderInstanceTree::const_iterator renderInstanceIt = visibleRenderInstances.begin();
-        RenderInstanceTree::const_iterator renderInstanceEnd = visibleRenderInstances.end();
-        unsigned int stride = 0;
-        unsigned int offset = 0;
-        size_t oldTechniqueId = 0;
-        std::vector<ID3D11ShaderResourceView*> resourceViews;
-        resourceViews.reserve(128);
+    //    ID3D11RenderTargetView* aRTViews[1] = { renderTarget->getRenderTargetView(rtCounter) };
+    //    deviceContext->OMSetRenderTargets(sizeof(aRTViews) / sizeof(aRTViews[0]), aRTViews, m_depthStencilView);
+    //    deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 0.0f, 0);
 
-        for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
-        {
-            resourceViews.clear();
-            RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
+    //    RenderInstanceTree::const_iterator renderInstanceIt = visibleRenderInstances.begin();
+    //    RenderInstanceTree::const_iterator renderInstanceEnd = visibleRenderInstances.end();
+    //    unsigned int stride = 0;
+    //    unsigned int offset = 0;
+    //    size_t oldTechniqueId = 0;
+    //    std::vector<ID3D11ShaderResourceView*> resourceViews;
+    //    resourceViews.reserve(128);
 
-            //This should transform into this but need to take care of the view projection stuff for the cubemap technique, might need special shaders :)
-            const auto shaderInstance = renderInstance.getShaderInstance();
-            const Effect* effect = effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());
-            const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
+    //    for (; renderInstanceIt != renderInstanceEnd; ++renderInstanceIt)
+    //    {
+    //        resourceViews.clear();
+    //        RenderInstance& renderInstance = (RenderInstance&)(*(*renderInstanceIt));
 
-            if (technique)
-            {
-                if (!shaderInstance.getVSConstantBufferSetup().empty())
-                {
-                    deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
-                }
-                if (!shaderInstance.getPSConstantBufferSetup().empty())
-                {
-                    deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
-                }
+    //        //This should transform into this but need to take care of the view projection stuff for the cubemap technique, might need special shaders :)
+    //        const auto shaderInstance = renderInstance.getShaderInstance();
+    //        const Effect* effect = effectCache.getEffect(shaderInstance.getMaterial().getEffectHash());
+    //        const Technique* technique = effect->getTechnique(shaderInstance.getTechniqueHash());
 
-                if (!shaderInstance.getVSSRVSetup().empty())
-                {
-                    deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
-                }
-                if (!shaderInstance.getPSSRVSetup().empty())
-                {
-                    deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
-                }
+    //        if (technique)
+    //        {
+    //            if (!shaderInstance.getVSConstantBufferSetup().empty())
+    //            {
+    //                deviceContext->VSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getVSConstantBufferSetup().size()), &shaderInstance.getVSConstantBufferSetup()[0]);
+    //            }
+    //            if (!shaderInstance.getPSConstantBufferSetup().empty())
+    //            {
+    //                deviceContext->PSSetConstantBuffers(0, static_cast<uint32>(shaderInstance.getPSConstantBufferSetup().size()), &shaderInstance.getPSConstantBufferSetup()[0]);
+    //            }
 
-                //The special sauce for this renderer
-                //WVPBufferContent wvpConstants = renderInstance.getShaderInstance().getWVPConstants();
-                //wvpConstants.m_projection = m_cubeProjection;
-                //wvpConstants.m_view = m_viewArray[rtCounter];
-                //technique->setWVPContent(deviceManager, wvpConstants);
+    //            if (!shaderInstance.getVSSRVSetup().empty())
+    //            {
+    //                deviceContext->VSSetShaderResources(0, static_cast<uint32>(shaderInstance.getVSSRVSetup().size()), &shaderInstance.getVSSRVSetup()[0]);
+    //            }
+    //            if (!shaderInstance.getPSSRVSetup().empty())
+    //            {
+    //                deviceContext->PSSetShaderResources(0, static_cast<uint32>(shaderInstance.getPSSRVSetup().size()), &shaderInstance.getPSSRVSetup()[0]);
+    //            }
+
+    //            //The special sauce for this renderer
+    //            //WVPBufferContent wvpConstants = renderInstance.getShaderInstance().getWVPConstants();
+    //            //wvpConstants.m_projection = m_cubeProjection;
+    //            //wvpConstants.m_view = m_viewArray[rtCounter];
+    //            //technique->setWVPContent(deviceManager, wvpConstants);
 
 
-                if (technique->getTechniqueId() != oldTechniqueId)
-                {
-                    //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-                    deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-                    deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-                    deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-                    deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-                    deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
-                    oldTechniqueId = technique->getTechniqueId();
-                }
-                technique->setupTechnique();
+    //            if (technique->getTechniqueId() != oldTechniqueId)
+    //            {
+    //                //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
+    //                //deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+    //                //deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+    //                //deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+    //                //deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+    //                //deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+    //                oldTechniqueId = technique->getTechniqueId();
+    //            }
+    //            technique->setupTechnique();
 
-                //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
-                if (shaderInstance.getAlphaBlend())
-                {
-                    deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
-                }
-                else
-                {
-                    deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
-                }
+    //            //deviceContext->PSSetConstantBuffers(1, 1, &m_lightConstantBuffer); //this is not great and should be moved in to the shader instance creation
+    //            if (shaderInstance.getAlphaBlend())
+    //            {
+    //                deviceContext->OMSetBlendState(m_alphaBlendState, 0, 0xffffffff);
+    //            }
+    //            else
+    //            {
+    //                deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
+    //            }
 
-                // Set vertex buffer stride and offset.
-                const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
-                ID3D11Buffer* buffer = vb->getBuffer();
-                stride = static_cast<unsigned int>(vb->getVertexStride());
-                if (renderInstance.getGeometryInstance().getIB() != nullptr)
-                {
-                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-                    deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
-                    deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                    deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
-                }
-                else
-                {
-                    deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
-                    deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-                    deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
-                    deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
-                }
-            }
-        }
-        deviceContext->Flush();
-    }
+    //            // Set vertex buffer stride and offset.
+    //            const VertexBuffer* vb = renderInstance.getGeometryInstance().getVB();
+    //            ID3D11Buffer* buffer = vb->getBuffer();
+    //            stride = static_cast<unsigned int>(vb->getVertexStride());
+    //            if (renderInstance.getGeometryInstance().getIB() != nullptr)
+    //            {
+    //                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+    //                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+    //                deviceContext->IASetIndexBuffer(renderInstance.getGeometryInstance().getIB()->getBuffer(), DXGI_FORMAT_R32_UINT, 0);
+    //                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+    //                deviceContext->DrawIndexed(renderInstance.getGeometryInstance().getIB()->getNumberOfIndecis(), 0, 0);
+    //            }
+    //            else
+    //            {
+    //                deviceContext->IASetInputLayout(renderInstance.getGeometryInstance().getVB()->getInputLayout());
+    //                deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+    //                deviceContext->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)renderInstance.getPrimitiveType());
+    //                deviceContext->Draw((unsigned int)renderInstance.getGeometryInstance().getVB()->getVertexCount(), 0);
+    //            }
+    //        }
+    //    }
+    //    deviceContext->Flush();
+    //}
 
-    deviceContext->OMSetRenderTargets(1, rtView, dsView);
-    rtView[0]->Release();
-    dsView->Release();
+    //deviceContext->OMSetRenderTargets(1, rtView, dsView);
+    //rtView[0]->Release();
+    //dsView->Release();
 
-    deviceContext->RSSetViewports(cRT, &OldVP);
-    deviceContext->GenerateMips(renderTarget->getShaderResourceView());
+    //deviceContext->RSSetViewports(cRT, &OldVP);
+    //deviceContext->GenerateMips(renderTarget->getShaderResourceView());
 }
 
 ///-------------------------------------------------------------------------

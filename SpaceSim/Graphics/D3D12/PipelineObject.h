@@ -2,6 +2,7 @@
 
 #include "D3D12.h"
 #include "Graphics/Shaders.h"
+#include "CommandQueue.h"
 
 struct VertexDeclarationDescriptor;
 
@@ -55,9 +56,14 @@ public:
 
         m_pipeLineStateDescriptor.RasterizerState.MultisampleEnable = static_cast<BOOL>(count > 1);
     }
-private:
+
+    void BindToCommandList(CommandList& commandList);
+
     ID3D12PipelineState* m_pipelineObject = nullptr;
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC m_pipeLineStateDescriptor = { 0 };
+private:
+    
     //ID3D12RootSignature* m_rootSignature = nullptr;
 
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC m_pipeLineStateDescriptor = {0};
+    
 };

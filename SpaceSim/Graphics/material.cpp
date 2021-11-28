@@ -52,7 +52,7 @@ Material::Material(const Material& material)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Material::deserialise( Resource* resource, const DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node )
+void Material::deserialise( Resource* resource, DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node )
 {
     node = node->FirstChildElement();
     const auto shininessHash = "Shininess"_hash;

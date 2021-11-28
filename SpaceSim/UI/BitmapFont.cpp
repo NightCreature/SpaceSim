@@ -200,7 +200,7 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
                 else if (Pages::PageInfo::fileHash == hashAttribute)
                 {
                     pageInfo.m_fileName = attribute->Value();
-                    gameResource.getWriteableResource().getTextureManager().addLoad(gameResource.getResource().getDeviceManager(), currentPath + pageInfo.m_fileName);
+                    gameResource.getWriteableResource().getTextureManager().addLoad(gameResource.getWriteableResource().getDeviceManager(), currentPath + pageInfo.m_fileName); //This needs to be a load request
                 }
             }
             m_pagesInformation.m_pages.push_back(pageInfo);

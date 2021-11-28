@@ -47,14 +47,12 @@ CreatedModel CreateSquare(const SquareCreationParams& params)
         texCoordDim.push_back(2);
 
         VertexBuffer* vb = new VertexBuffer();
-        const EffectCache& effectCache = renderResource.getEffectCache();
-        const Effect* effect = effectCache.getEffect(params.mat.getEffectHash());
-        const Technique* technique = effect->getTechnique(params.mat.getTechnique());
+
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
-        const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
-        assert(shader);
-        vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
+
+        vb->Create(renderResource.getDeviceManager(), *params.m_commandList, bufferSize, data, vertexDesc.GetVertexStride());
+        //vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), bufferSize, (void*)vertexData, false, vertexDesc, shader->getShaderBlob());
         square.model->getMeshData().push_back(new MeshGroup(vb, 0, params.mat, renderResource.getDeviceManager()));
         data = nullptr;
     }

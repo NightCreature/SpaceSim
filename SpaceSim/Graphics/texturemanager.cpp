@@ -1,10 +1,12 @@
 #include "Graphics/texturemanager.h"
-#include "Graphics/D3DDebugHelperFunctions.h"
-#include "Graphics/texture.h"
-#include "assert.h"
+
+#include "Core/Resource/RenderResource.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Graphics/D3DDebugHelperFunctions.h"
 #include "Graphics/DeviceManager.h"
-#include <iostream>
+#include "Graphics/texture.h"
+
+#include "assert.h"
 
 TextureManager::~TextureManager()
 {
@@ -24,13 +26,13 @@ bool TextureManager::find(const std::string& filename) const //Should be texture
 	return false;
 }
 
-const Texture* TextureManager::getTexture(const std::string& filename) const
+const TextureInfo* TextureManager::getTexture(const std::string& filename) const
 {
     auto textureFileNameHash = hashString(filename);
     return getTexture(textureFileNameHash);
 }
 
-const Texture* TextureManager::getTexture(const size_t textureNameHash) const
+const TextureInfo* TextureManager::getTexture(const size_t textureNameHash) const
 {    
     TextureMap::const_iterator tmit = m_textures.find(textureNameHash);
     if (tmit != m_textures.end())
@@ -39,9 +41,11 @@ const Texture* TextureManager::getTexture(const size_t textureNameHash) const
 
 }
 
-void TextureManager::addLoad(const DeviceManager& deviceManager, const std::string& filename)
+//This might need to connect to the resource loader and just do a request here passing in all the data to the request
+void TextureManager::addLoad(DeviceManager& deviceManager, const std::string& filename)
 {
 	assert (!filename.empty());
+    assert(false);//shouldnt be calling this
 
     //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
     std::string texureName = getTextureNameFromFileName(filename);
@@ -53,14 +57,17 @@ void TextureManager::addLoad(const DeviceManager& deviceManager, const std::stri
 	}
 
 	MSG_TRACE_CHANNEL("TEXTUREMANAGER", "Attempting to read in texture: %s", filename.c_str());
-	Texture tex;
-    if (!tex.loadTextureFromFile(deviceManager, filename))
+	Texture12 tex;
+    if (!tex.loadTextureFromFile(deviceManager, filename))// , commandQeueuHandle, commandListHandle, handle))
 	{
         MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s", filename.c_str());
     }
 
     auto textureFileNameHash = hashString(texureName);
-	m_textures.insert(std::make_pair(textureFileNameHash, tex));
+    TextureInfo texInfo;
+    texInfo.m_texture = tex;
+    //texInfo.m_heapIndex = index; //Need to fix this this is how we can get the GPU and CPU handles again
+	m_textures.insert(std::make_pair(textureFileNameHash, texInfo));
 }
 
 bool TextureManager::activateTexture(const std::string& filename)
@@ -94,13 +101,28 @@ void TextureManager::cleanup()
     TextureMap::iterator tmit = m_textures.begin();
     while (tmit != m_textures.end())
     { 
-        tmit->second.cleanup();
+        tmit->second.m_texture.cleanup();
         ++tmit;
     }
 
     m_textures.clear();
 
-    m_samplerState->Release();
+    if (m_samplerState)
+    {
+        m_samplerState->Release();
+    }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void TextureManager::Initialise(Resource* resource)
+{
+    auto writableResource = RenderResourceHelper(resource).getWriteableResource();
+    auto& descriptorHeapManager = writableResource.getDescriptorHeapManager();
+    m_textureHeap = descriptorHeapManager.CreateDescriptorHeap(256, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true);
+    m_samplerHeap = descriptorHeapManager.CreateDescriptorHeap(256, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, true);
 }
 
 ///-------------------------------------------------------------------------
@@ -108,30 +130,31 @@ void TextureManager::cleanup()
 ///-------------------------------------------------------------------------
 bool TextureManager::createSamplerStates(const DeviceManager& deviceManager)
 {
-    //Setup sampler state here
-    D3D11_SAMPLER_DESC samplerStateDesc;
-    samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-    samplerStateDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerStateDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerStateDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerStateDesc.MipLODBias = 0.0f;
-    samplerStateDesc.MaxAnisotropy = 16;
-    samplerStateDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    samplerStateDesc.BorderColor[0] = 0.0f;
-    samplerStateDesc.BorderColor[1] = 0.0f;
-    samplerStateDesc.BorderColor[2] = 0.0f;
-    samplerStateDesc.BorderColor[3] = 0.0f;
-    samplerStateDesc.MinLOD = -3.402823466e+38F;
-    samplerStateDesc.MaxLOD = 3.402823466e+38F;
-    ID3D11Device* device = deviceManager.getDevice();
-    HRESULT hr = device->CreateSamplerState(&samplerStateDesc, &m_samplerState);
-    if (FAILED( hr ) )
-    {
-        MSG_TRACE_CHANNEL("TEXTUREMANAGER", "Failed to create sampler state: 0x%x", hr )
-        return false;
-    }
+    UNUSEDPARAM(deviceManager);
+    ////Setup sampler state here
+    //D3D11_SAMPLER_DESC samplerStateDesc;
+    //samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    //samplerStateDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    //samplerStateDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    //samplerStateDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    //samplerStateDesc.MipLODBias = 0.0f;
+    //samplerStateDesc.MaxAnisotropy = 16;
+    //samplerStateDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    //samplerStateDesc.BorderColor[0] = 0.0f;
+    //samplerStateDesc.BorderColor[1] = 0.0f;
+    //samplerStateDesc.BorderColor[2] = 0.0f;
+    //samplerStateDesc.BorderColor[3] = 0.0f;
+    //samplerStateDesc.MinLOD = -3.402823466e+38F;
+    //samplerStateDesc.MaxLOD = 3.402823466e+38F;
+    //ID3D11Device* device = deviceManager.getDevice();
+    //HRESULT hr = device->CreateSamplerState(&samplerStateDesc, &m_samplerState);
+    //if (FAILED( hr ) )
+    //{
+    //    MSG_TRACE_CHANNEL("TEXTUREMANAGER", "Failed to create sampler state: 0x%x", hr )
+    //    return false;
+    //}
 
-    D3DDebugHelperFunctions::SetDebugChildName(m_samplerState, "TextureManger Sampler State");
+    //D3DDebugHelperFunctions::SetDebugChildName(m_samplerState, "TextureManger Sampler State");
 
     return true;
 }
@@ -139,7 +162,7 @@ bool TextureManager::createSamplerStates(const DeviceManager& deviceManager)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-Material::TextureSlotMapping TextureManager::deserialise( const DeviceManager& deviceManager, const tinyxml2::XMLElement* node )
+Material::TextureSlotMapping TextureManager::deserialise( DeviceManager& deviceManager, const tinyxml2::XMLElement* node )
 {
     (void*)node;
     const char* fileName = node->Attribute("file_name");
@@ -161,12 +184,15 @@ Material::TextureSlotMapping TextureManager::deserialise( const DeviceManager& d
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void TextureManager::addTexture( const std::string& textureName, const Texture& texture )
+void TextureManager::addTexture( const std::string& textureName, const Texture12& texture, size_t heapIndex )
 {
     std::scoped_lock<std::mutex> lock(m_mutex);
     auto textureNameHash = hashString(textureName);
     if (!find(textureName))
     {
-        m_textures.insert(std::make_pair(textureNameHash, texture));
+        TextureInfo info;
+        info.m_texture = texture;
+        info.m_heapIndex = heapIndex;
+        m_textures.insert(std::make_pair(textureNameHash, info));
     }
 }

@@ -3,6 +3,7 @@
 #include "D3D12.h"
 #include "D3D12X.h"
 #include "Core/Types/Types.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/D3D12/CommandQueue.h"
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
 
@@ -13,17 +14,19 @@ template<class T>
 class ConstantBuffer
 {
 public:
-    void Create(const DeviceManager& deviceManager);
-
-    void CreateViewOnHeap(const CommandQueue& queue);
+    using Type = T;
+    void Create(const DeviceManager& deviceManager, DescriptorHeap& heap);
     void UpdateGPUData();
 
-    void UpdateCPUData(const T& data) { m_cpuSideData = data; }
+    void UpdateCPUData(const T& data) { m_cpuSideData = data; UpdateGPUData(); }
+    ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
 private:
-    T m_cpuSideData = {0};
+    T m_cpuSideData = {};
 
     ID3D12Resource* m_constantBuffer = nullptr;
     byte* m_GPUDataBegin = nullptr;
+
+    size_t m_heapIndex = DescriptorHeap::invalidDescriptorIndex;
 };
 
 ///-----------------------------------------------------------------------------
@@ -31,7 +34,7 @@ private:
 ///! @remark
 ///-----------------------------------------------------------------------------
 template<class T>
-void ConstantBuffer<T>::Create(const DeviceManager& deviceManager)
+void ConstantBuffer<T>::Create(const DeviceManager& deviceManager, DescriptorHeap& heap)
 {
     D3D12_HEAP_PROPERTIES uploadHeap;
     uploadHeap.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -57,7 +60,7 @@ void ConstantBuffer<T>::Create(const DeviceManager& deviceManager)
     HRESULT hr = deviceManager.GetDevice()->CreateCommittedResource(&uploadHeap, D3D12_HEAP_FLAG_NONE, &resourceDescriptor, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&m_constantBuffer));
     if (hr != S_OK)
     {
-        MSG_TRACE_CHANNEL("CONSTANT BUFFER", "Failed to create contstant buffer");
+        MSG_TRACE_CHANNEL("CONSTANT BUFFER", "Failed to create constant buffer with error: %d %s", hr, getLastErrorMessage(hr));
     }
 
     // Map and initialize the constant buffer. We don't unmap this until the
@@ -66,8 +69,16 @@ void ConstantBuffer<T>::Create(const DeviceManager& deviceManager)
     hr = m_constantBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_GPUDataBegin));
     if (hr != S_OK)
     {
-        MSG_TRACE_CHANNEL("CONSTANT BUFFER", "Failed to map contstant buffer");
+        MSG_TRACE_CHANNEL("CONSTANT BUFFER", "Failed to map constant buffer with error: %d %s", hr, getLastErrorMessage(hr));
     }
+
+    // Describe and create a constant buffer view.
+    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+    cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
+    cbvDesc.SizeInBytes = sizeof(T) < 256 ? 256 : sizeof(T);
+
+    
+    deviceManager.GetDevice()->CreateConstantBufferView(&cbvDesc, heap.GetCPUDescriptorHandle(m_heapIndex));
 }
 
 template<class T>
@@ -75,19 +86,3 @@ void ConstantBuffer<T>::UpdateGPUData()
 {
     memcpy(m_GPUDataBegin, &m_cpuSideData, sizeof(m_cpuSideData));
 }
-
-///-----------------------------------------------------------------------------
-///! @brief   
-///! @remark
-///-----------------------------------------------------------------------------
-template<class T>
-void ConstantBuffer<T>::CreateViewOnHeap(const CommandQueue& queue)
-{
-    // Describe and create a constant buffer view.
-    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-    cbvDesc.BufferLocation = m_constantBuffer->GetGPUVirtualAddress();
-    cbvDesc.SizeInBytes = sizeof(T);
-    //This needs a handle from a descriptor heap
-    //m_device->CreateConstantBufferView(&cbvDesc, ->GetCPUDescriptorHandleForHeapStart());
-}
-

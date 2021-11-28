@@ -9,6 +9,8 @@
 #include "Graphics/D3D12/CommandQueue.h"
 #include "Graphics/D3D12/D3D12X.h"
 
+static size_t ibCounter = 0;
+
 //void IndexBuffer::createBuffer( const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic )
 //{
 //    D3D11_BUFFER_DESC bufferDescriptor;
@@ -116,4 +118,12 @@ void IndexBuffer::Create(const DeviceManager& deviceManager, CommandList& comman
     m_bufferView.SizeInBytes = static_cast<unsigned int>(bufferSize);
 
     m_numberOfIndecis = static_cast<unsigned int>(bufferSize / sizeof(unsigned int));
+
+#ifdef _DEBUG
+    std::wstringstream str;
+    str << L"IndexBuffer" << ibCounter++;
+    m_defaultResource->SetName(str.str().c_str());
+    str << L"Upload";
+    m_uploadResource->SetName(str.str().c_str());
+#endif
  }

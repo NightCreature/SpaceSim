@@ -32,7 +32,10 @@ public:
     //    m_textureShaderResourceView = srView;
     //}
     HASH_ELEMENT_DEFINITION(Texture12)
+
+    D3D12_CPU_DESCRIPTOR_HANDLE GetTextureHandle() const { return m_handle; }
 protected:
 private:
     ID3D12Resource* m_texture;
+    D3D12_CPU_DESCRIPTOR_HANDLE m_handle;
 };

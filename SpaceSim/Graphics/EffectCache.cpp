@@ -9,12 +9,23 @@ EffectCache::~EffectCache()
 {
 }
 
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void EffectCache::Initialise(Resource* resource)
+{
+    auto& descriptorHeapManager = RenderResourceHelper(resource).getWriteableResource().getDescriptorHeapManager();
+    m_constantBufferHeap = descriptorHeapManager.CreateDescriptorHeap(128, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true);
+}
+
 const Effect* EffectCache::createEffect(Resource* resource, const std::string& resourceFileName)
 {
     std::string resourceName = getResourceNameFromFileName(resourceFileName);
     const Effect* returnValue = getEffect(resourceName);
     if (returnValue == nullptr)
     {
+
         //Load the effect here and deserialise
         tinyxml2::XMLDocument doc;
         if (doc.LoadFile(resourceFileName.c_str()) != tinyxml2::XML_NO_ERROR)
@@ -31,6 +42,9 @@ const Effect* EffectCache::createEffect(Resource* resource, const std::string& r
         {
             Effect effect;
             effect.deserialise(element, resource);
+#ifdef _DEBUG
+			effect.m_name = resourceName;
+#endif
             m_effects.emplace(std::pair<size_t, Effect>(hashString(resourceName), effect));
             returnValue = getEffect(resourceName);
         }
@@ -39,19 +53,19 @@ const Effect* EffectCache::createEffect(Resource* resource, const std::string& r
     return returnValue;
 }
 
-const Effect* EffectCache::getEffect(const std::string& name) const
+Effect* EffectCache::getEffect(const std::string& name)
 {
     return getEffect(hashString(name));
 }
 
-const Effect* EffectCache::getEffect(size_t effectHash) const
+Effect* EffectCache::getEffect(size_t effectHash)
 {
     if (m_effects.empty())
     {
         return nullptr;
     }
 
-    std::map<size_t, Effect>::const_iterator it = m_effects.find(effectHash);
+    std::map<size_t, Effect>::iterator it = m_effects.find(effectHash);
     if (it == m_effects.end())
     {
         return nullptr;

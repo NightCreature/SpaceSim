@@ -88,7 +88,7 @@ public:
         //}
     }
 
-    void deserialise(Resource* resource, const DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node);
+    void deserialise(Resource* resource, DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node);
 
 	Color getAmbient() const {return Color(m_materialCB.m_ambient);}
     Color getDiffuse() const { return Color(m_materialCB.m_diffuse); }

@@ -36,11 +36,11 @@ ParticleEmitterComponentBased::~ParticleEmitterComponentBased()
         delete m_updaters[counter];
     }
 
-    m_particleDataBuffer->Release();
-    m_srv->Release();
-    m_indexBuffer->Release();
-    m_constantBuffers[0]->Release();
-    m_constantBuffers[1]->Release();
+    //m_particleDataBuffer->Release();
+    //m_srv->Release();
+    //m_indexBuffer->Release();
+    //m_constantBuffers[0]->Release();
+    //m_constantBuffers[1]->Release();
 }
 
 ///-----------------------------------------------------------------------------
@@ -88,7 +88,8 @@ void ParticleEmitterComponentBased::initialise(Resource* resource)
         indecis[counter + 5] = (counter / 6 * 4) + 3;
     }
     IndexBuffer indexbuffer;
-    indexbuffer.createBuffer(resourceHelper.getWriteableResource().getDeviceManager(), 6 * numberParticles, indecis, false);
+    CommandList commandList;//fix this
+    indexbuffer.Create(resourceHelper.getWriteableResource().getDeviceManager(), commandList, 6 * numberParticles, indecis);
     //GeometryInstance geomInstance(nullptr, &indexbuffer);
     
     D3D11_SUBRESOURCE_DATA initData;
@@ -213,19 +214,20 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
 
         PROFILE_EVENT("ParticleEmitter::SubmitInstance", DarkBlue);
 
-        const Effect* effect = helper.getResource().getEffectCache().getEffect(hashString("ParticleSystem.xml"));
+        const Effect* effect = helper.getWriteableResource().getEffectCache().getEffect(hashString("ParticleSystem.xml"));
         const Technique* technique = effect->getTechnique(hashString("default"));
+        UNUSEDPARAM(technique);
         deviceContext->UpdateSubresource(m_constantBuffers[0], 0, 0, (void*)&wvp, 0, 0);
         deviceContext->UpdateSubresource(m_constantBuffers[1], 0, 0, (void*)&inverseView, 0, 0);
         
 
         //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-        auto&& shaderCache = helper.getResource().getShaderCache();
-        deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-        deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-        deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-        deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-        deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+        //auto&& shaderCache = helper.getResource().getShaderCache();
+        //deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+        //deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+        //deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+        //deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+        //deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
 
         //technique->setupTechnique();
         deviceContext->VSSetConstantBuffers(0, 2, m_constantBuffers);

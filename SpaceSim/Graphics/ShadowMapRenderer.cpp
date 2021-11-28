@@ -199,7 +199,13 @@ void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, c
 ///-----------------------------------------------------------------------------
 void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light)
 {
-    PROFILE_EVENT("ShadowMapRenderer::renderShadowMap", Blue);
+
+    UNUSEDPARAM(resource);
+    UNUSEDPARAM(renderInstances);
+    UNUSEDPARAM(deviceManager);
+    UNUSEDPARAM(light);
+
+    /*PROFILE_EVENT("ShadowMapRenderer::renderShadowMap", Blue);
     if (light != nullptr)
     {
 #ifdef _DEBUG
@@ -233,6 +239,7 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
 
         RenderResourceHelper gameResource = { resource };
         const ShaderCache& shaderCache = gameResource.getResource().getShaderCache();
+        UNUSEDPARAM(shaderCache);
         const EffectCache& effectCache = gameResource.getResource().getEffectCache();
 
         size_t oldTechniqueId = 0;
@@ -291,11 +298,11 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
                 if (technique->getTechniqueId() != oldTechniqueId)
                 {
                     //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-                    deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-                    deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-                    deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-                    deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-                    deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+                    //deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
+                    //deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
+                    //deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
+                    //deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
+                    //deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
                     oldTechniqueId = technique->getTechniqueId();
                 }
                 technique->setupTechnique();
@@ -348,4 +355,5 @@ void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstance
         pPerf->EndEvent();
 #endif
     }
+    */
 }

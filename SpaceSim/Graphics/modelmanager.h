@@ -22,14 +22,15 @@ public:
     void cleanup();
     void initialise(Resource* resource) { m_resource = resource; }
 
-    size_t LoadModel(void* data);
-    size_t AddFace(void* data);
+    size_t LoadModel(void* data, size_t commandQueueHandle, size_t commandLisHandle);
+    size_t AddFace(void* data, size_t commandQueueHandle, size_t commandLisHandle);
 
     bool HasRenderResource(size_t resource_id) const;
     void RegisterCreatedModel(CreatedModel model, size_t renderResourceId);
     const CreatedModel* GetRenderResource(size_t renderResourceId) const;
 protected:
 private:
+    bool InternalHasRenderResource(size_t resourceId) const;
     struct ModelResourceHandle
     {
         CreatedModel m_model;
@@ -40,6 +41,6 @@ private:
 
     Resource* m_resource;
 
-    std::mutex m_mutex;
+    mutable std::mutex m_mutex;
 };
 #endif

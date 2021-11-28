@@ -4,12 +4,13 @@
 
 #include <windows.h>
 
-
 struct PlatformSpecficFileDataWin
 {
+    OVERLAPPED m_overlapped; //store this first so we can resurrect the object from that pointer
     HANDLE m_fileHandle = INVALID_HANDLE_VALUE;
     size_t m_filePosition = 0;
     size_t m_fileSize = 0;
+    VFS::FileOperation m_operation = VFS::FileOperation::NoOp;
 };
 
 void VFS::File::Close()
@@ -20,6 +21,24 @@ void VFS::File::Close()
     platformData->m_fileSize = 0;
     delete platformData;
     m_platformSpecificData = nullptr;
+}
+
+namespace VFS
+{
+
+//Callback for Overlapped IO
+void LpoverlappedCompletionRoutine(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped)
+{
+    if (dwErrorCode == ERROR_SUCCESS)
+    {
+        auto* platformData = reinterpret_cast<PlatformSpecficFileDataWin*>(lpOverlapped); //Its the reason the overlapped structure is at the top
+        if (nullptr != platformData)
+        {
+            platformData->m_filePosition += dwNumberOfBytesTransfered;
+        }
+    }
+}
+
 }
 
 void VFS::File::createFile(const std::filesystem::path& name, FileMode fileMode)
@@ -54,7 +73,7 @@ void VFS::File::createFile(const std::filesystem::path& name, FileMode fileMode)
 }
 
 ///-----------------------------------------------------------------------------
-///! @brief 
+///! @brief This function writes from the current file pointer
 ///! @remark
 ///-----------------------------------------------------------------------------
 void VFS::File::Write(byte* data, size_t length)
@@ -69,9 +88,66 @@ void VFS::File::Write(byte* data, size_t length)
     if (m_platformSpecificData != nullptr && platformData->m_fileHandle != INVALID_HANDLE_VALUE)
     {
         size_t amountToWrite = length;
+        size_t counter = 0;
+        DWORD numberOfBytesWritten = 0;
         while (length >= std::numeric_limits<unsigned long>::max())
         {
-            if (!WriteFileEx(platformData->m_fileHandle, static_cast<void*>(data), std::numeric_limits<unsigned long>::max(), NULL, NULL))
+            size_t offset = platformData->m_filePosition + std::numeric_limits<unsigned long>::max() * counter;
+            platformData->m_overlapped.Offset = static_cast<unsigned long>(offset);
+            platformData->m_overlapped.OffsetHigh = static_cast<unsigned long>(offset >> 32);
+            ++counter;
+
+            numberOfBytesWritten = 0;
+            if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(data), std::numeric_limits<unsigned long>::max(), &numberOfBytesWritten, &(platformData->m_overlapped)))
+            {
+                MSG_TRACE_CHANNEL("FILESYSTEM", "Writing to file: %s failed for reason: %s", m_name.string().c_str(), getLastErrorMessage(GetLastError()));
+                return;
+            }
+            amountToWrite -= std::numeric_limits<unsigned long>::max();
+            data += std::numeric_limits<unsigned long>::max();
+        }
+
+        platformData->m_overlapped.Offset = static_cast<unsigned long>(amountToWrite);
+        platformData->m_overlapped.OffsetHigh = static_cast<unsigned long>(amountToWrite >> 32);
+        numberOfBytesWritten = 0;
+        if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(data), static_cast<unsigned long>(amountToWrite), &numberOfBytesWritten, &(platformData->m_overlapped)))
+        {
+            //Handle error file writing fucked up
+            MSG_TRACE_CHANNEL("FILESYSTEM", "Writing to file: %s failed for reason: %s", m_name.string().c_str(), getLastErrorMessage(GetLastError()));
+            return;
+        }
+
+        platformData->m_filePosition += length;
+    }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief This function writes at a certain offset from the beginning of the file and resets the file position
+///! @remark
+///-----------------------------------------------------------------------------
+void VFS::File::Write(byte* data, size_t offset, size_t length)
+{
+    if (data == nullptr || length <= 0)
+    {
+        return; //nothing to do no data or zero bytes to write
+    }
+
+    PlatformSpecficFileDataWin* platformData = static_cast<PlatformSpecficFileDataWin*>(m_platformSpecificData);
+
+    if (m_platformSpecificData != nullptr && platformData->m_fileHandle != INVALID_HANDLE_VALUE)
+    {
+        size_t amountToWrite = length;
+        size_t counter = 0;
+        DWORD numberOfBytesWritten = 0;
+        while (length >= std::numeric_limits<unsigned long>::max())
+        {
+            //size_t fileOffset = offset + std::numeric_limits<unsigned long>::max() * counter;
+            platformData->m_overlapped.Offset = static_cast<unsigned long>(offset);
+            platformData->m_overlapped.OffsetHigh = static_cast<unsigned long>(offset >> 32);
+            ++counter;
+
+            numberOfBytesWritten = 0;
+            if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(data), std::numeric_limits<unsigned long>::max(), &numberOfBytesWritten, &(platformData->m_overlapped)))
             {
                 MSG_TRACE_CHANNEL("FILESYSTEM", "Writing to file: %s failed for reason: %s", m_name.string().c_str(), getLastErrorMessage(GetLastError()));
                 return;
@@ -79,7 +155,10 @@ void VFS::File::Write(byte* data, size_t length)
             amountToWrite -= std::numeric_limits<unsigned long>::max();
         }
 
-        if (!WriteFileEx(platformData->m_fileHandle, static_cast<void*>(data), static_cast<unsigned long>(amountToWrite), NULL, NULL))
+        platformData->m_overlapped.Offset = static_cast<unsigned long>(amountToWrite);
+        platformData->m_overlapped.OffsetHigh = static_cast<unsigned long>(amountToWrite >> 32);
+        numberOfBytesWritten = 0;
+        if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(data), static_cast<unsigned long>(amountToWrite), &numberOfBytesWritten, &(platformData->m_overlapped)))
         {
             //Handle error file writing fucked up
             MSG_TRACE_CHANNEL("FILESYSTEM", "Writing to file: %s failed for reason: %s", m_name.string().c_str(), getLastErrorMessage(GetLastError()));

@@ -7,6 +7,8 @@
 #include <list>
 #include <vector>
 
+#include <D3D12.h>
+
 class Input;
 class Resource;
 
@@ -39,6 +41,21 @@ public:
             for (size_t counter = 0; counter < m_modelData.size(); ++counter)
             {
                 m_modelData[counter]->update(resource, renderInstance, elapsedTime, world, view, projection, name, m_boundingBox);
+            }
+        }
+    }
+
+    ///-----------------------------------------------------------------------------
+    ///! @brief   
+    ///! @remark Since View and porjections are mostly per frame or per pass constants we dont need to set them
+    ///-----------------------------------------------------------------------------
+    void Update(Resource* resource, CommandList& list, float elapsedTime, const Matrix44& world, const std::string& name)
+    {
+        if (!m_modelData.empty())
+        {
+            for (size_t counter = 0; counter < m_modelData.size(); ++counter)
+            {
+                m_modelData[counter]->Update(resource, list, elapsedTime, world, name, m_boundingBox);
             }
         }
     }

@@ -6,11 +6,22 @@
 ///--------------------------------------------------------------------------------------
 
 Texture2D<float4> shaderTextures : register(t8);
-SamplerState SampleType : register (s0);
+SamplerState SampleType
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
 
 Texture2D<float4> normalMap : register(t32);
 Texture2D<float4> shadowMap : register(t33);
-SamplerState ShadowSampleType : register (s1);
+SamplerState ShadowSampleType
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
 
 
 ///--------------------------------------------------------------------------------------

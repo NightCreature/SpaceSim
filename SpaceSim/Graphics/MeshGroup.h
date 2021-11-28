@@ -20,8 +20,10 @@ public:
     {
         m_world.identity();
         m_shaderInstance.setMaterial(m_material);
-        m_shaderInstance.AddPsConstantBuffer(sizeof(MaterialContent), deviceManager, "material content buffer for meshgroup");
-        m_shaderInstance.AddVsConstantBuffer(sizeof(WVPBufferContent), deviceManager, "WVP content buffer for meshgroup");
+        //m_shaderInstance.AddPsConstantBuffer(sizeof(MaterialContent), deviceManager, "material content buffer for meshgroup");
+        //m_shaderInstance.AddVsConstantBuffer(sizeof(WVPBufferContent), deviceManager, "WVP content buffer for meshgroup");
+
+        UNUSEDPARAM(deviceManager);
     }
     MeshGroup(const MeshGroup& source);
     ~MeshGroup();
@@ -29,6 +31,8 @@ public:
     //Create and add a RenderInstance into the tree to be rendered
     void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box);
     
+    void Update(Resource* resource, CommandList& list, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box);
+
     void setMaterial(const Material& material) { m_material = material; m_renderInstanceDirty = true; }
     void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true; }
 
@@ -42,9 +46,10 @@ public:
 private:
     Matrix44 m_world;
     Material m_material;
-    GeometryInstance m_geometryInstance;
-    ShaderInstance m_shaderInstance;
-    RenderInstance* m_renderInstance;
+    GeometryInstance m_geometryInstance; //This goes
+    ShaderInstance m_shaderInstance; //this goes
+    RenderInstance* m_renderInstance; //this goes
+    //SHould all be done here since we can execute commands here :)
     bool m_renderInstanceDirty;
 };
 

@@ -4,6 +4,7 @@
 
 #include <atomic>
 #include <sstream>
+#include "../Types/TypeHelpers.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -177,5 +178,6 @@ void JobSystem::ProcessWork()
     else
     {
         DWORD waitReturn = WaitForSingleObject(m_workFinishedEvent, INFINITE);
+        UNUSEDPARAM(waitReturn);
     }
 }

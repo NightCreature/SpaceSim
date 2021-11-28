@@ -4,13 +4,15 @@
 #include "Core/Paths.h"
 
 #include "WICTextureLoader.h"
-#include "DDSTextureLoader.h"
+#include <DDSTextureLoader.h>
 
 #include <assert.h>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 
 
+std::mutex mutex;
 
 Texture::Texture()
 {
@@ -24,6 +26,8 @@ Texture::~Texture()
 
 bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, const std::string& filename)
 {
+    std::scoped_lock<std::mutex> scopeLock(mutex);
+
     ID3D11Device* device = deviceManager.getDevice();
     HRESULT hr = S_OK;
 
@@ -34,15 +38,16 @@ bool Texture::loadTextureFromFile(const DeviceManager& deviceManager, const std:
 	convertToWideString(makeAbsolutePath(filename), wfilename);
     if (extension == "dds")
     {
-        hr = DirectX::CreateDDSTextureFromFile(device, wfilename.c_str(), 0, &m_textureShaderResourceView);
+        //hr = DirectX::CreateDDSTextureFromFile(device, deviceManager.getDeferredDeviceContext(), wfilename.c_str(), 0, &m_textureShaderResourceView);
         //D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("SRV for Texture %s", filename.c_str()));
     }
     else
     {
 
-        hr = DirectX::CreateWICTextureFromFile(device, deviceManager.getDeviceContext(), wfilename.c_str(), 0, &m_textureShaderResourceView, 0);
+        //hr = DirectX::CreateWICTextureFromFile(device, deviceManager.getDeferredDeviceContext(), wfilename.c_str(), 0, &m_textureShaderResourceView, 0);
         //D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("RTV for Texture %s", filename.c_str()));
     }
+
 
     if (FAILED(hr))
     {

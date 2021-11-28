@@ -4,13 +4,21 @@
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
 #include <d3d12.h>
 
-constexpr size_t invalidDescriptorIndex = static_cast<size_t>(-1);
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
 DescriptorHeapManager::~DescriptorHeapManager()
+{
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void DescriptorHeapManager::Cleanup()
 {
     for (auto& heap : m_descriptorHeaps)
     {
@@ -23,13 +31,13 @@ DescriptorHeapManager::~DescriptorHeapManager()
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-DescriptorHeap DescriptorHeapManager::CreateDescriptorHeap(size_t descriptorCount, D3D12_DESCRIPTOR_HEAP_TYPE type)
+DescriptorHeap DescriptorHeapManager::CreateDescriptorHeap(size_t descriptorCount, D3D12_DESCRIPTOR_HEAP_TYPE type, bool shaderVisible)
 {
     //Create the heap for the back buffers we still have to attach the resources
     DescriptorHeap heap;
     heap.m_descriptor.NumDescriptors = static_cast<UINT>(descriptorCount);
     heap.m_descriptor.Type = type;
-    heap.m_descriptor.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+    heap.m_descriptor.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE: D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     heap.m_descriptor.NodeMask = 0;
 
     auto& resourceWrapper = RenderResourceHelper(m_resource).getWriteableResource();
@@ -54,12 +62,13 @@ DescriptorHeap DescriptorHeapManager::CreateDescriptorHeap(size_t descriptorCoun
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCPUDescriptorHandle(size_t index /*= -1*/)
+D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCPUDescriptorHandle(size_t& index)
 {
     D3D12_CPU_DESCRIPTOR_HANDLE handle(m_heap->GetCPUDescriptorHandleForHeapStart());
     if (index == invalidDescriptorIndex)
     {
         handle.ptr += m_usedDescriptors * m_incrementSize;
+        index = m_usedDescriptors;
         ++m_usedDescriptors;
     }
     else
@@ -73,7 +82,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::GetCPUDescriptorHandle(size_t index 
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetGPUDescriptorHandle(size_t index /*= -1*/)
+D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::GetGPUDescriptorHandle(size_t index)
 {
     D3D12_GPU_DESCRIPTOR_HANDLE handle(m_heap->GetGPUDescriptorHandleForHeapStart());
     if (index == invalidDescriptorIndex)

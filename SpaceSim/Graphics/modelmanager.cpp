@@ -34,7 +34,7 @@ void ModelManager::cleanup()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-size_t ModelManager::LoadModel( void* data )
+size_t ModelManager::LoadModel( void* data, size_t commandQueueHandle, size_t commandLisHandle)
 {
     auto modelData = static_cast<MessageSystem::CreateRenderResource<LoadModelResource>::ResourceData<LoadModelResource>*>(data);
 
@@ -50,18 +50,22 @@ size_t ModelManager::LoadModel( void* data )
 
         std::string extension = extractExtensionFromFileName(loadData.m_fileName);
 
+        auto& resource = RenderResourceHelper(m_resource).getWriteableResource();
+        auto& commandQueue = resource.getDeviceManager().GetCommandQueue(commandQueueHandle);
+        auto& commandList = commandQueue.GetCommandList(commandLisHandle);
+
         CreatedModel createdModel;
         if (strICmp(extension, "dat") || strICmp(extension, "xml"))
         {
             XMLModelLoader loader;
-            createdModel = loader.LoadModel(m_resource, loadData);
+            createdModel = loader.LoadModel(m_resource, loadData, commandList);
             //m_loadedModels.insert(GeometryTreePair(fileNameHash, model));
         }
         else if (strICmp(extension, "mml"))
         {
             //This format is a mixture between an xml and a attached model file
             MmlLoader loader;
-            createdModel = loader.LoadModel(m_resource, loadData);
+            createdModel = loader.LoadModel(m_resource, loadData, commandList);
         }
         else
         {
@@ -82,12 +86,16 @@ size_t ModelManager::LoadModel( void* data )
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-size_t ModelManager::AddFace(void* data)
+size_t ModelManager::AddFace(void* data, size_t commandQueueHandle, size_t commandLisHandle)
 {
-    auto creationParams = static_cast<MessageSystem::CreateRenderResource<Face::CreationParams>::ResourceData<Face::CreationParams>*>(data);
+    auto* creationParams = static_cast<MessageSystem::CreateRenderResource<Face::CreationParams>::ResourceData<Face::CreationParams>*>(data);
     size_t renderResourceId = HASH_BINARY(creationParams);
     if (!HasRenderResource(renderResourceId))
     {
+        auto& resource = RenderResourceHelper(m_resource).getWriteableResource();
+        auto& commandQueue = resource.getDeviceManager().GetCommandQueue(commandQueueHandle);
+        creationParams->m_fixedData.m_commandList = &(commandQueue.GetCommandList(commandLisHandle));
+
         //register face with model manager
         RegisterCreatedModel(Face::CreateFace((creationParams->m_fixedData), m_resource), renderResourceId);
     }
@@ -101,8 +109,7 @@ size_t ModelManager::AddFace(void* data)
 ///-----------------------------------------------------------------------------
 bool ModelManager::HasRenderResource(size_t resource_id) const
 {
-    //std::scoped_lock<std::mutex> lock(m_mutex);
-    return (std::find_if(cbegin(m_models), cend(m_models), [resource_id](const auto& entry) { return entry.m_resourceId == resource_id; })) != cend(m_models);
+    return InternalHasRenderResource(resource_id);
 }
 
 ///-----------------------------------------------------------------------------
@@ -112,7 +119,7 @@ bool ModelManager::HasRenderResource(size_t resource_id) const
 void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourceId)
 {
     std::scoped_lock<std::mutex> lock(m_mutex);
-    if (!HasRenderResource(renderResourceId))
+    if (!InternalHasRenderResource(renderResourceId))
     {
         ModelResourceHandle handle;
         handle.m_model = model;
@@ -128,7 +135,7 @@ void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourc
 ///-----------------------------------------------------------------------------
 const CreatedModel* ModelManager::GetRenderResource(size_t renderResourceId) const
 {
-    //std::scoped_lock<std::mutex> lock(m_mutex);
+    std::scoped_lock<std::mutex> lock(m_mutex);
     ModelsArray::const_iterator it = std::find_if(cbegin(m_models), cend(m_models), [renderResourceId](const auto& entry) { return entry.m_resourceId == renderResourceId; });
     if (it != cend(m_models))
     {
@@ -136,4 +143,13 @@ const CreatedModel* ModelManager::GetRenderResource(size_t renderResourceId) con
     }
 
     return nullptr;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark This might not be needed, does this function need to actually lock
+///-----------------------------------------------------------------------------
+bool ModelManager::InternalHasRenderResource(size_t resourceId) const
+{
+    return (std::find_if(cbegin(m_models), cend(m_models), [resourceId](const auto& entry) { return entry.m_resourceId == resourceId; })) != cend(m_models);
 }

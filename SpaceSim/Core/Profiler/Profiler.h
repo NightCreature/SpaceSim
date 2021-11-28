@@ -34,7 +34,7 @@ public:
     void RegisterThreadName(size_t threadId, const std::string& threadName);
     void RegisterFrameName(const std::string& frameName);
 
-    Event* Profiler::CaptureEvent(const size_t& eventDescriptorHash);
+    Event* CaptureEvent(const size_t& eventDescriptorHash);
 
     void BeginFrame();
 

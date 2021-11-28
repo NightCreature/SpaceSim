@@ -39,7 +39,7 @@ public:
 
 #ifdef MEMORY_PROFILING
         //Tell mtuner about the allocation
-        rmemAlloc(0, returnSlot, size, 0);
+        //rmemAlloc(0, returnSlot, size, 0);
 #endif
 
         return returnSlot;
@@ -53,7 +53,7 @@ public:
 
 #ifdef MEMORY_PROFILING
         //Tell mtuner about the allocation
-        rmemFree(0, p);
+        //rmemFree(0, p);
 #endif
     }
 private:

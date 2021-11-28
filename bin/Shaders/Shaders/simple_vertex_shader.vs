@@ -1,7 +1,7 @@
 #define LIGHTHING
 #define SHADOW
 #include "CommonConstantBuffers.ivs"
-#include "rootsignatures.ifx"
+//#include "rootsignatures.ifx"
 
 ///--------------------------------------------------------------------------------------
 struct VS_INPUT
@@ -22,6 +22,25 @@ struct PS_INPUT
     float3 WorldPos : TEXCOORD1;
     float4 LightToPixel : TEXCOORD2;
 };
+
+#define simpleEffectRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "CBV(b0, space=0),"\
+    "CBV(b1, space=0),"\
+    "CBV(b2, space=0),"\
+    "CBV(b0, space=1),"\
+    "CBV(b1, space=1),"\
+    "DescriptorTable( SRV(t8) ),"\
+    "DescriptorTable( SRV(t32) ),"\
+    "DescriptorTable( SRV(t33) ),"\
+    "StaticSampler(s0, "\
+               "addressU = TEXTURE_ADDRESS_WRAP, "\
+               "addressV = TEXTURE_ADDRESS_WRAP, "\
+               "filter = FILTER_ANISOTROPIC ),"\
+    "StaticSampler(s1, "\
+               "addressU = TEXTURE_ADDRESS_WRAP, "\
+               "addressV = TEXTURE_ADDRESS_WRAP, "\
+               "filter = FILTER_ANISOTROPIC )"
 
 ///--------------------------------------------------------------------------------------
 // Vertex Shader

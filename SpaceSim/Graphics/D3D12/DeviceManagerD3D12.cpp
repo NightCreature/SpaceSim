@@ -3,6 +3,8 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include <dxgidebug.h>
 #include "Core/Resource/RenderResource.h"
+#include "D3D12X.h"
+#include <sstream>
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
@@ -231,7 +233,7 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
     // Describe and create the swap chain.
     m_swapChainDescriptor = {};
     m_swapChainDescriptor.BufferCount = static_cast<UINT>(m_frameCount);
-    m_swapChainDescriptor.Width = windowHeight;
+    m_swapChainDescriptor.Width = windowWidth;
     m_swapChainDescriptor.Height = windowHeight;
     m_swapChainDescriptor.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     m_swapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -254,7 +256,7 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
     m_currentBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
 
     //Create the heap for the back buffers we still have to attach the resources
-    m_renderTargetViewDescriptorHeap = writableResource.getDescriptorHeapManager().CreateDescriptorHeap(m_frameCount, D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    m_renderTargetViewDescriptorHeap = writableResource.getDescriptorHeapManager().CreateDescriptorHeap(m_frameCount, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, false);
 
     
     //Create actual resources for the backbuffers
@@ -271,13 +273,20 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
             MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to grab the backbuffer for the swapchain with error: 0x%x, %s", hr, getLastErrorMessage(hr));
             return false;
         }
-        D3D12_CPU_DESCRIPTOR_HANDLE  rtvHandle = m_renderTargetViewDescriptorHeap.GetCPUDescriptorHandle();
+        size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
+        D3D12_CPU_DESCRIPTOR_HANDLE  rtvHandle = m_renderTargetViewDescriptorHeap.GetCPUDescriptorHandle(descriptorIndex);
         m_device->CreateRenderTargetView(m_backBufferRenderTargets[counter], nullptr, rtvHandle);
+
+#ifdef _DEBUG
+        std::wstringstream str;
+        str << L"Back Buffer Render Target" << counter;
+        m_backBufferRenderTargets[counter]->SetName(str.str().c_str());
+#endif
     }
 
 
     //Create the Depth Stencil heap
-    m_depthStencilDescriptorHeap = writableResource.getDescriptorHeapManager().CreateDescriptorHeap(1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+    m_depthStencilDescriptorHeap = writableResource.getDescriptorHeapManager().CreateDescriptorHeap(1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, false);
     
 
     // Create the depth stencil view.
@@ -312,14 +321,24 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
         heapProperties.CreationNodeMask = 1;
         heapProperties.VisibleNodeMask = 1;
 
-        hr = m_device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &depthStencilDescriptor, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthOptimizedClearValue, IID_PPV_ARGS(&m_depthStencil));
+        auto depthDescritpionD3Dx = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, windowWidth, windowHeight, 1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+
+        hr = m_device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &depthDescritpionD3Dx, D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthOptimizedClearValue, IID_PPV_ARGS(&m_depthStencil));
         if (hr != S_OK)
         {
             MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create depth stencil resource with error: 0x%x, %s", hr, getLastErrorMessage(hr));
             return false;
         }
 
-        m_device->CreateDepthStencilView(m_depthStencil, &depthStencilDesc, m_depthStencilDescriptorHeap.GetCPUDescriptorHandle());
+#ifdef _DEBUG
+        std::wstringstream str;
+        str << L"Depth Stencil";
+        m_depthStencil->SetName(str.str().c_str());
+#endif
+
+
+		
+        m_device->CreateDepthStencilView(m_depthStencil, &depthStencilDesc, m_depthStencilDescriptorHeap.GetCPUDescriptorHandle(depthStencilDescriptorIndex));
     }
 
     return true;
@@ -344,12 +363,22 @@ size_t DeviceManager::CreateCommandQueue()
         return std::numeric_limits<size_t>::max();
     }
 
+#ifdef _DEBUG
+    std::wstringstream str;
+    str << L"CommandQueue" << m_commandQueues.size();
+    queue.m_queue->SetName(str.str().c_str());
+#endif
+
     hr = m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&queue.m_fence));
     if (hr != S_OK)
     {
         MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create a GPU fence with error: 0x%x, %s", hr, getLastErrorMessage(hr));
         return std::numeric_limits<size_t>::max();
     }
+#ifdef _DEBUG
+    str << L"Fence";
+    queue.m_queue->SetName(str.str().c_str());
+#endif
     queue.m_fenceValue = 1;
 
     queue.m_fenceEvent = CreateEvent(nullptr, false, false, nullptr);
@@ -370,7 +399,7 @@ size_t DeviceManager::CreateCommandQueue()
 ///-----------------------------------------------------------------------------
 D3D12_CPU_DESCRIPTOR_HANDLE DeviceManager::GetDepthStencilHandle()
 {
-    return m_depthStencilDescriptorHeap.GetCPUDescriptorHandle(0);
+    return m_depthStencilDescriptorHeap.GetCPUDescriptorHandle(depthStencilDescriptorIndex);
 }
 
 ///-----------------------------------------------------------------------------
@@ -388,7 +417,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE DeviceManager::GetCurrentBackBufferRTVHandle()
 ///-----------------------------------------------------------------------------
 bool DeviceManager::InitialiseDebugLayers()
 {
-//#if defined(_DEBUG)
+#if defined(_DEBUG)
     // Enable the D3D12 debug layer.
     HRESULT hr = D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugInterface));
     if (hr != S_OK)
@@ -398,7 +427,7 @@ bool DeviceManager::InitialiseDebugLayers()
     }
 
     m_debugInterface->EnableDebugLayer();
-//#endif
+#endif
 
     return true;
 }

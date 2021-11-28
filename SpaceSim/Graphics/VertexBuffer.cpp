@@ -14,6 +14,7 @@
 #include "Graphics/D3D12/CommandQueue.h"
 #include "Core/Types/Types.h"
 
+static size_t vbCounter = 0;
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
@@ -101,6 +102,14 @@ void VertexBuffer::Create(const DeviceManager& deviceManager, CommandList& comma
     m_bufferView.BufferLocation = m_defaultResource->GetGPUVirtualAddress();
     m_bufferView.StrideInBytes = static_cast<unsigned int>(vertexStride);
     m_bufferView.SizeInBytes = static_cast<unsigned int>(bufferSize);
+
+#ifdef _DEBUG
+    std::wstringstream str;
+    str << L"VertexBuffer" << vbCounter++;
+    m_defaultResource->SetName(str.str().c_str());
+    str << L"Upload";
+    m_uploadResource->SetName(str.str().c_str());
+#endif
     //HRESULT hr = deviceManager.GetDevice()->CreateCommittedResource(
     //    &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
     //    D3D12_HEAP_FLAG_NONE,

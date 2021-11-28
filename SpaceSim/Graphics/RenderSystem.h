@@ -31,6 +31,8 @@
 #ifdef _DEBUG
 #include <d3d11_1.h>
 #endif
+#include "D3D12/DescriptorHeapManager.h"
+#include "D3D12/D3D12X.h"
 
 class RenderInstance;
 namespace MessageSystem
@@ -65,6 +67,7 @@ public:
     void beginDraw();
     void CheckVisibility(RenderInstanceTree& renderInstances);
     void update(float elapsedTime, double time);
+
     void endDraw();
 
     HWND getWindowHandle() const { return m_window.getWindowHandle(); }
@@ -80,6 +83,11 @@ public:
     void CreateRenderList(const MessageSystem::Message& msg);
 
     void setInput(Input input) { m_input = input; }
+
+    //Fix this
+    static Matrix44 m_view;
+    static Matrix44 m_inverseView;
+    static Matrix44 m_projection;
 protected:
 private:
     void setupSwapChainForRendering( ID3D11Device* device, ID3D11DeviceContext* deviceContext, int windowWidth, int windowHeight );
@@ -87,15 +95,14 @@ private:
     void initialiseCubemapRendererAndResources( Resource* resource );
     
     Matrix44 m_CullingProjectionMatrix;
-    Matrix44 m_view;
-    Matrix44 m_inverseView;
-    Matrix44 m_projection;
+
 
     RenderResource* m_renderResource;
 
     CameraManager      m_cameraSystem;
     DeviceManagerD3D11 m_deviceManager11;
     DeviceManager m_deviceManager;
+    DescriptorHeapManager m_heapManager;
     TextureManager m_textureManager;
     ModelManager m_modelManger;
     LightManager m_lightManager;
@@ -109,6 +116,8 @@ private:
     std::string m_windowName;
 
     IDXGISwapChain* m_swapChain; //Non owning pointer
+    D3D12_VIEWPORT m_viewPort;
+    CD3DX12_RECT m_scissorRect;
 
     //This needs to change
     ID3D11Texture2D* m_backBuffer;
@@ -177,4 +186,7 @@ private:
     void CreateMainCommandList();
 
     size_t m_tempCommandList;
+    size_t m_renderCommandQueueHandle = 0;
+    size_t m_currentCommandListIndex = 0;
+    size_t m_backUpCommandListIndex = 0;
 };

@@ -75,7 +75,7 @@ private:
     virtual void internalActionSetup(InputActions::ActionType, const tinyxml2::XMLAttribute* input) override;
     void calculateThumbStickDirectionAndMagnitude(float stickX, float stickY, bool isLeftStick, Vector4& directionAndMagnitude);
 
-    InputActions::ActionType m_PhysicalInputState[InputDefines::XControllerDefines::XControllerInput::NumInputActions];
+    InputActions::ActionType m_PhysicalInputState[static_cast<std::underlying_type_t<InputDefines::XControllerDefines::XControllerInput>>( InputDefines::XControllerDefines::XControllerInput::NumInputActions)];
 
     int            m_controllerIndex;
     bool           m_controllerActive;

@@ -26,7 +26,7 @@ const size_t numberOfTexcoords = 1;
 ///! @remark
 ///-----------------------------------------------------------------------------
 CreatedModel CreateFace(const CreationParams& params, Resource* resource)
-{
+{ 
     RenderResourceHelper renderResourceHelper(resource);
     const RenderResource& renderResource = renderResourceHelper.getResource();
     //const ShaderInstance& shaderInstance = *(params.shaderInstance);
@@ -98,21 +98,20 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
         createVertexData(params, vertexData, face.boundingBox, corridorheight, corridorwidth, rows, columns);
 
         //Move pointer to start of vertex array  
-        const EffectCache& effectCache = renderResource.getEffectCache();
-        const Effect* effect = effectCache.getEffect(mat.getEffectHash());
-        const Technique* technique = effect->getTechnique(mat.getTechnique());
 
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.position = 3;
         vertexDesc.normal = true;
         vertexDesc.tangent = true;
         vertexDesc.textureCoordinateDimensions = texCoordDimensions;
-        const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader());
-        assert(shader);
-        if (!vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), static_cast<unsigned int>(bufferSize), startOfVertexArray, false, vertexDesc, shader->getShaderBlob()))
+
+        if (params.m_commandList != nullptr)
         {
-            MSG_TRACE_CHANNEL("VERTEXBUFFER_ERROR", "Failed to create VB!");
-            assert(false);
+            vb->Create(renderResource.getDeviceManager(), *params.m_commandList, bufferSize, startOfVertexArray, vertexDesc.GetVertexStride());
+        }
+        else
+        {
+            //Print message
         }
 
         delete[] startOfVertexArray; //cleanup
@@ -125,7 +124,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
         unsigned int* startOfIndexData = indecis;
         createIndexData(indecis, params.changeWindingOrder, rows, columns);
 
-        ib->createBuffer(renderResource.getDeviceManager(), static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData, false);
+        ib->Create(renderResource.getDeviceManager(), *params.m_commandList, static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData);
         delete[] startOfIndexData; //cleanup
         indecis = nullptr;
         startOfIndexData = nullptr;

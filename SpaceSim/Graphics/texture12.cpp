@@ -77,7 +77,9 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, const std::str
 
     //Need to find a way to get this here
     DirectX::CreateShaderResourceView(device, m_texture, handle);
+    m_handle = handle;
     //Create resource view here, CPU handle
+   
 
 
     if (FAILED(hr))

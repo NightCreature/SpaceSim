@@ -1,0 +1,99 @@
+#define coreEffectRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "CBV(b0, space=0),"\
+    "CBV(b0, space=1),"\
+    "CBV(b1, space=1),"\
+    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "DescriptorTable( SRV(t33), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "StaticSampler(s0, " \
+                   "addressU = TEXTURE_ADDRESS_WRAP, " \
+                   "addressV = TEXTURE_ADDRESS_WRAP, " \
+                   "filter = FILTER_ANISOTROPIC )"
+
+#define shadowMappingRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "CBV(b0)"
+
+#define worldTransformRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "CBV(b0)"
+
+#define doorRS\
+    "RootFlags(ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT),"\
+    "CBV(b0, space=0),"\
+    "CBV(b0, space=1),"\
+    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "StaticSampler(s0, " \
+                   "addressU = TEXTURE_ADDRESS_WRAP, " \
+                   "addressV = TEXTURE_ADDRESS_WRAP, " \
+                   "filter = FILTER_ANISOTROPIC )"
+
+#define forceFieldRS\
+    "RootFlags(ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT),"\
+    "CBV(b0, space=0),"\
+    "CBV(b0, space=1),"\
+    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "StaticSampler(s0, " \
+                   "addressU = TEXTURE_ADDRESS_WRAP, " \
+                   "addressV = TEXTURE_ADDRESS_WRAP, " \
+                   "filter = FILTER_ANISOTROPIC )"
+
+#define laserRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "CBV(b0, space=0),"\
+    "CBV(b0, space=1)"
+
+#define gunRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "CBV(b0, space=0),"\
+    "CBV(b0,  space=1),"\
+    "CBV(b1,  space=1)"
+
+#define particleSystemRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "SRV(t0),"\
+    "CBV(b0),"\
+    "CBV(b1),"\
+    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "StaticSampler(s0, " \
+               "addressU = TEXTURE_ADDRESS_WRAP, " \
+               "addressV = TEXTURE_ADDRESS_WRAP, " \
+               "filter = FILTER_ANISOTROPIC )"
+
+#define sdfFontRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "CBV(b0, space=0),"\
+    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "StaticSampler(s0, " \
+               "addressU = TEXTURE_ADDRESS_WRAP, " \
+               "addressV = TEXTURE_ADDRESS_WRAP, " \
+               "filter = FILTER_ANISOTROPIC )"
+
+#define simpleEffectRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "CBV(b0, space=0),"\
+    "CBV(b1, space=0),"\
+    "CBV(b2, space=0),"\
+    "CBV(b0, space=1),"\
+    "CBV(b1, space=1),"\
+    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "DescriptorTable( SRV(t32), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "DescriptorTable( SRV(t33), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "StaticSampler(s0, " \
+               "addressU = TEXTURE_ADDRESS_WRAP, " \
+               "addressV = TEXTURE_ADDRESS_WRAP, " \
+               "filter = FILTER_ANISOTROPIC )", \
+    "StaticSampler(s1, " \
+               "addressU = TEXTURE_ADDRESS_WRAP, " \
+               "addressV = TEXTURE_ADDRESS_WRAP, " \
+               "filter = FILTER_ANISOTROPIC )"
+
+
+#define skyDomeRS\
+    "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
+    "CBV(b0) ,"\
+    "DescriptorTable( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "StaticSampler(s0, " \
+       "addressU = TEXTURE_ADDRESS_WRAP, " \
+       "addressV = TEXTURE_ADDRESS_WRAP, " \
+       "filter = FILTER_ANISOTROPIC )"

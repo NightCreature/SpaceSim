@@ -83,7 +83,7 @@ public:
 
 #ifdef MEMORY_PROFILING
             //Tell mtuner about the allocation
-            rmemAlloc(0, aligned_address, size, allocationSizeNeeded - size);
+            //rmemAlloc(0, aligned_address, size, allocationSizeNeeded - size);
 #endif
 
             return (void*)aligned_address;
@@ -151,7 +151,7 @@ public:
 
 #ifdef MEMORY_PROFILING
         //Tell mtuner about the allocation
-        rmemFree(0, p);
+        //rmemFree(0, p);
 #endif
     }
 

@@ -22,30 +22,32 @@ public:
     const size_t getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
 
     //This should be taking a shader handle and returning an actual shader object, and only accessed from the renderer.
-    const VertexShader* getVertexShader(size_t resourceName) const;
-    const HullShader* getHullShader(size_t resourceName) const;
-    const DomainShader* getDomainShader(size_t resourceName) const;
-    const GeometryShader* getGeometryShader(size_t resourceName) const;
-    const PixelShader* getPixelShader(size_t resourceName) const;
-    const ComputeShader* getComputeShader(size_t resourceName) const;
+    const Shader* getVertexShader(size_t resourceName) const;
+    const Shader* getHullShader(size_t resourceName) const;
+    const Shader* getDomainShader(size_t resourceName) const;
+    const Shader* getGeometryShader(size_t resourceName) const;
+    const Shader* getPixelShader(size_t resourceName) const;
+    const Shader* getComputeShader(size_t resourceName) const;
 
 #ifdef DEBUG
     void DumpLoadedShaderNames();
 #endif
 private:
 
-    typedef std::pair<size_t, VertexShader>   VertexShaderHandle;
-    typedef std::pair<size_t, HullShader>     HullShaderHandle;
-    typedef std::pair<size_t, DomainShader>   DomainShaderHandle;
-    typedef std::pair<size_t, GeometryShader> GeometryShaderHandle;
-    typedef std::pair<size_t, PixelShader>    PixelShaderHandle;
-    typedef std::pair<size_t, ComputeShader>  ComputeShaderHandle;
-    typedef std::map<size_t, VertexShader>   VertexShaders;
-    typedef std::map<size_t, HullShader>     HullShaders;
-    typedef std::map<size_t, DomainShader>   DomainShaders;
-    typedef std::map<size_t, GeometryShader> GeometryShaders;
-    typedef std::map<size_t, PixelShader>    PixelShaders;
-    typedef std::map<size_t, ComputeShader>  ComputeShaders;
+    size_t getShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+
+    typedef std::pair<size_t, Shader>   VertexShaderHandle;
+    typedef std::pair<size_t, Shader>     HullShaderHandle;
+    typedef std::pair<size_t, Shader>   DomainShaderHandle;
+    typedef std::pair<size_t, Shader> GeometryShaderHandle;
+    typedef std::pair<size_t, Shader>    PixelShaderHandle;
+    typedef std::pair<size_t, Shader>  ComputeShaderHandle;
+    typedef std::map<size_t, Shader>   VertexShaders;
+    typedef std::map<size_t, Shader>     HullShaders;
+    typedef std::map<size_t, Shader>   DomainShaders;
+    typedef std::map<size_t, Shader> GeometryShaders;
+    typedef std::map<size_t, Shader>    PixelShaders;
+    typedef std::map<size_t, Shader>  ComputeShaders;
 
     VertexShaders m_vertexShaders;
     HullShaders m_hullShaders;
