@@ -94,7 +94,7 @@ void JobSystem::WorkerThreadSleeping(size_t index)
 void JobSystem::WorkerThreadActive(size_t index)
 {
     std::scoped_lock<std::mutex> sl(m_finishedMutex);
-    m_workerThreads[index].m_working = true;
+    m_workerThreads[index - 1].m_working = true;
     --m_numberOfSleepingThreads;
 }
 
