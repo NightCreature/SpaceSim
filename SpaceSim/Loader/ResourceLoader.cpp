@@ -24,8 +24,9 @@ void ResourceLoader::initialise(Resource* resource)
 
     //Should probably use a dubble buffered command list here
     auto& helper = RenderResourceHelper(m_resource).getWriteableResource();
-    m_uploadQueueHandle = helper.getDeviceManager().CreateCommandQueue();
-    CommandQueue& commandQueue = helper.getDeviceManager().GetCommandQueue(m_uploadQueueHandle);
+    m_uploadQueueHandle = helper.getCommandQueueManager().CreateCommandQueue();
+    CommandQueue& commandQueue = helper.getCommandQueueManager().GetCommandQueue(m_uploadQueueHandle);
+    commandQueue.SetName("ResourceLoaderQueue");
     m_currentUploadCommandListHandle = commandQueue.CreateCommandList();
     m_previousCommandListHandle = commandQueue.CreateCommandList();
 }
@@ -86,7 +87,7 @@ void ResourceLoader::DispatchResourceCommandQueue()
 {
     auto& helper = RenderResourceHelper(m_resource).getWriteableResource();
 
-    auto& resourceCommandQueue = helper.getDeviceManager().GetCommandQueue(m_uploadQueueHandle);
+    auto& resourceCommandQueue = helper.getCommandQueueManager().GetCommandQueue(m_uploadQueueHandle);
     auto& resourceCommandList = resourceCommandQueue.GetCommandList(m_currentUploadCommandListHandle);
 
     HRESULT hr = resourceCommandList.m_list->Close();
@@ -117,7 +118,7 @@ void ResourceLoader::DispatchResourceCommandQueue()
         WaitForSingleObject(resourceCommandQueue.m_fenceEvent, INFINITE); //This could stall
     }
 
-    auto& commandList = helper.getDeviceManager().GetCommandQueue(m_uploadQueueHandle).GetCommandList(m_currentUploadCommandListHandle);
+    auto& commandList = helper.getCommandQueueManager().GetCommandQueue(m_uploadQueueHandle).GetCommandList(m_currentUploadCommandListHandle);
     commandList.m_alloctor->Reset();
     commandList.m_list->Reset(commandList.m_alloctor, nullptr);
 

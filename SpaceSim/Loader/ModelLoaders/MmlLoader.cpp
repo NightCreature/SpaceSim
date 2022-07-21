@@ -7,6 +7,7 @@
 #include "Loader/ModelLoaders/AssimpModelLoader.h"
 #include <string>
 #include "Graphics/D3D12/CommandQueue.h"
+#include "Graphics/D3D12/DescriptorHeapManager.h"
 
 constexpr auto c_ModelHash = "Model"_hash;
 
@@ -48,6 +49,7 @@ CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData, 
         else if (element_hash == Material::m_hash)
         {
             mat.deserialise(resource, gameResource.getDeviceManager(), gameResource.getTextureManager(), gameResource.getLightManager(), element);
+            mat.Prepare(gameResource.getEffectCache(), gameResource.getDeviceManager(), gameResource.getDescriptorHeapManager().GetSRVCBVUAVHeap());
         }
     }
 

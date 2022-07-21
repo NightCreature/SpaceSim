@@ -33,6 +33,7 @@
 #endif
 #include "D3D12/DescriptorHeapManager.h"
 #include "D3D12/D3D12X.h"
+#include "D3D12/CommandQueue.h"
 
 class RenderInstance;
 namespace MessageSystem
@@ -100,6 +101,7 @@ private:
     RenderResource* m_renderResource;
 
     CameraManager      m_cameraSystem;
+    CommandQueueManager m_commandQueueManager;
     DeviceManagerD3D11 m_deviceManager11;
     DeviceManager m_deviceManager;
     DescriptorHeapManager m_heapManager;

@@ -7,6 +7,7 @@
 #include "Memory.h"
 
 class DeviceManager;
+class CommandQueueManager;
 
 class Texture12
 {
@@ -15,8 +16,8 @@ public:
 	~Texture12();
 
     void cleanup();
-    bool loadTextureFromFile(DeviceManager& deviceManager, const std::string& filename);
-    bool loadTextureFromFile(DeviceManager& deviceManager, const std::string& filename, size_t commandQeueuHandle, size_t commandListHandle, D3D12_CPU_DESCRIPTOR_HANDLE handle);
+    bool loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename);
+    bool loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename, size_t commandQeueuHandle, size_t commandListHandle, D3D12_CPU_DESCRIPTOR_HANDLE handle);
     //void createFromShaderResourceView(ID3D11ShaderResourceView* textureShaderResourceView, ID3D11SamplerState* textureSamplerState) { m_textureShaderResourceView = textureShaderResourceView; m_textureSamplerState = textureSamplerState; }
     //ID3D11ShaderResourceView* getShaderResourceView() const { return m_textureShaderResourceView; }
     //ID3D11SamplerState* getSamplerState() const { return m_textureSamplerState; }
@@ -34,8 +35,10 @@ public:
     HASH_ELEMENT_DEFINITION(Texture12)
 
     D3D12_CPU_DESCRIPTOR_HANDLE GetTextureHandle() const { return m_handle; }
+    D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress() const { return m_gpuAddress; }
 protected:
 private:
     ID3D12Resource* m_texture;
     D3D12_CPU_DESCRIPTOR_HANDLE m_handle;
+    D3D12_GPU_VIRTUAL_ADDRESS m_gpuAddress;
 };

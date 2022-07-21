@@ -280,6 +280,10 @@
     <ClInclude Include="..\..\Gameplay\box.h" />
     <ClInclude Include="..\..\Gameplay\core.h" />
     <ClInclude Include="..\..\Gameplay\door.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\DataStore.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\DataTag.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Entity.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Processor.h" />
     <ClInclude Include="..\..\Gameplay\EntityManager.h" />
     <ClInclude Include="..\..\Gameplay\face.h" />
     <ClInclude Include="..\..\Gameplay\forcefield.h" />
@@ -445,6 +449,8 @@
     <ClCompile Include="..\..\Gameplay\box.cpp" />
     <ClCompile Include="..\..\Gameplay\core.cpp" />
     <ClCompile Include="..\..\Gameplay\door.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\DataStore.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\Entity.cpp" />
     <ClCompile Include="..\..\Gameplay\EntityManager.cpp" />
     <ClCompile Include="..\..\Gameplay\face.cpp" />
     <ClCompile Include="..\..\Gameplay\forcefield.cpp" />
@@ -563,6 +569,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="..\..\Core\StringOperations\StringTemplate.inl" />
+    <None Include="..\..\Gameplay\ECS\DataStoreArrayIterator.h" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

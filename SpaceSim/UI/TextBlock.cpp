@@ -534,7 +534,7 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 	descriptor.position = 3;
 	descriptor.textureCoordinateDimensions.push_back(2);
     
-    auto& commandQueue = renderResourceHelper.getWriteableResource().getDeviceManager().GetCommandQueue(renderResourceHelper.getResource().getResourceLoader().m_uploadQueueHandle);
+    auto& commandQueue = renderResourceHelper.getWriteableResource().getCommandQueueManager().GetCommandQueue(renderResourceHelper.getResource().getResourceLoader().m_uploadQueueHandle);
     auto& commandList = commandQueue.GetCommandList(renderResourceHelper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
 
 	vb.Create(renderResourceHelper.getResource().getDeviceManager(), commandList, sizeof(GlyphVertex) * m_glyphVerts.size(), &m_glyphVerts[0], descriptor.GetVertexStride());
@@ -575,7 +575,7 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
     mat.setEffectHash(hashString("sdf_font_effect.xml"));
 	mat.setBlendState(true);
 	//Should fix this if we have more than one page somehow
-	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
+	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName.string()), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
 	mat.setTechnique(hashString("default"));
 	//m_shaderInstance.setMaterial(mat);

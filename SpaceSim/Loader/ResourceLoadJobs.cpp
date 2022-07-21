@@ -68,7 +68,7 @@ void LoadTextureJob::Execute(size_t threadIndex)
 
     Texture12 texture;
     size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
-    if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), m_fileName, m_commandQueueHandle, m_commandListHandle, texManager.GetTextureDescriptorHeap().GetCPUDescriptorHandle(descriptorIndex)))
+    if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), renderResource.getCommandQueueManager(), m_fileName, m_commandQueueHandle, m_commandListHandle, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
     {
         MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", m_fileName.c_str(), threadIndex);
         return;

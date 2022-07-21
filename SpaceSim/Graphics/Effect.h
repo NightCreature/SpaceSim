@@ -57,8 +57,12 @@ public:
     const PipelineObject& GetPipelineState() const { return m_pso; }
     PipelineObject& GetPipelineState() { return m_pso; }
 
+    const ShaderParameters& GetShaderParameters() const { return m_shaderParameters; }
+
     HASH_ELEMENT_DEFINITION(Technique);
 private:
+
+    void BuildRootParamaterLayout(const std::array<const Shader*, static_cast<std::underlying_type_t<ShaderType>>(ShaderType::Count)>& m_loadedShaders);
 #ifdef _DEBUG
     std::string m_name; //This should be compiled out in release
 #endif

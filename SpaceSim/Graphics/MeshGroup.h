@@ -22,7 +22,7 @@ public:
         m_shaderInstance.setMaterial(m_material);
         //m_shaderInstance.AddPsConstantBuffer(sizeof(MaterialContent), deviceManager, "material content buffer for meshgroup");
         //m_shaderInstance.AddVsConstantBuffer(sizeof(WVPBufferContent), deviceManager, "WVP content buffer for meshgroup");
-
+        m_material = material;
         UNUSEDPARAM(deviceManager);
     }
     MeshGroup(const MeshGroup& source);
@@ -51,5 +51,10 @@ private:
     RenderInstance* m_renderInstance; //this goes
     //SHould all be done here since we can execute commands here :)
     bool m_renderInstanceDirty;
+
+public:
+    //shouldnt be here just want to be able to draw something
+    static Matrix44 m_projection;
+    static Matrix44 m_view;
 };
 

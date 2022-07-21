@@ -9,6 +9,7 @@
 
 #include "Application/BaseApplication.h" //Hack for now
 #include "Core/Types/TypeHelpers.h" //Hack for now
+#include "Graphics/D3D12/DescriptorHeapManager.h"
 #include "Graphics/MeshGroupCreator.h"
 #include "Graphics/ShaderInstance.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
@@ -51,7 +52,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
             renderResourceHelper.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
         }
     }
-
+    mat.Prepare(renderResourceHelper.getResource().getEffectCache(), renderResourceHelper.getWriteableResource().getDeviceManager(), renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap());
 
     CreatedModel face;
     face.model = new Model();

@@ -75,7 +75,7 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
         vertexDesc.vertexColor = true;
         
 
-        auto& commandQueue = helper.getWriteableResource().getDeviceManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
+        auto& commandQueue = helper.getWriteableResource().getCommandQueueManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
         auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
 
         vb->Create(helper.getResource().getDeviceManager(), commandList, numberOfBytes, (void*)boxVerts, vertexDesc.GetVertexStride());

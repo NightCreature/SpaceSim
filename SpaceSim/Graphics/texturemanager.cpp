@@ -7,6 +7,7 @@
 #include "Graphics/texture.h"
 
 #include "assert.h"
+#include "Loader/ResourceLoader.h"
 
 TextureManager::~TextureManager()
 {
@@ -57,8 +58,9 @@ void TextureManager::addLoad(DeviceManager& deviceManager, const std::string& fi
 	}
 
 	MSG_TRACE_CHANNEL("TEXTUREMANAGER", "Attempting to read in texture: %s", filename.c_str());
+    auto& commandQueueManager = RenderResourceHelper(m_resource).getWriteableResource().getCommandQueueManager();
 	Texture12 tex;
-    if (!tex.loadTextureFromFile(deviceManager, filename))// , commandQeueuHandle, commandListHandle, handle))
+    if (!tex.loadTextureFromFile(deviceManager, commandQueueManager, filename))// , commandQeueuHandle, commandListHandle, handle)) Shouldnt use this
 	{
         MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s", filename.c_str());
     }
@@ -119,10 +121,27 @@ void TextureManager::cleanup()
 ///-----------------------------------------------------------------------------
 void TextureManager::Initialise(Resource* resource)
 {
+    m_resource = resource;
     auto writableResource = RenderResourceHelper(resource).getWriteableResource();
     auto& descriptorHeapManager = writableResource.getDescriptorHeapManager();
-    m_textureHeap = descriptorHeapManager.CreateDescriptorHeap(256, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true);
-    m_samplerHeap = descriptorHeapManager.CreateDescriptorHeap(256, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, true);
+    ////m_textureHeap = descriptorHeapManager.CreateDescriptorHeap(256, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true, false);
+    ////m_samplerHeap = descriptorHeapManager.CreateDescriptorHeap(256, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, true, false);
+
+    auto& heap = descriptorHeapManager.GetSRVCBVUAVHeap();
+    m_nullDescriptorSrvs.first = 5;
+    m_nullDescriptorSrvs.second = heap.GetCPUDescriptorHeapRange(m_nullDescriptorSrvs.first);
+    D3D12_SHADER_RESOURCE_VIEW_DESC nullView = {};
+    //
+    nullView.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    nullView.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    nullView.Texture2D.MipLevels = static_cast<UINT>(-1);
+    nullView.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+
+    for (size_t index = 0; index < m_nullDescriptorSrvs.first; ++index)
+    {
+        size_t descriptorIndex = m_nullDescriptorSrvs.second + index;
+        writableResource.getDeviceManager().GetDevice()->CreateShaderResourceView(nullptr, &nullView, heap.GetCPUDescriptorHandle(descriptorIndex));
+    }
 }
 
 ///-------------------------------------------------------------------------
@@ -165,10 +184,17 @@ bool TextureManager::createSamplerStates(const DeviceManager& deviceManager)
 Material::TextureSlotMapping TextureManager::deserialise( DeviceManager& deviceManager, const tinyxml2::XMLElement* node )
 {
     (void*)node;
+    (void*)&deviceManager;
     const char* fileName = node->Attribute("file_name");
     if (fileName)
     {
-        addLoad(deviceManager, fileName);
+        LoadRequest loadRequest;
+        loadRequest.m_gameObjectId = 0;
+        loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+        loadRequest.m_loadData = static_cast<void*>(new char[256]);
+        memcpy(loadRequest.m_loadData, fileName, 256);
+        RenderResourceHelper(m_resource).getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
+
         Material::TextureSlotMapping::TextureSlot textureSlot = Material::TextureSlotMapping::Diffuse0;
         const tinyxml2::XMLAttribute* attribute = node->FindAttribute("texture_slot");
         if (attribute != nullptr)

@@ -90,7 +90,7 @@ public:
         }
     }
 protected:
-    std::vector<MeshGroup*> m_modelData;
+    std::vector<MeshGroup*> m_modelData; //Why is meshgroup a pointer here and not just owned?
     Bbox m_originalBBox;
     Bbox m_boundingBox;
 };

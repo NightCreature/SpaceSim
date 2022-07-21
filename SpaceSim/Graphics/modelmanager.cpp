@@ -51,7 +51,7 @@ size_t ModelManager::LoadModel( void* data, size_t commandQueueHandle, size_t co
         std::string extension = extractExtensionFromFileName(loadData.m_fileName);
 
         auto& resource = RenderResourceHelper(m_resource).getWriteableResource();
-        auto& commandQueue = resource.getDeviceManager().GetCommandQueue(commandQueueHandle);
+        auto& commandQueue = resource.getCommandQueueManager().GetCommandQueue(commandQueueHandle);
         auto& commandList = commandQueue.GetCommandList(commandLisHandle);
 
         CreatedModel createdModel;
@@ -93,7 +93,7 @@ size_t ModelManager::AddFace(void* data, size_t commandQueueHandle, size_t comma
     if (!HasRenderResource(renderResourceId))
     {
         auto& resource = RenderResourceHelper(m_resource).getWriteableResource();
-        auto& commandQueue = resource.getDeviceManager().GetCommandQueue(commandQueueHandle);
+        auto& commandQueue = resource.getCommandQueueManager().GetCommandQueue(commandQueueHandle);
         creationParams->m_fixedData.m_commandList = &(commandQueue.GetCommandList(commandLisHandle));
 
         //register face with model manager

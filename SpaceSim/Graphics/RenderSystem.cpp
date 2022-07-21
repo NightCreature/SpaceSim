@@ -15,6 +15,7 @@
 #include "Graphics/RenderInstance.h"
 #include "Graphics/ShaderPack.h"
 #include <assert.h>
+#include "MeshGroup.h"
 
 Matrix44 RenderSystem::m_view;
 Matrix44 RenderSystem::m_inverseView;
@@ -120,11 +121,12 @@ RenderSystem::~RenderSystem()
 void RenderSystem::initialise(Resource* resource)
 {
     GameResource& gameResource = GameResourceHelper(resource).getWriteableResource();
-    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, &(gameResource.getJobQueue()), &m_heapManager);
+    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, &(gameResource.getJobQueue()), &m_heapManager, &m_commandQueueManager);
 
     m_deviceManager.Initialise(m_renderResource);
     m_modelManger.initialise(m_renderResource);
     m_heapManager.Initialise(m_renderResource);
+    m_commandQueueManager.Initialise(m_renderResource);
     
     m_appName = "Demo app";
     m_windowName = "Demo app";
@@ -139,6 +141,8 @@ void RenderSystem::initialise(Resource* resource)
     {
         ExitProcess(1); //Fix this exit cleanly
     }
+
+    m_heapManager.CreateHeaps();
 
     //needs the device for init
     m_textureManager.Initialise(m_renderResource);
@@ -168,7 +172,8 @@ void RenderSystem::initialise(Resource* resource)
     {
         m_swapChain = m_deviceManager.GetSwapChain();
     }
-
+    //The swap chain makes the main command queue
+    CreateMainCommandList();
     
     m_viewPort.Width = (float)windowWidth;
     m_viewPort.Height = (float)windowHeight;
@@ -181,8 +186,6 @@ void RenderSystem::initialise(Resource* resource)
     m_scissorRect.left = 0;
     m_scissorRect.right = windowWidth;
     m_scissorRect.bottom = windowHeight;
-
-    CreateMainCommandList();
 
     auto device = m_deviceManager.getDevice();
     setupSwapChainForRendering(device, m_deviceManager.getDeviceContext(), windowWidth, windowHeight);
@@ -382,8 +385,8 @@ void RenderSystem::update(float elapsedTime, double time)
     m_window.update(elapsedTime, time);
     
     //Process Render Command queue
-    CommandQueue* commandQueue = m_deviceManager.GetSwapChainCommandQueue();//This should be the current command queue
-    CommandList& commandList = commandQueue->GetCommandList(0);
+    CommandQueue& commandQueue = m_commandQueueManager.GetCommandQueue(m_deviceManager.GetSwapChainCommandQueueIndex());//This should be the current command queue
+    CommandList& commandList = commandQueue.GetCommandList(m_deviceManager.GetSwapChainCommandListIndex());
 
     //commandList.m_alloctor->Reset(); //Reset errors here
     //commandList.m_list->Reset(commandList.m_alloctor, nullptr);
@@ -434,14 +437,7 @@ void RenderSystem::update(float elapsedTime, double time)
 
     //This should move to end frame were we call present
     // Indicate that the back buffer will now be used to present.
-    D3D12_RESOURCE_BARRIER barrier2;
-    ZeroMemory(&barrier2, sizeof(D3D12_RESOURCE_BARRIER));
-    barrier2.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier2.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrier2.Transition.pResource = m_deviceManager.GetCurrentBackBuffer();
-    barrier2.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier2.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-    commandList.m_list->ResourceBarrier(1, &barrier2);
+
 
     HRESULT hr = commandList.m_list->Close();
     if (hr != S_OK)
@@ -449,10 +445,20 @@ void RenderSystem::update(float elapsedTime, double time)
         MSG_TRACE_CHANNEL("RENDERSYSTEM", "Failed to close the main rendering commandlist");
     }
 
-    auto& renderCommandQueue = m_deviceManager.GetCommandQueue(m_renderCommandQueueHandle);
+    auto& renderCommandQueue = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle);
     std::vector<ID3D12CommandList*> commandListsVector;
 
     auto& renderCommandList = renderCommandQueue.GetCommandList(m_currentCommandListIndex);
+
+    D3D12_RESOURCE_BARRIER barrier2;
+    ZeroMemory(&barrier2, sizeof(D3D12_RESOURCE_BARRIER));
+    barrier2.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    barrier2.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    barrier2.Transition.pResource = m_deviceManager.GetCurrentBackBuffer();
+    barrier2.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    barrier2.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    renderCommandList.m_list->ResourceBarrier(1, &barrier2);
+
     hr = renderCommandList.m_list->Close();
     if (hr != S_OK)
     {
@@ -481,7 +487,7 @@ void RenderSystem::update(float elapsedTime, double time)
 
     commandListsVector.push_back(commandList.m_list);
 
-    commandQueue->m_queue->ExecuteCommandLists(static_cast<UINT>(commandListsVector.size()), &commandListsVector[0]);
+    commandQueue.m_queue->ExecuteCommandLists(static_cast<UINT>(commandListsVector.size()), &commandListsVector[0]);
 
     m_numberOfInstancesRenderingThisFrame = visibleInstances.size();
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
@@ -624,7 +630,7 @@ void RenderSystem::beginDraw()
     m_currentCommandListIndex = m_backUpCommandListIndex;
     m_backUpCommandListIndex = tempCommandListIndex;
 
-    auto& commandList = m_deviceManager.GetCommandQueue(m_renderCommandQueueHandle).GetCommandList(m_currentCommandListIndex);
+    auto& commandList = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle).GetCommandList(m_currentCommandListIndex);
     //commandList.m_alloctor->Reset();
     //commandList.m_list->Reset(commandList.m_alloctor, nullptr);
 
@@ -646,7 +652,7 @@ void RenderSystem::beginDraw()
     //// Record commands.
     const float clearColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
     commandList.m_list->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-    commandList.m_list->ClearDepthStencilView(depthStencilHanlde, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+    commandList.m_list->ClearDepthStencilView(depthStencilHanlde, D3D12_CLEAR_FLAG_DEPTH, 0.0f, 0, 0, nullptr);
 
 
     // Setup the viewport
@@ -665,7 +671,8 @@ void RenderSystem::beginDraw()
     m_view = m_cameraSystem.getCamera("global")->getCamera();
     m_inverseView = m_cameraSystem.getCamera("global")->getInvCamera();
 
-
+    MeshGroup::m_projection = m_projection;
+    MeshGroup::m_view = m_view;
 
     m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
     m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
@@ -845,8 +852,8 @@ void RenderSystem::endDraw()
 
         //have to wait for the GPU to be done this is not the best but fuck it for now
         const UINT64 fence = m_deviceManager.m_fenceValue;
-        auto* commandQueue = m_deviceManager.GetSwapChainCommandQueue(); //This should be the current command queue
-        hr = commandQueue->m_queue->Signal(commandQueue->m_fence, fence);
+        auto& commandQueue = m_commandQueueManager.GetCommandQueue(m_deviceManager.GetSwapChainCommandQueueIndex()); //This should be the current command queue
+        hr = commandQueue.m_queue->Signal(commandQueue.m_fence, fence);
         if (hr != S_OK)
         {
             MSG_TRACE_CHANNEL("ERROR", "Fence Signal failed with error code: 0x%x %s", hr, getLastErrorMessage(hr));
@@ -854,19 +861,19 @@ void RenderSystem::endDraw()
         m_deviceManager.m_fenceValue++;
 
         // Wait until the previous frame is finished.
-        UINT64 fenceValue = commandQueue->m_fence->GetCompletedValue();
+        UINT64 fenceValue = commandQueue.m_fence->GetCompletedValue();
         if (fenceValue < fence)
         {
-            commandQueue->m_fence->SetEventOnCompletion(fence, commandQueue->m_fenceEvent);
-            WaitForSingleObject(commandQueue->m_fenceEvent, INFINITE);
+            commandQueue.m_fence->SetEventOnCompletion(fence, commandQueue.m_fenceEvent);
+            WaitForSingleObject(commandQueue.m_fenceEvent, INFINITE);
         }
 
         m_deviceManager.SetCurrentFrameBufferIndex(0);
     }
 
     //Reset commandlists and allocators
-    CommandQueue* commandQueue = m_deviceManager.GetSwapChainCommandQueue();//This should be the current command queue
-    CommandList& commandList = commandQueue->GetCommandList(0);
+    CommandQueue& commandQueue = m_commandQueueManager.GetCommandQueue(m_deviceManager.GetSwapChainCommandQueueIndex());//This should be the current command queue
+    CommandList& commandList = commandQueue.GetCommandList(m_deviceManager.GetSwapChainCommandListIndex());
     HRESULT hr = commandList.m_alloctor->Reset();
     if (hr != S_OK)
     {
@@ -879,7 +886,10 @@ void RenderSystem::endDraw()
         MSG_TRACE_CHANNEL("RENDERSYSTEM", "Failed to close the main rendering commandlist");
     }
 
-    auto& renderCommandQueue = m_deviceManager.GetCommandQueue(m_renderCommandQueueHandle);
+    //Need to reset the ring buffer uses of our heaps here
+    m_heapManager.GetSRVCBVUAVHeap().ResetRingBufferRange();
+
+    auto& renderCommandQueue = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle);
     std::vector<ID3D12CommandList*> commandListsVector;
 
     auto& renderCommandList = renderCommandQueue.GetCommandList(m_currentCommandListIndex);
@@ -986,7 +996,7 @@ void RenderSystem::CreateRenderList(const MessageSystem::Message& msg)
     {
         model->model->update(m_renderResource, m_renderInstances, 0.0f, info->m_world, m_view, m_projection, info->m_name);
         //need to pass commanlist here
-        CommandQueue& commandQueue = m_deviceManager.GetCommandQueue(m_renderCommandQueueHandle);
+        CommandQueue& commandQueue = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle);
         CommandList& commandList = commandQueue.GetCommandList(m_currentCommandListIndex);
         model->model->Update(m_renderResource, commandList, 0.0f, info->m_world, info->m_name);
     }
@@ -1115,8 +1125,9 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
 ///-----------------------------------------------------------------------------
 void RenderSystem::CreateMainCommandList()
 {
-    m_renderCommandQueueHandle = m_deviceManager.CreateCommandQueue();
-    m_tempCommandList = m_deviceManager.GetCommandQueue(m_renderCommandQueueHandle).CreateCommandList();
-    m_currentCommandListIndex = m_deviceManager.GetCommandQueue(m_renderCommandQueueHandle).CreateCommandList();
-    m_backUpCommandListIndex = m_deviceManager.GetCommandQueue(m_renderCommandQueueHandle).CreateCommandList();
+
+    m_renderCommandQueueHandle = m_deviceManager.GetSwapChainCommandQueueIndex();
+    m_tempCommandList = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle).CreateCommandList();
+    m_currentCommandListIndex = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle).CreateCommandList();
+    m_backUpCommandListIndex = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle).CreateCommandList();
 }

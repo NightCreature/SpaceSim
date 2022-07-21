@@ -131,12 +131,20 @@ public:
 
     static MaterialParameters GetMaterialParameters(const tinyxml2::XMLElement* childElement);
     void setEffectHash(size_t effectHash) { m_effectHash = effectHash; }
+
+    size_t GetNumberOfNeededDescriptors() const { return m_numberOfDescriptorsNeeded; }
+    void Prepare(const EffectCache& effectCache, DeviceManager& deviceManager, DescriptorHeap& heap);
+
+    const ShaderParameters& GetShaderParameters() const { return m_shaderParameterData; }
+    ShaderParameters& GetShaderParameters() { return m_shaderParameterData; }
 protected:
 private:
-    size_t m_techniqueHash;
-    size_t m_effectHash;
+    ShaderParameters m_shaderParameterData;
     MaterialContent m_materialCB;
     std::vector<TextureSlotMapping> m_texture;//Order is sampler order as well
+    size_t m_techniqueHash;
+    size_t m_effectHash;
+    size_t m_numberOfDescriptorsNeeded = 0;
     bool m_alphaBlend;
 };
 #endif

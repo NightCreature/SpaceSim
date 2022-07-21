@@ -54,15 +54,10 @@ public:
     IDXGISwapChain* GetSwapChain() { return m_swapChain; }
     bool createSwapChain(HWND windowHandle, int windowWidth, int windowHeight);
 
-    std::vector<CommandQueue>& GetCommandQueues() { return m_commandQueues; }
-    size_t CreateCommandQueue();
-    CommandQueue& GetCommandQueue(size_t commandQueueHandle) 
-    {
-        assert(!m_commandQueues.empty() && commandQueueHandle < m_commandQueues.size());
-        return m_commandQueues[commandQueueHandle]; 
-    }
+    
 
-    CommandQueue* GetSwapChainCommandQueue() { return m_commandQueue; }
+    size_t GetSwapChainCommandQueueIndex() { return m_swapChainCommandQueueIndex; }
+    size_t GetSwapChainCommandListIndex() { return m_swapChainCommandListIndex; }
 
     D3D12_CPU_DESCRIPTOR_HANDLE GetDepthStencilHandle();
     D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentBackBufferRTVHandle();
@@ -79,11 +74,9 @@ private:
     IDXGIAdapter* EnumerateAdapters();
 
     std::vector<ID3D12Resource*> m_backBufferRenderTargets;
-    std::vector<CommandQueue> m_commandQueues;
     ID3D12Resource* m_depthStencil = nullptr;
 
     ID3D12Device6* m_device = nullptr;
-    CommandQueue* m_commandQueue; //Fix this shouldnt be a pointer
     D3D_FEATURE_LEVEL m_featureLevel = static_cast<D3D_FEATURE_LEVEL>(0);
 
     IDXGIFactory7* m_dxgiFactory = nullptr;
@@ -105,6 +98,8 @@ private:
     ID3D12Debug* m_debugInterface = nullptr;
 //#endif
 
+    size_t m_swapChainCommandQueueIndex = 0;
+    size_t m_swapChainCommandListIndex = 0;
     size_t m_frameCount = 3;
     size_t m_currentBackBufferIndex = 0;
     size_t depthStencilDescriptorIndex = DescriptorHeap::invalidDescriptorIndex;

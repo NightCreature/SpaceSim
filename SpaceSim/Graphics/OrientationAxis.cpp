@@ -45,7 +45,7 @@ void OrientationAxis::initialise(Resource* resource, const DeviceManager& device
     RenderResourceHelper helper(resource);
     unsigned int bufferSize = 12 * sizeof(LineVertex);
 
-    auto& commandQueue = helper.getWriteableResource().getDeviceManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
+    auto& commandQueue = helper.getWriteableResource().getCommandQueueManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
     auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
 
     //Move pointer to start of vertex array

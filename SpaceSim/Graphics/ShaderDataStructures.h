@@ -58,4 +58,6 @@ struct MaterialContent
     float m_specular[4];
     float m_emissive[4];
     ALIGN16 float m_shininess;
+
+    float m_unusedJustTOInflat[256];
 };

@@ -42,22 +42,23 @@ public:
 
     void addTexture( const std::string& textureName, const Texture12& texture, size_t heapIndex);
 
-	DescriptorHeap& GetTextureDescriptorHeap() { return m_textureHeap; }
-	DescriptorHeap& GetSamplerDescriptorHeap() { return m_samplerHeap; }
+	std::pair<size_t, size_t> GetNullDescriptor() const { return m_nullDescriptorSrvs; }
         
 protected:
 private:
-	bool m_generatemipmaps;
-	bool m_autogeneratemipmaps;
     typedef std::pair<size_t, TextureInfo> TexturePair;
 	typedef std::map<size_t, TextureInfo> TextureMap;
 	using Texture12Map = std::map<size_t, Texture12>;
 	TextureMap m_textures;	
-    ID3D11SamplerState* m_samplerState;
 
-	DescriptorHeap m_textureHeap;
-	DescriptorHeap m_samplerHeap;
+    ID3D11SamplerState* m_samplerState;
+	Resource* m_resource;
+	std::pair<size_t, size_t> m_nullDescriptorSrvs;
+
 
 	std::mutex m_mutex;
+
+    bool m_generatemipmaps;
+    bool m_autogeneratemipmaps;
 };
 #endif

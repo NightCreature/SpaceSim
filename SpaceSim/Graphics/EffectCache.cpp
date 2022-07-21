@@ -15,8 +15,7 @@ EffectCache::~EffectCache()
 ///-----------------------------------------------------------------------------
 void EffectCache::Initialise(Resource* resource)
 {
-    auto& descriptorHeapManager = RenderResourceHelper(resource).getWriteableResource().getDescriptorHeapManager();
-    m_constantBufferHeap = descriptorHeapManager.CreateDescriptorHeap(128, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true);
+    UNUSEDPARAM(resource);
 }
 
 const Effect* EffectCache::createEffect(Resource* resource, const std::string& resourceFileName)
@@ -31,7 +30,7 @@ const Effect* EffectCache::createEffect(Resource* resource, const std::string& r
         if (doc.LoadFile(resourceFileName.c_str()) != tinyxml2::XML_NO_ERROR)
         {
             MSG_TRACE_CHANNEL("MAP", "Failed to load %s \nWith error: %d", resourceFileName.c_str(), doc.ErrorID());
-            return nullptr;
+            return returnValue;
         }
 
         const tinyxml2::XMLElement* element;
@@ -53,19 +52,19 @@ const Effect* EffectCache::createEffect(Resource* resource, const std::string& r
     return returnValue;
 }
 
-Effect* EffectCache::getEffect(const std::string& name)
+const Effect* EffectCache::getEffect(const std::string& name) const
 {
     return getEffect(hashString(name));
 }
 
-Effect* EffectCache::getEffect(size_t effectHash)
+const Effect* EffectCache::getEffect(size_t effectHash) const
 {
     if (m_effects.empty())
     {
         return nullptr;
     }
 
-    std::map<size_t, Effect>::iterator it = m_effects.find(effectHash);
+    std::map<size_t, Effect>::const_iterator it = m_effects.find(effectHash);
     if (it == m_effects.end())
     {
         return nullptr;

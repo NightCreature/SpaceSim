@@ -23,31 +23,82 @@
 ///-----------------------------------------------------------------------------
 void ShaderParameter::CreateConstantBuffer(const DeviceManager& deviceManager, DescriptorHeap& heap)
 {
-    auto index = m_constantBuffer.index();
+    auto index = m_data.index();
     switch (index)
     {
     case 0:
     {
-        auto data = std::get_if<0>(&m_constantBuffer);
+        auto data = std::get_if<0>(&m_data);
         data->Create(deviceManager, heap);
     }
     break;
     case 1:
     {
-        auto data = std::get_if<1>(&m_constantBuffer);
+        auto data = std::get_if<1>(&m_data);
         data->Create(deviceManager, heap);
     }
     break;
     case 2:
     {
-        auto data = std::get_if<2>(&m_constantBuffer);
+        auto data = std::get_if<2>(&m_data);
         data->Create(deviceManager, heap);
     }
     break;
     default:
-        MSG_TRACE_CHANNEL("ShaderParameter", "Failed to create constant buffer because the type of the variant doesnt match or is not set: %d", m_constantBuffer.index());
+        //MSG_TRACE_CHANNEL("ShaderParameter", "Failed to create constant buffer because the type of the variant doesnt match or is not set: %d", m_data.index());
         break;
     }
 
 }
 
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void ShaderParameter::Print() const
+{
+    std::stringstream str;
+    str << "RootParamIndex :" << m_rootParamIndex << "\n";
+    str << "Name Hash :" << m_nameHash << "\n";
+    auto index = m_data.index();
+    switch (index)
+    {
+    case 0:
+    {
+        str << "Data Type : WVPBuffer\n";
+    }
+    break;
+    case 1:
+    {
+        str << "Data Type : Material Buffer\n";
+    }
+    break;
+    case 2:
+    {
+        str << "Data Type : Perframe constants\n";
+    }
+    break;
+    case 3:
+    {
+        str << "Data Type : Texture Data\n";
+    }
+    break;
+    default:
+        //MSG_TRACE_CHANNEL("ShaderParameter", "Failed to create constant buffer because the type of the variant doesnt match or is not set: %d", m_data.index());
+        break;
+    }
+    
+    MSG_TRACE_CHANNEL("ShaderParameter", "%s", str.str().c_str() );
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void PrintParameters(const ShaderParameters& parameters)
+{
+    for (const auto& param : parameters)
+    {
+        param.Print();
+    }
+}

@@ -186,7 +186,7 @@ void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string& ent
 
 
 #if defined( DEBUG ) || defined( _DEBUG )
-DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES | D3DCOMPILE_ALL_RESOURCES_BOUND;
+DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES /*| D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_DEBUG | D3DCOMPILE_ALL_RESOURCES_BOUND*/;
 #else
 DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES;
 #endif
@@ -238,11 +238,9 @@ bool Shader::createShader(const DeviceManager& deviceManager)
         //    return false;
         //}
         //Pixel shaders currently dont have a RootDescripter attached this is handled at the technique level really
-        if (m_type == ShaderType::eVertexShader)
+        //if (m_type == ShaderType::eVertexShader)
         {
-            ShaderParamMatcher matcher(m_shaderBlob);
-            matcher.MatchSignatureWithRefeclection();
-            m_parameters = matcher.GetBoundParameters();
+
         }
 
         delete[] shaderCodeBuffer;

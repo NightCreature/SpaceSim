@@ -15,6 +15,7 @@
 #include "Graphics/ShaderCache.h"
 #include <stdio.h>
 #include "VertexBuffer.h"
+#include "D3D12/ShaderParamMatcher.h"
 
 
 
@@ -119,6 +120,9 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
     VertexDeclarationDescriptor vertextDeclaration;
     D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
+    std::array<const Shader*, static_cast<std::underlying_type_t<ShaderType>>(ShaderType::Count)> loadedShaders = { nullptr };
+    
+
     //Fix shader type
     for (const tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement())
     {
@@ -132,18 +136,23 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
                 auto parameters = shader->GetParameters();
                 std::copy(parameters.begin(), parameters.end(), std::back_inserter(m_shaderParameters));
             }
+
+            loadedShaders[static_cast<std::underlying_type_t<ShaderType>>(ShaderType::eVertexShader)] = shader;
         }
         else if (hashString("HullShader") == elmentHash)
         {
             m_pso.SetHullShader(*shaderCache.getHullShader(shaderCache.getHullShader(childElement, deviceManager)));
+            loadedShaders[static_cast<std::underlying_type_t<ShaderType>>(ShaderType::eHullShader)] = shaderCache.getGeometryShader(shaderCache.getGeometryShader(childElement, deviceManager));
         }
         else if (hashString("DomainShader") == elmentHash)
         {
             m_pso.SetDomainShader(*shaderCache.getDomainShader(shaderCache.getDomainShader(childElement, deviceManager)));
+            loadedShaders[static_cast<std::underlying_type_t<ShaderType>>(ShaderType::eDomainShader)] = shaderCache.getGeometryShader(shaderCache.getGeometryShader(childElement, deviceManager));
         }
         else if (hashString("GeometryShader") == elmentHash)
         {
             m_pso.SetGeometryShader(*shaderCache.getGeometryShader(shaderCache.getGeometryShader(childElement, deviceManager)));
+            loadedShaders[static_cast<std::underlying_type_t<ShaderType>>(ShaderType::eGeometryShader)] = shaderCache.getGeometryShader(shaderCache.getGeometryShader(childElement, deviceManager));
         }
         else if (hashString("PixelShader")  == elmentHash)
         {
@@ -152,11 +161,13 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
             {
                 m_pso.SetPixelShader(*shader);
             }
+            loadedShaders[static_cast<std::underlying_type_t<ShaderType>>(ShaderType::ePixelShader)] = shader;
         }
         else if (hashString("ComputeShader") == elmentHash)
         {
             //This cant be set on a graphics pipeline state
             //m_pso.SetComputeShader(*shaderCache.getComputeShader(shaderCache.getComputeShader(childElement, deviceManager)));
+            loadedShaders[static_cast<std::underlying_type_t<ShaderType>>(ShaderType::eComputeShader)] = nullptr;
         }
         else if (hashString("VertexDeclarationDescriptor") == elmentHash)
         {
@@ -225,15 +236,12 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         }
     }
 
+    //Build root paramter index layout 
+    BuildRootParamaterLayout(loadedShaders);
+
+
     m_pso.SetVertexInformation(vertextDeclaration, D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED, primitiveTopology);
     m_pso.CreatePipelineStateObject(deviceManager.GetDevice());
-
-    auto& descriptorHeap = renderResource.getWriteableResource().getEffectCache().GetDescriptorHeap();
-    //Run through the parameters and create them
-    for (ShaderParameter& param : m_shaderParameters)
-    {
-        param.CreateConstantBuffer(deviceManager, descriptorHeap);
-    }
 
     m_techniqueId = hashBinaryData(reinterpret_cast<char*>(&m_pso), sizeof(PipelineObject)); //Not sure this works well
     //m_techniqueId = ((size_t)(m_vertexShader + m_pixelShader) /*<< 32*/) | (m_hullShader + m_domainShader + m_geometryShader + m_computeShader);
@@ -265,12 +273,50 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
 }
 
 ///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void Technique::BuildRootParamaterLayout(const std::array<const Shader*, static_cast<std::underlying_type_t<ShaderType>>(ShaderType::Count)>& shaders)
+{
+    RootParamtersInfo rootParameterInfo;
+    for (size_t counter = 0; counter < shaders.size(); ++counter)
+    {
+        if (shaders[counter] != nullptr)
+        {
+            ShaderParamMatcher matcher(shaders[counter]->getShaderBlob());
+            matcher.MatchSignatureWithRefeclection(rootParameterInfo);
+            if (static_cast<ShaderType>(counter) == ShaderType::eVertexShader)
+            {
+                rootParameterInfo = matcher.GetRootParametersInfo();
+            }
+
+            auto& shaderParams = matcher.GetBoundParameters();
+            m_shaderParameters.insert(m_shaderParameters.end(), shaderParams.begin(), shaderParams.end());
+        }
+    }
+
+//#ifdef _DEBUG
+//    MSG_TRACE_CHANNEL("Technique", "Trace Shader Parameters for Technique: %s", m_name.c_str());
+//#endif
+//    MSG_TRACE_CHANNEL("Technique", "Trace Shader Parameters for Technique: %d", m_nameHash);
+//    PrintParameters(m_shaderParameters);
+    //ShaderParamMatcher matcher(m_shaderBlob);
+    //if (matcher.MatchSignatureWithRefeclection())
+    //{
+    //    rootParameterInfo = matcher.GetRootParametersInfo();
+    //}
+    //m_parameters = matcher.GetBoundParameters();
+}
+
+///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
 void Technique::setWVPContent(const DeviceManager& deviceManager, const WVPBufferContent& wvpContent) const
 {
     //deviceManager.getDeviceContext()->UpdateSubresource(m_constantBuffers[0], 0, 0, (void*)&wvpContent, 0, 0);
+    UNUSEDPARAM(deviceManager);
+    UNUSEDPARAM(wvpContent);
 }
 
 ///-----------------------------------------------------------------------------
@@ -280,4 +326,6 @@ void Technique::setWVPContent(const DeviceManager& deviceManager, const WVPBuffe
 void Technique::setMaterialContent(const DeviceManager& deviceManager, const MaterialContent& materialContent) const
 {
     //deviceManager.getDeviceContext()->UpdateSubresource(m_constantBuffers[1], 0, 0, (void*)&materialContent, 0, 0);
+    UNUSEDPARAM(deviceManager);
+    UNUSEDPARAM(materialContent);
 }

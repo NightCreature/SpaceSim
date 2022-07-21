@@ -6,6 +6,8 @@
 #include "Graphics/texturemanager.h"
 
 #include "Core/tinyxml2.h"
+#include "Loader/ResourceLoader.h"
+#include <filesystem>
 
 namespace Text
 {
@@ -200,7 +202,14 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
                 else if (Pages::PageInfo::fileHash == hashAttribute)
                 {
                     pageInfo.m_fileName = attribute->Value();
-                    gameResource.getWriteableResource().getTextureManager().addLoad(gameResource.getWriteableResource().getDeviceManager(), currentPath + pageInfo.m_fileName); //This needs to be a load request
+
+                    LoadRequest loadRequest;
+                    loadRequest.m_gameObjectId = 0;
+                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
+                    std::filesystem::path path = currentPath / pageInfo.m_fileName;
+                    memcpy(loadRequest.m_loadData, path.string().c_str(), 256);
+                    gameResource.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
                 }
             }
             m_pagesInformation.m_pages.push_back(pageInfo);

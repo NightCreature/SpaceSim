@@ -52,6 +52,7 @@ private:
     std::vector<ID3D11ShaderResourceView*> m_vsSrvData;
     uint32 m_techniqueHash;
     bool m_alphaBlendEnabled;
+
 };
 
 namespace ShaderInstanceHelpers

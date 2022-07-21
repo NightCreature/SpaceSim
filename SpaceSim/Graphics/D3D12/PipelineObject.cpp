@@ -31,8 +31,8 @@ PipelineObject::PipelineObject()
     D3D12_DEPTH_STENCIL_DESC& depthStencilStateDesc = m_pipeLineStateDescriptor.DepthStencilState;
     depthStencilStateDesc.DepthEnable = true;
     depthStencilStateDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-    depthStencilStateDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER;
-    depthStencilStateDesc.StencilEnable = false;
+    depthStencilStateDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL; //THis should be greater or maybe less then when we go to flipped Z again
+    depthStencilStateDesc.StencilEnable = 0;
     depthStencilStateDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
     depthStencilStateDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
     depthStencilStateDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
@@ -58,6 +58,8 @@ PipelineObject::PipelineObject()
         blendStateDesc.RenderTarget[counter].BlendOpAlpha = D3D12_BLEND_OP_ADD;
         blendStateDesc.RenderTarget[counter].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
     }
+
+    m_pipeLineStateDescriptor.SampleMask = 0xFFFFFFFF;
 
     //Must match backbuffer if only rendering to that
     SetMultiSampling(1, 0);

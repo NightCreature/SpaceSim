@@ -11,6 +11,7 @@
 #include <sstream>
 #include "Graphics/D3D12/D3D12X.h"
 #include <NewSpaceSim/packages/directxtk12_desktop_2017.2021.8.2.1/include/DirectXHelpers.h>
+#include "D3D12/CommandQueue.h"
 
 Texture12::Texture12()
 {
@@ -24,7 +25,7 @@ Texture12::~Texture12()
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, const std::string& filename, size_t commandQeueuHandle, size_t commandListHandle, D3D12_CPU_DESCRIPTOR_HANDLE handle)
+bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename, size_t commandQeueuHandle, size_t commandListHandle, D3D12_CPU_DESCRIPTOR_HANDLE handle)
 {
     ID3D12Device* device = deviceManager.GetDevice();
     HRESULT hr = S_OK;
@@ -69,7 +70,7 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, const std::str
     hr = device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&uploadRes));
 
     //have to pass commandlist here
-    auto& commandList = deviceManager.GetCommandQueue(commandQeueuHandle).GetCommandList(commandListHandle);
+    auto& commandList = commandQueueManager.GetCommandQueue(commandQeueuHandle).GetCommandList(commandListHandle);
     UpdateSubresources(commandList.m_list, m_texture, uploadRes, 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
 
     auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_texture, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
@@ -79,7 +80,14 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, const std::str
     DirectX::CreateShaderResourceView(device, m_texture, handle);
     m_handle = handle;
     //Create resource view here, CPU handle
-   
+
+    //m_gpuAddress = m_texture->GetGPUVirtualAddress();
+
+#ifdef _DEBUG
+    std::wstringstream str;
+    str << L"Texture:" << wfilename;
+    m_texture->SetName(str.str().c_str());
+#endif
 
 
     if (FAILED(hr))
@@ -107,10 +115,10 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, const std::str
 
 
 
-bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, const std::string& filename) //shouldnt use this function
+bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename) //shouldnt use this function
 {
     MSG_TRACE_CHANNEL("TEXTURE12", "This cannot create a working texture");
-    return loadTextureFromFile(deviceManager, filename, 0, 0, D3D12_CPU_DESCRIPTOR_HANDLE());
+    return loadTextureFromFile(deviceManager, commandQueueManager, filename, 0, 0, D3D12_CPU_DESCRIPTOR_HANDLE());
 }
 
 ///-----------------------------------------------------------------------------

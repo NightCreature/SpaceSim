@@ -167,7 +167,7 @@
 //}
 
 //This needs to be done differently in the future
-std::variant<ConstantBuffer<WVPBufferContent>, ConstantBuffer<MaterialContent>, ConstantBuffer<PerFrameConstants>> GetVariant(const std::string& name)
+ShaderParameter::ShaderParameterData GetVariant(const std::string& name)
 {
     if (name == "WVPConstants" || name == "ShadowConstants")
     {
@@ -182,7 +182,7 @@ std::variant<ConstantBuffer<WVPBufferContent>, ConstantBuffer<MaterialContent>, 
         return ConstantBuffer<MaterialContent>();
     }
     
-    return std::variant<ConstantBuffer<WVPBufferContent>, ConstantBuffer<MaterialContent>, ConstantBuffer<PerFrameConstants>>();
+    return ShaderParameter::ShaderParameterData();
 }
 
 ///-----------------------------------------------------------------------------
@@ -204,33 +204,40 @@ ShaderParamMatcher::ShaderParamMatcher(ID3DBlob* shaderBlob) : m_shaderBlob(shad
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ShaderParamMatcher::MatchSignatureWithRefeclection()
+bool ShaderParamMatcher::MatchSignatureWithRefeclection(const RootParamtersInfo& rootParamInfo)
 {
+    bool foundRootParametersInfo = false;
 
     ID3D12ShaderReflection* shaderReflection;
     HRESULT hr = D3DReflect(m_shaderBlob->GetBufferPointer(), m_shaderBlob->GetBufferSize(), IID_PPV_ARGS(&shaderReflection));
     if (FAILED(hr))
     {
         MSG_TRACE_CHANNEL("ShaderParamMatcher", "Failed to get the refelection data for the the shader with error code: %d (%s)", hr, getLastErrorMessage(hr));
-        return;
+        return foundRootParametersInfo;
     }
 
+    //Check and fill out rootparameter info if we have it
     ID3D12VersionedRootSignatureDeserializer* rootSignatureDeserialiser = nullptr;
     void* bufferCode = m_shaderBlob->GetBufferPointer();
     hr = D3D12CreateVersionedRootSignatureDeserializer(bufferCode, m_shaderBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignatureDeserialiser));
-    if (FAILED(hr))
+    if (SUCCEEDED(hr))
     {
-        MSG_TRACE_CHANNEL("ShaderParamMatcher", "Failed to deserialise the root signature with error code: %d (%s)", hr, getLastErrorMessage(hr));
-        return;
+        const D3D12_VERSIONED_ROOT_SIGNATURE_DESC* rootSignatureDescriptor = nullptr;
+        hr = rootSignatureDeserialiser ? rootSignatureDeserialiser->GetRootSignatureDescAtVersion(D3D_ROOT_SIGNATURE_VERSION_1_1, &rootSignatureDescriptor) : E_FAIL;
+        if (SUCCEEDED(hr))
+        {
+            //we have root parameters so we should save them out.
+            const D3D12_ROOT_PARAMETER1* const parameters = rootSignatureDescriptor->Desc_1_1.pParameters;
+            for (size_t rootParamCounter = 0; rootParamCounter < rootSignatureDescriptor->Desc_1_1.NumParameters; ++rootParamCounter)
+            {
+                m_rootParametersInfo.push_back(parameters[rootParamCounter]);
+            }
+
+            foundRootParametersInfo = true;
+        }
     }
 
-    const D3D12_VERSIONED_ROOT_SIGNATURE_DESC* rootSignatureDescriptor;
-    hr = rootSignatureDeserialiser->GetRootSignatureDescAtVersion(D3D_ROOT_SIGNATURE_VERSION_1_1, &rootSignatureDescriptor);
-    if (FAILED(hr))
-    {
-        MSG_TRACE_CHANNEL("ShaderParamMatcher", "Failed to get root signature descriptor with error code: %d (%s)", hr, getLastErrorMessage(hr));
-        return;
-    }
+
 
 
     D3D12_SHADER_DESC shaderDescriptor;
@@ -238,88 +245,170 @@ void ShaderParamMatcher::MatchSignatureWithRefeclection()
     if (FAILED(hr))
     {
         MSG_TRACE_CHANNEL("ShaderParamMatcher", "Failed to get shader descriptor with error code: %d (%s)", hr, getLastErrorMessage(hr));
-        return;
+        //return;
     }
-    //Got everything we need here now lets match the bound resources from the reflection data with the root params
-    for (size_t boundResourceCounter = 0; boundResourceCounter < shaderDescriptor.BoundResources; ++boundResourceCounter)
+    
+    //Create the parameter setup for this shader
+    if (!foundRootParametersInfo)
     {
-        D3D12_SHADER_INPUT_BIND_DESC inputBindingDescriptor;
-        hr = shaderReflection->GetResourceBindingDesc(static_cast<UINT>(boundResourceCounter), &inputBindingDescriptor);
-        if (SUCCEEDED(hr))
+        m_rootParametersInfo = rootParamInfo;
+    }
+    else
+    {
+        //We only need to setup the stuff for UAV, SRV and ranges once
+        for (size_t rootParamIndex = 0; rootParamIndex < m_rootParametersInfo.size(); ++rootParamIndex)
         {
-            const D3D12_ROOT_PARAMETER1* const parameters = rootSignatureDescriptor->Desc_1_1.pParameters;
-            for (size_t rootParamCounter = 0; rootParamCounter < rootSignatureDescriptor->Desc_1_1.NumParameters; ++rootParamCounter)
+            D3D12_ROOT_PARAMETER1& rootParam = m_rootParametersInfo[rootParamIndex];
+            //we are dealing with descriptorTable, SRV or UAV
+            switch (rootParam.ParameterType)
             {
-                switch (parameters[rootParamCounter].ParameterType)
+            case D3D12_ROOT_PARAMETER_TYPE_SRV:
+                //This is a texture
+                //MSG_TRACE("D3D12_ROOT_PARAMETER_TYPE_SRV Found");
+                break;
+            case D3D12_ROOT_PARAMETER_TYPE_UAV:
+                //This is a bufffer
+                //MSG_TRACE("D3D12_ROOT_PARAMETER_TYPE_UAV Found");
+                break;
+            case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
+                //This could be all kinds of things, in our case its just a list of textures
+            {
+                ShaderParameter shaderParam;
+                shaderParam.m_rootParamIndex = rootParamIndex;
+                if (rootParam.DescriptorTable.pDescriptorRanges[0].RangeType == D3D12_DESCRIPTOR_RANGE_TYPE_SRV)
                 {
-                case D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE:
-                    HandleDescriptorTable(parameters[rootParamCounter], inputBindingDescriptor, rootParamCounter); //Special
-                    break;
-                case D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS:
-                    HandleRootConstants(parameters[rootParamCounter], inputBindingDescriptor, rootParamCounter); //special
-                    break;
-                case D3D12_ROOT_PARAMETER_TYPE_CBV:
-                case D3D12_ROOT_PARAMETER_TYPE_SRV:
-                case D3D12_ROOT_PARAMETER_TYPE_UAV:
-                    HandleCBVSRVUAV(parameters[rootParamCounter], inputBindingDescriptor, rootParamCounter);
-                    break;
-                default:
+                    TextureData data;
+                    data.m_numberOfTextures = rootParam.DescriptorTable.pDescriptorRanges[0].NumDescriptors;
+                    data.m_startingSlot = rootParam.DescriptorTable.pDescriptorRanges[0].BaseShaderRegister; //This indentifies the texture slot for this texture
+                    shaderParam.m_data = data;
+                    m_parameters.push_back(shaderParam);
+                }
+
+                //MSG_TRACE("D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE Found");
+            }
+                break;
+            case D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS:
+                //MSG_TRACE("D3D12_ROOT_PARAMETER_TYPE_32BitConstants Found");
+                break;
+            case D3D12_ROOT_PARAMETER_TYPE_CBV:
+                //MSG_TRACE("D3D12_ROOT_PARAMETER_TYPE_CBV Found");
+                break;
+            default:
+                break;
+
+            }
+        }
+    }
+
+    //Lets read the constant buffers and match them with the root params
+    for (size_t index = 0; index < shaderDescriptor.ConstantBuffers; ++index)
+    {
+        ID3D12ShaderReflectionConstantBuffer* cbPtr = shaderReflection->GetConstantBufferByIndex(static_cast<UINT>(index));
+        if (cbPtr != nullptr)
+        {
+            D3D12_SHADER_BUFFER_DESC shaderCBDesc;
+            cbPtr->GetDesc(&shaderCBDesc);
+
+            //MSG_TRACE("Adding CBV with name: %s", shaderCBDesc.Name);
+
+            D3D12_SHADER_INPUT_BIND_DESC inputBindingDesc;
+            shaderReflection->GetResourceBindingDescByName(shaderCBDesc.Name, &inputBindingDesc);
+
+            for (size_t rootParamIndex = 0; rootParamIndex < m_rootParametersInfo.size(); ++rootParamIndex)
+            {
+                //We know the type has to be CBV
+                D3D12_ROOT_PARAMETER1& rootParam = m_rootParametersInfo[rootParamIndex];
+                if (rootParam.Descriptor.ShaderRegister == inputBindingDesc.BindPoint && rootParam.Descriptor.RegisterSpace == inputBindingDesc.Space)
+                {
+                    //Found a CB that matches a root paramter
+                    ShaderParameter param;
+                    param.m_rootParamIndex = rootParamIndex;
+                    param.m_data = GetVariant(shaderCBDesc.Name);
+                    m_parameters.push_back(param);
+
                     break;
                 }
             }
         }
     }
+
+
+    return foundRootParametersInfo;
+
 }
 
-///-----------------------------------------------------------------------------
-///! @brief   
-///! @remark
-///-----------------------------------------------------------------------------
-void ShaderParamMatcher::HandleDescriptorTable(D3D12_ROOT_PARAMETER1 parameter, D3D12_SHADER_INPUT_BIND_DESC bindingDescriptor, size_t rootParamIndex)
-{
-    for (size_t counter = 0; counter < parameter.DescriptorTable.NumDescriptorRanges; ++counter)
-    {
-        D3D12_DESCRIPTOR_RANGE1 range = parameter.DescriptorTable.pDescriptorRanges[counter];
-        if (range.BaseShaderRegister == bindingDescriptor.BindPoint && range.RegisterSpace == bindingDescriptor.Space)
-        {
-            //Found what we were looking for
-            ShaderParameter param;
-            param.m_rootParamIndex = rootParamIndex;
-            param.m_constantBuffer = GetVariant(bindingDescriptor.Name);
-            m_parameters.push_back(param);
-        }
-    }
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   
-///! @remark
-///-----------------------------------------------------------------------------
-void ShaderParamMatcher::HandleRootConstants(D3D12_ROOT_PARAMETER1 parameter, D3D12_SHADER_INPUT_BIND_DESC bindingDescriptor, size_t rootParamIndex)
-{
-    if (parameter.Constants.ShaderRegister == bindingDescriptor.BindPoint && parameter.Constants.RegisterSpace == bindingDescriptor.Space)
-    {
-        //Found what we were looking for
-        ShaderParameter param;
-        param.m_rootParamIndex = rootParamIndex;
-        param.m_constantBuffer = GetVariant(bindingDescriptor.Name);
-        m_parameters.push_back(param);
-    }
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   
-///! @remark
-///-----------------------------------------------------------------------------
-void ShaderParamMatcher::HandleCBVSRVUAV(D3D12_ROOT_PARAMETER1 parameter, D3D12_SHADER_INPUT_BIND_DESC bindingDescriptor, size_t rootParamIndex)
-{
-    if (parameter.Descriptor.ShaderRegister == bindingDescriptor.BindPoint && parameter.Descriptor.RegisterSpace == bindingDescriptor.Space)
-    {
-        //Found what we were looking for
-        //Might want to check the name here for some known paramters and the data class it should represent
-        ShaderParameter param;
-        param.m_rootParamIndex = rootParamIndex;
-        param.m_constantBuffer = GetVariant(bindingDescriptor.Name);
-        m_parameters.push_back(param);
-    }
-}
+//
+/////-----------------------------------------------------------------------------
+/////! @brief   
+/////! @remark
+/////-----------------------------------------------------------------------------
+//RootParamInformation ShaderParamMatcher::HandleDescriptorTable(D3D12_ROOT_PARAMETER1 parameter, size_t rootParamIndex)
+//{
+//    RootParamInformation info;
+//    info.m_index = rootParamIndex;
+//    info.shaderRegister = parameter.Constants.ShaderRegister;
+//    info.registerSpace = parameter.Constants.RegisterSpace;
+//
+//    return info;
+//
+//    for (size_t counter = 0; counter < parameter.DescriptorTable.NumDescriptorRanges; ++counter)
+//    {
+//        D3D12_DESCRIPTOR_RANGE1 range = parameter.DescriptorTable.pDescriptorRanges[counter];
+//        if (range.BaseShaderRegister == bindingDescriptor.BindPoint && range.RegisterSpace == bindingDescriptor.Space)
+//        {
+//            //Found what we were looking for
+//            ShaderParameter param;
+//            param.m_rootParamIndex = rootParamIndex;
+//            param.m_constantBuffer = GetVariant(bindingDescriptor.Name);
+//            m_parameters.push_back(param);
+//        }
+//    }
+//}
+//
+/////-----------------------------------------------------------------------------
+/////! @brief   
+/////! @remark
+/////-----------------------------------------------------------------------------
+//RootParamInformation ShaderParamMatcher::HandleRootConstants(D3D12_ROOT_PARAMETER1 parameter, size_t rootParamIndex)
+//{
+//    RootParamInformation info;
+//    info.m_index = rootParamIndex;
+//    info.shaderRegister = parameter.Constants.ShaderRegister;
+//    info.registerSpace = parameter.Constants.RegisterSpace;
+//
+//    return info;
+//    //if (parameter.Constants.ShaderRegister == bindingDescriptor.BindPoint && parameter.Constants.RegisterSpace == bindingDescriptor.Space)
+//    //{
+//    //    //Found what we were looking for
+//    //    ShaderParameter param;
+//    //    param.m_rootParamIndex = rootParamIndex;
+//    //    param.m_constantBuffer = GetVariant(bindingDescriptor.Name);
+//    //    m_parameters.push_back(param);
+//    //}
+//}
+//
+/////-----------------------------------------------------------------------------
+/////! @brief   
+/////! @remark
+/////-----------------------------------------------------------------------------
+//RootParamInformation ShaderParamMatcher::HandleCBVSRVUAV(D3D12_ROOT_PARAMETER1 parameter, size_t rootParamIndex)
+//{
+//
+//    RootParamInformation info;
+//    info.m_index = rootParamIndex;
+//    info.shaderRegister = parameter.Descriptor.ShaderRegister;
+//    info.registerSpace = parameter.Descriptor.RegisterSpace;
+//
+//    return info;
+//
+//    //if (parameter.Descriptor.ShaderRegister == bindingDescriptor.BindPoint && parameter.Descriptor.RegisterSpace == bindingDescriptor.Space)
+//    //{
+//    //    //Found what we were looking for
+//    //    //Might want to check the name here for some known paramters and the data class it should represent
+//    //    ShaderParameter param;
+//    //    param.m_rootParamIndex = rootParamIndex;
+//    //    param.m_constantBuffer = GetVariant(bindingDescriptor.Name);
+//    //    m_parameters.push_back(param);
+//    //}
+//    ////MSG_TRACE_CHANNEL("ShaderParameterMatcher", "",);
+//}

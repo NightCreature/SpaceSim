@@ -11,6 +11,12 @@
 
 #include "Core/Resource/RenderResource.h"
 #include "Core/Types/TypeHelpers.h"
+#include "D3D12/DescriptorHeapManager.h"
+#include <variant>
+
+//shouldnt be here just want to be able to draw something
+Matrix44 MeshGroup::m_projection;
+Matrix44 MeshGroup::m_view;
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -91,18 +97,19 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
 ///-----------------------------------------------------------------------------
 void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box)
 {
-    //Set Descriptor heaps but that might be in render system itself
-
+    //update constant buffers
+    ShaderParameters& shaderParams = m_material.GetShaderParameters();
 
     auto& writableResource = RenderResourceHelper(resource).getWriteableResource();
-    auto& textureHeap = writableResource.getTextureManager().GetTextureDescriptorHeap();
-    auto& samplerHeap = writableResource.getTextureManager().GetSamplerDescriptorHeap();
     auto& effectCache = writableResource.getEffectCache();
 
-    auto& effectHeap = effectCache.GetDescriptorHeap();
-    UNUSEDPARAM(effectHeap);
+    auto& heapManager = writableResource.getDescriptorHeapManager();
 
-    ID3D12DescriptorHeap* ppHeaps[] = { textureHeap.m_heap, samplerHeap.m_heap };
+    auto& shaderVisibleHeap = heapManager.GetShaderVisibleHeap();
+    //Need to create the root descriptor tables we use here, copy in the descriptor handles from the heap to this area.
+
+    //Might need to offset this but for now set the whole heap for CRV etc.
+    ID3D12DescriptorHeap* ppHeaps[] = { heapManager.GetSRVCBVUAVHeap().m_heap, heapManager.GetSamplerHeap().m_heap };
     list.m_list->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
     //Set rootdiscriptor here
 
@@ -112,15 +119,23 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
 
     
     //Set PSO object
-    auto& material = m_shaderInstance.getMaterial();
-    Effect* effect = effectCache.getEffect(material.getEffectHash());
-    Technique* technique = effect->getTechnique(material.getTechnique());
+    const Effect* effect = effectCache.getEffect(m_material.getEffectHash());
+    const Technique* technique = effect->getTechnique(m_material.getTechnique());
+
+    //This should come from teh material
+    size_t startOfRangeIndex = shaderVisibleHeap.GetCPUDescriptorHeapRangeRingBuffer(m_material.GetNumberOfNeededDescriptors());
+    size_t copiedNumberOfDescriptors = 0;
+    if (startOfRangeIndex == static_cast<size_t>(-1))
+    {
+        //We have an error here and our range is out of scope
+    }
+    //auto device = writableResource.getDeviceManager().GetDevice();
 
     //technique->m_psBuffer.UpdateCPUData(material.getMaterialCB());
-    WVPBufferContent wvpData;
-    wvpData.m_world = m_world;
-    wvpData.m_view = RenderSystem::m_view;
-    wvpData.m_projection = RenderSystem::m_projection;
+    //WVPBufferContent wvpData;
+    //wvpData.m_world = m_world;
+    //wvpData.m_view = RenderSystem::m_view;
+    //wvpData.m_projection = RenderSystem::m_projection;
     //technique->m_vsBuffer.UpdateCPUData(wvpData);
 
     //technique->GetPipelineState().BindToCommandList(list);
@@ -128,32 +143,109 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
     list.m_list->SetGraphicsRootSignature(technique->GetPipelineState().m_pipeLineStateDescriptor.pRootSignature);
 
     //technique
-
-    //list.m_list->SetGraphicsRootConstantBufferView(0, technique->m_vsBuffer.GetConstantBuffer()->GetGPUVirtualAddress()); //WVP
-    //list.m_list->SetGraphicsRootConstantBufferView(1, technique->m_vsBuffer.GetConstantBuffer()->GetGPUVirtualAddress()); //Shadow
-    //list.m_list->SetGraphicsRootConstantBufferView(2, technique->m_vsBuffer.GetConstantBuffer()->GetGPUVirtualAddress()); //Lights
-
-    //list.m_list->SetGraphicsRootConstantBufferView(3, technique->m_psBuffer.GetConstantBuffer()->GetGPUVirtualAddress()); //material
-    //list.m_list->SetGraphicsRootConstantBufferView(4, technique->m_psBuffer.GetConstantBuffer()->GetGPUVirtualAddress()); //lights again
-
-    TextureManager& tm = writableResource.getTextureManager();
-
-    size_t counter = 5;
-    for (auto& textureSlot : material.getTextureHashes())
+    //MSG_TRACE_CHANNEL("Mesh Group", "Drawing mesh with following deatils:");
+    //MSG_TRACE_CHANNEL("Mesh Group", "\tEffect Hash: %s", effect->m_name.c_str());
+    //MSG_TRACE_CHANNEL("Mesh Group", "\tTechnique Hash: %d", technique->getTechniqueId());
+    //MSG_TRACE_CHANNEL("Mesh Group", "\tNumber of Root Params: %d", shaderParams.size());
+    
+    for (size_t counter = 0; counter < shaderParams.size(); ++counter)
     {
-        const TextureInfo* texInfo = tm.getTexture(textureSlot.m_textureHash);
-        if (texInfo != nullptr)
+        ShaderParameter& shaderParam = shaderParams[counter];
+        auto index = shaderParam.m_data.index();
+        switch (index)
         {
-            //list.m_list->SetGraphicsRootDescriptorTable(counter, tm.GetTextureDescriptorHeap().GetGPUDescriptorHandle(texInfo->m_heapIndex));
-            ++counter;
-            //list.m_list->SetGraphicsRootShaderResourceView(textureSlot.m_textureSlot, );
+        case 0:
+        {
+            auto* constantBuffer = std::get_if<0>(&shaderParam.m_data);
+
+
+            //if (shaderParam.m_rootParamIndex == 0 || shaderParam.m_rootParamIndex == 2)
+            {
+                //This should be world stuffs
+                WVPBufferContent wvpBuffer;
+                wvpBuffer.m_projection = m_projection;
+                wvpBuffer.m_view = m_view;
+                wvpBuffer.m_world = world;
+                constantBuffer->UpdateCPUData(wvpBuffer);
+                constantBuffer->UpdateGPUData();
+            }
+
+            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex),constantBuffer->GetConstantBuffer()->GetGPUVirtualAddress());
+            //MSG_TRACE_CHANNEL("Mesh Group", "Set WVP data for param: %d", shaderParam.m_rootParamIndex);
+        }
+        break;
+        case 1:
+        {
+            auto* constantBuffer = std::get_if<1>(&shaderParam.m_data);
+            constantBuffer->UpdateCPUData(m_material.getMaterialCB());
+            constantBuffer->UpdateGPUData();
+            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), constantBuffer->GetConstantBuffer()->GetGPUVirtualAddress());
+            //MSG_TRACE_CHANNEL("Mesh Group", "Set material data for param: %d", shaderParam.m_rootParamIndex);
+        }
+        break;
+        case 2:
+        {
+            auto* constantBuffer = std::get_if<2>(&shaderParam.m_data);
+            constantBuffer->UpdateGPUData();
+            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), constantBuffer->GetConstantBuffer()->GetGPUVirtualAddress());
+            //MSG_TRACE_CHANNEL("Mesh Group", "Set per frame data for param: %d", shaderParam.m_rootParamIndex);
+        }
+        break;
+        case 3:
+        //{
+        //    TextureManager& tm = writableResource.getTextureManager();
+        //    auto nullDescriptors = tm.GetNullDescriptor();
+        //    list.m_list->SetGraphicsRootDescriptorTable(static_cast<UINT>(shaderParam.m_rootParamIndex), heapManager.GetSRVCBVUAVHeap().GetGPUDescriptorHandle(nullDescriptors.second));
+        //    //MSG_TRACE_CHANNEL("Mesh Group", "Set texture data for param: %d", shaderParam.m_rootParamIndex);
+        //}
+        {
+            auto* textureData = std::get_if<3>(&shaderParam.m_data);
+            if (textureData != nullptr)
+            {
+                auto& textureHashes = m_material.getTextureHashes();
+                TextureManager& tm = writableResource.getTextureManager();
+                //need to allocate range here
+                for (size_t textureSlotIndex = textureData->m_startingSlot; textureSlotIndex < textureData->m_numberOfTextures + textureData->m_startingSlot; ++textureSlotIndex)
+                {
+                    auto textureSlotIterator = std::find_if(textureHashes.begin(), textureHashes.end(), [textureSlotIndex](const auto& slotMapping) { return textureSlotIndex == slotMapping.m_textureSlot; });
+                    if (textureSlotIterator != textureHashes.end())
+                    {
+                        //this should create a new descriptor range and set that in a table
+                        const TextureInfo* texInfo = tm.getTexture(textureSlotIterator->m_textureHash);
+                        if (texInfo != nullptr)
+                        {
+                            //auto& actualDescriptor = shaderVisibleHeap.GetCPUDescriptorHandle(copiedNumberOfDescriptors);
+                            //device->CopyDescriptorsSimple(1, actualDescriptor, textureDescriptorHeap.GetCPUDescriptorHandle(texInfo->m_heapIndex), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+                            //list.m_list->SetGraphicsRootDescriptorTable(counter, tm.GetTextureDescriptorHeap().GetGPUDescriptorHandle(texInfo->m_heapIndex));
+                            ++counter;
+                            ++copiedNumberOfDescriptors;
+
+                            // We need to copy the descriptors here so we can set a table
+                            //size_t descriptorStartIndex = heapManager.GetSRVCBVUAVHeap().GetCPUDescriptorHeapRange(textureData->m_numberOfTextures);
+                            //auto& cpuDescriptorHandle = heapManager.GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorStartIndex);
+                            size_t heapIndex = texInfo->m_heapIndex;
+                            auto textureCPUHandle = heapManager.GetSRVCBVUAVHeap().GetGPUDescriptorHandle(heapIndex);
+                            //device->CopyDescriptorsSimple(1, cpuDescriptorHandle, textureCPUHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV); //This fails because the descriptor heap is set to shader visible
+                            //You should allocate CPU and GPU descriptor handles at the same time, so basically our heap index can be used for GPU and CPU creation of handles
+                            //D3D12_GPU_DESCRIPTOR_HANDLE descriptor;
+                            list.m_list->SetGraphicsRootDescriptorTable(static_cast<UINT>(shaderParam.m_rootParamIndex), textureCPUHandle);
+                        }
+                        else
+                        {
+                            //Create a proper null descriptor range here potentially so we always have something bound 
+                            // // E:\SDK\DirectX-Graphics-Samples\Samples\Desktop\D3D12xGPU\src\bin\x64\Debug check out sample its doing more work than most others
+                            //Set a null descriptor
+                            auto nullDescriptors = tm.GetNullDescriptor();
+                            list.m_list->SetGraphicsRootDescriptorTable(static_cast<UINT>(shaderParam.m_rootParamIndex), heapManager.GetSRVCBVUAVHeap().GetGPUDescriptorHandle(nullDescriptors.second));
+                        }
+                    }
+                }
+            }
+        }
+        default:
+            break;
         }
     }
-	//commandList->SetGraphicsRootSignature(rootSignature.Get());
-	//commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture1SRV, texture1);
-	//commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture1Sampler, texture1Sampler);
-	//commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture2SRV, texture2);
-	//commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture2Sampler, texture2Sampler);
 
 
     //Set Shader constants and samplers here this is different
@@ -170,51 +262,6 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
     UNUSEDPARAM(world);
     UNUSEDPARAM(elapsedTime);
     UNUSEDPARAM(resource);
-
-
-
-    //void FrameResource::PopulateCommandList(ID3D12GraphicsCommandList * pCommandList, ID3D12PipelineState * pPso1, ID3D12PipelineState * pPso2,
-    //    UINT frameResourceIndex, UINT numIndices, D3D12_INDEX_BUFFER_VIEW * pIndexBufferViewDesc, D3D12_VERTEX_BUFFER_VIEW * pVertexBufferViewDesc,
-    //    ID3D12DescriptorHeap * pCbvSrvDescriptorHeap, UINT cbvSrvDescriptorSize, ID3D12DescriptorHeap * pSamplerDescriptorHeap, ID3D12RootSignature * pRootSignature)
-    //{
-    //    // If the root signature matches the root signature of the caller, then
-    //    // bindings are inherited, otherwise the bind space is reset.
-    //    pCommandList->SetGraphicsRootSignature(pRootSignature);
-
-    //    ID3D12DescriptorHeap* ppHeaps[] = { pCbvSrvDescriptorHeap, pSamplerDescriptorHeap };
-    //    pCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-    //    pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    //    pCommandList->IASetIndexBuffer(pIndexBufferViewDesc);
-    //    pCommandList->IASetVertexBuffers(0, 1, pVertexBufferViewDesc);
-    //    pCommandList->SetGraphicsRootDescriptorTable(0, pCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-    //    pCommandList->SetGraphicsRootDescriptorTable(1, pSamplerDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-
-    //    // Calculate the descriptor offset due to multiple frame resources.
-    //    // 1 SRV + how many CBVs we have currently.
-    //    UINT frameResourceDescriptorOffset = 1 + (frameResourceIndex * m_cityRowCount * m_cityColumnCount);
-    //    CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(pCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart(), frameResourceDescriptorOffset, cbvSrvDescriptorSize);
-
-    //    PIXBeginEvent(pCommandList, 0, L"Draw cities");
-    //    BOOL usePso1 = TRUE;
-    //    for (UINT i = 0; i < m_cityRowCount; i++)
-    //    {
-    //        for (UINT j = 0; j < m_cityColumnCount; j++)
-    //        {
-    //            // Alternate which PSO to use; the pixel shader is different on 
-    //            // each just as a PSO setting demonstration.
-    //            pCommandList->SetPipelineState(usePso1 ? pPso1 : pPso2);
-    //            usePso1 = !usePso1;
-
-    //            // Set this city's CBV table and move to the next descriptor.
-    //            pCommandList->SetGraphicsRootDescriptorTable(2, cbvSrvHandle);
-    //            cbvSrvHandle.Offset(cbvSrvDescriptorSize);
-
-    //            pCommandList->DrawIndexedInstanced(numIndices, 1, 0, 0, 0);
-    //        }
-    //    }
-    //    PIXEndEvent(pCommandList);
-    //}
-    auto depth = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 }
 
 ///-------------------------------------------------------------------------

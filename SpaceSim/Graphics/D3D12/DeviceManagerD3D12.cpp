@@ -30,8 +30,6 @@ void DeviceManager::cleanup()
         m_swapChain->Release();
     }
    
-    delete m_commandQueue;
-
     m_dxgiFactory->Release();
     m_device->Release();
 
@@ -188,6 +186,22 @@ ID3D12Resource* DeviceManager::GetCurrentBackBuffer()
 ///-----------------------------------------------------------------------------
 bool DeviceManager::CheckFeatures()
 {
+    D3D12_FEATURE_DATA_D3D12_OPTIONS featureSupport = {};
+    m_device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &featureSupport, sizeof(featureSupport));
+
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Conservative Rasterisation Tier: %d", featureSupport.ConservativeRasterizationTier);
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Cross Adapter Row Major Textures: %s", featureSupport.CrossAdapterRowMajorTextureSupported ? "true" : "false");
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Cross Node sharing tier: %d", featureSupport.CrossNodeSharingTier);
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Double Precision Float Shader Ops: %s", featureSupport.DoublePrecisionFloatShaderOps ? "true" : "false");
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Max GPU Virtual Adress bits: %d", featureSupport.MaxGPUVirtualAddressBitsPerResource);
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Min Precision Support (10, 16 bits): %d", featureSupport.MinPrecisionSupport);
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Output Merger Logic: %s", featureSupport.OutputMergerLogicOp ? "true" : "false");
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "PS Specified Stencil Reference Support: %s", featureSupport.PSSpecifiedStencilRefSupported ? "true" : "false");
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Resource Binding Tier: %d", featureSupport.ResourceBindingTier);
+
+
+
+
     return true;
 }
 
@@ -199,36 +213,15 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
 {
     auto writableResource = RenderResourceHelper(m_resource).getWriteableResource();
 
-    m_commandQueue = new CommandQueue(*this);
-
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-    HRESULT hr = m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue->m_queue));
-    if (hr != S_OK)
-    {
-        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create a command queue with error: 0x%x, %s", hr, getLastErrorMessage(hr));
-        return false;
-    }
+    auto& commandQueueManager = writableResource.getCommandQueueManager();
+    m_swapChainCommandQueueIndex = commandQueueManager.CreateCommandQueue();
+    auto& commandQueue = commandQueueManager.GetCommandQueue(m_swapChainCommandQueueIndex);
 
-    hr = m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_commandQueue->m_fence));
-    if (hr != S_OK)
-    {
-        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create a GPU fence with error: 0x%x, %s", hr, getLastErrorMessage(hr));
-        return false;
-    }
-    m_fenceValue = 1;
-
-    m_commandQueue->m_fenceEvent = CreateEvent(nullptr, false, false, nullptr);
-    if (m_commandQueue->m_fenceEvent == 0)
-    {
-        hr = GetLastError();
-        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create an Event with error: 0x%x, %s", hr, getLastErrorMessage(hr));
-        return false;
-    }
-
-    m_commandQueue->CreateCommandList(); 
+    m_swapChainCommandListIndex = commandQueue.CreateCommandList(); 
 
     // Describe and create the swap chain.
     m_swapChainDescriptor = {};
@@ -244,7 +237,7 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
 
     // Swap chain needs the queue so that it can force a flush on it.
     IDXGISwapChain1* tempSwapChain = nullptr;
-    hr = m_dxgiFactory->CreateSwapChainForHwnd(m_commandQueue->m_queue, windowHandle, &m_swapChainDescriptor, nullptr, nullptr, &tempSwapChain);
+    HRESULT hr = m_dxgiFactory->CreateSwapChainForHwnd(commandQueue.m_queue, windowHandle, &m_swapChainDescriptor, nullptr, nullptr, &tempSwapChain);
     if (hr != S_OK)
     {
         MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create a swap chain with error: 0x%x, %s", hr, getLastErrorMessage(hr));
@@ -256,7 +249,7 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
     m_currentBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
 
     //Create the heap for the back buffers we still have to attach the resources
-    m_renderTargetViewDescriptorHeap = writableResource.getDescriptorHeapManager().CreateDescriptorHeap(m_frameCount, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, false);
+    m_renderTargetViewDescriptorHeap = writableResource.getDescriptorHeapManager().CreateDescriptorHeap(m_frameCount, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, false, false);
 
     
     //Create actual resources for the backbuffers
@@ -286,7 +279,7 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
 
 
     //Create the Depth Stencil heap
-    m_depthStencilDescriptorHeap = writableResource.getDescriptorHeapManager().CreateDescriptorHeap(1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, false);
+    m_depthStencilDescriptorHeap = writableResource.getDescriptorHeapManager().CreateDescriptorHeap(1, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, false, false);
     
 
     // Create the depth stencil view.
@@ -298,7 +291,7 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
 
         D3D12_CLEAR_VALUE depthOptimizedClearValue = {};
         depthOptimizedClearValue.Format = DXGI_FORMAT_D32_FLOAT;
-        depthOptimizedClearValue.DepthStencil.Depth = 1.0f;
+        depthOptimizedClearValue.DepthStencil.Depth = 0.0f;
         depthOptimizedClearValue.DepthStencil.Stencil = 0;
 
         D3D12_RESOURCE_DESC depthStencilDescriptor;
@@ -337,60 +330,11 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
 #endif
 
 
-		
+        
         m_device->CreateDepthStencilView(m_depthStencil, &depthStencilDesc, m_depthStencilDescriptorHeap.GetCPUDescriptorHandle(depthStencilDescriptorIndex));
     }
 
     return true;
-}
-
-///-----------------------------------------------------------------------------
-///! @brief 
-///! @remark
-///-----------------------------------------------------------------------------
-size_t DeviceManager::CreateCommandQueue()
-{
-    CommandQueue queue(*this);
-
-    D3D12_COMMAND_QUEUE_DESC queueDesc = {};
-    queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-    queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-
-    HRESULT hr = m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&queue.m_queue));
-    if (hr != S_OK)
-    {
-        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create a command queue with error: 0x%x, %s", hr, getLastErrorMessage(hr));
-        return std::numeric_limits<size_t>::max();
-    }
-
-#ifdef _DEBUG
-    std::wstringstream str;
-    str << L"CommandQueue" << m_commandQueues.size();
-    queue.m_queue->SetName(str.str().c_str());
-#endif
-
-    hr = m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&queue.m_fence));
-    if (hr != S_OK)
-    {
-        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create a GPU fence with error: 0x%x, %s", hr, getLastErrorMessage(hr));
-        return std::numeric_limits<size_t>::max();
-    }
-#ifdef _DEBUG
-    str << L"Fence";
-    queue.m_queue->SetName(str.str().c_str());
-#endif
-    queue.m_fenceValue = 1;
-
-    queue.m_fenceEvent = CreateEvent(nullptr, false, false, nullptr);
-    if (queue.m_fenceEvent == 0)
-    {
-        hr = GetLastError();
-        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create an Event with error: 0x%x, %s", hr, getLastErrorMessage(hr));
-        return std::numeric_limits<size_t>::max();
-    }
-
-    m_commandQueues.push_back(queue);
-    return m_commandQueues.size() - 1;
 }
 
 ///-----------------------------------------------------------------------------
