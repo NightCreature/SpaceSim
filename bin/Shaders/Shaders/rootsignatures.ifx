@@ -1,10 +1,10 @@
 #define coreEffectRS\
     "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
-    "CBV(b0, space=0),"\
-    "CBV(b0, space=1),"\
-    "CBV(b1, space=1),"\
-    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_PIXEL )," \
-    "DescriptorTable( SRV(t33), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "CBV(b0, space=0, visibility = SHADER_VISIBILITY_VERTEX),"\
+    "CBV(b0, space=1, visibility = SHADER_VISIBILITY_PIXEL),"\
+    "CBV(b1, space=1, visibility = SHADER_VISIBILITY_PIXEL),"\
+    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_ALL )," \
+    "DescriptorTable( SRV(t33), visibility = SHADER_VISIBILITY_ALL )," \
     "StaticSampler(s0, " \
                    "addressU = TEXTURE_ADDRESS_WRAP, " \
                    "addressV = TEXTURE_ADDRESS_WRAP, " \
@@ -12,11 +12,11 @@
 
 #define shadowMappingRS\
     "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
-    "CBV(b0)"
+    "CBV(b0, visibility = SHADER_VISIBILITY_VERTEX)"
 
 #define worldTransformRS\
     "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
-    "CBV(b0)"
+    "CBV(b0, visibility = SHADER_VISIBILITY_VERTEX)"
 
 #define doorRS\
     "RootFlags(ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT),"\
@@ -30,8 +30,8 @@
 
 #define forceFieldRS\
     "RootFlags(ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT),"\
-    "CBV(b0, space=0),"\
-    "CBV(b0, space=1),"\
+    "CBV(b0, space=0, visibility = SHADER_VISIBILITY_VERTEX),"\
+    "CBV(b0, space=1, visibility = SHADER_VISIBILITY_PIXEL),"\
     "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_PIXEL )," \
     "StaticSampler(s0, " \
                    "addressU = TEXTURE_ADDRESS_WRAP, " \
@@ -71,18 +71,18 @@
 
 #define simpleEffectRS\
     "RootFlags( ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT ),"\
-    "CBV(b0, space=0),"\
-    "CBV(b1, space=0),"\
-    "CBV(b2, space=0),"\
-    "CBV(b0, space=1),"\
-    "CBV(b1, space=1),"\
-    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_PIXEL )," \
-    "DescriptorTable( SRV(t32), visibility = SHADER_VISIBILITY_PIXEL )," \
-    "DescriptorTable( SRV(t33), visibility = SHADER_VISIBILITY_PIXEL )," \
+    "CBV(b0, space=0, visibility = SHADER_VISIBILITY_ALL),"\
+    "CBV(b1, space=0, visibility = SHADER_VISIBILITY_ALL),"\
+    "CBV(b2, space=0, visibility = SHADER_VISIBILITY_ALL),"\
+    "CBV(b0, space=1, visibility = SHADER_VISIBILITY_ALL),"\
+    "CBV(b1, space=1, visibility = SHADER_VISIBILITY_ALL),"\
+    "DescriptorTable( SRV(t8), visibility = SHADER_VISIBILITY_All )," \
+    "DescriptorTable( SRV(t32), visibility = SHADER_VISIBILITY_ALL )," \
+    "DescriptorTable( SRV(t33), visibility = SHADER_VISIBILITY_ALL )," \
     "StaticSampler(s0, " \
                "addressU = TEXTURE_ADDRESS_WRAP, " \
                "addressV = TEXTURE_ADDRESS_WRAP, " \
-               "filter = FILTER_ANISOTROPIC )", \
+               "filter = FILTER_ANISOTROPIC )," \
     "StaticSampler(s1, " \
                "addressU = TEXTURE_ADDRESS_WRAP, " \
                "addressV = TEXTURE_ADDRESS_WRAP, " \
