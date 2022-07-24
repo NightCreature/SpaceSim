@@ -46,6 +46,11 @@ public:
     IndexBuffer& GetIB() { return m_indexBuffer; }
     Material& GetMaterial() { return m_material; }
     void SetPrimitiveLayout(size_t layout) { m_primitiveLayout = layout; }
+    ///-----------------------------------------------------------------------------
+    ///! @brief   
+    ///! @remark
+    ///-----------------------------------------------------------------------------
+    void Cleanup();
 private:
     Matrix44 m_world;
     Material m_material;

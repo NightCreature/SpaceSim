@@ -24,10 +24,11 @@ public:
     Model() {}
     ~Model() 
     {
-        if (m_modelData.size() > 0)
+        for (auto& meshGroup : m_modelData)
         {
-            m_modelData.clear();
+            meshGroup.Cleanup();
         }
+
     }
 
     void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name)

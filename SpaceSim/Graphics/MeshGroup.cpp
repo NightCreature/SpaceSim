@@ -25,9 +25,6 @@ Matrix44 MeshGroup::m_view;
 ///-------------------------------------------------------------------------
 MeshGroup::~MeshGroup()
 {
-    //This leads to issues
-    //m_vertexBuffer.cleanup();
-    //m_indexBuffer.cleanup();
 }
 
 ///-------------------------------------------------------------------------
@@ -261,6 +258,16 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
     UNUSEDPARAM(resource);
 
     PIXEndEvent(list.m_list);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void MeshGroup::Cleanup()
+{
+    m_vertexBuffer.cleanup();
+    m_indexBuffer.cleanup();
 }
 
 ///-------------------------------------------------------------------------
