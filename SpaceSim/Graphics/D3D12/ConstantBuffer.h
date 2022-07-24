@@ -52,15 +52,10 @@ public:
         memcpy(m_GPUDataBegin, m_cpuSideData.m_data, m_cpuSideData.m_size); 
     }
 
-    void UpdateCpuData(const void* data) 
-    { 
-        memcpy(m_cpuSideData.m_data, data, m_cpuSideData.m_size);
-    }
-
     template<class T>
     void UpdateCpuData(const T& data) 
     {
-        UpdateCpuData(static_cast<const void*>(&data)); 
+        memcpy(m_cpuSideData.m_data, &data, sizeof(T));
     }
     ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
 private:
