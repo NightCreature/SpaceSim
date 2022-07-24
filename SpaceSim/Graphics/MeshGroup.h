@@ -16,14 +16,12 @@ class Bbox;
 class MeshGroup
 {
 public:
-    MeshGroup(VertexBuffer* vb, IndexBuffer* ib, const Material& material, DeviceManager& deviceManager) : m_geometryInstance(vb, ib), m_material(material), m_renderInstance(nullptr)
+    MeshGroup(const Material& material) : m_material(material)
     {
         m_world.identity();
-        m_shaderInstance.setMaterial(m_material);
         //m_shaderInstance.AddPsConstantBuffer(sizeof(MaterialContent), deviceManager, "material content buffer for meshgroup");
         //m_shaderInstance.AddVsConstantBuffer(sizeof(WVPBufferContent), deviceManager, "WVP content buffer for meshgroup");
         m_material = material;
-        UNUSEDPARAM(deviceManager);
     }
     MeshGroup(const MeshGroup& source);
     ~MeshGroup();
@@ -36,19 +34,25 @@ public:
     void setMaterial(const Material& material) { m_material = material; m_renderInstanceDirty = true; }
     void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true; }
 
-    const GeometryInstance& getGeometryInstance() const { return m_geometryInstance; }
+    /*const GeometryInstance& getGeometryInstance() const { return m_geometryInstance; }
     GeometryInstance& getGeometryInstance() { return m_geometryInstance; }
     const ShaderInstance& getShaderInstance() const { return m_shaderInstance; }
     ShaderInstance& getShaderInstance() { return m_shaderInstance; }
-    void setShaderInstance(const ShaderInstance& shaderInstance) { m_shaderInstance = shaderInstance; m_renderInstanceDirty = true; }
+    void setShaderInstance(const ShaderInstance& shaderInstance) { m_shaderInstance = shaderInstance; m_renderInstanceDirty = true; }*/
 
     void setDirty() { m_renderInstanceDirty = true; }
+
+    VertexBuffer& GetVB() { return m_vertexBuffer; }
+    IndexBuffer& GetIB() { return m_indexBuffer; }
+    Material& GetMaterial() { return m_material; }
+    void SetPrimitiveLayout(size_t layout) { m_primitiveLayout = layout; }
 private:
     Matrix44 m_world;
     Material m_material;
-    GeometryInstance m_geometryInstance; //This goes
-    ShaderInstance m_shaderInstance; //this goes
-    RenderInstance* m_renderInstance; //this goes
+    IndexBuffer m_indexBuffer;
+    VertexBuffer m_vertexBuffer;
+    size_t m_primitiveLayout;
+
     //SHould all be done here since we can execute commands here :)
     bool m_renderInstanceDirty;
 

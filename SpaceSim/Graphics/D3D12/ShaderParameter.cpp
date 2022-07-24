@@ -29,19 +29,20 @@ void ShaderParameter::CreateConstantBuffer(const DeviceManager& deviceManager, D
     case 0:
     {
         auto data = std::get_if<0>(&m_data);
-        data->Create(deviceManager, heap);
+        m_cbData.Create(deviceManager, heap, sizeof(*data));
+        //This can now call into the constant buffer manager maybe? or should this have the material instead probably cleaner
     }
     break;
     case 1:
     {
         auto data = std::get_if<1>(&m_data);
-        data->Create(deviceManager, heap);
+        m_cbData.Create(deviceManager, heap, sizeof(*data));
     }
     break;
     case 2:
     {
         auto data = std::get_if<2>(&m_data);
-        data->Create(deviceManager, heap);
+        m_cbData.Create(deviceManager, heap, sizeof(*data));
     }
     break;
     default:

@@ -14,6 +14,8 @@
 #include "D3D12/DescriptorHeapManager.h"
 #include <variant>
 
+#include <pix3.h>
+
 //shouldnt be here just want to be able to draw something
 Matrix44 MeshGroup::m_projection;
 Matrix44 MeshGroup::m_view;
@@ -23,11 +25,9 @@ Matrix44 MeshGroup::m_view;
 ///-------------------------------------------------------------------------
 MeshGroup::~MeshGroup()
 {
-    if (m_renderInstance != nullptr)
-    {
-        delete m_renderInstance;
-        m_renderInstance = nullptr;
-    }
+    //This leads to issues
+    //m_vertexBuffer.cleanup();
+    //m_indexBuffer.cleanup();
 }
 
 ///-------------------------------------------------------------------------
@@ -35,60 +35,60 @@ MeshGroup::~MeshGroup()
 ///-------------------------------------------------------------------------
 void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box )
 {
-    PROFILE_EVENT("MeshGroup::update", Aqua);
-    //What if this just recorded its things into the CommandList?
-    //if (m_renderInstanceDirty || m_renderInstance == nullptr)
-    //{  
-        //if ( m_renderInstance != nullptr)
-        //{
-        //    delete m_renderInstance;
-        //    m_renderInstance = nullptr;
-        //}
-		if (m_renderInstance == nullptr)
-		{
-            PROFILE_EVENT("MeshGroup::update::Allocation", Black);
-			m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
-#ifdef _DEBUG
-			convertToWideString(name, m_renderInstance->m_name); 
-            UNUSEDPARAM(name);
-#else
-			UNUSEDPARAM(name);
-#endif
-		}
-
-        WVPBufferContent wvpConstants; //= m_renderInstance->GetShaderInstance().getWVPConstants();
-        wvpConstants.m_projection = projection;
-        wvpConstants.m_view = view;
-        wvpConstants.m_world = m_world * world; 
-        auto vsConstants = m_renderInstance->GetShaderInstance().getVSConstantBufferSetup();
-        RenderResourceHelper resourceHelper(resource);
-        if (!vsConstants.empty())
-        {
-            resourceHelper.getResource().getDeviceManager().getDeferredDeviceContext()->UpdateSubresource(vsConstants[0], 0, 0, (void*)&wvpConstants, 0, 0); //Not sure about this
-        }
-
-        //Fix shader resource view references for the material.
-        m_renderInstance->GetShaderInstance().FixSrvReferences(resourceHelper.getWriteableResource());
-
-        auto psConstants = m_renderInstance->GetShaderInstance().getPSConstantBufferSetup();
-        if (!psConstants.empty())
-        {
-            resourceHelper.getResource().getDeviceManager().getDeferredDeviceContext()->UpdateSubresource(psConstants[0], 0, 0, (void*)&m_material.getMaterialCB(), 0, 0); //Not sure about this
-        }
-
-        UNUSEDPARAM(resource);
-        UNUSEDPARAM(world);
-        UNUSEDPARAM(view);
-        UNUSEDPARAM(projection);
-    //}
-    
-    if (m_renderInstance != nullptr)
-    {
-        m_renderInstance->setBoundingBox(box);
-        renderInstance.emplace_back(m_renderInstance);
-    }
-
-    UNUSEDPARAM(elapsedTime);
+//    PROFILE_EVENT("MeshGroup::update", Aqua);
+//    //What if this just recorded its things into the CommandList?
+//    //if (m_renderInstanceDirty || m_renderInstance == nullptr)
+//    //{  
+//        //if ( m_renderInstance != nullptr)
+//        //{
+//        //    delete m_renderInstance;
+//        //    m_renderInstance = nullptr;
+//        //}
+//    if (m_renderInstance == nullptr)
+//    {
+//        PROFILE_EVENT("MeshGroup::update::Allocation", Black);
+//        m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
+//#ifdef _DEBUG
+//        convertToWideString(name, m_renderInstance->m_name);
+//        UNUSEDPARAM(name);
+//#else
+//        UNUSEDPARAM(name);
+//#endif
+//    }
+//
+//        WVPBufferContent wvpConstants; //= m_renderInstance->GetShaderInstance().getWVPConstants();
+//        wvpConstants.m_projection = projection;
+//        wvpConstants.m_view = view;
+//        wvpConstants.m_world = m_world * world; 
+//        auto vsConstants = m_renderInstance->GetShaderInstance().getVSConstantBufferSetup();
+//        RenderResourceHelper resourceHelper(resource);
+//        if (!vsConstants.empty())
+//        {
+//            resourceHelper.getResource().getDeviceManager().getDeferredDeviceContext()->UpdateSubresource(vsConstants[0], 0, 0, (void*)&wvpConstants, 0, 0); //Not sure about this
+//        }
+//
+//        //Fix shader resource view references for the material.
+//        m_renderInstance->GetShaderInstance().FixSrvReferences(resourceHelper.getWriteableResource());
+//
+//        auto psConstants = m_renderInstance->GetShaderInstance().getPSConstantBufferSetup();
+//        if (!psConstants.empty())
+//        {
+//            resourceHelper.getResource().getDeviceManager().getDeferredDeviceContext()->UpdateSubresource(psConstants[0], 0, 0, (void*)&m_material.getMaterialCB(), 0, 0); //Not sure about this
+//        }
+//
+//        UNUSEDPARAM(resource);
+//        UNUSEDPARAM(world);
+//        UNUSEDPARAM(view);
+//        UNUSEDPARAM(projection);
+//    //}
+//    
+//    if (m_renderInstance != nullptr)
+//    {
+//        m_renderInstance->setBoundingBox(box);
+//        renderInstance.emplace_back(m_renderInstance);
+//    }
+//
+//    UNUSEDPARAM(elapsedTime);
 }
 
 ///-----------------------------------------------------------------------------
@@ -97,6 +97,8 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
 ///-----------------------------------------------------------------------------
 void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box)
 {
+    PIXBeginEvent(list.m_list, 0, "Update Mesh Group: %s", name.c_str());
+
     //update constant buffers
     ShaderParameters& shaderParams = m_material.GetShaderParameters();
 
@@ -156,38 +158,35 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
         {
         case 0:
         {
-            auto* constantBuffer = std::get_if<0>(&shaderParam.m_data);
+            auto constantBuffer = *(std::get_if<0>(&shaderParam.m_data));
 
 
             //if (shaderParam.m_rootParamIndex == 0 || shaderParam.m_rootParamIndex == 2)
             {
                 //This should be world stuffs
-                WVPBufferContent wvpBuffer;
-                wvpBuffer.m_projection = m_projection;
-                wvpBuffer.m_view = m_view;
-                wvpBuffer.m_world = world;
-                constantBuffer->UpdateCPUData(wvpBuffer);
-                constantBuffer->UpdateGPUData();
+                constantBuffer.m_projection = m_projection;
+                constantBuffer.m_view = m_view;
+                constantBuffer.m_world = world;
+                shaderParam.m_cbData.UpdateCpuData(constantBuffer);
+                shaderParam.m_cbData.UpdateGpuData();
             }
 
-            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex),constantBuffer->GetConstantBuffer()->GetGPUVirtualAddress());
+            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
             //MSG_TRACE_CHANNEL("Mesh Group", "Set WVP data for param: %d", shaderParam.m_rootParamIndex);
         }
         break;
         case 1:
         {
-            auto* constantBuffer = std::get_if<1>(&shaderParam.m_data);
-            constantBuffer->UpdateCPUData(m_material.getMaterialCB());
-            constantBuffer->UpdateGPUData();
-            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), constantBuffer->GetConstantBuffer()->GetGPUVirtualAddress());
+            shaderParam.m_cbData.UpdateCpuData(m_material.getMaterialCB());
+            shaderParam.m_cbData.UpdateGpuData();
+            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
             //MSG_TRACE_CHANNEL("Mesh Group", "Set material data for param: %d", shaderParam.m_rootParamIndex);
         }
         break;
         case 2:
         {
-            auto* constantBuffer = std::get_if<2>(&shaderParam.m_data);
-            constantBuffer->UpdateGPUData();
-            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), constantBuffer->GetConstantBuffer()->GetGPUVirtualAddress());
+            shaderParam.m_cbData.UpdateGpuData();
+            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
             //MSG_TRACE_CHANNEL("Mesh Group", "Set per frame data for param: %d", shaderParam.m_rootParamIndex);
         }
         break;
@@ -250,18 +249,18 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
 
     //Set Shader constants and samplers here this is different
     list.m_list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //Adjecency infocmtoin
-    D3D12_VERTEX_BUFFER_VIEW vertexBuffers[] = { m_geometryInstance.getVB()->GetBufferView() };
+    D3D12_VERTEX_BUFFER_VIEW vertexBuffers[] = { m_vertexBuffer.GetBufferView() };
     list.m_list->IASetVertexBuffers(0, 1, vertexBuffers);
-    const D3D12_INDEX_BUFFER_VIEW& indexBuffer = m_geometryInstance.getIB()->GetBufferView();
-    list.m_list->IASetIndexBuffer(&indexBuffer);
-
-    list.m_list->DrawIndexedInstanced(m_geometryInstance.getIB()->getNumberOfIndecis(), 1, 0, 0, 0);
+    list.m_list->IASetIndexBuffer(&m_indexBuffer.GetBufferView());
+    list.m_list->DrawIndexedInstanced(m_indexBuffer.getNumberOfIndecis(), 1, 0, 0, 0);
     
     UNUSEDPARAM(box);
     UNUSEDPARAM(name);
     UNUSEDPARAM(world);
     UNUSEDPARAM(elapsedTime);
     UNUSEDPARAM(resource);
+
+    PIXEndEvent(list.m_list);
 }
 
 ///-------------------------------------------------------------------------
@@ -270,8 +269,5 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
 MeshGroup::MeshGroup( const MeshGroup& source )
 {
     m_world = source.m_world;
-    m_geometryInstance = source.getGeometryInstance();
-    m_shaderInstance = source.getShaderInstance();
-    m_renderInstance = nullptr;
     m_renderInstanceDirty = true;
 }

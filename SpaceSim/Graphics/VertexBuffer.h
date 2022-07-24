@@ -38,10 +38,7 @@ class VertexBuffer
 {
 public:
     VertexBuffer(void){}
-    ~VertexBuffer(void)
-    {
-        cleanup();
-    }
+    ~VertexBuffer(void) {}
 
     void cleanup()
     {

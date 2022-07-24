@@ -13,9 +13,11 @@
 CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
 {
     CreatedMeshGroup meshGroup;
+    RenderResource& renderResource = RenderResourceHelper(params.m_resource).getWriteableResource();
+    meshGroup.meshGroup = new MeshGroup(params.mat);
 
-    VertexBuffer* vb = new VertexBuffer();
-    IndexBuffer* ib = new IndexBuffer();
+    VertexBuffer& vb = meshGroup.meshGroup->GetVB();
+    IndexBuffer& ib = meshGroup.meshGroup->GetIB();
 
     unsigned int m_nummultitexcoords = 1; //HACK FIX THIS
     unsigned int bufferSize = 0;
@@ -64,16 +66,15 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
         texCoordDimensions.push_back(2);
     }
     vertexData = vertexData - bufferSize;
-    RenderResource& renderResource = RenderResourceHelper(params.m_resource).getWriteableResource();
+
     
-    vb->Create(renderResource.getDeviceManager(), *params.m_commandList, bufferSize, vertexData, params.m_vertexDeclaration.GetVertexStride());
+    vb.Create(renderResource.getDeviceManager(), *params.m_commandList, bufferSize, vertexData, params.m_vertexDeclaration.GetVertexStride());
     //vb->createBufferAndLayoutElements(, bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
     delete[] vertexData;
 
-    ib->setNumberOfIndecis((unsigned int)params.m_indices.size());
-    ib->Create(renderResource.getDeviceManager(), *params.m_commandList, (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0]);
+    ib.setNumberOfIndecis((unsigned int)params.m_indices.size());
+    ib.Create(renderResource.getDeviceManager(), *params.m_commandList, (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0]);
 
-    meshGroup.meshGroup = new MeshGroup(vb, ib, params.mat, renderResource.getDeviceManager());
 
     //Add a binding to the shadow map
     //shaderInstance.AddPsSRV(m_shadowMapRenderer->getShadowMap());

@@ -32,14 +32,87 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     const RenderResource& renderResource = renderResourceHelper.getResource();
     //const ShaderInstance& shaderInstance = *(params.shaderInstance);
 
-    Material mat;
+    CreatedModel face;
+    face.model = new Model();
+
+    float corridorwidth = 50.0f;
+    float corridorheight = 50.0f;
+
+    auto& group = face.model->CreateMeshGroup();
+    group.SetPrimitiveLayout((unsigned int)D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    VertexBuffer& vb = group.GetVB();
+    IndexBuffer& ib = group.GetIB();
+
+    std::vector<unsigned int> texCoordDimensions;
+    for (int texCoordCounter = 0; texCoordCounter < numberOfTexcoords; ++texCoordCounter)
+    {
+        texCoordDimensions.push_back(2);
+    }
+
+    size_t bufferSize = 0;
+    size_t rows = params.nrVerticesInX;
+    size_t columns = params.nrVerticesInY;
+    //if ((params.height / corridorheight) > 1 && params.tesselate)
+    //{
+    //    rows *= (int)(params.height / corridorheight);
+    //}
+    //if ((params.width / corridorwidth) > 1 && params.tesselate)
+    //{
+    //    columns *= (int)(params.width / corridorheight);
+    //}
+    size_t numberOfVerts = rows * columns;
+    m_totalNumberOfVerts += numberOfVerts;
+    bufferSize += sizeof(float) * 3 * numberOfVerts;
+    bufferSize += sizeof(float) * 3 * numberOfVerts; //Normal
+    bufferSize += sizeof(float) * 3 * numberOfVerts; //Tangent
+    bufferSize += sizeof(float) * 2 * numberOfTexcoords * numberOfVerts;
+    byte* vertexData = new byte[bufferSize];
+    byte* startOfVertexArray = vertexData;
+    createVertexData(params, vertexData, face.boundingBox, corridorheight, corridorwidth, rows, columns);
+
+    //Move pointer to start of vertex array  
+
+    VertexDeclarationDescriptor vertexDesc;
+    vertexDesc.position = 3;
+    vertexDesc.normal = true;
+    vertexDesc.tangent = true;
+    vertexDesc.textureCoordinateDimensions = texCoordDimensions;
+
+    if (params.m_commandList != nullptr)
+    {
+        vb.Create(renderResource.getDeviceManager(), *params.m_commandList, bufferSize, startOfVertexArray, vertexDesc.GetVertexStride());
+    }
+    else
+    {
+        //Print message
+    }
+
+    delete[] startOfVertexArray; //cleanup
+    vertexData = nullptr;
+    startOfVertexArray = nullptr;
+
+    size_t numberOfIndecis = (rows - 1) * (columns - 1) * 6;
+    ib.setNumberOfIndecis(static_cast<unsigned int>(numberOfIndecis));
+    unsigned int* indecis = new unsigned int[numberOfIndecis];
+    unsigned int* startOfIndexData = indecis;
+    createIndexData(indecis, params.changeWindingOrder, rows, columns);
+
+    ib.Create(renderResource.getDeviceManager(), *params.m_commandList, static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData);
+    delete[] startOfIndexData; //cleanup
+    indecis = nullptr;
+    startOfIndexData = nullptr;
+    m_totalNumberOfPolygons += numberOfIndecis / 3;
+
+    //Setup material
+    Material& mat = group.GetMaterial();
     mat.setEffectHash(params.m_materialParameters.m_effectHash);
     mat.setMaterialContent(params.m_materialParameters.m_materialContent);
     mat.setBlendState(params.m_materialParameters.m_alphaBlend);
     mat.setTechnique(params.m_materialParameters.m_techniqueHash);
     mat.setEffectHash(params.m_materialParameters.m_effectHash);
     //Fix up texture references here
-    for (auto counter = 0; counter < Material::TextureSlotMapping::NumSlots; ++counter) 
+    for (auto counter = 0; counter < Material::TextureSlotMapping::NumSlots; ++counter)
     {
         if (!strICmp(params.m_materialParameters.m_textureNames[counter], ""))
         {
@@ -53,93 +126,6 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
         }
     }
     mat.Prepare(renderResourceHelper.getResource().getEffectCache(), renderResourceHelper.getWriteableResource().getDeviceManager(), renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap());
-
-    CreatedModel face;
-    face.model = new Model();
-
-
-    float corridorwidth = 50.0f;
-    float corridorheight = 50.0f;
-
-
-    if (face.model->getMeshData().empty())
-    {
-        MeshGroup* group = new MeshGroup(new VertexBuffer(), new IndexBuffer(), mat, renderResourceHelper.getWriteableResource().getDeviceManager());
-
-        face.model->getMeshData().push_back(group);
-
-        VertexBuffer* vb = face.model->getMeshData()[0]->getGeometryInstance().getVB();
-        IndexBuffer* ib = face.model->getMeshData()[0]->getGeometryInstance().getIB();
-
-        std::vector<unsigned int> texCoordDimensions;
-        for (int texCoordCounter = 0; texCoordCounter < numberOfTexcoords; ++texCoordCounter)
-        {
-            texCoordDimensions.push_back(2);
-        }
-
-        size_t bufferSize = 0;
-        size_t rows = params.nrVerticesInX;
-        size_t columns = params.nrVerticesInY;
-        //if ((params.height / corridorheight) > 1 && params.tesselate)
-        //{
-        //    rows *= (int)(params.height / corridorheight);
-        //}
-        //if ((params.width / corridorwidth) > 1 && params.tesselate)
-        //{
-        //    columns *= (int)(params.width / corridorheight);
-        //}
-        size_t numberOfVerts = rows * columns;
-        m_totalNumberOfVerts += numberOfVerts;
-        bufferSize += sizeof(float) * 3 * numberOfVerts;
-        bufferSize += sizeof(float) * 3 * numberOfVerts; //Normal
-        bufferSize += sizeof(float) * 3 * numberOfVerts; //Tangent
-        bufferSize += sizeof(float) * 2 * numberOfTexcoords * numberOfVerts;
-        byte* vertexData = new byte[bufferSize];
-        byte* startOfVertexArray = vertexData;
-        createVertexData(params, vertexData, face.boundingBox, corridorheight, corridorwidth, rows, columns);
-
-        //Move pointer to start of vertex array  
-
-        VertexDeclarationDescriptor vertexDesc;
-        vertexDesc.position = 3;
-        vertexDesc.normal = true;
-        vertexDesc.tangent = true;
-        vertexDesc.textureCoordinateDimensions = texCoordDimensions;
-
-        if (params.m_commandList != nullptr)
-        {
-            vb->Create(renderResource.getDeviceManager(), *params.m_commandList, bufferSize, startOfVertexArray, vertexDesc.GetVertexStride());
-        }
-        else
-        {
-            //Print message
-        }
-
-        delete[] startOfVertexArray; //cleanup
-        vertexData = nullptr;
-        startOfVertexArray = nullptr;
-
-        size_t numberOfIndecis = (rows - 1) * (columns - 1) * 6;
-        ib->setNumberOfIndecis(static_cast<unsigned int>(numberOfIndecis));
-        unsigned int* indecis = new unsigned int[numberOfIndecis];
-        unsigned int* startOfIndexData = indecis;
-        createIndexData(indecis, params.changeWindingOrder, rows, columns);
-
-        ib->Create(renderResource.getDeviceManager(), *params.m_commandList, static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData);
-        delete[] startOfIndexData; //cleanup
-        indecis = nullptr;
-        startOfIndexData = nullptr;
-        m_totalNumberOfPolygons += numberOfIndecis / 3;
-
-        vb = nullptr;
-        ib = nullptr;
-    }
-    else
-    {
-
-    }
-
-    face.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     return face;
 }

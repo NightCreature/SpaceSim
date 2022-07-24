@@ -230,16 +230,6 @@ Model::~Model()
 {
 }
 
-
-///-----------------------------------------------------------------------------
-///! @brief   
-///! @remark Since View and porjections are mostly per frame or per pass constants we dont need to set them
-///-----------------------------------------------------------------------------
-void Model::Update(Resource* resource, float elpasedTime, const Matrix44& world, const std::string& name)
-{
-
-}
-
 _Use_decl_annotations_
 void XM_CALLCONV Model::Draw( ID3D11DeviceContext* deviceContext, CommonStates& states,
                               FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection,

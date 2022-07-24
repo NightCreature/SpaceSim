@@ -14,6 +14,7 @@
 #include "Graphics/Effect.h"
 #include "Graphics/EffectCache.h"
 #include "Graphics/ShaderCache.h"
+#include "Graphics/D3D12/ShaderParameter.h"
 
 namespace ParticleSystem
 {
@@ -193,9 +194,13 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
         m_cache[counter].size = m_particleData.m_size[counter];
     }
 
+    CommandList list;
+
     RenderResourceHelper helper(m_resource);
     auto&& deviceContext = helper.getWriteableResource().getDeviceManager().getDeviceContext();
     //deviceContext->UpdateSubresource(m_particleDataBuffer, 0, 0, (void*)&cache, 0, 0);
+
+    //This needs to be a barrier upload I think
     D3D11_MAPPED_SUBRESOURCE out;
     HRESULT hr = deviceContext->Map(m_particleDataBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &out);
     if (hr != S_OK)
@@ -215,11 +220,13 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
         PROFILE_EVENT("ParticleEmitter::SubmitInstance", DarkBlue);
 
         const Effect* effect = helper.getWriteableResource().getEffectCache().getEffect(hashString("ParticleSystem.xml"));
-        const Technique* technique = effect->getTechnique(hashString("default"));
+        Technique* technique = const_cast<Technique*>(effect->getTechnique(hashString("default")));
         UNUSEDPARAM(technique);
         deviceContext->UpdateSubresource(m_constantBuffers[0], 0, 0, (void*)&wvp, 0, 0);
         deviceContext->UpdateSubresource(m_constantBuffers[1], 0, 0, (void*)&inverseView, 0, 0);
         
+        list.m_list->SetPipelineState(technique->GetPipelineState().m_pipelineObject);
+        list.m_list->SetGraphicsRootSignature(technique->GetPipelineState().m_pipeLineStateDescriptor.pRootSignature);
 
         //this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
         //auto&& shaderCache = helper.getResource().getShaderCache();
@@ -230,20 +237,47 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
         //deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
 
         //technique->setupTechnique();
-        deviceContext->VSSetConstantBuffers(0, 2, m_constantBuffers);
-
-        // Set vertex buffer stride and offset.
-
+        ShaderParameters& shaderParams = technique->GetShaderParameters(); //THis really should perhaps be a material instead
+        for (size_t counter = 0; counter < shaderParams.size(); ++counter)
         {
-            uint32 generateVerticesCount = 6; //In the case of a particle system we assume to generate quads in the vertex shader
+            ShaderParameter& shaderParam = shaderParams[counter];
+            auto index = shaderParam.m_data.index();
+            switch (index)
+            {
+            case 0:
+            {
+                auto constantBuffer = *(std::get_if<0>(&shaderParam.m_data));
 
-            deviceContext->VSSetShaderResources(0, 1, &m_srv);
-            deviceContext->IASetInputLayout(nullptr);
-            deviceContext->IASetVertexBuffers(0, 0, nullptr, 0, 0);
-            deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-            deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            deviceContext->DrawIndexed((uint32)m_particleData.m_aliveParticles * generateVerticesCount, 0, 0);
+
+                //if (shaderParam.m_rootParamIndex == 0 || shaderParam.m_rootParamIndex == 2)
+                {
+                    //This should be world stuffs
+                    constantBuffer.m_projection = projection;
+                    constantBuffer.m_view = view;
+                    constantBuffer.m_world = inverseView;
+                    shaderParam.m_cbData.UpdateCpuData(constantBuffer);
+                    shaderParam.m_cbData.UpdateGpuData();
+                }
+
+                list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
+                //MSG_TRACE_CHANNEL("Mesh Group", "Set WVP data for param: %d", shaderParam.m_rootParamIndex);
+            }
+            break;
+            case 1:
+            case 2:
+            case 3:
+            default:
+                break;
+            }
         }
+
+
+        //list.m_list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //Adjecency infocmtoin
+        //const D3D12_INDEX_BUFFER_VIEW& indexBuffer = m_geometryInstance.getIB()->GetBufferView();
+        //list.m_list->IASetIndexBuffer(&indexBuffer);
+        //list.m_list->IASetVertexBuffers(0, 0, nullptr);
+
+        //list.m_list->DrawIndexedInstanced((uint32)m_particleData.m_aliveParticles* generateVerticesCount, 1, 0, 0, 0);
     }
 
     //Reset use of VSConstant Buffers slots.

@@ -26,10 +26,6 @@ public:
     {
         if (m_modelData.size() > 0)
         {
-            for (auto it = m_modelData.begin(); it != m_modelData.end(); ++it)
-            {
-                delete *it;
-            }
             m_modelData.clear();
         }
     }
@@ -40,7 +36,7 @@ public:
         {
             for (size_t counter = 0; counter < m_modelData.size(); ++counter)
             {
-                m_modelData[counter]->update(resource, renderInstance, elapsedTime, world, view, projection, name, m_boundingBox);
+                m_modelData[counter].update(resource, renderInstance, elapsedTime, world, view, projection, name, m_boundingBox);
             }
         }
     }
@@ -55,12 +51,13 @@ public:
         {
             for (size_t counter = 0; counter < m_modelData.size(); ++counter)
             {
-                m_modelData[counter]->Update(resource, list, elapsedTime, world, name, m_boundingBox);
+                m_modelData[counter].Update(resource, list, elapsedTime, world, name, m_boundingBox);
             }
         }
     }
 
-    void addMeshGroup(MeshGroup* meshGroup) { m_modelData.push_back(meshGroup); }
+    //Deprecated bad code
+    void addMeshGroup(MeshGroup* meshGroup) { m_modelData.push_back(*meshGroup); }
     const Bbox& getBoundingBox() const { return m_boundingBox; }
     Bbox& getBoundingBox() { return m_boundingBox; }
 	const Bbox& getOriginalBoundingBox() const { return m_originalBBox; }
@@ -69,28 +66,35 @@ public:
     void setBoundingBox(const Bbox& boundingBox) { m_boundingBox = boundingBox; }
 
     //This should indicate which mesh group it wants to set this material on
-    void setMaterial( const Material& material) { m_modelData[0]->setMaterial( material ); }
+    void setMaterial( const Material& material) { m_modelData[0].setMaterial( material ); }
 
-    const std::vector<MeshGroup*>& getMeshData() const { return m_modelData; }
-    std::vector<MeshGroup*>& getMeshData() { return m_modelData; }
+    const std::vector<MeshGroup>& getMeshData() const { return m_modelData; }
+    std::vector<MeshGroup>& getMeshData() { return m_modelData; }
 
     void setDirty()
     {
         for (auto meshGroup : m_modelData)
         {
-            meshGroup->setDirty();
+            meshGroup.setDirty();
         }
     }
 
     void setShaderInstance(const ShaderInstance& shaderInstance)
     {
+        UNUSEDPARAM(shaderInstance);
         for (auto meshGroup : m_modelData)
         {
-            meshGroup->setShaderInstance(shaderInstance);
+            //meshGroup.setShaderInstance(shaderInstance);
         }
     }
+
+    MeshGroup& CreateMeshGroup()
+    {
+        m_modelData.emplace_back(MeshGroup({}));
+        return *(--m_modelData.end());
+    }
 protected:
-    std::vector<MeshGroup*> m_modelData; //Why is meshgroup a pointer here and not just owned?
+    std::vector<MeshGroup> m_modelData; //Why is meshgroup a pointer here and not just owned?
     Bbox m_originalBBox;
     Bbox m_boundingBox;
 };

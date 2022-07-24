@@ -3,15 +3,17 @@
 //#include <D3D11.h>
 #include <d3d12.h>
 
+#include <string>
+#include "Core/StringOperations/StringHelperFunctions.h"
+
 class DeviceManager;
 struct CommandList;
 
 class IndexBuffer
 {
 public:
-    IndexBuffer(void) {}
-    ~IndexBuffer(void) { cleanup(); }
-
+    IndexBuffer(void) { }
+    ~IndexBuffer(void) {}
     void cleanup();
 
     void setNumberOfIndecis(unsigned int numberOfIndecis) { m_numberOfIndecis = numberOfIndecis; }
@@ -42,4 +44,6 @@ private:
     ID3D12Resource* m_uploadResource = nullptr;
     D3D12_INDEX_BUFFER_VIEW m_bufferView;
     unsigned int m_numberOfIndecis;
+
+    std::wstring name;
 };

@@ -58,6 +58,7 @@ public:
     PipelineObject& GetPipelineState() { return m_pso; }
 
     const ShaderParameters& GetShaderParameters() const { return m_shaderParameters; }
+    ShaderParameters& GetShaderParameters() { return m_shaderParameters; }
 
     HASH_ELEMENT_DEFINITION(Technique);
 private:
@@ -81,32 +82,7 @@ class Effect
 {
 public:
     Effect() {}
-    ~Effect(void) 
-    {
-        //if (m_vertexShaderBlob)
-        //{
-        //    m_vertexShaderBlob->Release();
-        //    m_vertexShaderBlob = 0;
-        //}
-
-        //if (m_vertexShader)
-        //{
-        //    m_vertexShader->Release();
-        //    m_vertexShader = 0;
-        //}
-
-        //if (m_pixelShader)
-        //{
-        //    m_pixelShader->Release();
-        //    m_pixelShader = 0;
-        //}
-
-        //if (m_wvpBuffer)
-        //{
-        //    m_wvpBuffer->Release();
-        //    m_wvpBuffer = 0;
-        //}
-    }
+    ~Effect(void) {}
 
     void cleanup() { for (auto technique : m_techniques) { technique.second.cleanup(); } }
 

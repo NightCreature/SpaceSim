@@ -17,6 +17,8 @@
 #include <assert.h>
 #include "MeshGroup.h"
 
+#include <pix3.h>
+
 Matrix44 RenderSystem::m_view;
 Matrix44 RenderSystem::m_inverseView;
 Matrix44 RenderSystem::m_projection;
@@ -388,6 +390,8 @@ void RenderSystem::update(float elapsedTime, double time)
     CommandQueue& commandQueue = m_commandQueueManager.GetCommandQueue(m_deviceManager.GetSwapChainCommandQueueIndex());//This should be the current command queue
     CommandList& commandList = commandQueue.GetCommandList(m_deviceManager.GetSwapChainCommandListIndex());
 
+    PIXBeginEvent(0, "Execute Command list");
+
     //commandList.m_alloctor->Reset(); //Reset errors here
     //commandList.m_list->Reset(commandList.m_alloctor, nullptr);
 
@@ -491,6 +495,8 @@ void RenderSystem::update(float elapsedTime, double time)
 
     m_numberOfInstancesRenderingThisFrame = visibleInstances.size();
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
+
+    PIXEndEvent();
 
 }
 
@@ -617,6 +623,7 @@ void RenderSystem::cleanup()
 void RenderSystem::beginDraw()
 {
     PROFILE_EVENT("RenderSystem::beginDraw", Orange);
+    PIXBeginEvent(0, "Begin Draw");
 
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
     UNUSEDPARAM(deviceContext);
@@ -681,9 +688,10 @@ void RenderSystem::beginDraw()
     //Kick resource loading, potentially this needs to move to its own low priority thread too.
     m_resourceLoader.update();
 
-
+    PIXBeginEvent(0, "Resource Command List Dispatch");
     //Process Resource load commandqueue
     m_resourceLoader.DispatchResourceCommandQueue();
+    PIXEndEvent();
 
     //float clearColor[4] = { 0.8f, 0.8f, 0.8f, 0.0f }; //Reverse Z so clear to 0 instead of 1 leads to a linear depth pass
     
@@ -701,6 +709,7 @@ void RenderSystem::beginDraw()
     //deviceContext->OMSetDepthStencilState(m_depthStencilState, 0xffffffff);
 
     {
+        //This should probably go now
         PROFILE_EVENT("RenderSystem::beginDraw::MaterialSorting", DarkRed);
         std::sort(begin(m_renderInstances), end(m_renderInstances), [this](const RenderInstance* lhs, const RenderInstance* rhs)
         {
@@ -769,7 +778,9 @@ void RenderSystem::beginDraw()
         //    ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
         //    //deviceContext->PSSetShaderResources(0, 40, srv);
         //    //m_cubeMapRenderer->initialise(m_cubeSettings[rtCounter].m_position);
+        PIXBeginEvent(0, "Cube Map Update");
         //    //m_cubeMapRenderer->renderCubeMap(m_renderResource, const_cast<Texture*>( tm.getTexture(m_cubeSettings[rtCounter].m_texutureResourceName) ), m_renderInstances, m_deviceManager, perFrameConstants, tm);
+        PIXEndEvent();
         //    //m_cubeSettings[rtCounter].m_hasBeenRenderedTo = true;
         //    //deviceContext->PSSetShaderResources(0, 40, srv);
         //}
@@ -784,7 +795,9 @@ void RenderSystem::beginDraw()
     //Do shadowmap update here too to begin with
     ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     //deviceContext->PSSetShaderResources(0, 40, srv);
+    PIXBeginEvent(0, "Shadow Map");
     //m_shadowMapRenderer->renderShadowMap(m_renderResource, m_renderInstances, m_deviceManager, lm.getLight("light_1"));
+    PIXEndEvent();
     //deviceContext->PSSetShaderResources(0, 40, srv);
 #ifdef D3DPROFILING
     deviceContext->End(m_shadoEndDrawQuery);
@@ -808,6 +821,7 @@ void RenderSystem::beginDraw()
     //ID3D11ShaderResourceView* shadowMapSRV = m_shadowMapRenderer->getShadowMap();
     //deviceContext->PSSetShaderResources(33, 1, &shadowMapSRV);
 
+    PIXEndEvent();
 }
 
 ///-----------------------------------------------------------------------------
@@ -833,6 +847,7 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 ///-------------------------------------------------------------------------
 void RenderSystem::endDraw()
 {
+    PIXBeginEvent(0, "End Draw");
     PROFILE_EVENT("RenderSystem::endDraw", Orange);
 #ifdef _DEBUG
     m_debugAxis->draw(m_deviceManager, m_view, m_projection, m_renderResource);
@@ -979,6 +994,8 @@ void RenderSystem::endDraw()
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "DSInvocations: %u", pipeLineStats.DSInvocations);
     MSG_TRACE_CHANNEL("RENDERSYSTEM", "CSInvocations: %u", pipeLineStats.CSInvocations);
 #endif
+
+    PIXEndEvent();
 }
 
 ///-----------------------------------------------------------------------------

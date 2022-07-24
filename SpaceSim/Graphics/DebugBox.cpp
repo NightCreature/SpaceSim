@@ -51,7 +51,7 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
         wvp.m_projection = projection;
         Material mat;
         mat.setEffectHash(hashString("debug_effect.xml"));
-        box->getMeshData().push_back(new MeshGroup(vb, ib, mat, helper.getWriteableResource().getDeviceManager()));
+        auto& group = box->CreateMeshGroup();
         //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         //{
         //box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));
@@ -97,12 +97,12 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
 
         ib->Create(helper.getResource().getDeviceManager(), commandList, sizeof(indexData), (void*)&indexData[0]);
         ib->setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
+
+        group.SetPrimitiveLayout(static_cast<uint32>(D3D_PRIMITIVE_TOPOLOGY_LINELIST));
     }
     else
     {
     }
-
-    box->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 }
 
 }

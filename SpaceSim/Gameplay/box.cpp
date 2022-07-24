@@ -25,7 +25,8 @@ CreatedModel CreateBox(const CreationParams& params)
         VertexBuffer* vb = new VertexBuffer();
         IndexBuffer* ib = new IndexBuffer();
 
-        box.model->getMeshData().push_back(new MeshGroup(vb, ib, material, renderResource.getDeviceManager()));
+        //box.model->getMeshData().push_back(new MeshGroup(vb, ib, material, renderResource.getDeviceManager()));
+        MeshGroup& group = box.model->CreateMeshGroup();
 
         std::vector<unsigned int> texCoordDim;
         if (params.m_gentexcoords)
@@ -254,13 +255,14 @@ CreatedModel CreateBox(const CreationParams& params)
 
         ib->Create(renderResource.getDeviceManager(), *params.m_commandList, sizeof(indexData), (void*)&indexData[0]);
         ib->setNumberOfIndecis(36);
+
+        group.SetPrimitiveLayout(static_cast<uint32>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
     }
     else
     {
         //Should probably update the material here althoguh that is not how this should be used to begin with
     }
 
-    box.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     return box;
 }

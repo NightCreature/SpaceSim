@@ -125,5 +125,7 @@ void IndexBuffer::Create(const DeviceManager& deviceManager, CommandList& comman
     m_defaultResource->SetName(str.str().c_str());
     str << L"Upload";
     m_uploadResource->SetName(str.str().c_str());
+
+    name = str.str();
 #endif
  }
