@@ -220,7 +220,6 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
                             //auto& actualDescriptor = shaderVisibleHeap.GetCPUDescriptorHandle(copiedNumberOfDescriptors);
                             //device->CopyDescriptorsSimple(1, actualDescriptor, textureDescriptorHeap.GetCPUDescriptorHandle(texInfo->m_heapIndex), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
                             //list.m_list->SetGraphicsRootDescriptorTable(counter, tm.GetTextureDescriptorHeap().GetGPUDescriptorHandle(texInfo->m_heapIndex));
-                            ++counter;
                             ++copiedNumberOfDescriptors;
 
                             // We need to copy the descriptors here so we can set a table
