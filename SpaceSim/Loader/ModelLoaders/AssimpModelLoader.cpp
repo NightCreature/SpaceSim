@@ -242,7 +242,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         }
         MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to read material %d", aimaterial);
         
-        shaderMaterial.Prepare(renderResourceHelper.getResource().getEffectCache(), renderResourceHelper.getWriteableResource().getDeviceManager(), renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap());
+        shaderMaterial.Prepare(renderResourceHelper.getResource().getEffectCache());
 
         meshGroupParams.m_numtangents = meshGroupParams.m_tangents.size(); //TODO FIX this needs to look at the model to get this.
         meshGroupParams.m_vertexDeclaration.position = 3;
@@ -258,7 +258,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         meshGroupParams.m_commandList = &commandList;
 
         //Add mesh group to the mesh creator params
-        params.m_meshGroups.push_back(MeshGroupCreator::CreateMeshGroup(meshGroupParams));
+        params.m_meshGroups.emplace_back(MeshGroupCreator::CreateMeshGroup(meshGroupParams));
     }
 
     return  Mesh::CreateMesh(params);

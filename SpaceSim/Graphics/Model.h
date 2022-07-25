@@ -106,6 +106,7 @@ struct CreatedModel
     Bbox boundingBox;
 };
 
+//This should be different
 struct CreatedMeshGroup
 {
     MeshGroup* meshGroup;

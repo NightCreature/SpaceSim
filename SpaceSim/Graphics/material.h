@@ -133,7 +133,7 @@ public:
     void setEffectHash(size_t effectHash) { m_effectHash = effectHash; }
 
     size_t GetNumberOfNeededDescriptors() const { return m_numberOfDescriptorsNeeded; }
-    void Prepare(const EffectCache& effectCache, DeviceManager& deviceManager, DescriptorHeap& heap);
+    void Prepare(const EffectCache& effectCache);
 
     const ShaderParameters& GetShaderParameters() const { return m_shaderParameterData; }
     ShaderParameters& GetShaderParameters() { return m_shaderParameterData; }

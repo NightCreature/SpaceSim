@@ -167,23 +167,7 @@
 //}
 
 //This needs to be done differently in the future
-ShaderParameter::ShaderParameterData GetVariant(const std::string& name)
-{
-    if (name == "WVPConstants" || name == "ShadowConstants")
-    {
-        return WVPBufferContent();
-    }
-    else if (name == "LightParameters")
-    { 
-        return PerFrameConstants();
-    }
-    else if (name == "MaterialConstants")
-    { 
-        return MaterialContent();
-    }
-    
-    return ShaderParameter::ShaderParameterData();
-}
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief   

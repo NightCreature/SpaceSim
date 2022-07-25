@@ -271,7 +271,7 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void Material::Prepare(const EffectCache& effectCache, DeviceManager& deviceManager, DescriptorHeap& heap)
+void Material::Prepare(const EffectCache& effectCache)
 {
     //Prepare the shader parameters
     const auto* effect = effectCache.getEffect(m_effectHash);
@@ -284,8 +284,8 @@ void Material::Prepare(const EffectCache& effectCache, DeviceManager& deviceMana
         }
     }
 
-    for (auto& shaderParam : m_shaderParameterData)
-    {
-        shaderParam.CreateConstantBuffer(deviceManager, heap);
-    }
+    //for (auto& shaderParam : m_shaderParameterData)
+    //{
+    //    shaderParam.CreateConstantBuffer(deviceManager, heap);
+    //}
 }

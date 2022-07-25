@@ -20,39 +20,39 @@
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark std::variant<ConstantBuffer<WVPBufferContent>, ConstantBuffer<MaterialContent>, ConstantBuffer<PerFrameConstants>>
-///-----------------------------------------------------------------------------
-void ShaderParameter::CreateConstantBuffer(const DeviceManager& deviceManager, DescriptorHeap& heap)
-{
-    auto index = m_data.index();
-    switch (index)
-    {
-    case 0:
-    {
-        auto data = std::get_if<0>(&m_data);
-        m_cbData.Create(deviceManager, heap, sizeof(*data));
-        //This can now call into the constant buffer manager maybe? or should this have the material instead probably cleaner
-    }
-    break;
-    case 1:
-    {
-        auto data = std::get_if<1>(&m_data);
-        m_cbData.Create(deviceManager, heap, sizeof(*data));
-    }
-    break;
-    case 2:
-    {
-        auto data = std::get_if<2>(&m_data);
-        m_cbData.Create(deviceManager, heap, sizeof(*data));
-    }
-    break;
-    default:
-        //MSG_TRACE_CHANNEL("ShaderParameter", "Failed to create constant buffer because the type of the variant doesnt match or is not set: %d", m_data.index());
-        break;
-    }
-
-}
-
-///-----------------------------------------------------------------------------
+/////-----------------------------------------------------------------------------
+//void ShaderParameter::CreateConstantBuffer(const DeviceManager& deviceManager, DescriptorHeap& heap)
+//{
+//    auto index = m_data.index();
+//    switch (index)
+//    {
+//    case 0:
+//    {
+//        auto data = std::get_if<0>(&m_data);
+//        m_cbData.Create(deviceManager, heap, sizeof(*data));
+//        //This can now call into the constant buffer manager maybe? or should this have the material instead probably cleaner
+//    }
+//    break;
+//    case 1:
+//    {
+//        auto data = std::get_if<1>(&m_data);
+//        m_cbData.Create(deviceManager, heap, sizeof(*data));
+//    }
+//    break;
+//    case 2:
+//    {
+//        auto data = std::get_if<2>(&m_data);
+//        m_cbData.Create(deviceManager, heap, sizeof(*data));
+//    }
+//    break;
+//    default:
+//        //MSG_TRACE_CHANNEL("ShaderParameter", "Failed to create constant buffer because the type of the variant doesnt match or is not set: %d", m_data.index());
+//        break;
+//    }
+//
+//}
+//
+/////-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
@@ -102,4 +102,46 @@ void PrintParameters(const ShaderParameters& parameters)
     {
         param.Print();
     }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+size_t GetVariantSize(size_t index)
+{
+    switch (index)
+    {
+    case 0:
+        return sizeof(std::variant_alternative_t<0, ShaderParameter::ShaderParameterData>);
+    case 1:
+        return sizeof(std::variant_alternative_t<1, ShaderParameter::ShaderParameterData>);
+    case 2:
+        return sizeof(std::variant_alternative_t<2, ShaderParameter::ShaderParameterData>);
+
+    }
+
+    return 0;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+ShaderParameter::ShaderParameterData GetVariant(const std::string& name)
+{
+    if (name == "WVPConstants" || name == "ShadowConstants")
+    {
+        return WVPBufferContent();
+    }
+    else if (name == "LightParameters")
+    {
+        return PerFrameConstants();
+    }
+    else if (name == "MaterialConstants")
+    {
+        return MaterialContent();
+    }
+
+    return ShaderParameter::ShaderParameterData();
 }

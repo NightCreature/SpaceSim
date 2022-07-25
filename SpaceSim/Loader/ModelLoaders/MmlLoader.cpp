@@ -49,7 +49,7 @@ CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData, 
         else if (element_hash == Material::m_hash)
         {
             mat.deserialise(resource, gameResource.getDeviceManager(), gameResource.getTextureManager(), gameResource.getLightManager(), element);
-            mat.Prepare(gameResource.getEffectCache(), gameResource.getDeviceManager(), gameResource.getDescriptorHeapManager().GetSRVCBVUAVHeap());
+            mat.Prepare(gameResource.getEffectCache());
         }
     }
 

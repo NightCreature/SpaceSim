@@ -125,8 +125,12 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
             renderResourceHelper.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
         }
     }
-    mat.Prepare(renderResourceHelper.getResource().getEffectCache(), renderResourceHelper.getWriteableResource().getDeviceManager(), renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap());
-
+    mat.Prepare(renderResourceHelper.getResource().getEffectCache());
+    
+    for (auto& shaderParam : mat.GetShaderParameters())
+    {
+        group.CreateConstantBuffer(GetVariantSize(shaderParam.m_data.index()), shaderParam.m_rootParamIndex, renderResourceHelper.getWriteableResource().getDeviceManager(), renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap());
+    }
     return face;
 }
 

@@ -79,6 +79,11 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     //Add a binding to the shadow map
     //shaderInstance.AddPsSRV(m_shadowMapRenderer->getShadowMap());
 
+    for (auto& shaderParam : params.mat.GetShaderParameters())
+    {
+        meshGroup.meshGroup->CreateConstantBuffer(GetVariantSize(shaderParam.m_data.index()), shaderParam.m_rootParamIndex, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap());
+    }
+
     return meshGroup;
 }
 

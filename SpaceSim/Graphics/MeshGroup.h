@@ -34,24 +34,20 @@ public:
     void setMaterial(const Material& material) { m_material = material; m_renderInstanceDirty = true; }
     void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true; }
 
-    /*const GeometryInstance& getGeometryInstance() const { return m_geometryInstance; }
-    GeometryInstance& getGeometryInstance() { return m_geometryInstance; }
-    const ShaderInstance& getShaderInstance() const { return m_shaderInstance; }
-    ShaderInstance& getShaderInstance() { return m_shaderInstance; }
-    void setShaderInstance(const ShaderInstance& shaderInstance) { m_shaderInstance = shaderInstance; m_renderInstanceDirty = true; }*/
 
     void setDirty() { m_renderInstanceDirty = true; }
 
     VertexBuffer& GetVB() { return m_vertexBuffer; }
     IndexBuffer& GetIB() { return m_indexBuffer; }
     Material& GetMaterial() { return m_material; }
+    void CreateConstantBuffer(size_t size, size_t rootParamIndex, const DeviceManager& deviceManager, DescriptorHeap& heap);
+    //std::vector<ConstantBuffer>& GetConstantBuffers() { return m_constantBuffers; }
+    //const std::vector<ConstantBuffer>& GetConstantBuffers() const { return m_constantBuffers; }
     void SetPrimitiveLayout(size_t layout) { m_primitiveLayout = layout; }
-    ///-----------------------------------------------------------------------------
-    ///! @brief   
-    ///! @remark
-    ///-----------------------------------------------------------------------------
+
     void Cleanup();
 private:
+    std::vector<std::pair<size_t, ConstantBuffer>> m_constantBuffers;
     Matrix44 m_world;
     Material m_material;
     IndexBuffer m_indexBuffer;

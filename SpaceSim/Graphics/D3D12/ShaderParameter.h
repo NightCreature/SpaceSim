@@ -22,25 +22,11 @@ struct ShaderParameter
 {
     ShaderParameter()
     {
-        MSG_TRACE_CHANNEL("ShaderParameter", "construction");
     }
 
     ~ShaderParameter()
     {
-        MSG_TRACE_CHANNEL("ShaderParameter", "destruction");
     }
-
-    void CreateConstantBuffer(const DeviceManager& deviceManager, DescriptorHeap& heap);
-    template <class T>
-    void UploadDataToContentBuffer(const T& data)
-    {
-        if (std::holds_alternative<T>())
-        {
-            auto constantBuffer = std::get<T>>(m_data);
-            constantBuffer.UpdateCpuData(static_cast<void*>(&data));
-        }
-    }
-
 
     void Print() const;
 
@@ -48,7 +34,6 @@ struct ShaderParameter
     size_t m_nameHash;
     using ShaderParameterData = std::variant<WVPBufferContent, MaterialContent, PerFrameConstants, TextureData>;
     ShaderParameterData m_data;
-    ConstantBuffer m_cbData;
 };
 
 using ShaderParameters = std::vector<ShaderParameter>;
@@ -69,3 +54,6 @@ struct ShaderParameterData
 };
 
 using ShaderParamersData = std::vector<ShaderParameterData>;
+
+size_t GetVariantSize(size_t index);
+ShaderParameter::ShaderParameterData GetVariant(const std::string& name);

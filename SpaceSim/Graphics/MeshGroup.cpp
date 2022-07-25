@@ -86,6 +86,15 @@ void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, 
 //    }
 //
 //    UNUSEDPARAM(elapsedTime);
+
+    UNUSEDPARAM(resource);
+    UNUSEDPARAM(renderInstance);
+    UNUSEDPARAM(elapsedTime);
+    UNUSEDPARAM(world);
+    UNUSEDPARAM(view);
+    UNUSEDPARAM(projection);
+    UNUSEDPARAM(name);
+    UNUSEDPARAM(box);
 }
 
 ///-----------------------------------------------------------------------------
@@ -155,35 +164,33 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
         {
         case 0:
         {
-            auto constantBuffer = *(std::get_if<0>(&shaderParam.m_data));
+            auto constantData = *(std::get_if<0>(&shaderParam.m_data));
+            auto& constantBuffer = m_constantBuffers[shaderParam.m_rootParamIndex];
+            //This should be world stuffs
+            constantData.m_projection = m_projection;
+            constantData.m_view = m_view;
+            constantData.m_world = world;
+            constantBuffer.second.UpdateCpuData(constantData);
+            constantBuffer.second.UpdateGpuData();
 
-
-            //if (shaderParam.m_rootParamIndex == 0 || shaderParam.m_rootParamIndex == 2)
-            {
-                //This should be world stuffs
-                constantBuffer.m_projection = m_projection;
-                constantBuffer.m_view = m_view;
-                constantBuffer.m_world = world;
-                shaderParam.m_cbData.UpdateCpuData(constantBuffer);
-                shaderParam.m_cbData.UpdateGpuData();
-            }
-
-            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
+            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), constantBuffer.second.GetConstantBuffer()->GetGPUVirtualAddress());
             //MSG_TRACE_CHANNEL("Mesh Group", "Set WVP data for param: %d", shaderParam.m_rootParamIndex);
         }
         break;
         case 1:
         {
-            shaderParam.m_cbData.UpdateCpuData(m_material.getMaterialCB());
-            shaderParam.m_cbData.UpdateGpuData();
-            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
+            auto& constantBuffer = m_constantBuffers[shaderParam.m_rootParamIndex];
+            constantBuffer.second.UpdateCpuData(m_material.getMaterialCB());
+            constantBuffer.second.UpdateGpuData();
+            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), constantBuffer.second.GetConstantBuffer()->GetGPUVirtualAddress());
             //MSG_TRACE_CHANNEL("Mesh Group", "Set material data for param: %d", shaderParam.m_rootParamIndex);
         }
         break;
         case 2:
         {
-            shaderParam.m_cbData.UpdateGpuData();
-            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
+            auto& constantBuffer = m_constantBuffers[shaderParam.m_rootParamIndex];
+            constantBuffer.second.UpdateGpuData();
+            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), constantBuffer.second.GetConstantBuffer()->GetGPUVirtualAddress());
             //MSG_TRACE_CHANNEL("Mesh Group", "Set per frame data for param: %d", shaderParam.m_rootParamIndex);
         }
         break;
@@ -264,10 +271,28 @@ void MeshGroup::Update(Resource* resource, CommandList& list, float elapsedTime,
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
+void MeshGroup::CreateConstantBuffer(size_t size, size_t rootParamIndex, const DeviceManager& deviceManager, DescriptorHeap& heap)
+{
+    if (size > 0)
+    {
+        ConstantBuffer cb;
+        cb.Create(deviceManager, heap, size);
+        m_constantBuffers.emplace_back(std::make_pair(rootParamIndex, cb));
+    }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void MeshGroup::Cleanup()
 {
     m_vertexBuffer.cleanup();
     m_indexBuffer.cleanup();
+    for (auto& constantBufferPair : m_constantBuffers)
+    {
+        constantBufferPair.second.Destroy();
+    }
 }
 
 ///-------------------------------------------------------------------------

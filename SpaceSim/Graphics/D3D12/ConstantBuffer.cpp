@@ -9,6 +9,7 @@ static size_t numberOfConstantBuffers = 0;
 void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& heap, size_t size)
 {
     m_cpuSideData = ConstantBufferData(size);
+    m_cpuSideData.Create();
 
     D3D12_HEAP_PROPERTIES uploadHeap;
     uploadHeap.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -59,4 +60,15 @@ void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& 
     str << L"ConstantBuffer" << numberOfConstantBuffers++ << L"sized:" << m_cpuSideData.m_size;
     m_constantBuffer->SetName(str.str().c_str());
 #endif
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void ConstantBuffer::Destroy()
+{
+    m_constantBuffer->Release();
+    m_heapIndex = DescriptorHeap::invalidDescriptorIndex;
+    m_cpuSideData.Destroy();
 }

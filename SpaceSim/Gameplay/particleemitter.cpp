@@ -255,11 +255,11 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
                     constantBuffer.m_projection = projection;
                     constantBuffer.m_view = view;
                     constantBuffer.m_world = inverseView;
-                    shaderParam.m_cbData.UpdateCpuData(constantBuffer);
-                    shaderParam.m_cbData.UpdateGpuData();
+                    //shaderParam.m_cbData.UpdateCpuData(constantBuffer);
+                    //shaderParam.m_cbData.UpdateGpuData();
                 }
 
-                list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
+                //list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
                 //MSG_TRACE_CHANNEL("Mesh Group", "Set WVP data for param: %d", shaderParam.m_rootParamIndex);
             }
             break;
