@@ -261,7 +261,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         params.m_meshGroups.emplace_back(MeshGroupCreator::CreateMeshGroup(meshGroupParams));
     }
 
-    return  Mesh::CreateMesh(params);
+    return  Mesh::CreateMesh(params, static_cast<RenderResource*>(resource)->getEffectCache());
 }
 
 }

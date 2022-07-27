@@ -294,87 +294,6 @@ void RenderSystem::initialise(Resource* resource)
 void RenderSystem::CreatePipelineStates(ID3D11Device* device)
 {
     UNUSEDPARAM(device);
-    //Everything is in GL format so turn off culling
-    /*D3D11_RASTERIZER_DESC rasterizerStateDesc;
-    rasterizerStateDesc.CullMode = D3D11_CULL_BACK;
-    rasterizerStateDesc.FillMode = D3D11_FILL_SOLID;
-    rasterizerStateDesc.AntialiasedLineEnable = false;
-    rasterizerStateDesc.DepthBias = 0;
-    rasterizerStateDesc.DepthBiasClamp = 0.0f;
-    rasterizerStateDesc.FrontCounterClockwise = true;
-    rasterizerStateDesc.MultisampleEnable = true;
-    rasterizerStateDesc.ScissorEnable = false;
-    rasterizerStateDesc.SlopeScaledDepthBias = 0.0f;
-    rasterizerStateDesc.DepthClipEnable = false;
-    HRESULT hr = device->CreateRasterizerState(&rasterizerStateDesc, &m_rasteriserState);
-    D3DDebugHelperFunctions::SetDebugChildName(m_rasteriserState, "RenderSystem RasterizerState");
-
-    D3D11_RASTERIZER_DESC rasterizerWireStateDesc;
-    rasterizerWireStateDesc.CullMode = D3D11_CULL_NONE;
-    rasterizerWireStateDesc.FillMode = D3D11_FILL_WIREFRAME;
-    rasterizerWireStateDesc.AntialiasedLineEnable = false;
-    rasterizerWireStateDesc.DepthBias = 0;
-    rasterizerWireStateDesc.DepthBiasClamp = 0.0f;
-    rasterizerWireStateDesc.FrontCounterClockwise = true;
-    rasterizerWireStateDesc.MultisampleEnable = true;
-    rasterizerWireStateDesc.ScissorEnable = false;
-    rasterizerWireStateDesc.SlopeScaledDepthBias = 0.0f;
-    rasterizerWireStateDesc.DepthClipEnable = false;
-    hr = device->CreateRasterizerState(&rasterizerWireStateDesc, &m_rasteriserWireFrameModeState);
-    D3DDebugHelperFunctions::SetDebugChildName(m_rasteriserWireFrameModeState, "RenderSystem WireFrameRasterizerState");
-
-    D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
-    depthStencilStateDesc.DepthEnable = true;
-    depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_GREATER;
-    depthStencilStateDesc.StencilEnable = false;
-    depthStencilStateDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
-    depthStencilStateDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-    depthStencilStateDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-    depthStencilStateDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilStateDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilStateDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilStateDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-    depthStencilStateDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilStateDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-    depthStencilStateDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    hr = device->CreateDepthStencilState(&depthStencilStateDesc, &m_depthStencilState);
-    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilState, "RenderSystem DepthStencilState");
-
-    D3D11_BLEND_DESC blendStateDesc;
-    blendStateDesc.AlphaToCoverageEnable = false;
-    blendStateDesc.IndependentBlendEnable = false;
-    for (unsigned int counter = 0; counter < 8; ++counter)
-    {
-        blendStateDesc.RenderTarget[counter].BlendEnable = false;
-        blendStateDesc.RenderTarget[counter].SrcBlend = D3D11_BLEND_ONE;
-        blendStateDesc.RenderTarget[counter].DestBlend = D3D11_BLEND_ZERO;
-        blendStateDesc.RenderTarget[counter].BlendOp = D3D11_BLEND_OP_ADD;
-        blendStateDesc.RenderTarget[counter].SrcBlendAlpha = D3D11_BLEND_ONE;
-        blendStateDesc.RenderTarget[counter].DestBlendAlpha = D3D11_BLEND_ZERO;
-        blendStateDesc.RenderTarget[counter].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-        blendStateDesc.RenderTarget[counter].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-    }
-    hr = device->CreateBlendState(&blendStateDesc, &m_blendState);
-    D3DDebugHelperFunctions::SetDebugChildName(m_blendState, "RenderSystem BlendState");
-
-    D3D11_BLEND_DESC blendDescriptor;
-    blendDescriptor.AlphaToCoverageEnable = FALSE;
-    blendDescriptor.IndependentBlendEnable = FALSE;
-    for (unsigned int counter = 0; counter < 8; ++counter)
-    {
-        blendDescriptor.RenderTarget[0].BlendEnable = TRUE;
-        blendDescriptor.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-        blendDescriptor.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-        blendDescriptor.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-        blendDescriptor.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-        blendDescriptor.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-        blendDescriptor.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-        blendDescriptor.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-    }
-
-    hr = device->CreateBlendState(&blendDescriptor, &m_alphaBlendState);
-    D3DDebugHelperFunctions::SetDebugChildName(m_alphaBlendState, "RenderSystem AlphaBlendState");*/
 
 }
 
@@ -510,69 +429,6 @@ void RenderSystem::setupSwapChainForRendering(ID3D11Device* device, ID3D11Device
     UNUSEDPARAM(deviceContext);
     UNUSEDPARAM(windowWidth);
     UNUSEDPARAM(windowHeight);
-//    if (FAILED(m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_backBuffer)))
-//    {
-//        MSG_TRACE_CHANNEL("ERROR", "Failed to acquire the back buffer pointer")
-//            return;
-//    }
-//
-//    if (FAILED(device->CreateRenderTargetView(m_backBuffer, NULL, &m_renderTargetView)))
-//    {
-//        MSG_TRACE_CHANNEL("ERROR", "Failed to Create the render target view")
-//            return;
-//    }
-//    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem BackBuffer Texture for Swap Chain");
-//    m_backBuffer->Release();
-//    D3DDebugHelperFunctions::SetDebugChildName(m_renderTargetView, "RenderSystem RTV for Swap Chain");
-//
-//    // Create depth stencil texture
-//    D3D11_TEXTURE2D_DESC depthBufferDescriptor;
-//    ZeroMemory(&depthBufferDescriptor, sizeof(D3D11_TEXTURE2D_DESC));
-//    depthBufferDescriptor.Width = windowWidth;
-//    depthBufferDescriptor.Height = windowHeight;
-//    depthBufferDescriptor.MipLevels = 1;
-//    depthBufferDescriptor.ArraySize = 1;
-//    depthBufferDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
-//    depthBufferDescriptor.SampleDesc.Count = 4;
-//    depthBufferDescriptor.SampleDesc.Quality = 0;
-//    depthBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
-//    depthBufferDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-//    depthBufferDescriptor.CPUAccessFlags = 0;
-//    depthBufferDescriptor.MiscFlags = 0;
-//    if (FAILED(device->CreateTexture2D(&depthBufferDescriptor, NULL, &m_depthStencilBuffer)))
-//    {
-//        MSG_TRACE_CHANNEL("ERROR", "Failed to create the back buffer")
-//            return;
-//    }
-//
-//    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilBuffer, "RenderSystem DepthStencil Texture");
-//
-//#if _DEBUG //Name the depth Stencil buffer
-//    //m_depthStencilBuffer->SetPrivateData( WKPDID_D3DDebugObjectName, 18, "DepthStencilBuffer" );
-//#endif
-//
-//    // Create the depth stencil view
-//    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor;
-//    ZeroMemory(&depthStencilViewDescriptor, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-//    depthStencilViewDescriptor.Format = depthBufferDescriptor.Format;
-//    depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
-//    depthStencilViewDescriptor.Texture2D.MipSlice = 0;
-//    if (FAILED(device->CreateDepthStencilView(m_depthStencilBuffer, &depthStencilViewDescriptor, &m_depthStencilView)))
-//    {
-//        MSG_TRACE_CHANNEL("ERROR", "Failed to create the depth stencil view")
-//            return;
-//    }
-//
-//    D3DDebugHelperFunctions::SetDebugChildName(m_depthStencilView, "RenderSystem DepthStencil View");
-
-    //We might need to do this at the command list level
-    //deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
-
-#if _DEBUG //Name the target views
-    //m_depthStencilView->SetPrivateData( WKPDID_D3DDebugObjectName, 16, "DepthStencilView" );
-    //m_renderTargetView->SetPrivateData( WKPDID_D3DDebugObjectName, 16, "RenderTargetView" );
-#endif
-
 }
 
 ///-----------------------------------------------------------------------------
@@ -693,6 +549,11 @@ void RenderSystem::beginDraw()
     m_resourceLoader.DispatchResourceCommandQueue();
     PIXEndEvent();
 
+    for (auto& handle : m_modelManger.GetModels())
+    {
+        handle.m_model.model->PopulateCommandList(m_renderResource, commandList);
+    }
+
     //float clearColor[4] = { 0.8f, 0.8f, 0.8f, 0.0f }; //Reverse Z so clear to 0 instead of 1 leads to a linear depth pass
     
     //deviceContext->ClearRenderTargetView(m_renderTargetView, clearColor);
@@ -708,23 +569,7 @@ void RenderSystem::beginDraw()
     //deviceContext->OMSetBlendState(m_blendState, 0, 0xffffffff);
     //deviceContext->OMSetDepthStencilState(m_depthStencilState, 0xffffffff);
 
-    {
-        //This should probably go now
-        PROFILE_EVENT("RenderSystem::beginDraw::MaterialSorting", DarkRed);
-        std::sort(begin(m_renderInstances), end(m_renderInstances), [this](const RenderInstance* lhs, const RenderInstance* rhs)
-        {
-            const Effect* lhsEffect = m_effectCache.getEffect(lhs->getShaderInstance().getMaterial().getEffectHash());
-            const Effect* rhsEffect = m_effectCache.getEffect(rhs->getShaderInstance().getMaterial().getEffectHash());
-            size_t lhsTechniqueId = lhsEffect->getTechnique(lhs->getShaderInstance().getMaterial().getTechnique())->getTechniqueId();
-            size_t rhsTechniqueId = rhsEffect->getTechnique(lhs->getShaderInstance().getMaterial().getTechnique())->getTechniqueId();
-            return lhsTechniqueId < rhsTechniqueId; //Need a shader chache instance here to access 
-        });
 
-        std::sort(begin(m_renderInstances), end(m_renderInstances), [=](const RenderInstance* lhs, const RenderInstance* rhs)
-        {
-            return lhs->getShaderInstance().getAlphaBlend() < rhs->getShaderInstance().getAlphaBlend();
-        });
-    }
     
     RenderResourceHelper helper(m_renderResource);
     Vector3 camPos;
@@ -1011,7 +856,6 @@ void RenderSystem::CreateRenderList(const MessageSystem::Message& msg)
     const CreatedModel* model = mm.GetRenderResource(info->m_renderObjectid);
     if (model)
     {
-        model->model->update(m_renderResource, m_renderInstances, 0.0f, info->m_world, m_view, m_projection, info->m_name);
         //need to pass commanlist here
         CommandQueue& commandQueue = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle);
         CommandList& commandList = commandQueue.GetCommandList(m_currentCommandListIndex);

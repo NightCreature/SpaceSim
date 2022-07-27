@@ -131,6 +131,8 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     {
         group.CreateConstantBuffer(GetVariantSize(shaderParam.m_data.index()), shaderParam.m_rootParamIndex, renderResourceHelper.getWriteableResource().getDeviceManager(), renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap());
     }
+    group.SetName(params.m_name);
+    face.model->CalculateSortKey(renderResource.getEffectCache());
     return face;
 }
 

@@ -177,10 +177,20 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         {
             //    <BlendState  alphablend = "false" / >
             auto& blendDesc = m_pso.GetBLendDescriptor();
-            attribute = childElement->FindAttribute("alpha_blend");
+            attribute = childElement->FindAttribute("alphablend");
             if (attribute != nullptr)
             {
                 blendDesc.RenderTarget[0].BlendEnable = attribute->IntValue();
+                if (blendDesc.RenderTarget[0].BlendEnable)
+                {
+
+                    blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+                    blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+                    blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+                    blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+                    blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+                    blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+                }
             }
             attribute = nullptr;
 
@@ -189,19 +199,19 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         {
             //    <RasterState Cullmode = "back" FillMode = "solid" FrontCCW = "true" / >
             auto& rasterDesc = m_pso.GetRasterizerDescriptor();
-            attribute = childElement->FindAttribute("cull_mode");
+            attribute = childElement->FindAttribute("Cullmode");
             if (attribute != nullptr)
             {
                 rasterDesc.CullMode = static_cast<D3D12_CULL_MODE>(attribute->IntValue());
             }
             attribute = nullptr;
-            attribute = childElement->FindAttribute("fill_mode");
+            attribute = childElement->FindAttribute("Fillmode");
             if (attribute != nullptr)
             {
                 rasterDesc.FillMode = static_cast<D3D12_FILL_MODE>(attribute->IntValue());
             }
             attribute = nullptr;
-            attribute = childElement->FindAttribute("cull_mode");
+            attribute = childElement->FindAttribute("FrontCCW");
             if (attribute != nullptr)
             {
                 rasterDesc.FrontCounterClockwise = attribute->IntValue();

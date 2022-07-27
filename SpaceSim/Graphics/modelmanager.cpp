@@ -126,6 +126,9 @@ void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourc
         handle.m_resourceId = renderResourceId;
 
         m_models.push_back(handle);
+
+        //We want to sort these here
+        std::sort(begin(m_models), end(m_models), [](const ModelResourceHandle& lhs, const ModelResourceHandle& rhs) { return lhs.m_model.model->GetSortKey() < rhs.m_model.model->GetSortKey(); });
     }
 }
 

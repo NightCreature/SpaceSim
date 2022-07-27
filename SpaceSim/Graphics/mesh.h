@@ -33,7 +33,7 @@ namespace Mesh
         std::vector<CreatedMeshGroup> m_meshGroups;
     };
 
-    CreatedModel CreateMesh(const CreationParams& params);
+    CreatedModel CreateMesh(const CreationParams& params, const EffectCache& effectCache);
     void normalizeNormals(std::vector<Vector3>& normals);
 
 };

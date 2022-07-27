@@ -13,6 +13,12 @@ class Model;
 class Resource;
 class ShaderInstance;
 
+struct ModelResourceHandle
+{
+    CreatedModel m_model;
+    size_t m_resourceId;
+};
+
 class ModelManager 
 {
 public:
@@ -28,14 +34,15 @@ public:
     bool HasRenderResource(size_t resource_id) const;
     void RegisterCreatedModel(CreatedModel model, size_t renderResourceId);
     const CreatedModel* GetRenderResource(size_t renderResourceId) const;
+
+    const std::vector<ModelResourceHandle>& GetModels() const
+    {
+        return m_models;
+    }
 protected:
 private:
     bool InternalHasRenderResource(size_t resourceId) const;
-    struct ModelResourceHandle
-    {
-        CreatedModel m_model;
-        size_t m_resourceId;        
-    };
+
     typedef std::vector<ModelResourceHandle> ModelsArray;
     std::vector<ModelResourceHandle> m_models;
 

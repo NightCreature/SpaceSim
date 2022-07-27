@@ -88,6 +88,7 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
     params.invertNormal = m_invertNormal;
     params.changeWindingOrder = m_changeWindingOrder;
     params.m_materialParameters = m_materialParameters;
+    params.m_name = m_name;
     //if (10 != m_rows && 10 != m_coloms)
     //{
     //    params.tesselate = false;

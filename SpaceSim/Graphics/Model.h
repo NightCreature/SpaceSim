@@ -4,10 +4,12 @@
 #include "Graphics/MeshGroup.h"
 #include "Core/Types\Types.h"
 #include "Gameplay/BBox.h"
+#include "EffectCache.h"
 #include <list>
 #include <vector>
 
 #include <D3D12.h>
+
 
 class Input;
 class Resource;
@@ -94,10 +96,43 @@ public:
         m_modelData.emplace_back(MeshGroup({}));
         return *(--m_modelData.end());
     }
+
+    uint64 GetSortKey() const { return m_sortKey; }
+    void CalculateSortKey(const EffectCache& effectCache)
+    {
+        bool hasAlphaBlending = false;
+        //Might want to order this internally in the meshgroup array based on blending have to see
+        for (auto& meshGroup : m_modelData)
+        {
+            auto& material = meshGroup.GetMaterial();
+            const Effect* effect = effectCache.getEffect(material.getEffectHash());
+            m_sortKey |= effect->getTechnique(material.getTechnique())->getTechniqueId();
+            hasAlphaBlending |= material.getBlendState();
+        }
+
+        if (hasAlphaBlending)
+        {
+            //we want these to be last in the list so set the first bit to 1
+            m_sortKey |= (1ull << 63);
+        }
+    }
+
+
+    void PopulateCommandList(Resource* resource, CommandList& commandList)
+    {
+        if (!m_modelData.empty())
+        {
+            for (auto& group : m_modelData)
+            {
+                group.PopulateCommandlist(resource, commandList);
+            }
+        }
+    }
 protected:
     std::vector<MeshGroup> m_modelData; //Why is meshgroup a pointer here and not just owned?
     Bbox m_originalBBox;
     Bbox m_boundingBox;
+    uint64 m_sortKey = 0;
 };
 
 struct CreatedModel

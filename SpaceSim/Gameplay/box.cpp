@@ -263,7 +263,7 @@ CreatedModel CreateBox(const CreationParams& params)
         //Should probably update the material here althoguh that is not how this should be used to begin with
     }
 
-
+    box.model->CalculateSortKey(renderResource.getEffectCache());
     return box;
 }
 

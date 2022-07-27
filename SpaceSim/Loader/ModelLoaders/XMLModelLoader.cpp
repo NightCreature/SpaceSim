@@ -132,5 +132,5 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
     Mesh::CreationParams meshParams;
     meshParams.m_meshGroups.push_back(mesh);
 
-    return  Mesh::CreateMesh(meshParams);
+    return  Mesh::CreateMesh(meshParams, static_cast<RenderResource*>(resource)->getEffectCache());
 }

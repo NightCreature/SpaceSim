@@ -56,6 +56,7 @@ CreatedModel CreateSquare(const SquareCreationParams& params)
 
     group.SetPrimitiveLayout((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+    square.model->CalculateSortKey(renderResource.getEffectCache());
     return square;
 }
 

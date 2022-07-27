@@ -59,7 +59,7 @@ PipelineObject::PipelineObject()
         blendStateDesc.RenderTarget[counter].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
     }
 
-    m_pipeLineStateDescriptor.SampleMask = 0xFFFFFFFF;
+    m_pipeLineStateDescriptor.SampleMask = 0xFFFFFFFFFF;
 
     //Must match backbuffer if only rendering to that
     SetMultiSampling(1, 0);

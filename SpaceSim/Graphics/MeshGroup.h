@@ -8,6 +8,8 @@
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+#include <string>
+
 class DeviceManager;
 class Resource;
 class Bbox;
@@ -31,6 +33,8 @@ public:
     
     void Update(Resource* resource, CommandList& list, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box);
 
+    void PopulateCommandlist(Resource* resource, CommandList& list);
+
     void setMaterial(const Material& material) { m_material = material; m_renderInstanceDirty = true; }
     void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true; }
 
@@ -46,12 +50,17 @@ public:
     void SetPrimitiveLayout(size_t layout) { m_primitiveLayout = layout; }
 
     void Cleanup();
+
+    void SetName(const std::string& name) { m_name = name; }
 private:
     std::vector<std::pair<size_t, ConstantBuffer>> m_constantBuffers;
     Matrix44 m_world;
     Material m_material;
     IndexBuffer m_indexBuffer;
     VertexBuffer m_vertexBuffer;
+
+    std::string m_name;
+
     size_t m_primitiveLayout;
 
     //SHould all be done here since we can execute commands here :)
