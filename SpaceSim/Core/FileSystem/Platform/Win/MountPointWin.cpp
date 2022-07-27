@@ -1,4 +1,4 @@
-#include "Core/FileSystem/Platform/Win/MountPointWin.h"
+#include "Core/FileSystem/MountPoint.h"
 
 #include "Core/FileSystem/File.h"
 #include "Core/Types/TypeHelpers.h"
@@ -10,15 +10,14 @@ namespace VFS
 ///! @brief Represents a directory on the Windows filesystem
 ///! @remark 
 ///-----------------------------------------------------------------------------
-MountPointWin::MountPointWin(const std::filesystem::path& path) : MountPoint(path)
+void MountPoint::PlatformSpecificConstruct()
 {
-    
     if (m_rootPath.is_absolute())
     {
         //make sure this path actually exists
         WIN32_FILE_ATTRIBUTE_DATA fileAttributeData;
         ZeroMemory(&fileAttributeData, sizeof(WIN32_FILE_ATTRIBUTE_DATA));
-        if (GetFileAttributesEx(path.string().c_str(), GetFileExInfoStandard, static_cast<void*>(&fileAttributeData)) != 0)
+        if (GetFileAttributesEx(m_rootPath.string().c_str(), GetFileExInfoStandard, static_cast<void*>(&fileAttributeData)) != 0)
         {
             m_valid = fileAttributeData.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY;
             //Could open handle here if needed
@@ -30,16 +29,7 @@ MountPointWin::MountPointWin(const std::filesystem::path& path) : MountPoint(pat
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-MountPointWin::~MountPointWin()
-{
-    //if the constructor opens the handle we need to close it here
-}
-
-///-----------------------------------------------------------------------------
-///! @brief 
-///! @remark
-///-----------------------------------------------------------------------------
-std::vector<std::filesystem::path> MountPointWin::ListFiles()
+std::vector<std::filesystem::path> MountPoint::ListFiles()
 {
     std::vector<std::filesystem::path> paths;
 
@@ -71,44 +61,46 @@ std::vector<std::filesystem::path> MountPointWin::ListFiles()
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-VFS::File* MountPointWin::FileCreate(const std::filesystem::path& name)
+VFS::File MountPoint::FileCreate(const std::filesystem::path& name, FileMode fileMode)
 {
-    UNUSEDPARAM(name);
+    File file;
 
-    return nullptr;
+    file.createFile(name, fileMode);
+
+    return file;
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-VFS::File* MountPointWin::DirectoryCreate(const std::filesystem::path& name)
+VFS::File MountPoint::DirectoryCreate(const std::filesystem::path& name)
 {
     UNUSEDPARAM(name);
 
-    return nullptr;
+    return File();
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-VFS::File* MountPointWin::OpenFile(const std::filesystem::path& name)
+bool MountPoint::FileExists(const std::filesystem::path& name)
 {
-    UNUSEDPARAM(name);
-
-    //This opens a file seeing the file is an interface too 
-
-    return nullptr;
-}
-
-///-----------------------------------------------------------------------------
-///! @brief 
-///! @remark
-///-----------------------------------------------------------------------------
-bool MountPointWin::FileExists(const std::filesystem::path& name)
-{
-    UNUSEDPARAM(name);
+    std::filesystem::path fileName = name;
+    if (!name.is_absolute())
+    {
+        //This might cause problems you have to merge paths here
+        fileName = m_rootPath / name;
+    }
+    
+    //make sure this path actually exists
+    WIN32_FILE_ATTRIBUTE_DATA fileAttributeData;
+    ZeroMemory(&fileAttributeData, sizeof(WIN32_FILE_ATTRIBUTE_DATA));
+    if (GetFileAttributesEx(fileName.string().c_str(), GetFileExInfoStandard, static_cast<void*>(&fileAttributeData)) != 0)
+    {
+        return fileAttributeData.dwFileAttributes != INVALID_FILE_ATTRIBUTES;
+    }
 
     return false;
 }
@@ -117,7 +109,7 @@ bool MountPointWin::FileExists(const std::filesystem::path& name)
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-bool MountPointWin::DirectoryExists(const std::filesystem::path& name)
+bool MountPoint::DirectoryExists(const std::filesystem::path& name)
 {
     UNUSEDPARAM(name);
 

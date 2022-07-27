@@ -7,7 +7,7 @@
 
 #define MEMORY_PROFILING
 #ifdef MEMORY_PROFILING
-#include "D:\SDK\Demo\SpaceSim\SDK\MTuner\SDK\inc\rmem.h"
+//#include "D:\SDK\Demo\SpaceSim\SDK\MTuner\SDK\inc\rmem.h"
 #endif
 
 namespace Allocator
@@ -135,7 +135,7 @@ public:
     STLAllocator(const STLAllocator& other) { m_allocator = other.m_allocator; }
 
     template<typename U>
-    STLAllocator(const STLAllocator<U>&) { m_allocator = other.m_allocator; }
+    STLAllocator(const STLAllocator<U>& other) { m_allocator = other.m_allocator; }
 
     template<typename U>
     STLAllocator& operator=(const STLAllocator<U>& other) { return *this; }
@@ -159,7 +159,7 @@ public:
     void destroy(pointer p) { p->~T(); }
 
     template<typename U>
-    void destroy(U* p) { p->!U(); }
+    void destroy(U* p) { p->~U(); }
 
     size_type max_size() const { return m_allocator->getSize() / sizeof(T); }
 

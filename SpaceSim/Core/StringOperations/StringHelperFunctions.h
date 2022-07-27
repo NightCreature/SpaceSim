@@ -8,6 +8,7 @@
 
 #include <Windows.h>
 #include <Stringapiset.h>
+#include <vector>
 
 const size_t c_fnvHashOffset = 2166136261;
 const size_t c_fnvHashPrime = 16777619;
@@ -74,7 +75,7 @@ constexpr size_t operator ""_hash(const char* str, size_t size)
 
 ///-----------------------------------------------------------------------------
 ///! @brief   Case insensitive hash function, uses the const expression version
-///! @remark
+///! @remark  in C++20 this should become a constexpr function, waiting for constexpr containers
 ///-----------------------------------------------------------------------------
 inline size_t hashString(const std::string& sourceStr)
 {
@@ -248,3 +249,5 @@ std::string makeAbsolutePath(const std::string& filename);
  void convertToUTF16String(const std::string& str, std::wstring& out);
 
 void convertToCString(const std::wstring& str, std::string& out);
+
+std::vector<std::string> tokeniseString(const std::string& input, const char delimeter);

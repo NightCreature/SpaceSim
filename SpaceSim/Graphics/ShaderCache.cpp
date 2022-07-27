@@ -61,8 +61,8 @@ void ShaderCache::cleanup()
 
 const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    VertexShader shader;
-    shader.deserialise(element);
+    Shader shader;
+    shader.deserialise(element, ShaderType::eVertexShader);
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getVertexShader(resourceName) == nullptr)
     {
@@ -80,8 +80,8 @@ const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, c
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    HullShader shader;
-    shader.deserialise(element);
+    Shader shader;
+    shader.deserialise(element, ShaderType::eHullShader);
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getHullShader(resourceName) == nullptr)
     {
@@ -99,8 +99,8 @@ const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, con
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    DomainShader shader;
-    shader.deserialise(element);
+    Shader shader;
+    shader.deserialise(element, ShaderType::eDomainShader);
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getDomainShader(resourceName) == nullptr)
     {
@@ -118,8 +118,8 @@ const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, c
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    GeometryShader shader;
-    shader.deserialise(element);
+    Shader shader;
+    shader.deserialise(element, ShaderType::eGeometryShader);
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getGeometryShader(resourceName) == nullptr)
     {
@@ -137,8 +137,8 @@ const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element,
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    PixelShader shader;
-    shader.deserialise(element);
+    Shader shader;
+    shader.deserialise(element, ShaderType::ePixelShader);
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getPixelShader(resourceName) == nullptr)
     {
@@ -156,8 +156,8 @@ const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, co
 ///-------------------------------------------------------------------------
 const size_t  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    ComputeShader shader;
-    shader.deserialise(element);
+    Shader shader;
+    shader.deserialise(element, ShaderType::eComputeShader);
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getComputeShader(resourceName) == nullptr)
     {
@@ -173,7 +173,7 @@ const size_t  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element,
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const VertexShader* ShaderCache::getVertexShader(size_t resourceName) const
+const Shader* ShaderCache::getVertexShader(size_t resourceName) const
 {
     if (m_vertexShaders.empty())
     {
@@ -193,7 +193,7 @@ const VertexShader* ShaderCache::getVertexShader(size_t resourceName) const
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const HullShader* ShaderCache::getHullShader(size_t resourceName) const
+const Shader* ShaderCache::getHullShader(size_t resourceName) const
 {
     if (m_hullShaders.empty())
     {
@@ -212,7 +212,7 @@ const HullShader* ShaderCache::getHullShader(size_t resourceName) const
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const DomainShader* ShaderCache::getDomainShader(size_t resourceName) const
+const Shader* ShaderCache::getDomainShader(size_t resourceName) const
 {
     if (m_domainShaders.empty())
     {
@@ -231,7 +231,7 @@ const DomainShader* ShaderCache::getDomainShader(size_t resourceName) const
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const GeometryShader* ShaderCache::getGeometryShader(size_t resourceName) const
+const Shader* ShaderCache::getGeometryShader(size_t resourceName) const
 {
     if (m_geometryShaders.empty())
     {
@@ -250,7 +250,7 @@ const GeometryShader* ShaderCache::getGeometryShader(size_t resourceName) const
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const PixelShader* ShaderCache::getPixelShader(size_t resourceName) const
+const Shader* ShaderCache::getPixelShader(size_t resourceName) const
 {
     if (m_pixelShaders.empty())
     {
@@ -269,7 +269,7 @@ const PixelShader* ShaderCache::getPixelShader(size_t resourceName) const
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ComputeShader* ShaderCache::getComputeShader(size_t resourceName) const
+const Shader* ShaderCache::getComputeShader(size_t resourceName) const
 {
     if (m_computeShaders.empty())
     {
@@ -297,4 +297,5 @@ void ShaderCache::DumpLoadedShaderNames()
         MSG_TRACE_CHANNEL("ShaderCache", "Vertex Shader: %s", it->second.getFileName().c_str());
     }
 }
+
 #endif

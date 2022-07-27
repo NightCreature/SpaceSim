@@ -21,6 +21,6 @@ struct PSInput
 
 float4 ps_main(PSInput input) : SV_Target
 {
-	return float4(input.Tex,0,1);
-	//return shaderTextures.Sample(SampleType, input.Tex);
+	//return float4(input.Tex,0,1);
+	return shaderTextures.Sample(SampleType, input.Tex);
 }

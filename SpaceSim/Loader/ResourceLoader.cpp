@@ -9,7 +9,27 @@
 #include "Graphics/modelmanager.h"
 #include "Graphics/texturemanager.h"
 
+#include "Loader/ResourceLoadJobs.h"
 #include "Loader/ResourceLoadRequests.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
+
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark This needs to run after we have a device now
+///-----------------------------------------------------------------------------
+void ResourceLoader::initialise(Resource* resource)
+{
+    m_resource = resource;
+
+    //Should probably use a dubble buffered command list here
+    auto& helper = RenderResourceHelper(m_resource).getWriteableResource();
+    m_uploadQueueHandle = helper.getCommandQueueManager().CreateCommandQueue();
+    CommandQueue& commandQueue = helper.getCommandQueueManager().GetCommandQueue(m_uploadQueueHandle);
+    commandQueue.SetName("ResourceLoaderQueue");
+    m_currentUploadCommandListHandle = commandQueue.CreateCommandList();
+    m_previousCommandListHandle = commandQueue.CreateCommandList();
+}
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
@@ -17,46 +37,24 @@
 ///-----------------------------------------------------------------------------
 void ResourceLoader::update()
 {
-    m_isUpdating = true;
-    PROFILE_EVENT("ResourceLoader::update", Crimson);
+    m_updating = true;
 
-    RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
-
-    for (auto request : m_requests)
+    for (auto* job : m_newJobs)
     {
-        if (request.m_resourceType == hashString("Face::CreationParams"))
-        {
-            MessageSystem::CreatedRenderResourceMessage returnMessage;
-            MessageSystem::CreatedRenderResourceMessage::CreatedRenderResource data;
-            data.m_renderResourceHandle = renderResource.getModelManager().AddFace(request.m_loadData);
-            data.m_gameObjectId = request.m_gameObjectId;
-            returnMessage.SetData(data);
-            
-            renderResource.m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage);
-        }
-        else if (request.m_resourceType == hashString("LOAD_TEXTURE"))
-        {
-            auto textureLoadData = static_cast<char*>(request.m_loadData);
-            renderResource.getTextureManager().addLoad(renderResource.getDeviceManager(), textureLoadData);
-        }
-        else if ( request.m_resourceType == hashString("LoadModelResource"))
-        {
-            MessageSystem::CreatedRenderResourceMessage returnMessage;
-            MessageSystem::CreatedRenderResourceMessage::CreatedRenderResource data;
-            data.m_renderResourceHandle = renderResource.getModelManager().LoadModel(request.m_loadData);
-            data.m_gameObjectId = request.m_gameObjectId;
-            returnMessage.SetData(data);
+        m_jobs.push_back(job);
+    }
+    m_newJobs.clear();
 
-            renderResource.m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage);
-        }
-
-        delete [] request.m_loadData;
+    for (auto* job : m_jobs)
+    {
+        job->Execute(0);
+        delete job;
     }
 
-    m_requests.clear();
-    m_requests.swap(m_newRequestsDuringUpdate);
+    m_jobs.clear();
 
-    m_isUpdating = false;
+
+    m_updating = false;
 }
 
 ///-----------------------------------------------------------------------------
@@ -66,7 +64,8 @@ void ResourceLoader::update()
 void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
 {
     const MessageSystem::LoadResourceRequest& crrmsg = static_cast<const MessageSystem::LoadResourceRequest&>(msg);
-    //Figure out what kind of load request and schedule it to be loaded
+
+    //Figure out what kind of load request and schedule it to be loader
     LoadRequest request;
     request.m_resourceType = crrmsg.GetResourceType(); //should probably store load requests by type
     request.m_gameObjectId = crrmsg.GetGameObjectId();
@@ -77,21 +76,98 @@ void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
     request.m_sourceInfo = SourceInfo(msg.m_sourceInfo.getSourceFileName().c_str(), msg.m_sourceInfo.getSourceFileLineNumber());
 #endif
 
-    m_requests.push_back(request);
+    AddLoadRequest(request);
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
+void ResourceLoader::DispatchResourceCommandQueue()
+{
+    auto& helper = RenderResourceHelper(m_resource).getWriteableResource();
+
+    auto& resourceCommandQueue = helper.getCommandQueueManager().GetCommandQueue(m_uploadQueueHandle);
+    auto& resourceCommandList = resourceCommandQueue.GetCommandList(m_currentUploadCommandListHandle);
+
+    HRESULT hr = resourceCommandList.m_list->Close();
+    if (hr != S_OK)
+    {
+        MSG_TRACE_CHANNEL("ResourceLoader", "Failed to close the resource command list 0x%x %s", hr, getLastErrorMessage(hr));
+    }
+
+    std::vector<ID3D12CommandList*> resourceCommandListsVector;
+    resourceCommandListsVector.push_back(resourceCommandList.m_list); //Push back the current command list
+
+    resourceCommandQueue.m_queue->ExecuteCommandLists(static_cast<UINT>(resourceCommandListsVector.size()), &resourceCommandListsVector[0]);
+
+    //have to wait for the GPU to be done this is not the best but fuck it for now
+    const UINT64 fence = resourceCommandQueue.m_fenceValue;
+    hr = resourceCommandQueue.m_queue->Signal(resourceCommandQueue.m_fence, fence);
+    if (hr != S_OK)
+    {
+        MSG_TRACE_CHANNEL("ERROR", "Fence Signal failed with error code: 0x%x %s", hr, getLastErrorMessage(hr));
+    }
+    resourceCommandQueue.m_fenceValue++;
+
+    // Wait until the previous frame is finished.
+    UINT64 fenceValue = resourceCommandQueue.m_fence->GetCompletedValue();
+    if (fenceValue < fence)
+    {
+        resourceCommandQueue.m_fence->SetEventOnCompletion(fence, resourceCommandQueue.m_fenceEvent);
+        WaitForSingleObject(resourceCommandQueue.m_fenceEvent, INFINITE); //This could stall
+    }
+
+    auto& commandList = helper.getCommandQueueManager().GetCommandQueue(m_uploadQueueHandle).GetCommandList(m_currentUploadCommandListHandle);
+    commandList.m_alloctor->Reset();
+    commandList.m_list->Reset(commandList.m_alloctor, nullptr);
+
+    size_t tempCommandListIndex = m_currentUploadCommandListHandle;
+    m_currentUploadCommandListHandle = m_previousCommandListHandle;
+    m_previousCommandListHandle = tempCommandListIndex;
+
+    //Before we do this we need to know that the previous commandlist has been finished, so we can reset the list.
+
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   Create different load jobs per type
+///! @remark
+///-----------------------------------------------------------------------------
 void ResourceLoader::AddLoadRequest(const LoadRequest& request)
 {
-    if (m_isUpdating)
+    // These jobs will have to wait untill the commandlist they have put there commands in is done on the GPU before sending messages back to the update side
+    Job* job = nullptr;
+    switch (request.m_resourceType)
     {
-        m_newRequestsDuringUpdate.push_back(request);
+    case "Face::CreationParams"_hash:
+        job = new FaceJob(m_resource, m_uploadQueueHandle, m_currentUploadCommandListHandle, request.m_gameObjectId, request.m_loadData);
+    break;
+    case "LOAD_TEXTURE"_hash:
+    {
+        job = new LoadTextureJob(m_resource, m_uploadQueueHandle, m_currentUploadCommandListHandle, (char*)(request.m_loadData));
+        delete request.m_loadData;
     }
-    else
+    break;
+    case "LoadModelResource"_hash:
+        job = new LoadModelJob(m_resource, m_uploadQueueHandle, m_currentUploadCommandListHandle, request.m_gameObjectId, request.m_loadData);
+    break;
+    default:
+        break;
+    }
+
+    if (job != nullptr)
     {
-        m_requests.push_back(request);
+        //RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
+        //renderResource.getJobQueue().AddJob(job);
+        if (m_updating)
+        { 
+            m_newJobs.push_back(job);
+        }
+        else
+        {
+            m_jobs.push_back(job);
+        }
+
     }
 }

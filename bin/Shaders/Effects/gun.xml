@@ -3,6 +3,11 @@
     <Technique name="default">
       <VertexShader entry_point="vs_main" file_name="Shaders\Shaders\gun.vs" />
       <PixelShader entry_point="ps_main" file_name="Shaders\Shaders\gun.ps" />
+      <BlendState  alphablend="0"/>
+      <RasterState Cullmode="3" FillMode="3" FrontCCW="1" />
+      <DepthStencilState depth_enabled="1" stencil_enabled="0" />
+      <VertexDeclarationDescriptor position_dimension="3" normal="true" tangent="false" vertex_color="false" textureCoordsDimensions="" />
+      <PrimitiveType type="3" />
   	</Technique>
   </Effect>
 </xml>

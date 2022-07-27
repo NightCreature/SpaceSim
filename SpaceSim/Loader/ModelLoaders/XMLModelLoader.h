@@ -2,6 +2,8 @@
 
 #include "modelloader.h"
 
+struct CommandList;
+
 class XMLModelLoader : public ModelLoader
 {
 public:
@@ -11,7 +13,7 @@ public:
     ///-------------------------------------------------------------------------
     // @brief 
     ///-------------------------------------------------------------------------
-    CreatedModel LoadModel(Resource* resource, const LoadData& loadData);
+    CreatedModel LoadModel(Resource* resource, const LoadData& loadData, CommandList& commandList);
 
 };
 

@@ -3,6 +3,11 @@
     <Technique name="default">
       <VertexShader entry_point="vs_main" profile_version="_5_0" file_name="Shaders\Shaders\BasicParticleSystem.vs" />
       <PixelShader entry_point="ps_main" profile_version="_5_0" file_name="Shaders\Shaders\BasicParticleSystem.ps" />
+      <BlendState  alphablend="1"/>
+      <RasterState Cullmode="3" FillMode="3" FrontCCW="1" />
+      <DepthStencilState depth_enabled="1" stencil_enabled="0" />
+      <VertexDeclarationDescriptor position_dimension="0" normal="false" tangent="false" vertex_color="false" textureCoordsDimensions="" />
+      <PrimitiveType type="3" />
     </Technique>
    </Effect>
 </xml>	

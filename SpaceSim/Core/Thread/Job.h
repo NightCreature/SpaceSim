@@ -37,4 +37,5 @@ public:
     CRITICAL_SECTION m_criticalSection;
     std::mutex m_mutex;
     std::vector<Workload> m_jobs;
+    std::vector<Workload> m_finishedJobs;
 };

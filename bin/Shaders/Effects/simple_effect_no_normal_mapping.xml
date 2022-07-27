@@ -3,10 +3,20 @@
     <Technique name="default">
       <VertexShader entry_point="vs_main" file_name="Shaders\Shaders\simple_vertex_shader_no_normal_mapping.vs" />
       <PixelShader entry_point="ps_main" file_name="Shaders\Shaders\simple_pixel_shader_no_nomal_mapping.ps" />
+      <BlendState  alphablend="1"/>
+      <RasterState Cullmode="3" FillMode="3" FrontCCW="1" />
+      <DepthStencilState depth_enabled="1" stencil_enabled="0" />
+      <VertexDeclarationDescriptor position_dimension="3" normal="true" tangent="false" vertex_color="false" textureCoordsDimensions="2" /> <!--This needs optimising we only really need the vertex stream here-->
+      <PrimitiveType type="3" />
   	</Technique>
     <Technique name="shadow_map">
       <VertexShader entry_point="vs_main" file_name="Shaders\Shaders\simple_shadow_vertex_shader.vs" />
       <PixelShader entry_point="ps_main" file_name="Shaders\Shaders\simple_shadow_pixel_shader.ps" />
+      <BlendState  alphablend="1"/>
+      <RasterState Cullmode="3" FillMode="3" FrontCCW="1" />
+      <DepthStencilState depth_enabled="1" stencil_enabled="0" />
+      <VertexDeclarationDescriptor position_dimension="3" normal="true" tangent="true" vertex_color="false" textureCoordsDimensions="2" /> <!--This needs optimising we only really need the vertex stream here-->
+      <PrimitiveType type="3" />
   	</Technique>
   </Effect>
 </xml>

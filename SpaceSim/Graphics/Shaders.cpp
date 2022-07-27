@@ -8,15 +8,17 @@
 #include <fstream>
 #include <numeric>
 #include <limits>
+#include "D3D12/D3D12X.h"
+#include "D3D12/ShaderParamMatcher.h"
 
-enum class ShaderType
+const char* shaderTypeNames[] =
 {
-    eVertexShader = 0,
-    eHullShader,
-    eDomainShader,
-    eGeometryShader,
-    ePixelShader,
-    eComputeShader
+    "VS",
+    "HS",
+    "DS",
+    "GS",
+    "PS",
+    "CS"
 };
 
 ///-----------------------------------------------------------------------------
@@ -91,6 +93,13 @@ void getProfileName(const DeviceManager& deviceManager, ShaderType type, std::st
             profileName += "_5_0";
         }
         break;
+        case D3D_FEATURE_LEVEL_12_0:
+        case D3D_FEATURE_LEVEL_12_1:
+        case D3D_FEATURE_LEVEL_1_0_CORE:
+        {
+            profileName += "_5_1";//This should allow use to use new features, have to see if we need to chgange this to 6_6 or 6_4 and how we determine that need to include the new shader ocmpiler first and its bridge https://github.com/microsoft/DirectXShaderCompiler
+        }
+        break;
         default:
         {
             profileName += "_4_0_level_9_1";
@@ -146,7 +155,7 @@ char* getShaderBuffer(const std::string& fileName, size_t& length)
     return buffer;
 }
 
-void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string& entryPoint, std::string& profileVersion, std::string& fileName)
+void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string& entryPoint, std::string& profileVersion, std::string& fileName, ShaderType& type)
 {
     for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
     {
@@ -162,353 +171,85 @@ void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string& ent
         {
             fileName = attribute->Value();
         }
-}
+        else if (strICmp(attribute->Name(), "shader_type"))
+        {
+            for (size_t counter = 0; counter < static_cast<std::underlying_type_t<ShaderType>>(ShaderType::Count); ++counter)
+            {
+                if (strICmp(shaderTypeNames[counter], attribute->Value()))
+                {
+                    type = static_cast<ShaderType>(counter);
+                }
+            }
+        }
     }
+}
 
 
 #if defined( DEBUG ) || defined( _DEBUG )
-DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES;
+DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES | D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_DEBUG | D3DCOMPILE_ALL_RESOURCES_BOUND;
 #else
 DWORD shaderCompilerFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_ROW_MAJOR | D3DCOMPILE_ENABLE_UNBOUNDED_DESCRIPTOR_TABLES;
 #endif
 
+
+
 ///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
+///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void VertexShader::deserialise(const tinyxml2::XMLElement* element)
+void Shader::deserialise(const tinyxml2::XMLElement* element, ShaderType defaultType)
 {
-    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
-
+    m_type = defaultType;
+    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName, m_type);
 }
 
 ///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
+///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-bool VertexShader::createShader(const DeviceManager& deviceManager)
+bool Shader::createShader(const DeviceManager& deviceManager)
 {
     size_t length = 0;
     char* shaderCodeBuffer = getShaderBuffer(m_fileName, length);
     if (shaderCodeBuffer)
     {
         std::string profileName = "";
-        getProfileName(deviceManager, ShaderType::eVertexShader, profileName);
+        getProfileName(deviceManager, m_type, profileName);
+
         ID3DBlob* errorBlob;
-        HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &m_vertexShaderBlob, &errorBlob);
+        HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &m_shaderBlob, &errorBlob);
         if (FAILED(hr))
         {
-            MSG_TRACE_CHANNEL("VertexShader_ERROR", "Failed to compile vertex shader with error code: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            MSG_TRACE_CHANNEL("VertexShader_ERROR", "Failed to compile vertex shader: %s, with errors: \n%s", m_fileName.c_str(), (errorBlob != nullptr ? (char*)errorBlob->GetBufferPointer() : "<errorBlob pointer is nullptr>"));
-            delete [] shaderCodeBuffer;
-            return false;
-        }
-        
-        hr = deviceManager.getDevice()->CreateVertexShader(m_vertexShaderBlob->GetBufferPointer(), m_vertexShaderBlob->GetBufferSize(), 0, &m_shader);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("VERTEXSHADER_ERROR", "Failed to create vertex shader: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            delete [] shaderCodeBuffer;
+            MSG_TRACE_CHANNEL("Shader_ERROR", "Failed to compile vertex shader with error code: 0x%x(%s)", hr, getLastErrorMessage(hr));
+            MSG_TRACE_CHANNEL("Shader_ERROR", "Failed to compile vertex shader: %s, with errors: \n%s", m_fileName.c_str(), (errorBlob != nullptr ? (char*)errorBlob->GetBufferPointer() : "<errorBlob pointer is nullptr>"));
+            delete[] shaderCodeBuffer;
             return false;
         }
 
-        delete []  shaderCodeBuffer;
+        //void* blobBufferPtr = m_shaderBlob->GetBufferPointer();
+
+        //ID3DBlob* rootsignatureBlob = nullptr;
+        //hr = D3DGetBlobPart(shaderCodeBuffer, length, D3D_BLOB_ROOT_SIGNATURE, 0, &rootsignatureBlob);
+        //if (FAILED(hr))
+        //{
+        //    MSG_TRACE_CHANNEL("VertexShader_ERROR", "Failed to compile vertex shader with error code: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
+        //    MSG_TRACE_CHANNEL("VertexShader_ERROR", "Failed to compile vertex shader: %s, with errors: \n%s", m_fileName.c_str(), (errorBlob != nullptr ? (char*)errorBlob->GetBufferPointer() : "<errorBlob pointer is nullptr>"));
+        //    delete[] shaderCodeBuffer;
+        //    return false;
+        //}
+        //Pixel shaders currently dont have a RootDescripter attached this is handled at the technique level really
+        //if (m_type == ShaderType::eVertexShader)
+        {
+
+        }
+
+        delete[] shaderCodeBuffer;
 
 #ifdef _DEBUG
-        if (m_shader != nullptr)
-        {
+        //if (m_shader != nullptr)
+       // {
             //m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
-        }
-#endif
-        return true;
-    }
-
-    return false;
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void HullShader::deserialise(const tinyxml2::XMLElement* element)
-{
-    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-bool HullShader::createShader(const DeviceManager& deviceManager)
-{
-    D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
-    if (featureLevel < D3D_FEATURE_LEVEL_11_0)
-    {
-        return true;
-    }
-
-    size_t length = 0;
-    char* shaderCodeBuffer = getShaderBuffer(m_fileName, length);
-    if (shaderCodeBuffer)
-    {
-        std::string profileName = "";
-        getProfileName(deviceManager, ShaderType::eHullShader, profileName, m_profileVersion);
-        ID3DBlob* errorBlob;
-        ID3DBlob* shaderBlob;
-        HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("HullShader_ERROR", "Failed to compile vertex shader with error code: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            MSG_TRACE_CHANNEL("HullShader_ERROR", "Failed to compile vertex shader: %s, with errors: \n%s", m_fileName.c_str(), (errorBlob != nullptr ? (char*)errorBlob->GetBufferPointer() : "<errorBlob pointer is nullptr>"));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        hr = deviceManager.getDevice()->CreateHullShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &m_shader);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("VERTEXSHADER_ERROR", "Failed to create vertex shader: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        delete[]  shaderCodeBuffer;
-#ifdef _DEBUG
-        if (m_shader != nullptr)
-        {
-            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
-        }
-#endif
-        return true;
-    }
-
-    return false;
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void DomainShader::deserialise(const tinyxml2::XMLElement* element)
-{
-    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-bool DomainShader::createShader(const DeviceManager& deviceManager)
-{
-    D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
-    if (featureLevel < D3D_FEATURE_LEVEL_11_0)
-    {
-        return true;
-    }
-
-    size_t length = 0;
-    char* shaderCodeBuffer = getShaderBuffer(m_fileName, length);
-    if (shaderCodeBuffer)
-    {
-        std::string profileName = "";
-        getProfileName(deviceManager, ShaderType::eDomainShader, profileName, m_profileVersion);
-        ID3DBlob* errorBlob;
-        ID3DBlob* shaderBlob;
-        HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("DomainShader_ERROR", "Failed to compile vertex shader with error code: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            MSG_TRACE_CHANNEL("DomainShader_ERROR", "Failed to compile vertex shader: %s, with errors: \n%s", m_fileName.c_str(), (errorBlob != nullptr ? (char*)errorBlob->GetBufferPointer() : "<errorBlob pointer is nullptr>"));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        hr = deviceManager.getDevice()->CreateDomainShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &m_shader);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("VERTEXSHADER_ERROR", "Failed to create vertex shader: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        delete[]  shaderCodeBuffer;
-#ifdef _DEBUG
-        if (m_shader != nullptr)
-        {
-            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
-        }
-#endif
-        return true;
-    }
-
-    return false;
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void GeometryShader::deserialise(const tinyxml2::XMLElement* element)
-{
-    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-bool GeometryShader::createShader(const DeviceManager& deviceManager)
-{
-    D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
-    if (featureLevel < D3D_FEATURE_LEVEL_10_0)
-    {
-        return true;
-    }
-
-
-    size_t length = 0;
-    char* shaderCodeBuffer = getShaderBuffer(m_fileName, length);
-    if (shaderCodeBuffer)
-    {
-        std::string profileName = "";
-        getProfileName(deviceManager, ShaderType::eGeometryShader, profileName, m_profileVersion);
-        ID3DBlob* errorBlob;
-        ID3DBlob* shaderBlob;
-        HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("GeometryShader_ERROR", "Failed to compile vertex shader with error code: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            MSG_TRACE_CHANNEL("GeometryShader_ERROR", "Failed to compile vertex shader: %s, with errors: \n%s", m_fileName.c_str(), (errorBlob != nullptr ? (char*)errorBlob->GetBufferPointer() : "<errorBlob pointer is nullptr>"));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        hr = deviceManager.getDevice()->CreateGeometryShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &m_shader);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("VERTEXSHADER_ERROR", "Failed to create vertex shader: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        delete[]  shaderCodeBuffer;
-#ifdef _DEBUG
-        if (m_shader != nullptr)
-        {
-            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
-        }
-#endif
-        return true;
-    }
-
-    return false;
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void PixelShader::deserialise(const tinyxml2::XMLElement* element)
-{
-    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-bool PixelShader::createShader(const DeviceManager& deviceManager)
-{
-    size_t length = 0;
-    char* shaderCodeBuffer = getShaderBuffer(m_fileName, length);
-    if (shaderCodeBuffer)
-    {
-        std::string profileName = "";
-        getProfileName(deviceManager, ShaderType::ePixelShader, profileName, m_profileVersion);
-        ID3DBlob* errorBlob;
-        ID3DBlob* shaderBlob;
-        HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("PixelShader_ERROR", "Failed to compile vertex shader with error code: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            MSG_TRACE_CHANNEL("PixelShader_ERROR", "Failed to compile vertex shader: %s, with errors: \n%s", m_fileName.c_str(), (errorBlob != nullptr ? (char*)errorBlob->GetBufferPointer() : "<errorBlob pointer is nullptr>"));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        hr = deviceManager.getDevice()->CreatePixelShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &m_shader);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("VERTEXSHADER_ERROR", "Failed to create vertex shader: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        delete[]  shaderCodeBuffer;
-#ifdef _DEBUG
-        if (m_shader != nullptr)
-        {
-            //m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
-        }
-#endif
-        return true;
-    }
-
-    return false;
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void ComputeShader::deserialise(const tinyxml2::XMLElement* element)
-{
-    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName);
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-bool ComputeShader::createShader(const DeviceManager& deviceManager)
-{
-    D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
-    if (featureLevel < D3D_FEATURE_LEVEL_11_0)
-    {
-        return true;
-    }
-
-    size_t length = 0;
-    char* shaderCodeBuffer = getShaderBuffer(m_fileName, length);
-    if (shaderCodeBuffer)
-    {
-        std::string profileName = "";
-        getProfileName(deviceManager, ShaderType::eComputeShader, profileName, m_profileVersion);
-        ID3DBlob* errorBlob;
-        ID3DBlob* shaderBlob;
-        HRESULT hr = D3DCompile(shaderCodeBuffer, length, m_fileName.c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, m_entryPoint.c_str(), profileName.c_str(), shaderCompilerFlags, 0, &shaderBlob, &errorBlob);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("ComputeShader_ERROR", "Failed to compile vertex shader with error code: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            MSG_TRACE_CHANNEL("ComputeShader_ERROR", "Failed to compile vertex shader: %s, with errors: \n%s", m_fileName.c_str(), (errorBlob != nullptr ? (char*)errorBlob->GetBufferPointer() : "<errorBlob pointer is nullptr>"));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        hr = deviceManager.getDevice()->CreateComputeShader(shaderBlob->GetBufferPointer(), shaderBlob->GetBufferSize(), 0, &m_shader);
-        if (FAILED(hr))
-        {
-            MSG_TRACE_CHANNEL("VERTEXSHADER_ERROR", "Failed to create vertex shader: 0x%x(%s)", hr, D3DDebugHelperFunctions::D3DErrorCodeToString(hr));
-            delete[] shaderCodeBuffer;
-            return false;
-        }
-
-        delete[]  shaderCodeBuffer;
-#ifdef _DEBUG
-        if (m_shader != nullptr)
-        {
-            m_shader->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(m_fileName.size()), m_fileName.c_str());
-        }
+       // }
 #endif
         return true;
     }

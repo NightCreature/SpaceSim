@@ -52,8 +52,10 @@ Material::Material(const Material& material)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Material::deserialise( Resource* resource, const DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node )
+void Material::deserialise( Resource* resource, DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node )
 {
+    UNUSEDPARAM(resource);
+
     node = node->FirstChildElement();
     const auto shininessHash = "Shininess"_hash;
     const auto alphaBlend = "AlphaBlend"_hash;
@@ -133,9 +135,33 @@ void Material::deserialise( Resource* resource, const DeviceManager& deviceManag
                 m_alphaBlend = attribute->BoolValue();
             }
         }
+        //Dont need this since we reflect on the shader now
+        //else if ("ShaderParameterData"_hash == elementHash)
+        //{
+        //    //Deserialise the data we need here, we can write to this data field
+        //    constexpr size_t typeHashes[] = { "WVPBufferContent"_hash , "MaterialContent"_hash , "PerFrameConstants"_hash }; //This should probably live with the shader parameters
+        //    for (const auto* childNode = node->FirstChildElement(); childNode != nullptr; childNode = static_cast<const tinyxml2::XMLElement*>(childNode->NextSibling()))
+        //    {
+        //        if (hashString(childNode->Value()) == "ShaderParameterData"_hash)
+        //        {
+        //            ShaderParameterData data;
+
+        //            auto* attribute = childNode->FindAttribute("name");
+        //            if (attribute != nullptr)
+        //            {
+        //                data.m_nameHash = hashString(attribute->Value());
+        //            }
+        //            attribute = childNode->FindAttribute("type");
+        //            if (attribute != nullptr)
+        //            {
+        //                auto typeHash = hashString(attribute->Value());
+
+        //            }
+        //        }
+        //    }
+        //}
     }
 
-    UNUSEDPARAM(resource);
     UNUSEDPARAM(lightManager);
 }
 
@@ -239,4 +265,27 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
     }
 
     return returnVal;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void Material::Prepare(const EffectCache& effectCache)
+{
+    //Prepare the shader parameters
+    const auto* effect = effectCache.getEffect(m_effectHash);
+    if (effect)
+    {
+        const auto* technique = effect->getTechnique(m_techniqueHash);
+        if (nullptr != technique)
+        {
+            m_shaderParameterData = technique->GetShaderParameters();
+        }
+    }
+
+    //for (auto& shaderParam : m_shaderParameterData)
+    //{
+    //    shaderParam.CreateConstantBuffer(deviceManager, heap);
+    //}
 }

@@ -21,7 +21,7 @@ namespace Mesh
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-CreatedModel CreateMesh(const CreationParams& params)
+CreatedModel CreateMesh(const CreationParams& params, const EffectCache& effectCache)
 {
     CreatedModel mesh;
 
@@ -33,6 +33,7 @@ CreatedModel CreateMesh(const CreationParams& params)
         mesh.boundingBox.enclose(params.m_meshGroups[counter].boundingBox);
     }
 
+    mesh.model->CalculateSortKey(effectCache);
     return mesh;
 }
 

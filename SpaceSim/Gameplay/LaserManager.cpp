@@ -68,7 +68,7 @@ void LaserManager::initialise(Resource* resource)
 }
 
 ///-------------------------------------------------------------------------
-// @brief 
+// @brief Needs a rewrite
 ///-------------------------------------------------------------------------
 void LaserManager::addInstance( const Vector3& position, const Vector3& direction, const ShaderInstance& shaderInstance, bool player_laser /*= false*/)
 {
@@ -78,7 +78,7 @@ void LaserManager::addInstance( const Vector3& position, const Vector3& directio
         if (m_currentNumberOfPlayerLasers < m_maxLasers)
         {
             LasterRenderPair pair = std::make_pair(Laser(position, direction, shaderInstance), m_renderInstancePool.back());
-            pair.second->setGeometryInstance(&(m_enemyLaser->getMeshData()[0]->getGeometryInstance()));
+            //pair.second->setGeometryInstance(&(m_enemyLaser->getMeshData()[0]->getGeometryInstance()));
 
             m_worldPlayerTransforms.push_back(pair);
             ++m_currentNumberOfPlayerLasers;
@@ -90,7 +90,7 @@ void LaserManager::addInstance( const Vector3& position, const Vector3& directio
         if (m_currentNumberOfEnemyLasers < m_maxLasers)
         {
             LasterRenderPair pair = std::make_pair(Laser(position, direction, shaderInstance), m_renderInstancePool.back());
-            pair.second->setGeometryInstance(&(m_enemyLaser->getMeshData()[0]->getGeometryInstance()));
+            //pair.second->setGeometryInstance(&(m_enemyLaser->getMeshData()[0]->getGeometryInstance()));
 
             m_worldEnemyTransforms.push_back(pair);
             ++m_currentNumberOfEnemyLasers;

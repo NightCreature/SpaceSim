@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <ctime>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <locale>
@@ -23,7 +24,7 @@ const size_t numberOfEventsBeforeFlushToFile = 1000000;
 Profiler::Profiler() : m_fileNameForSession(""), m_shouldFlushToFile(0), m_firstFlush(true)
 {
     InitializeCriticalSection(&m_criticalSection);
-
+    EnterCriticalSection(&m_criticalSection);
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
     std::stringstream fileNameForSession;
@@ -41,6 +42,11 @@ Profiler::Profiler() : m_fileNameForSession(""), m_shouldFlushToFile(0), m_first
         std::remove_if(m_fileNameForSession.begin(), m_fileNameForSession.end(),
             [](char& c) { return c == ':'; })
         , m_fileNameForSession.end());
+
+    auto filePath = std::filesystem::current_path() / "ProfileCaptures" / m_fileNameForSession;
+    m_fileNameForSession = filePath.string();
+
+    LeaveCriticalSection(&m_criticalSection);
 }
 
 ///-----------------------------------------------------------------------------
@@ -54,6 +60,32 @@ size_t Profiler::RegisterProfilingEventDescription(const EventDescriptor& eventD
     m_eventDescriptors.push_back(eventDescriptor);
     LeaveCriticalSection(&m_criticalSection);
     return retVal;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void Profiler::RegisterThreadName(size_t threadId, const std::string& threadName)
+{
+    EnterCriticalSection(&m_criticalSection);
+    auto it = std::find_if(m_threadNames.cbegin(), m_threadNames.cend(), [threadId](std::pair<size_t, std::string> threadName) { return threadName.first == threadId; });
+    if (it == m_threadNames.cend())
+    {
+        m_threadNames.push_back(std::make_pair(threadId, threadName));
+    }
+    LeaveCriticalSection(&m_criticalSection);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void Profiler::RegisterFrameName(const std::string& frameName)
+{
+    EnterCriticalSection(&m_criticalSection);
+    m_frameNames.push_back(frameName);
+    LeaveCriticalSection(&m_criticalSection);
 }
 
 ///-----------------------------------------------------------------------------
@@ -106,15 +138,8 @@ void Profiler::Cleanup()
 void Profiler::FlushToFile()
 {
     std::fstream outputFile;
-    std::ios_base::openmode openMode = std::ios_base::out | std::ios_base::in;
-    
-    std::string fileName;// = "/ProfileCaptures/";
-    fileName += m_fileNameForSession;
-
-    fileName = "ProfileCaptures.prf";
-
-
-    outputFile.open(fileName, openMode); //Should probably grab this from the paths thing but that would require profiler to know about resource
+    std::ios_base::openmode openMode = std::ios_base::out | std::ios_base::app;
+    outputFile.open(m_fileNameForSession, openMode); //Should probably grab this from the paths thing but that would require profiler to know about resource
     if (outputFile.is_open())
     {
         //begin object
@@ -123,7 +148,7 @@ void Profiler::FlushToFile()
         if (m_firstFlush) //Stream out the descriptors we need these to track what each event means in the file
         {
             
-            outputFile << "\"TimerResolution\": " <<  m_timer.getResolution() << ",\n";
+            outputFile << "\"TimerResolution\": " << std::fixed <<  m_timer.getResolution() << ",\n";
 
             outputFile << "\"EventDescriptors\": [\n";
             size_t counter = 0;
@@ -133,7 +158,7 @@ void Profiler::FlushToFile()
                 outputFile << (counter < m_eventDescriptors.size() ? ",\n" : "\n");
                 ++counter;
             }
-            outputFile << "]\n";
+            outputFile << "],\n";
         }
 
         outputFile << "\"Frames\": [\n";
@@ -156,7 +181,7 @@ void Profiler::FlushToFile()
     }
     else
     {
-        MSG_TRACE("Failed to open File stream with error: %s", std::strerror(errno));
+        MSG_TRACE("Failed to open File stream with error");
     }
 }
 

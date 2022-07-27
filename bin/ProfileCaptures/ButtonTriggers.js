@@ -11,6 +11,8 @@ function OpenFile()
 	}
 	fileReader.onerror = function (evt)
 	{
-		document.getElementById("demo").innerHTML = "Error reading file";
+		console.println("Error in data");
+		console.println(evt.target.result);
+		document.getElementById("error").innerHTML = "Error reading file";
 	} 
 };

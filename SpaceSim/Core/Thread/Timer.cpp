@@ -8,6 +8,7 @@
 PerformanceTimer::PerformanceTimer()
 {
     LARGE_INTEGER frequency = {0};
+    QueryPerformanceCounter(&m_now);
     if (QueryPerformanceFrequency(&frequency))
     {
         m_resolution = (double)frequency.QuadPart;

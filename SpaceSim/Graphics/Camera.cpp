@@ -107,7 +107,8 @@ Matrix44 Camera::createCamera()
                         0.0f,	              0.0f,	                0.0f,		          1.0f);
 
     m_camera.transpose(); //We want row major matrices
-    m_invcamera = m_camera.inverted();
+
+    m_camera.Inverted(m_invcamera); //Correct inversion now
     return m_camera;
 }
 

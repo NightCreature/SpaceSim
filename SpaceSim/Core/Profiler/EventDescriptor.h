@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <fstream>
 #include <string>
 
@@ -15,7 +16,9 @@ public:
         , m_functionName(functionName)
         , m_lineNumber(lineNumber)
         , m_hash(0)
-    {}
+    {
+        std::replace(m_fileName.begin(), m_fileName.end(), '\\', '/');
+    }
 
     size_t computeHash() const;
 

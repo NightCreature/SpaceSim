@@ -1,21 +1,33 @@
 #pragma once
 
+#include "Core/FileSystem/Flags.h"
 #include "Core/Types/Types.h"
 
 namespace VFS
 {
 
 
- //This should be an interface, with platform specific implementations of these functions like a mount point
+ //This is the interface for a file all functions are implemented in platform specifics
 class File
 {
 public:
-    File() {}
-    virtual ~File() {}
+    File() : m_platformSpecificData(nullptr) {}
+    ~File() {}
 
-    virtual void Write(byte* data, size_t length) = 0;
-    virtual byte* Read() = 0;
-    virtual byte* Read(size_t amount) = 0;
+    void Close();
+
+    void Write(byte* data, size_t length);
+    void Write(byte* data, size_t offset, size_t length);
+    byte* Read(byte*& data);
+    byte* Read(byte*& data, size_t amount);
+    byte* Read(byte*& data, size_t offset, size_t amount);
+
+    bool IsValid() const { return m_platformSpecificData != nullptr; }
+
+    void createFile(const std::filesystem::path& name, FileMode fileMode);
+private:
+    std::filesystem::path m_name;
+    void* m_platformSpecificData = nullptr; //Contains things like the file handle
 };
 
 }

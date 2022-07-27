@@ -5,6 +5,7 @@
 #include <string>
 
 class Resource;
+struct CommandList;
 
 struct LoadModelResource
 {
@@ -23,6 +24,6 @@ public:
         std::string m_fileName;
     };
 
-    virtual CreatedModel LoadModel(Resource* resource, const LoadData& loadData) = 0;
+    virtual CreatedModel LoadModel(Resource* resource, const LoadData& loadData, CommandList& commandList) = 0;
 };
 

@@ -249,3 +249,5 @@ SpaceSim/NewSpaceSim/NewSpaceSim/
 psuedo code.c
 *.wpix
 *.prf
+SDK/JSON/
+bin/ProfileCaptures/TypeScript/node_modules/

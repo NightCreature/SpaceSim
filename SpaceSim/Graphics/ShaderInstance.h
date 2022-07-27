@@ -40,6 +40,7 @@ public:
     void setMaterial(const Material& mat) { m_material = mat; }
 
     void FixSrvReferences(RenderResource& resource);
+
 private:
     //This is pure render information 
     Material m_material;
@@ -51,6 +52,7 @@ private:
     std::vector<ID3D11ShaderResourceView*> m_vsSrvData;
     uint32 m_techniqueHash;
     bool m_alphaBlendEnabled;
+
 };
 
 namespace ShaderInstanceHelpers

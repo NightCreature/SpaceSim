@@ -1,5 +1,6 @@
 #include "CommonConstantBuffers.ivs"
 #include "CommonConstantBuffers.ips"
+#include "rootsignatures.ifx"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -12,6 +13,7 @@ struct VS_INPUT
 {
     float4 Pos  : POSITION0;
     float3 Nor  : NORMAL0;
+    float3 Tan : TANGENT0;
     float2 Tex1 : TEXCOORD0;
 };
 
@@ -19,7 +21,6 @@ struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
     float2 Tex : TEXCOORD0;
-    float2 Tex2 : TEXCOORD1;
 };
 
 // function for getting the checker pattern
@@ -41,6 +42,7 @@ float4 checker(float2 uv)
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+[RootSignature(forceFieldRS)]
 PS_INPUT vs_main( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;
@@ -57,7 +59,7 @@ PS_INPUT vs_main( VS_INPUT input )
 //--------------------------------------------------------------------------------------
 float4 ps_main( PS_INPUT input) : SV_Target
 {
-    float4 color = ambient + shaderTextures.Sample(SampleType, input.Tex).a * diffuse + emissive;
+    float4 color = ambient + shaderTextures.Sample(SampleType, input.Tex) * diffuse + emissive;
     color.a = shaderTextures.Sample(SampleType, input.Tex).a;
-    return saturate(color);
+    return color;
 }

@@ -15,6 +15,7 @@
 #include "Application/BaseApplication.h"
 
 #include "Core/Types/TypeHelpers.h"
+#include "Graphics/D3D12/CommandQueue.h"
 
 
 namespace Text
@@ -528,14 +529,15 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 ///-----------------------------------------------------------------------------
 void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
-	RenderResourceHelper gameResource(resource);
+	RenderResourceHelper renderResourceHelper(resource);
 	VertexDeclarationDescriptor descriptor;
 	descriptor.position = 3;
 	descriptor.textureCoordinateDimensions.push_back(2);
-	auto vertexShaderHash = hashString("simple_2d_vertex_shader.vs");
-	const VertexShader* sdfVertexShader = gameResource.getResource().getShaderCache().getVertexShader(vertexShaderHash);
-	
-	vb.createBufferAndLayoutElements(gameResource.getResource().getDeviceManager(), sizeof(GlyphVertex) * m_glyphVerts.size(), &m_glyphVerts[0], false, descriptor, sdfVertexShader->getShaderBlob());
+    
+    auto& commandQueue = renderResourceHelper.getWriteableResource().getCommandQueueManager().GetCommandQueue(renderResourceHelper.getResource().getResourceLoader().m_uploadQueueHandle);
+    auto& commandList = commandQueue.GetCommandList(renderResourceHelper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
+
+	vb.Create(renderResourceHelper.getResource().getDeviceManager(), commandList, sizeof(GlyphVertex) * m_glyphVerts.size(), &m_glyphVerts[0], descriptor.GetVertexStride());
 	m_geometryInstance.setPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	unsigned int glyphIndexBufer[] = 
@@ -553,7 +555,7 @@ void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 			indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
 		}
 	}
-	ib.createBuffer(gameResource.getResource().getDeviceManager(), static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer, false);
+	ib.Create(renderResourceHelper.getResource().getDeviceManager(), commandList, static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer);
 	ib.setNumberOfIndecis(static_cast<unsigned int>(numberIndecis));
 
 	m_geometryInstance.setVB(&vb);
@@ -573,7 +575,7 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
     mat.setEffectHash(hashString("sdf_font_effect.xml"));
 	mat.setBlendState(true);
 	//Should fix this if we have more than one page somehow
-	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
+	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName.string()), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
 	mat.setTechnique(hashString("default"));
 	//m_shaderInstance.setMaterial(mat);

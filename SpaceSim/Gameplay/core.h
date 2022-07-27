@@ -37,6 +37,7 @@ protected:
 private:
 	Vector3		m_position;
 	//GLUquadric* m_core;
+	// 
 	//GLUquadric* m_coreforcefield;
 	float		m_radius;
 	float		m_angle;

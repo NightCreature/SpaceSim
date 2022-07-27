@@ -2,12 +2,21 @@
 #define TEXTUREMANAGER_H
 #include "Core/tinyxml2.h"
 #include "Graphics/material.h"
-#include "Graphics/Texture.h"
+#include "Graphics/Texture12.h"
 #include <d3d11.h>
 #include <map>
+#include <mutex>
 #include <string>
+#include "D3D12/DescriptorHeapManager.h"
 
 class DeviceManager;
+class Resource;
+
+struct TextureInfo
+{
+	Texture12 m_texture;
+	size_t m_heapIndex;
+};
 
 class TextureManager
 {
@@ -16,13 +25,14 @@ public:
 	~TextureManager();
 
     void cleanup();
-    Material::TextureSlotMapping deserialise( const DeviceManager& deviceManager, const tinyxml2::XMLElement* node );
+	void Initialise(Resource* resource);
+    Material::TextureSlotMapping deserialise( DeviceManager& deviceManager, const tinyxml2::XMLElement* node );
 	void setMipMapSettings(const bool canautomipmap, const bool generatemipmaps);
 
 	bool find(const std::string& filename) const;
-	void addLoad(const DeviceManager& deviceManager, const std::string& filename);
-	const Texture* getTexture(const std::string& filename) const;
-    const Texture* getTexture(const size_t textureNameHash) const;
+	void addLoad(DeviceManager& deviceManager, const std::string& filename);
+	const TextureInfo* getTexture(const std::string& filename) const;
+    const TextureInfo* getTexture(const size_t textureNameHash) const;
 	long getTexMemUsed() const;
 
 	bool activateTexture(const std::string& filename);
@@ -30,14 +40,25 @@ public:
     bool createSamplerStates(const DeviceManager& deviceManager);
     ID3D11SamplerState* const getSamplerState() const { return m_samplerState; }
 
-    void addTexture( const std::string& textureName, const Texture& texture );
+    void addTexture( const std::string& textureName, const Texture12& texture, size_t heapIndex);
+
+	std::pair<size_t, size_t> GetNullDescriptor() const { return m_nullDescriptorSrvs; }
+        
 protected:
 private:
-	bool m_generatemipmaps;
-	bool m_autogeneratemipmaps;
-    typedef std::pair<size_t, Texture> TexturePair;
-	typedef std::map<size_t, Texture> TextureMap;
+    typedef std::pair<size_t, TextureInfo> TexturePair;
+	typedef std::map<size_t, TextureInfo> TextureMap;
+	using Texture12Map = std::map<size_t, Texture12>;
 	TextureMap m_textures;	
+
     ID3D11SamplerState* m_samplerState;
+	Resource* m_resource;
+	std::pair<size_t, size_t> m_nullDescriptorSrvs;
+
+
+	std::mutex m_mutex;
+
+    bool m_generatemipmaps;
+    bool m_autogeneratemipmaps;
 };
 #endif

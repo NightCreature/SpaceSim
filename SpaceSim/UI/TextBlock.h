@@ -11,6 +11,7 @@
 #include <vector>
 
 class Resource;
+struct CommandList;
 
 namespace Text
 {

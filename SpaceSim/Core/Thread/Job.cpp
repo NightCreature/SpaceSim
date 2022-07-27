@@ -28,7 +28,7 @@ void JobQueue::AddJob(Job* job)
 }
 
 ///-----------------------------------------------------------------------------
-///! @brief 
+///! @brief We need to make this smarter so it doesnt lose the jobs its not the workerthreads job to delete the job at the end the queue owns them?
 ///! @remark
 ///-----------------------------------------------------------------------------
 Workload JobQueue::GetNextWorkLoad()
@@ -40,6 +40,7 @@ Workload JobQueue::GetNextWorkLoad()
     if (!m_jobs.empty())
     {
         workload = *m_jobs.rbegin();
+        m_finishedJobs.push_back(workload);
         m_jobs.pop_back();
     }
     //LeaveCriticalSection(&m_criticalSection);

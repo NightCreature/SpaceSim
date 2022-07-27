@@ -7,13 +7,13 @@
 #include "Graphics/texturemanager.h"
 #include "Core/Resource/RenderResource.h"
 
-
 ///-----------------------------------------------------------------------------
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
 ID3D11Buffer* CreateD3DBuffer(size_t bufferSize, DeviceManager &deviceManager, const std::string &name)
 {
+
     D3D11_BUFFER_DESC constantBufferDesc;
     ZeroMemory(&constantBufferDesc, sizeof(D3D11_BUFFER_DESC));
     constantBufferDesc.ByteWidth = static_cast<UINT>(bufferSize);
@@ -122,13 +122,14 @@ void ShaderInstanceHelpers::FixTextureSRVReferences(ShaderInstance& shaderInstan
     size_t currentTextureIndex = 0;
     for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots && currentTextureIndex < textureHashes.size(); ++counter) //We assume these are put in as order for the slots demand
     {
-        const Texture* texture = nullptr;
+        const Texture12* texture = nullptr;
         if (static_cast<Material::TextureSlotMapping::TextureSlot>(counter) == textureHashes[currentTextureIndex].m_textureSlot)
         {
-            texture = renderResource.getTextureManager().getTexture(textureHashes[currentTextureIndex].m_textureHash);
+            texture = &(renderResource.getTextureManager().getTexture(textureHashes[currentTextureIndex].m_textureHash)->m_texture);
             ++currentTextureIndex;
         }
-        ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-        shaderInstance.AddPsSRV(srv);
+        //ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
+        //shaderInstance.AddPsSRV(srv);
+        UNUSEDPARAM(shaderInstance);
     }
 }

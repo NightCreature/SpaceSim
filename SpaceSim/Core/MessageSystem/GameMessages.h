@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Types/TypeHelpers.h"
 #include "Core/MessageSystem/Messages.h"
 
 #include "Math/matrix44.h"
@@ -22,6 +23,9 @@ public:
     size_t GetResourceType() const { return static_cast<LoadResourceData*>(m_implementationData)->m_resourceType; }
     size_t GetGameObjectId() const { return static_cast<LoadResourceData*>(m_implementationData)->m_gameObjectHandle; }
     void SetGameObjectId(const size_t gameObjectId) { auto requestData = static_cast<LoadResourceData*>(m_implementationData); requestData->m_gameObjectHandle = gameObjectId; }
+
+    CommandQueue* m_commandQueue = nullptr;
+    CommandList* m_commandList = nullptr;
 protected:
 
 };
@@ -47,7 +51,11 @@ public:
 
     //virtual void CleanupImplementationData() { delete static_cast<ResourceData<T>*>(m_implementationData); m_implementationData = nullptr; }
 
-    void SetData(const T& data) { ResourceData<T>* dataPtr = static_cast<ResourceData<T>*>(m_implementationData); (*dataPtr).m_fixedData = data; }
+    void SetData(const T& data) 
+    {
+        ResourceData<T>* dataPtr = static_cast<ResourceData<T>*>(m_implementationData);
+        (*dataPtr).m_fixedData = data; 
+    }
     const ResourceData<T>* GetData() const { return static_cast<ResourceData<T>*>(m_implementationData); }
 }; 
 

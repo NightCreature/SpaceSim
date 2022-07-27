@@ -13,6 +13,7 @@ class DeviceManager;
 class Resource;
 class EffectCache;
 class Resource;
+struct CommandList;
 
 class OrientationAxis
 {

@@ -8,7 +8,7 @@
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-DeviceManager::DeviceManager()
+DeviceManagerD3D11::DeviceManagerD3D11()
 {
     ZeroMemory(&m_swapChainDescriptor, sizeof(DXGI_SWAP_CHAIN_DESC));
 }
@@ -18,7 +18,7 @@ DeviceManager::DeviceManager()
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-bool DeviceManager::createDevice()
+bool DeviceManagerD3D11::createDevice()
 {
     IDXGIAdapter* adapter = nullptr;
     HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&m_dxgiFactory));
@@ -65,7 +65,7 @@ bool DeviceManager::createDevice()
 
             MSG_TRACE_CHANNEL("DEVICEMANAGER", "Selected Feature level: 0x%x", featureLevel)
 
-                DWORD deviceCreationFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
+                DWORD deviceCreationFlags = 0/*D3D11_CREATE_DEVICE_SINGLETHREADED*/;
 #ifdef _DEBUG
             deviceCreationFlags |= D3D11_CREATE_DEVICE_DEBUG;//| D3D11_CREATE_DEVICE_DEBUGGABLE;
 #endif
@@ -73,7 +73,21 @@ bool DeviceManager::createDevice()
             if (FAILED(hr))
             {
                 MSG_TRACE_CHANNEL("DEVICEMANAGER", "Failed to create a D3D device with error code: 0x%x", hr)
-                    return false;
+                return false;
+            }
+
+            hr = m_device->CreateDeferredContext(0, &m_deferredContext);
+            if (FAILED(hr))
+            {
+                MSG_TRACE_CHANNEL("DEVICEMANAGER", "Failed to create a deferred device context with error: 0x%x", hr);
+                return false;
+            }
+
+            hr = m_device->CheckMultisampleQualityLevels(DXGI_FORMAT_B8G8R8A8_UNORM, 4, &m_qualityLevels);
+            if (FAILED(hr))
+            {
+                MSG_TRACE_CHANNEL("DEVICEMANAGER", "Failed to Get the quality levels for the back buffer multisampling with error: 0x%x", hr);
+                return false;
             }
 
 #ifdef _DEBUG
@@ -86,6 +100,11 @@ bool DeviceManager::createDevice()
 
             adapter->Release();
 
+            //Do some driver feautre checking
+            D3D11_FEATURE_DATA_THREADING threadingSupport;
+            ZeroMemory((void*)&threadingSupport, sizeof(D3D11_FEATURE_DATA_THREADING));
+            m_device->CheckFeatureSupport(D3D11_FEATURE_THREADING, (void*)&threadingSupport, sizeof(D3D11_FEATURE_DATA_THREADING));
+
             return true;
         }
     }
@@ -97,8 +116,9 @@ bool DeviceManager::createDevice()
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int windowHeight)
+bool DeviceManagerD3D11::createSwapChain(HWND windowHandle, int windowWidth, int windowHeight)
 {
+
     DXGI_MODE_DESC bufferDescription;
     ZeroMemory(&bufferDescription, sizeof(DXGI_MODE_DESC));
     bufferDescription.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -112,7 +132,7 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
     m_swapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     m_swapChainDescriptor.OutputWindow = windowHandle;
     m_swapChainDescriptor.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-    m_swapChainDescriptor.SampleDesc.Count = 1;
+    m_swapChainDescriptor.SampleDesc.Count = 4;
     m_swapChainDescriptor.SampleDesc.Quality = 0;
     m_swapChainDescriptor.Windowed = true;
 
@@ -129,7 +149,7 @@ bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int wind
 ///! @brief  Cleanup the device, D3D object and swap chains
 ///! @remark
 ///-----------------------------------------------------------------------------
-void DeviceManager::cleanup()
+void DeviceManagerD3D11::cleanup()
 {
     if (m_deviceContext)
     {
