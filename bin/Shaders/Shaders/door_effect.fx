@@ -13,6 +13,7 @@ struct VS_INPUT
 {
     float4 Pos  : POSITION0;
     float3 Nor  : NORMAL0;
+    float3 Tan  : TANGENT0;
     float2 Tex1 : TEXCOORD0;
 };
 
@@ -20,7 +21,6 @@ struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
     float2 Tex : TEXCOORD0;
-    float2 Tex2 : TEXCOORD1;
 };
 
 // function for getting the checker pattern

@@ -6,7 +6,7 @@
       <BlendState  alphablend="1"/>
       <RasterState Cullmode="3" FillMode="3" FrontCCW="1" />
       <DepthStencilState depth_enabled="1" stencil_enabled="0" />
-      <VertexDeclarationDescriptor position_dimension="3" normal="true" tangent="false" vertex_color="false" textureCoordsDimensions="2" />
+      <VertexDeclarationDescriptor position_dimension="3" normal="true" tangent="true" vertex_color="false" textureCoordsDimensions="2" />
       <PrimitiveType type="3" />
     </Technique>
    </Effect>
