@@ -35,7 +35,7 @@ public:
 
 #ifdef MEMORY_PROFILING
         //Tell mtuner about the allocation
-        rmemAlloc(0, returnAddress, size, m_usedMemory - size);
+        //rmemAlloc(0, returnAddress, size, m_usedMemory - size);
 #endif
 
         return returnAddress;
@@ -50,7 +50,7 @@ public:
         UNUSEDPARAM(p);
 #ifdef MEMORY_PROFILING
         //Tell mtuner about the allocation
-        rmemFree(0, p);
+        //rmemFree(0, p);
 #endif
     }
 

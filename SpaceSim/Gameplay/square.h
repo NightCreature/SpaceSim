@@ -12,6 +12,7 @@ namespace Square
 {
     struct SquareCreationParams : public Model::CreationParams
     {
+        CommandList* m_commandList;
         Material mat;
         Vector2 m_lowerleft;
         Vector2 m_upperright;

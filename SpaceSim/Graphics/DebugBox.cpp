@@ -8,6 +8,7 @@
 
 #include "Core/Resource/RenderResource.h"
 #include "Graphics/EffectCache.h"
+#include "D3D12/CommandQueue.h"
 
 namespace DebugGraphics
 {
@@ -50,7 +51,7 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
         wvp.m_projection = projection;
         Material mat;
         mat.setEffectHash(hashString("debug_effect.xml"));
-        box->getMeshData().push_back(new MeshGroup(vb, ib, mat, helper.getWriteableResource().getDeviceManager()));
+        auto& group = box->CreateMeshGroup();
         //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
         //{
         //box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));
@@ -70,14 +71,14 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
 
         unsigned int numberOfBytes = sizeof(boxVerts);
 
-        RenderResourceHelper renderResource(m_resource);
-        const EffectCache& effectCache = renderResource.getResource().getEffectCache();
-        const Effect* effect = effectCache.getEffect(mat.getEffectHash());
-        const Technique* technique = effect->getTechnique(mat.getTechnique());
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.vertexColor = true;
-        const VertexShader* shader = helper.getResource().getShaderCache().getVertexShader(technique->getVertexShader());
-        vb->createBufferAndLayoutElements(helper.getResource().getDeviceManager(), numberOfBytes, (void*)boxVerts, false, vertexDesc, shader->getShaderBlob());
+        
+
+        auto& commandQueue = helper.getWriteableResource().getCommandQueueManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
+        auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
+
+        vb->Create(helper.getResource().getDeviceManager(), commandList, numberOfBytes, (void*)boxVerts, vertexDesc.GetVertexStride());
         unsigned int indexData[] =
         {
             0, 2,
@@ -94,14 +95,14 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
             3, 1
         };
 
-        ib->createBuffer(helper.getResource().getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false);
+        ib->Create(helper.getResource().getDeviceManager(), commandList, sizeof(indexData), (void*)&indexData[0]);
         ib->setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
+
+        group.SetPrimitiveLayout(static_cast<uint32>(D3D_PRIMITIVE_TOPOLOGY_LINELIST));
     }
     else
     {
     }
-
-    box->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 }
 
 }

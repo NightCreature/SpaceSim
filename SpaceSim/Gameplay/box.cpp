@@ -25,7 +25,8 @@ CreatedModel CreateBox(const CreationParams& params)
         VertexBuffer* vb = new VertexBuffer();
         IndexBuffer* ib = new IndexBuffer();
 
-        box.model->getMeshData().push_back(new MeshGroup(vb, ib, material, renderResource.getDeviceManager()));
+        //box.model->getMeshData().push_back(new MeshGroup(vb, ib, material, renderResource.getDeviceManager()));
+        MeshGroup& group = box.model->CreateMeshGroup();
 
         std::vector<unsigned int> texCoordDim;
         if (params.m_gentexcoords)
@@ -238,12 +239,7 @@ CreatedModel CreateBox(const CreationParams& params)
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
 
-        EffectCache& effectCache = renderResource.getEffectCache();
-        const Effect* effect = effectCache.getEffect(material.getEffectHash());
-        const Technique* technique = effect->getTechnique(material.getTechnique());
-        const VertexShader* shader = renderResource.getShaderCache().getVertexShader(technique->getVertexShader()); //Technique pointer is 0!
-        assert(shader);
-        vb->createBufferAndLayoutElements(renderResource.getDeviceManager(), numberOfBytes, (void*)startOfData, params.m_dynamic, vertexDesc, shader->getShaderBlob());
+        vb->Create(renderResource.getDeviceManager(), *params.m_commandList, numberOfBytes, (void*)startOfData, vertexDesc.GetVertexStride());
         delete[] startOfData;
         data = nullptr;
         startOfData = nullptr;
@@ -257,16 +253,17 @@ CreatedModel CreateBox(const CreationParams& params)
             20, 21, 22, 22, 23, 20 //VF2
         };
 
-        ib->createBuffer(renderResource.getDeviceManager(), sizeof(indexData), (void*)&indexData[0], false);
+        ib->Create(renderResource.getDeviceManager(), *params.m_commandList, sizeof(indexData), (void*)&indexData[0]);
         ib->setNumberOfIndecis(36);
+
+        group.SetPrimitiveLayout(static_cast<uint32>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
     }
     else
     {
         //Should probably update the material here althoguh that is not how this should be used to begin with
     }
 
-    box.model->getMeshData()[0]->getGeometryInstance().setPrimitiveType((unsigned int)D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+    box.model->CalculateSortKey(renderResource.getEffectCache());
     return box;
 }
 

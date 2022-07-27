@@ -1,6 +1,6 @@
 #include "CommonConstantBuffers.ivs"
 #include "CommonConstantBuffers.ips"
-
+#include "RootSignatures.ifx"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -19,6 +19,7 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+[RootSignature(laserRS)]
 PS_INPUT vs_main( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;

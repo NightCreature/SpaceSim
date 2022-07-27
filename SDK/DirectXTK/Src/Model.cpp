@@ -230,7 +230,6 @@ Model::~Model()
 {
 }
 
-
 _Use_decl_annotations_
 void XM_CALLCONV Model::Draw( ID3D11DeviceContext* deviceContext, CommonStates& states,
                               FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection,

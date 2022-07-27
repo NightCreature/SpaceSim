@@ -9,18 +9,28 @@ EffectCache::~EffectCache()
 {
 }
 
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void EffectCache::Initialise(Resource* resource)
+{
+    UNUSEDPARAM(resource);
+}
+
 const Effect* EffectCache::createEffect(Resource* resource, const std::string& resourceFileName)
 {
     std::string resourceName = getResourceNameFromFileName(resourceFileName);
     const Effect* returnValue = getEffect(resourceName);
     if (returnValue == nullptr)
     {
+
         //Load the effect here and deserialise
         tinyxml2::XMLDocument doc;
         if (doc.LoadFile(resourceFileName.c_str()) != tinyxml2::XML_NO_ERROR)
         {
             MSG_TRACE_CHANNEL("MAP", "Failed to load %s \nWith error: %d", resourceFileName.c_str(), doc.ErrorID());
-            return nullptr;
+            return returnValue;
         }
 
         const tinyxml2::XMLElement* element;
@@ -31,6 +41,9 @@ const Effect* EffectCache::createEffect(Resource* resource, const std::string& r
         {
             Effect effect;
             effect.deserialise(element, resource);
+#ifdef _DEBUG
+			effect.m_name = resourceName;
+#endif
             m_effects.emplace(std::pair<size_t, Effect>(hashString(resourceName), effect));
             returnValue = getEffect(resourceName);
         }

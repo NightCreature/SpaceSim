@@ -1,6 +1,8 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Application/BaseApplication.h"
 
+//import TestModules;
+
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
@@ -23,6 +25,33 @@ void convertToCString(const std::wstring& str, std::string& out)
         HRESULT hr = HRESULT_FROM_WIN32(error);
         MSG_TRACE_CHANNEL("String Conversion Error", "Failed to convert from MB to UTF8 with Hresult: 0x%08x, %s", hr, getLastErrorMessage(error));
     }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+std::vector<std::string> tokeniseString(const std::string& input, const char delimeter)
+{
+    std::vector<std::string> result;
+    size_t tokenBegin = 0;
+    bool foundToken = false;
+    for (size_t counter = 0; counter < input.size(); ++counter)
+    {
+        if (input[counter] == delimeter)
+        {
+            result.push_back(input.substr(tokenBegin, counter));
+            tokenBegin = counter + 1;
+            foundToken = true;
+        }
+    }
+
+    if (!foundToken && !input.empty())
+    {
+        result.push_back(input);
+    }
+
+    return result;
 }
 
 ///-----------------------------------------------------------------------------
@@ -167,7 +196,7 @@ char* getLastErrorMessage(DWORD nErrorCode)
     FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, nErrorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&msg, 0, NULL);
     // Return the message
     if (!msg)
-        return("Unknown error");
+        return nullptr;// "Unknown error";
     else
         return(msg);
 }

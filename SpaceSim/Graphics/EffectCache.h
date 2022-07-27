@@ -4,6 +4,7 @@
 
 #include <map>
 #include <string>
+#include "D3D12/DescriptorHeapManager.h"
 
 class EffectCache
 {
@@ -19,7 +20,9 @@ public:
         }
     }
 
-    const Effect* EffectCache::createEffect(Resource* resource, const std::string& resourceFileName);
+    void Initialise(Resource* resource);
+
+    const Effect* createEffect(Resource* resource, const std::string& resourceFileName);
 
     const Effect* getEffect(const std::string& name) const;
     const Effect* getEffect(size_t effectHash) const;

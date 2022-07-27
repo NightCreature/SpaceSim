@@ -17,8 +17,10 @@ public:
     void Close();
 
     void Write(byte* data, size_t length);
+    void Write(byte* data, size_t offset, size_t length);
     byte* Read(byte*& data);
     byte* Read(byte*& data, size_t amount);
+    byte* Read(byte*& data, size_t offset, size_t amount);
 
     bool IsValid() const { return m_platformSpecificData != nullptr; }
 

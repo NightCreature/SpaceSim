@@ -31,6 +31,7 @@ bool ShaderPack::loadShaderPack( std::string shaderPack )
         const tinyxml2::XMLAttribute* fileNameAttr = effectElement->FindAttribute("file_name");
         if (fileNameAttr != nullptr)
         {
+            //MSG_TRACE_CHANNEL("ShaderPack", "Loading Effect: %s", fileNameAttr->Value());
             effectCache.createEffect(m_resource, fileNameAttr->Value());
         }
     }

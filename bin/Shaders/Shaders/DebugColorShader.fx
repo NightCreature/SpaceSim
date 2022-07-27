@@ -1,5 +1,5 @@
 #include "CommonConstantBuffers.ivs"
-
+#include "rootsignatures.ifx"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -19,6 +19,7 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+[RootSignature(worldTransformRS)]
 PS_INPUT vs_main( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;

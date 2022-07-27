@@ -1,5 +1,6 @@
 #include "CommonConstantBuffers.ivs"
 #include "CommonConstantBuffers.ips"
+#include "rootsignatures.ifx"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -12,6 +13,7 @@ struct VS_INPUT
 {
     float4 Pos  : POSITION0;
     float3 Nor  : NORMAL0;
+    float3 Tan  : TANGENT0;
     float2 Tex1 : TEXCOORD0;
 };
 
@@ -19,7 +21,6 @@ struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
     float2 Tex : TEXCOORD0;
-    float2 Tex2 : TEXCOORD1;
 };
 
 // function for getting the checker pattern
@@ -41,6 +42,7 @@ float4 checker(float2 uv)
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+[RootSignature(doorRS)]
 PS_INPUT vs_main( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;

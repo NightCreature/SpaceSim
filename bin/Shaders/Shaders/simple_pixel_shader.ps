@@ -6,11 +6,22 @@
 ///--------------------------------------------------------------------------------------
 
 Texture2D<float4> shaderTextures : register(t8);
-SamplerState SampleType : register (s0);
+SamplerState SampleType
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
 
 Texture2D<float4> normalMap : register(t32);
 Texture2D<float4> shadowMap : register(t33);
-SamplerState ShadowSampleType : register (s1);
+SamplerState ShadowSampleType
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
 
 
 ///--------------------------------------------------------------------------------------
@@ -46,6 +57,7 @@ float4 doLightCalculation(LightConstants light, float3 lightDir, float3 nnormal,
 ///--------------------------------------------------------------------------------------
 float4 ps_main( PS_INPUT input) : SV_Target
 {
+    //return float4(1.0, 0.0, 0.0, 1.0);
     float3 vertexPos = input.WorldPos;
     float4 color;
 
@@ -87,5 +99,6 @@ float4 ps_main( PS_INPUT input) : SV_Target
     //color.a = texColor.a;
     //color = float4(input.Tex, 0,1);
     //color = float4(1,1,1,1);
+    //return float4(diffuse.rgb, 1.0);
     return saturate(color);
 }

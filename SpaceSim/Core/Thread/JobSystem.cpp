@@ -1,7 +1,11 @@
 #include "JobSystem.h"
 
+#include "Core/StringOperations/StringHelperFunctions.h"
+
 #include <atomic>
 #include <sstream>
+#include "../Types/TypeHelpers.h"
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
@@ -15,7 +19,7 @@ JobSystem::JobSystem(size_t numThreads)
     m_workAvaliable = CreateEvent(NULL, TRUE, FALSE, "SignalWorkAvailable");
     m_workFinishedEvent = CreateEvent(NULL, TRUE, FALSE, "WorkFinishedEvent");
 
-    size_t index = 0;
+    size_t index = 1; //this starts at one so we can use this thread as a working thread too
     for (auto& threadStatus : m_workerThreads)
     {
         threadStatus.m_thread.SetJobsystem(this, index, m_workAvaliable);
@@ -45,10 +49,12 @@ JobSystem::JobSystem(size_t numThreads)
 JobSystem::~JobSystem()
 {
     //in case threads are sleeping flag the conditon that work is available
-    SetEvent(m_workAvaliable);
+
 
     for (auto& threadStatus : m_workerThreads)
     {
+        threadStatus.m_thread.killThread();
+        SetEvent(m_workAvaliable);
         threadStatus.m_thread.stopThread();
     }
 }
@@ -67,7 +73,7 @@ void JobSystem::WorkerThreadSleeping(size_t index)
     }
 
     
-    m_workerThreads[index].m_working = false;
+    m_workerThreads[index - 1].m_working = false; //index starts at 1
     ++m_numberOfSleepingThreads;
 
     //Should we set the event for all work is done
@@ -88,7 +94,7 @@ void JobSystem::WorkerThreadSleeping(size_t index)
 void JobSystem::WorkerThreadActive(size_t index)
 {
     std::scoped_lock<std::mutex> sl(m_finishedMutex);
-    m_workerThreads[index].m_working = true;
+    m_workerThreads[index - 1].m_working = true;
     --m_numberOfSleepingThreads;
 }
 
@@ -135,4 +141,43 @@ void JobSystem::WaitfForJobsToFinish()
     str << "waitReturn: " << waitReturn << "\n";
     str << "<<<<< JobSystem >>>>>\n";
     OutputDebugString(str.str().c_str());
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void JobSystem::ProcessWork()
+{
+    ResetEvent(m_workFinishedEvent);
+    if (!m_jobQueue.m_jobs.empty())
+    {
+        SetEvent(m_workAvaliable);
+    }
+
+    //pick up a job here until there is nothing left
+    auto workLoad = m_jobQueue.GetNextWorkLoad();
+    while (workLoad.m_job != nullptr)
+    {
+        //Execute this workload
+
+        workLoad.m_job->Execute(0); //running on the main thread
+
+        //once we are done with the work load get ride of it, this should probably be done better
+        //delete workLoad.m_job;
+        workLoad.m_job = nullptr;
+        workLoad = m_jobQueue.GetNextWorkLoad();
+    }
+
+    //at the end here the job queue should be empty if all threads are sleeping
+    if (m_numberOfSleepingThreads == m_workerThreads.size() && !m_jobQueue.m_jobs.empty())
+    {
+        //Something is wrong
+        MSG_TRACE_CHANNEL("[JOBSYSTEM]", "There is work left in the job queue there shouldn't be anything there at this point, amount of work left: %d", m_jobQueue.m_jobs.size());
+    }
+    else
+    {
+        DWORD waitReturn = WaitForSingleObject(m_workFinishedEvent, INFINITE);
+        UNUSEDPARAM(waitReturn);
+    }
 }

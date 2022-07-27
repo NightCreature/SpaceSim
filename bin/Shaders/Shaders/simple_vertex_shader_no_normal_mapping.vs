@@ -1,4 +1,5 @@
 #include "CommonConstantBuffers.ivs"
+#include "rootsignatures.ifx"
 
 //--------------------------------------------------------------------------------------
 struct VS_INPUT
@@ -19,6 +20,7 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+[RootSignature(coreEffectRS)]
 PS_INPUT vs_main( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;

@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <filesystem>
 
 class Resource;
 
@@ -141,7 +142,7 @@ struct Pages
     struct PageInfo
     {
         short m_id;
-        std::string m_fileName;
+        std::filesystem::path m_fileName;
 
         static const size_t idHash;
         static const size_t fileHash;

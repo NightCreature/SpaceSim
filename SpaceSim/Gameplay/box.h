@@ -11,6 +11,7 @@ namespace Box
 {
     struct CreationParams
     {
+        CommandList* m_commandList;
         Material material;
         Resource* resource;
         Vector3		m_lowerleft;

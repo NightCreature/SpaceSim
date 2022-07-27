@@ -55,7 +55,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -100,8 +100,8 @@
     <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Windows10_2019\x64\Debug\;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
@@ -111,16 +111,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>SpaceSim_x64</TargetName>
     <OutDir>$(SolutionDir)..\..\bin</OutDir>
-    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)..\..\SDK\VLD\lib\Win64</LibraryPath>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Release\;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)..\..\SDK\VLD\lib\Win64</LibraryPath>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'">
     <TargetName>SpaceSim_x64p</TargetName>
     <OutDir>$(SolutionDir)..\..\bin</OutDir>
-    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include\nlohmann\;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Desktop_2015\x64\Release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include\nlohmann\;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Windows10_2019\x64\Release\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
@@ -136,7 +136,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <DisableSpecificWarnings>4324;4820;4061;4365;4307</DisableSpecificWarnings>
       <PreprocessorDefinitions>NOMINMAX; _CRT_SECURE_NO_WARNINGS; %(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
@@ -145,12 +145,20 @@
       <EnablePREfast>true</EnablePREfast>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <ExceptionHandling>Sync</ExceptionHandling>
+      <AdditionalOptions>/d1reportSingleClassLayoutSize40Structure %(AdditionalOptions)</AdditionalOptions>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;vld.lib;WinPixEventRuntime.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <Profile>true</Profile>
+      <Profile>false</Profile>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.1</ShaderModel>
+      <EntryPointName>vs_main</EntryPointName>
+      <ObjectFileOutput>$(SolutionDir)..\..\bin\Shaders\Compiled\(Filename).cso</ObjectFileOutput>
+      <ShaderType>Vertex</ShaderType>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -183,19 +191,20 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4820;4324;4307</DisableSpecificWarnings>
-      <PreprocessorDefinitions>NOMINMAX;USE_PROFILER 1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <EnablePREfast>true</EnablePREfast>
-      <ExceptionHandling>false</ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;D3D11.lib;DXGI.lib;dxguid.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;D3D12.lib;WinPixEventRuntime.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'">
@@ -215,7 +224,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;BrofilerCore.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;dxguid.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;BrofilerCore.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -226,11 +235,14 @@
     <ClInclude Include="..\..\Application\displaywindow.h" />
     <ClInclude Include="..\..\Application\GameWindow.h" />
     <ClInclude Include="..\..\Application\UpdateThread.h" />
+    <ClInclude Include="..\..\Core\ConstructionFactory.h" />
     <ClInclude Include="..\..\Core\FileSystem\File.h" />
     <ClInclude Include="..\..\Core\FileSystem\FileSystem.h" />
+    <ClInclude Include="..\..\Core\FileSystem\Flags.h" />
     <ClInclude Include="..\..\Core\FileSystem\MountPoint.h" />
     <ClInclude Include="..\..\Core\FileSystem\Platform\Win\MountPointWin.h" />
     <ClInclude Include="..\..\Core\ICommand.h" />
+    <ClInclude Include="..\..\Core\Macros\PlatformMacros.h" />
     <ClInclude Include="..\..\Core\MessageSystem\GameMessages.h" />
     <ClInclude Include="..\..\Core\MessageSystem\MessageObserver.h" />
     <ClInclude Include="..\..\Core\MessageSystem\MessageQueue.h" />
@@ -255,15 +267,23 @@
     <ClInclude Include="..\..\Core\StringOperations\HashString.h" />
     <ClInclude Include="..\..\Core\StringOperations\StringHelperFunctions.h" />
     <ClInclude Include="..\..\Core\StringOperations\StringTemplate.h" />
+    <ClInclude Include="..\..\Core\Thread\Job.h" />
+    <ClInclude Include="..\..\Core\Thread\JobSystem.h" />
     <ClInclude Include="..\..\Core\Thread\Thread.h" />
     <ClInclude Include="..\..\Core\Thread\Timer.h" />
+    <ClInclude Include="..\..\Core\Thread\WorkerThread.h" />
     <ClInclude Include="..\..\Core\tinyxml2.h" />
+    <ClInclude Include="..\..\Core\Types\TemplateTypeMagic.h" />
     <ClInclude Include="..\..\Core\Types\TypeHelpers.h" />
     <ClInclude Include="..\..\Core\Types\Types.h" />
     <ClInclude Include="..\..\Gameplay\bbox.h" />
     <ClInclude Include="..\..\Gameplay\box.h" />
     <ClInclude Include="..\..\Gameplay\core.h" />
     <ClInclude Include="..\..\Gameplay\door.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\DataStore.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\DataTag.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Entity.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Processor.h" />
     <ClInclude Include="..\..\Gameplay\EntityManager.h" />
     <ClInclude Include="..\..\Gameplay\face.h" />
     <ClInclude Include="..\..\Gameplay\forcefield.h" />
@@ -283,11 +303,20 @@
     <ClInclude Include="..\..\Gameplay\scorchmark.h" />
     <ClInclude Include="..\..\Gameplay\square.h" />
     <ClInclude Include="..\..\Gameplay\switch.h" />
+    <ClInclude Include="..\..\Generators\astar.h" />
+    <ClInclude Include="..\..\Generators\MapGenerator.h" />
     <ClInclude Include="..\..\Graphics\Camera.h" />
     <ClInclude Include="..\..\Graphics\CameraManager.h" />
     <ClInclude Include="..\..\Graphics\color.h" />
     <ClInclude Include="..\..\Graphics\CubeMapRenderer.h" />
     <ClInclude Include="..\..\Graphics\D3D11\Profiler\D3D11GPUProfiler.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\CommandQueue.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\ConstantBuffer.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\DescriptorHeapManager.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\DeviceManagerD3D12.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\PipelineObject.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\ShaderParameter.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\ShaderParamMatcher.h" />
     <ClInclude Include="..\..\Graphics\D3DDebugHelperFunctions.h" />
     <ClInclude Include="..\..\Graphics\DebugBox.h" />
     <ClInclude Include="..\..\Graphics\DebugHelperFunctions.h" />
@@ -311,14 +340,17 @@
     <ClInclude Include="..\..\Graphics\OrientationAxis.h" />
     <ClInclude Include="..\..\Graphics\Renderable.h" />
     <ClInclude Include="..\..\Graphics\RenderInstance.h" />
+    <ClInclude Include="..\..\Graphics\RenderJobs.h" />
     <ClInclude Include="..\..\Graphics\RenderSystem.h" />
     <ClInclude Include="..\..\Graphics\ShaderCache.h" />
+    <ClInclude Include="..\..\Graphics\ShaderDataStructures.h" />
     <ClInclude Include="..\..\Graphics\ShaderInstance.h" />
     <ClInclude Include="..\..\Graphics\shadermanager.h" />
     <ClInclude Include="..\..\Graphics\ShaderPack.h" />
     <ClInclude Include="..\..\Graphics\Shaders.h" />
     <ClInclude Include="..\..\Graphics\ShadowMapRenderer.h" />
     <ClInclude Include="..\..\Graphics\texture.h" />
+    <ClInclude Include="..\..\Graphics\texture12.h" />
     <ClInclude Include="..\..\Graphics\texturemanager.h" />
     <ClInclude Include="..\..\Graphics\VertexBuffer.h" />
     <ClInclude Include="..\..\Input\controller.h" />
@@ -341,7 +373,9 @@
     <ClInclude Include="..\..\Loader\ModelLoaders\ModelLoader.h" />
     <ClInclude Include="..\..\Loader\ModelLoaders\XMLModelLoader.h" />
     <ClInclude Include="..\..\Loader\ResourceLoader.h" />
+    <ClInclude Include="..\..\Loader\ResourceLoadJobs.h" />
     <ClInclude Include="..\..\Loader\ResourceLoadRequests.h" />
+    <ClInclude Include="..\..\Loader\WICTTextureLoader.h" />
     <ClInclude Include="..\..\Logging\FileLogger.h" />
     <ClInclude Include="..\..\Logging\Logger.h" />
     <ClInclude Include="..\..\Math\MathUtilityFunctions.h" />
@@ -351,6 +385,8 @@
     <ClInclude Include="..\..\Math\vector2.h" />
     <ClInclude Include="..\..\Math\vector3.h" />
     <ClInclude Include="..\..\Math\vector4.h" />
+    <ClInclude Include="..\..\Math\VectorBySize.h" />
+    <ClInclude Include="..\..\Math\VectorTypes.h" />
     <ClInclude Include="..\..\Memory\AlignMacros.h" />
     <ClInclude Include="..\..\Memory\Allocator.h" />
     <ClInclude Include="..\..\Memory\HeapAllocator.h" />
@@ -368,6 +404,7 @@
     <ClInclude Include="..\..\NodeGraph\NodeFactory.h" />
     <ClInclude Include="..\..\NodeGraph\Nodes\AddNode.h" />
     <ClInclude Include="..\..\Physics\PhysicsManager.h" />
+    <ClInclude Include="..\..\Physics\spatialhashmap.h" />
     <ClInclude Include="..\..\SourceInformation\SourceInfo.h" />
     <ClInclude Include="..\..\UI\BitmapFont.h" />
     <ClInclude Include="..\..\UI\main.h" />
@@ -378,6 +415,8 @@
     <ClInclude Include="..\..\UI\ViewManager.h" />
     <ClInclude Include="..\..\UI\WebkitCommands.h" />
     <ClInclude Include="..\..\UI\WebkitThread.h" />
+    <ClInclude Include="ConstantBufferManager.h" />
+    <ClInclude Include="Task.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Application\BaseApplication.cpp" />
@@ -385,7 +424,9 @@
     <ClCompile Include="..\..\Application\GameWindow.cpp" />
     <ClCompile Include="..\..\Application\main.cpp" />
     <ClCompile Include="..\..\Application\UpdateThread.cpp" />
+    <ClCompile Include="..\..\Core\ConstructionFactory.cpp" />
     <ClCompile Include="..\..\Core\FileSystem\FileSystem.cpp" />
+    <ClCompile Include="..\..\Core\FileSystem\Platform\Win\FileWin.cpp" />
     <ClCompile Include="..\..\Core\FileSystem\Platform\Win\MountPointWin.cpp" />
     <ClCompile Include="..\..\Core\MessageSystem\MessageObserver.cpp" />
     <ClCompile Include="..\..\Core\Paths.cpp" />
@@ -399,13 +440,18 @@
     <ClCompile Include="..\..\Core\Settings\SettingsParser.cpp" />
     <ClCompile Include="..\..\Core\StringOperations\StringHelperFunctions.cpp" />
     <ClCompile Include="..\..\Core\StringOperations\StringTemplate.cpp" />
+    <ClCompile Include="..\..\Core\Thread\Job.cpp" />
+    <ClCompile Include="..\..\Core\Thread\JobSystem.cpp" />
     <ClCompile Include="..\..\Core\Thread\Thread.cpp" />
     <ClCompile Include="..\..\Core\Thread\Timer.cpp" />
+    <ClCompile Include="..\..\Core\Thread\WorkerThread.cpp" />
     <ClCompile Include="..\..\Core\tinyxml2.cpp" />
     <ClCompile Include="..\..\Gameplay\bbox.cpp" />
     <ClCompile Include="..\..\Gameplay\box.cpp" />
     <ClCompile Include="..\..\Gameplay\core.cpp" />
     <ClCompile Include="..\..\Gameplay\door.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\DataStore.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\Entity.cpp" />
     <ClCompile Include="..\..\Gameplay\EntityManager.cpp" />
     <ClCompile Include="..\..\Gameplay\face.cpp" />
     <ClCompile Include="..\..\Gameplay\forcefield.cpp" />
@@ -425,11 +471,23 @@
     <ClCompile Include="..\..\Gameplay\scorchmark.cpp" />
     <ClCompile Include="..\..\Gameplay\square.cpp" />
     <ClCompile Include="..\..\Gameplay\switch.cpp" />
+    <ClCompile Include="..\..\Generators\astar.cpp" />
+    <ClInclude Include="..\..\Generators\MapGenerator.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClCompile Include="..\..\Generators\MapGenerator.cpp" />
     <ClCompile Include="..\..\Graphics\Camera.cpp" />
     <ClCompile Include="..\..\Graphics\CameraManager.cpp" />
     <ClCompile Include="..\..\Graphics\color.cpp" />
     <ClCompile Include="..\..\Graphics\CubeMapRenderer.cpp" />
     <ClCompile Include="..\..\Graphics\D3D11\Profiler\D3D11GPUProfiler.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\CommandQueue.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\ConstantBuffer.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\DescriptorHeapManager.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\DeviceManagerD3D12.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\PipelineObject.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\ShaderParameter.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\ShaderParamMatcher.cpp" />
     <ClCompile Include="..\..\Graphics\DebugBox.cpp" />
     <ClCompile Include="..\..\Graphics\DeviceManager.cpp" />
     <ClCompile Include="..\..\Graphics\Effect.cpp" />
@@ -447,6 +505,7 @@
     <ClCompile Include="..\..\Graphics\OrientationAxis.cpp" />
     <ClCompile Include="..\..\Graphics\Renderable.cpp" />
     <ClCompile Include="..\..\Graphics\RenderInstance.cpp" />
+    <ClCompile Include="..\..\Graphics\RenderJobs.cpp" />
     <ClCompile Include="..\..\Graphics\RenderSystem.cpp" />
     <ClCompile Include="..\..\Graphics\ShaderCache.cpp" />
     <ClCompile Include="..\..\Graphics\ShaderInstance.cpp" />
@@ -455,6 +514,7 @@
     <ClCompile Include="..\..\Graphics\Shaders.cpp" />
     <ClCompile Include="..\..\Graphics\ShadowMapRenderer.cpp" />
     <ClCompile Include="..\..\Graphics\texture.cpp" />
+    <ClCompile Include="..\..\Graphics\texture12.cpp" />
     <ClCompile Include="..\..\Graphics\texturemanager.cpp" />
     <ClCompile Include="..\..\Graphics\VertexBuffer.cpp" />
     <ClCompile Include="..\..\Input\controller.cpp" />
@@ -475,6 +535,8 @@
     <ClCompile Include="..\..\Loader\ModelLoaders\ModelLoader.cpp" />
     <ClCompile Include="..\..\Loader\ModelLoaders\XMLModelLoader.cpp" />
     <ClCompile Include="..\..\Loader\ResourceLoader.cpp" />
+    <ClCompile Include="..\..\Loader\ResourceLoadJobs.cpp" />
+    <ClCompile Include="..\..\Loader\WICTTextureLoader.cpp" />
     <ClCompile Include="..\..\Logging\FileLogger.cpp" />
     <ClCompile Include="..\..\Logging\Logger.cpp" />
     <ClCompile Include="..\..\Math\matrix33.cpp" />
@@ -501,13 +563,31 @@
     <ClCompile Include="..\..\UI\UIManger.cpp" />
     <ClCompile Include="..\..\UI\ViewManager.cpp" />
     <ClCompile Include="..\..\UI\WebkitThread.cpp" />
+    <ClCompile Include="ConstantBufferManager.cpp" />
+    <ClCompile Include="Task.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\Maps\Entrance.dat">
       <SubType>Designer</SubType>
     </None>
     <None Include="..\..\Core\StringOperations\StringTemplate.inl" />
+    <None Include="..\..\Gameplay\ECS\DataStoreArrayIterator.h" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\..\bin\Shaders\Shaders\laser_shader.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets" Condition="Exists('..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets')" />
+    <Import Project="..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets" Condition="Exists('..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets')" />
+    <Import Project="..\..\..\..\..\..\ms.fxcompile.targets" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets'))" />
+    <Error Condition="!Exists('..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets'))" />
+  </Target>
 </Project>

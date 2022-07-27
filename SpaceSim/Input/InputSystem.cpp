@@ -76,9 +76,9 @@ void InputSystem::update( float elapsedTime, double time )
         (*it).second = controller->update(m_rawKeyBoardInput, m_rawMouseInput, m_rawHidInput);
     }
 
-	m_rawHidInput.clear();
-	m_rawMouseInput.clear();
-	m_rawKeyBoardInput.clear();
+    m_rawHidInput.clear();
+    m_rawMouseInput.clear();
+    m_rawKeyBoardInput.clear();
 
     elapsedTime = 0.0f;
     time = 0.0;
@@ -109,7 +109,7 @@ void InputSystem::initialise( const std::string& inputMapFileName, HWND hwnd )
             MSG_TRACE_CHANNEL("Input SYSTEM", "adding actions for: %s with hash %u", actionNameAttribute->Value(), hashString(actionNameAttribute->Value()));
             m_availableActions.emplace_back(InputActions::ActionType(actionNameAttribute->Value(), actionLngNameAttribute != nullptr ? actionLngNameAttribute->Value() : ""));
 #ifdef DEBUG
-			m_actionNames.insert(std::make_pair(m_availableActions[m_availableActions.size() - 1],actionNameAttribute->Value()));
+            m_actionNames.insert(std::make_pair(m_availableActions[m_availableActions.size() - 1],actionNameAttribute->Value()));
 #endif
         }
     }
@@ -180,8 +180,8 @@ bool InputSystem::getInputActionFromName(size_t actionName, InputActions::Action
     {
         if (it->getType() == actionName)
         {
-			actionType = *it;
-			return true;
+            actionType = *it;
+            return true;
         }
     }
 

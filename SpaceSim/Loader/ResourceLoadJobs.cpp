@@ -7,8 +7,13 @@
 #include "Core/Types/TypeHelpers.h"
 #include "Graphics/DeviceManager.h"
 #include "Graphics/modelmanager.h"
-#include "Graphics/texture.h"
+#include "Graphics/texture12.h"
+//#include "Graphics/texture.h"
 #include "Graphics/texturemanager.h"
+#include "Core/MessageSystem/GameMessages.h"
+
+//None of this can send a return msg until the command list has been executed on the GPU
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
@@ -33,8 +38,9 @@ void ResourceLoadJob::SendReturnMsg(size_t gameObjectId, size_t resourceHandle)
 void FaceJob::Execute(size_t threadIndex)
 {
     UNUSEDPARAM(threadIndex);
+    
     RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
-    auto resourceHandle = renderResource.getModelManager().AddFace(m_loadData);//needs to be thread safe
+    auto resourceHandle = renderResource.getModelManager().AddFace(m_loadData, m_commandQueueHandle, m_commandListHandle);//needs to be thread safe
     SendReturnMsg(m_gameObjectId, resourceHandle);
 
     delete m_loadData;
@@ -60,14 +66,15 @@ void LoadTextureJob::Execute(size_t threadIndex)
         return;
     }
 
-    Texture texture;
-    if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), m_fileName))
+    Texture12 texture;
+    size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
+    if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), renderResource.getCommandQueueManager(), m_fileName, m_commandQueueHandle, m_commandListHandle, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
     {
         MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", m_fileName.c_str(), threadIndex);
         return;
     }
 
-    texManager.addTexture(textureName, texture);
+    texManager.addTexture(textureName, texture, descriptorIndex);
 }
 
 ///-----------------------------------------------------------------------------
@@ -78,7 +85,8 @@ void LoadModelJob::Execute(size_t threadIndex)
 {
     UNUSEDPARAM(threadIndex);
     RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
-    auto resourceHandle = renderResource.getModelManager().LoadModel(m_loadData);//needs to be thread safe, and should be a job
+
+    auto resourceHandle = renderResource.getModelManager().LoadModel(m_loadData, m_commandQueueHandle, m_commandListHandle);//needs to be thread safe, and should be a job
     SendReturnMsg(m_gameObjectId, resourceHandle);
 
     delete m_loadData;
