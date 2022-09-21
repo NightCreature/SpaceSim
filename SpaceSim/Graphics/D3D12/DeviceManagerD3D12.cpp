@@ -104,7 +104,7 @@ bool DeviceManager::createDevice()
 
             MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Selected Feature level: 0x%x", m_featureLevel);
 
-            hr = D3D12CreateDevice(adapter, m_featureLevel, __uuidof(ID3D12Device), &(static_cast<void*>(m_device)));
+            hr = D3D12CreateDevice(adapter, m_featureLevel, IID_PPV_ARGS(&m_device));
             if (FAILED(hr))
             {
                 MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create a D3D device with error code: 0x%x %s", hr, getLastErrorMessage(hr))
@@ -140,10 +140,11 @@ IDXGIAdapter* DeviceManager::EnumerateAdapters()
     IDXGIAdapter* adapter = nullptr;
 
     HRESULT hr = S_OK;
-    for (size_t counter = 0; hr == S_OK; ++counter)
-    {
+    //for (size_t counter = 0; counter < 1; ++counter)
+    //{
         adapter = nullptr;
-        hr = m_dxgiFactory->EnumAdapters((UINT)counter, &adapter);
+        //Ask for the high performance GPU, this should be the dedicated GPU in a laptop
+        hr = m_dxgiFactory->EnumAdapterByGpuPreference((UINT)counter, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter));
         MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter number: %d", counter);
         if (adapter != nullptr)
         {
@@ -160,12 +161,9 @@ IDXGIAdapter* DeviceManager::EnumerateAdapters()
             convertToCString(adapterDesc.Description, str);
             MSG_TRACE_CHANNEL("DeviceManagerD3D12", "description: %s", str.c_str());
 
-            if (adapterDesc.VendorId != 0x8086) //THis is a hack to avoid igpus from intel, we need to do somethign else for AMD chips
-            {
-                break;
-            }
+            //Have to check if this is a dGPU
         }
-    }
+    //}
 
     return adapter;
 }
@@ -199,8 +197,10 @@ bool DeviceManager::CheckFeatures()
     MSG_TRACE_CHANNEL("DeviceManagerD3D12", "PS Specified Stencil Reference Support: %s", featureSupport.PSSpecifiedStencilRefSupported ? "true" : "false");
     MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Resource Binding Tier: %d", featureSupport.ResourceBindingTier);
 
-
-
+    D3D12_FEATURE_DATA_ARCHITECTURE architecture;
+    architecture.NodeIndex = 0;
+    m_device->CheckFeatureSupport(D3D12_FEATURE_ARCHITECTURE, &architecture, sizeof(architecture));
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Type of GPU: %s", architecture.UMA ? "APU" : "DGPU");
 
     return true;
 }
