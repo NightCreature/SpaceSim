@@ -3,6 +3,9 @@
 #include "Core/FileSystem/File.h"
 #include "Core/Types/TypeHelpers.h"
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 namespace VFS
 {
 

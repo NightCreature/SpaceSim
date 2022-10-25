@@ -52,8 +52,10 @@ void VFS::File::createFile(const std::filesystem::path& name, FileMode fileMode)
         creationDisposition = OPEN_EXISTING;
         break;
     case FileMode::Create:
-    case FileMode::OpenAndCreate:
         creationDisposition = CREATE_NEW;
+        break;
+    case FileMode::OpenAndCreate:
+        creationDisposition = OPEN_ALWAYS;
         break;
     default:
         return;
@@ -76,7 +78,7 @@ void VFS::File::createFile(const std::filesystem::path& name, FileMode fileMode)
 ///! @brief This function writes from the current file pointer
 ///! @remark
 ///-----------------------------------------------------------------------------
-void VFS::File::Write(byte* data, size_t length)
+void VFS::File::Write(const byte* data, size_t length)
 {
     if (data == nullptr || length <= 0)
     {
@@ -87,6 +89,7 @@ void VFS::File::Write(byte* data, size_t length)
 
     if (m_platformSpecificData != nullptr && platformData->m_fileHandle != INVALID_HANDLE_VALUE)
     {
+        void* dataPtr = static_cast<void*>(const_cast<byte*>(data));
         size_t amountToWrite = length;
         size_t counter = 0;
         DWORD numberOfBytesWritten = 0;
@@ -98,7 +101,7 @@ void VFS::File::Write(byte* data, size_t length)
             ++counter;
 
             numberOfBytesWritten = 0;
-            if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(data), std::numeric_limits<unsigned long>::max(), &numberOfBytesWritten, &(platformData->m_overlapped)))
+            if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(dataPtr), std::numeric_limits<unsigned long>::max(), &numberOfBytesWritten, &(platformData->m_overlapped)))
             {
                 MSG_TRACE_CHANNEL("FILESYSTEM", "Writing to file: %s failed for reason: %s", m_name.string().c_str(), getLastErrorMessage(GetLastError()));
                 return;
@@ -107,10 +110,10 @@ void VFS::File::Write(byte* data, size_t length)
             data += std::numeric_limits<unsigned long>::max();
         }
 
-        platformData->m_overlapped.Offset = static_cast<unsigned long>(amountToWrite);
+        platformData->m_overlapped.Offset = platformData->m_filePosition + static_cast<unsigned long>(amountToWrite);
         platformData->m_overlapped.OffsetHigh = static_cast<unsigned long>(amountToWrite >> 32);
         numberOfBytesWritten = 0;
-        if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(data), static_cast<unsigned long>(amountToWrite), &numberOfBytesWritten, &(platformData->m_overlapped)))
+        if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(dataPtr), static_cast<unsigned long>(amountToWrite), &numberOfBytesWritten, &(platformData->m_overlapped)))
         {
             //Handle error file writing fucked up
             MSG_TRACE_CHANNEL("FILESYSTEM", "Writing to file: %s failed for reason: %s", m_name.string().c_str(), getLastErrorMessage(GetLastError()));
@@ -125,7 +128,7 @@ void VFS::File::Write(byte* data, size_t length)
 ///! @brief This function writes at a certain offset from the beginning of the file and resets the file position
 ///! @remark
 ///-----------------------------------------------------------------------------
-void VFS::File::Write(byte* data, size_t offset, size_t length)
+void VFS::File::Write(const byte* data, size_t offset, size_t length)
 {
     if (data == nullptr || length <= 0)
     {
@@ -136,6 +139,7 @@ void VFS::File::Write(byte* data, size_t offset, size_t length)
 
     if (m_platformSpecificData != nullptr && platformData->m_fileHandle != INVALID_HANDLE_VALUE)
     {
+        void* dataPtr = static_cast<void*>(const_cast<byte*>(data));
         size_t amountToWrite = length;
         size_t counter = 0;
         DWORD numberOfBytesWritten = 0;
@@ -147,7 +151,7 @@ void VFS::File::Write(byte* data, size_t offset, size_t length)
             ++counter;
 
             numberOfBytesWritten = 0;
-            if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(data), std::numeric_limits<unsigned long>::max(), &numberOfBytesWritten, &(platformData->m_overlapped)))
+            if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(dataPtr), std::numeric_limits<unsigned long>::max(), &numberOfBytesWritten, &(platformData->m_overlapped)))
             {
                 MSG_TRACE_CHANNEL("FILESYSTEM", "Writing to file: %s failed for reason: %s", m_name.string().c_str(), getLastErrorMessage(GetLastError()));
                 return;
@@ -158,7 +162,7 @@ void VFS::File::Write(byte* data, size_t offset, size_t length)
         platformData->m_overlapped.Offset = static_cast<unsigned long>(amountToWrite);
         platformData->m_overlapped.OffsetHigh = static_cast<unsigned long>(amountToWrite >> 32);
         numberOfBytesWritten = 0;
-        if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(data), static_cast<unsigned long>(amountToWrite), &numberOfBytesWritten, &(platformData->m_overlapped)))
+        if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(dataPtr), static_cast<unsigned long>(amountToWrite), &numberOfBytesWritten, &(platformData->m_overlapped)))
         {
             //Handle error file writing fucked up
             MSG_TRACE_CHANNEL("FILESYSTEM", "Writing to file: %s failed for reason: %s", m_name.string().c_str(), getLastErrorMessage(GetLastError()));
