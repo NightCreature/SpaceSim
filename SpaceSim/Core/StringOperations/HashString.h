@@ -4,28 +4,29 @@
 #include <string>
 
 ///-----------------------------------------------------------------------------
-///! @brief This is not the best use of a hashed string we need, this is not compile time setup
-///! @remark
+///! @brief Helper object that in debug also shows the string its based on
+///! @remark constexpr usage prefered
 ///-----------------------------------------------------------------------------
 class HashString
 {
 public:
-    HashString(const std::string& str) : 
+    constexpr HashString(const std::string_view& str) :
 #ifdef _DEBUG
         m_string(str),
 #endif
         m_hash(hashString(str)) {}
-    ~HashString() {}
 
-    size_t getHash() const { return m_hash; }
-    operator size_t() const { return m_hash; }
+    constexpr ~HashString() {}
+
+    constexpr size_t getHash() const { return m_hash; }
+    constexpr operator size_t() const { return m_hash; }
 #ifdef _DEBUG
-    const std::string& getString() const { return m_string; }
+    constexpr const std::string_view& getString() const { return m_string; }
 #endif
 private:
 #ifdef _DEBUG
-    std::string m_string;
+    std::string_view m_string;
 #endif
-   size_t m_hash;
+    size_t m_hash;
 };
 
