@@ -2,9 +2,10 @@
 
 #include "Core/MessageSystem/MessageObserver.h"
 #include "Core/Thread/Thread.h"
+#include "Gameplay/ECS/Systems/RenderableSystem.h"
 #include "Input/Input.h"
-#include <vector>
 
+#include <vector>
 class EntityManager;
 class CameraManager;
 class SettingsManager;
@@ -18,11 +19,23 @@ namespace MessageSystem
 class MessageQueue;
 }
 
+namespace Physics
+{
+class PhysicsManager;
+}
+
+namespace ECS
+{
+class SystemsManager;
+}
+
 class Resource;
 
 class UpdateThread : public Thread
 {
 public:
+
+    virtual ~UpdateThread() override;
 
     void Initialise(Resource* resource);
 
@@ -37,17 +50,20 @@ public:
     void UnLockCriticalSection() { LeaveCriticalSection(&m_criticalSection); }
 
     void setInput(Input input) { m_input = input; }
+
     std::vector<RenderInstance*> m_renderList;
 
-    EntityManager* m_entityManager;
-    GameObjectManager* m_gameObjectManager;
-    LaserManager* m_laserManager;
+    EntityManager* m_entityManager = nullptr;
+    ECS::SystemsManager* m_entitySystemsManager = nullptr;
+    Physics::PhysicsManager* m_physicsManager = nullptr;
+    GameObjectManager* m_gameObjectManager = nullptr;
+    LaserManager* m_laserManager = nullptr;
 
     MessageSystem::MessageObserver m_messageObservers;
 
     Input m_input;
 
-    Resource* m_resource;
+    Resource* m_resource = nullptr;
 
     double m_time;
     float m_elapsedTime;

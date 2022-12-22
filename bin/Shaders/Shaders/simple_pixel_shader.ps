@@ -36,7 +36,7 @@ struct PS_INPUT
     float4 LightToPixel : TEXCOORD2;
 };
 
-float4 doLightCalculation(LightConstants light, float3 lightDir, float3 nnormal, float3 nviewdirection, float distance, float shininess, float4 color, float texColor)
+float4 doLightCalculation(LightConstants light, float3 lightDir, float3 nnormal, float3 nviewdirection, float distance, float shininess, float4 color, float4 texColor)
 {
     float attenuation = clamp(0.0, 1.0, 1.0 / (light.m_attenuationFallOff.x + light.m_attenuationFallOff.y * distance + light.m_attenuationFallOff.z * distance * distance));
 
@@ -50,6 +50,7 @@ float4 doLightCalculation(LightConstants light, float3 lightDir, float3 nnormal,
     }
 
     return color;
+    //return DoPhongShading(light, lightDir, nnormal, nviewdirection, distance, shininess, float4(1, 1, 1, 1));
 }
 
 ///--------------------------------------------------------------------------------------

@@ -34,6 +34,8 @@
 #include "D3D12/DescriptorHeapManager.h"
 #include "D3D12/D3D12X.h"
 #include "D3D12/CommandQueue.h"
+#include "Graphics/RenderInterface.h"
+#include "Graphics/D3D12/ConstantBufferManager.h"
 
 class RenderInstance;
 namespace MessageSystem
@@ -81,8 +83,6 @@ public:
 
     CubeMapRenderer* getCubeMapRenderer() { return m_cubeMapRenderer; }
 
-    void CreateRenderList(const MessageSystem::Message& msg);
-
     void setInput(Input input) { m_input = input; }
 
     //Fix this
@@ -114,6 +114,7 @@ private:
     GameWindow m_window;
     ResourceLoader m_resourceLoader;
     JobQueue m_jobQueue;
+    PerFrameDataStorage m_perFrameDataStorage;
     std::string m_appName;
     std::string m_windowName;
 

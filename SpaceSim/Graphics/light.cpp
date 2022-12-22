@@ -142,6 +142,7 @@ LightConstants Light::getLightConstants() const
     constants.m_range[1] = 0.0f;
     constants.m_range[2] = 0.0f;
     constants.m_range[3] = 0.0f;
+    constants.m_type[0] = static_cast<uint32>(m_lightType);
 
     return constants;
 }

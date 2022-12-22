@@ -17,6 +17,10 @@
 #include "Memory/MemoryArena.h"
 
 #include "Physics/spatialhashmap.h"
+#include <Optick.h>
+#include "Gameplay/ECS/Component.h"
+#include "Gameplay/ECS/Components/Components.h"
+#include "Core/Hashing/SipHash.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
@@ -24,23 +28,36 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 //	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 //#endif
 
-    SpatialHashMap<int> map;
-    map.Initialise(100, Vector2i64(-100), Vector2i64(100));
+    //SpatialHashMap<int> map;
+    //map.Initialise(100, Vector2i64(-100), Vector2i64(100));
+
+
+    //const uint64 hashValue1 = SipHash::hashString("Hello World!!!", 14);
+    //const uint64 hashValue2 = SipHash::hashString("Hello World!!!!", 15); //same as above probably shouldn't be
+
+    //const uint64 hashValue3 = SipHash::hashString("1234567890asdfe", 15);
+
+    //ECS::RegisterComponents();
 
     UNUSEDPARAM(hInstance);
     UNUSEDPARAM(hPrevInstance);
     UNUSEDPARAM(szCmdLine);
     UNUSEDPARAM(iCmdShow);
 
-    HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-    if (FAILED(hr))
-    {
-        MSG_TRACE_CHANNEL("COM ERROR", "Failed to make COM act in a multithreaded fashion");
-    }
+    //HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    //if (FAILED(hr))
+    //{
+    //    MSG_TRACE_CHANNEL("COM ERROR", "Failed to make COM act in a multithreaded fashion");
+    //}
+
+    //OPTICK_START_CAPTURE();
 
     Application application = Application();
     if( application.initialise() ) //Need to take the path manager from shader engine
     {
+        size_t hash = hashString("default");
+        MSG_TRACE("default hased is: %x", hash);
+
         application.mainGameLoop();
 
         application.cleanup();
@@ -51,6 +68,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
         char c;
         std::cin >> c;
     }
+
+
+    //OPTICK_STOP_CAPTURE();
+    //OPTICK_SAVE_CAPTURE("E:\\SDK\\Demo\\SpaceSim\\bin\\Profile");
 
     return 0;
 }

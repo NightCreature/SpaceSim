@@ -13,11 +13,13 @@
 const size_t c_fnvHashOffset = 2166136261;
 const size_t c_fnvHashPrime = 16777619;
 
+
 enum class TraceSeverity
 {
     EDEBUG,
     ELOG,
     EWARN,
+    EERROR,
     EASSERT
 };
 
@@ -33,17 +35,32 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
 //#else
 #define MSG_TRACE(message_string, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EDEBUG, "", message_string, __VA_ARGS__);
 #define MSG_TRACE_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EDEBUG, channel, msg, __VA_ARGS__);
+
+#define MSG_WARN_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EWARN, channel, msg, __VA_ARGS__);
+#define MSG_ERROR_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EERROR, channel, msg, __VA_ARGS__);
+#define MSG_ASSERT_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EASSERT, channel, msg, __VA_ARGS__);
 //#endif
 
 #define HASH_ELEMENT_DEFINITION(CLASS) static constexpr size_t m_hash = #CLASS##_hash;
+#define HASH_ELEMENT_TEMPLATE_DEFINITION(CLASS, T) static constexpr size_t m_hash = #CLASS#T##_hash;
 
 std::string FormatString(const char* format, ...);
+std::wstring FormatString(const wchar_t* format, ...);
 
-constexpr char toLowerConstExpr(const char c) 
+constexpr char toLowerConstExpr(const char c)
 {
     if (c >= 'A' && c <= 'Z')
     {
         return c + ('a' - 'A');
+    }
+    return c;
+}
+
+constexpr char toUpperConstExpr(const char c)
+{
+    if (c >= 'a' && c <= 'z')
+    {
+        return c + ('a' + 'A');
     }
     return c;
 }
@@ -73,13 +90,22 @@ constexpr size_t operator ""_hash(const char* str, size_t size)
     return hashString(str, size);
 }
 
+/////-----------------------------------------------------------------------------
+/////! @brief   Case insensitive hash function, uses the const expression version
+/////! @remark  in C++20 this should become a constexpr function, waiting for constexpr containers
+/////-----------------------------------------------------------------------------
+//inline constexpr size_t hashString(const std::string& sourceStr)
+//{
+//    return hashString(sourceStr.c_str(), sourceStr.size());
+//}
+
 ///-----------------------------------------------------------------------------
 ///! @brief   Case insensitive hash function, uses the const expression version
 ///! @remark  in C++20 this should become a constexpr function, waiting for constexpr containers
 ///-----------------------------------------------------------------------------
-inline size_t hashString(const std::string& sourceStr)
+inline constexpr size_t hashString(const std::string_view& sourceStr)
 {
-    return hashString(sourceStr.c_str(), sourceStr.size());
+    return hashString(sourceStr.data(), sourceStr.size());
 }
 
 inline constexpr size_t hashBinaryData(const char* data, size_t size)
@@ -169,6 +195,13 @@ inline std::string toLowerCase(const std::string& str)
     return result;
 }
 
+inline std::string toUpperCase(const std::string& str)
+{
+    std::string result = str;
+    std::transform(str.begin(), str.end(), result.begin(), [](char c) { return static_cast<char>(std::toupper(c)); });
+    return result;
+}
+
 inline bool strICmp(const std::string& lhs, const std::string& rhs)
 {
     return 0 == strcmp(toLowerCase(lhs).c_str(), toLowerCase(rhs).c_str()); //Avoid nasty 4800 warning by not casting :)
@@ -246,6 +279,7 @@ std::string makeAbsolutePath(const std::string& filename);
  char* getLastErrorMessage(DWORD nErrorCode);
 
  void convertToWideString(const std::string& str, std::wstring& out);
+ std::wstring convertToWideString(const std::string str);
  void convertToUTF16String(const std::string& str, std::wstring& out);
 
 void convertToCString(const std::wstring& str, std::string& out);

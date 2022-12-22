@@ -59,7 +59,7 @@ PipelineObject::PipelineObject()
         blendStateDesc.RenderTarget[counter].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
     }
 
-    m_pipeLineStateDescriptor.SampleMask = 0xFFFFFFFFFF;
+    m_pipeLineStateDescriptor.SampleMask = 0xFFFFFFFF;
 
     //Must match backbuffer if only rendering to that
     SetMultiSampling(1, 0);
@@ -100,10 +100,17 @@ PipelineObject::~PipelineObject()
 ///-----------------------------------------------------------------------------
 void PipelineObject::CreatePipelineStateObject(ID3D12Device6* device)
 {
+    if (m_pipeLineStateDescriptor.VS.pShaderBytecode == nullptr)
+    {
+        MSG_WARN_CHANNEL("Pipelineobject", "Vertex Shader is null, did the shader compile. Can't create pipeline object");
+        return;
+    }
+
     HRESULT hr  = device->CreateRootSignature(0, m_pipeLineStateDescriptor.VS.pShaderBytecode, m_pipeLineStateDescriptor.VS.BytecodeLength, IID_PPV_ARGS(&m_pipeLineStateDescriptor.pRootSignature));
     if (hr != S_OK)
     {
         MSG_TRACE_CHANNEL("PipelineObject", "Failed to create Root signature from shader data with error: 0x%x, %s", hr, getLastErrorMessage(hr));
+        assert(false);
     }
 
     hr = device->CreateGraphicsPipelineState(&m_pipeLineStateDescriptor, IID_PPV_ARGS(&m_pipelineObject));

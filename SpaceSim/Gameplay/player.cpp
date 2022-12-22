@@ -17,6 +17,7 @@
 #include "Graphics/EffectCache.h"
 #include "Core/StringOperations/HashString.h"
 #include "Input/InputSystem.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 const int playerlive = 5;
 const int playerffstrength = 10;
@@ -53,6 +54,11 @@ void Player::initialize(const CameraManager& cameraManager)
         }
 
         deserialise(node);
+    }
+
+    if (!m_entity.IsValid())
+    {
+        //LoadPlayerEne
     }
 }
 

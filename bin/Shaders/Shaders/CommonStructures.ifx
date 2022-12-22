@@ -1,5 +1,4 @@
-#ifndef CONSTANTSTRUCTURES
-#define CONSTANTSTRUCTURES
+#pragma once
 
 struct LightConstants
 {
@@ -9,6 +8,29 @@ struct LightConstants
     float4 m_specular;
     float4 m_attenuationFallOff;
     float4 m_range;
+    uint4 m_type;
 };
 
-#endif
+struct WVPData
+{
+	float4x4 World;
+	float4x4 View;
+	float4x4 Projection;
+};
+
+struct MaterialConstants
+{
+    float4 ambient;
+    float4 diffuse;
+    float4 specular;
+    float4 emissive;
+    float shininess;
+};
+
+struct LightParameters
+{
+    //float3 eyePosition;
+    LightConstants m_lights[8];
+    float3 camera_position;
+};
+

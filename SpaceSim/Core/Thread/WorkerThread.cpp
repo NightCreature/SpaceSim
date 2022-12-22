@@ -1,6 +1,7 @@
 #include "WorkerThread.h"
 
 #include "JobSystem.h"
+#include <Optick.h>
 
 ///-----------------------------------------------------------------------------
 ///! @brief Main function of this thread
@@ -8,6 +9,7 @@
 ///-----------------------------------------------------------------------------
 int WorkerThread::WorkerFunction()
 {
+    OPTICK_THREAD("WorkerThread");
     while(isAlive())
     {
         if (m_threadPaused) //if this is set we need to see if there is more work instead of just activating it it will keep toggling other wise instead of waiting

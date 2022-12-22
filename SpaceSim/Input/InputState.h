@@ -35,15 +35,7 @@ public:
 
     void setActionValue(const InputActions::ActionType& action, float value)
     {
-        InputStateMap::iterator it = std::find_if(m_inputState.begin(), m_inputState.end(), [&action](const StandardInputAction& standardInput)
-        {
-            if (action.getType() == standardInput.getAction().getType())
-            {
-                return true;
-            }
-
-            return false;
-        });
+        InputStateMap::iterator it = std::find_if(m_inputState.begin(), m_inputState.end(), [&action](const StandardInputAction& standardInput) { return action.getType() == standardInput.getAction().getType(); });
         if (it != m_inputState.end())
              it->setValue(value);
     }

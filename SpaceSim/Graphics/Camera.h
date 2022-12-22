@@ -65,5 +65,5 @@ private:
 
     float m_movementSpeed;
     float m_rotationSpeed;
-    static const float m_maxPitchAngle;
+    static constexpr float m_maxPitchAngle = 89.9f;
 };

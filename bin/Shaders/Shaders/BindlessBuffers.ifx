@@ -1,0 +1,71 @@
+#pragma once
+
+#include "CommonStructures.ifx"
+
+struct MeshResourceIndices
+{
+	//mesh information
+	uint posBufferIndex;
+	uint textureBufferIndex;
+	uint normalBufferIndex;
+	uint tangentBufferIndex;
+
+	//transform information
+	uint transformIndex;
+
+	uint materialIndex;
+	
+	//textures information
+	uint shadowMapIndex;
+	uint shadowSamplerIndex;
+
+	uint albedoMapIndex;
+	uint albedoSamplerIndex;
+	
+	uint normalMapIndex;
+	uint normalSamplerIndex;
+
+	uint cubeReflectionIndex;
+
+	uint ShadowProjection;
+
+	//Light info
+	uint LightBufferIndex;
+	uint NumberOfLights;
+};
+
+struct ParticleData
+{
+	uint positionIndex;
+	uint colorIndex;
+	uint sizeIndex;
+	uint transformIndex;
+
+	uint textureIndex;
+};
+
+Texture2D<float4> GetColorTexture(uint index) { return ResourceDescriptorHeap[index]; }
+Texture2D<float4> GetNormalTexture(uint index) { return ResourceDescriptorHeap[index]; }
+Texture3D<float4> GetCubeTexture(uint index) { return ResourceDescriptorHeap[index]; }
+SamplerState GetSampler(uint index) { return SamplerDescriptorHeap[index]; }
+
+template<typename T>
+StructuredBuffer<T> GetBufferT(uint index) { return StructuredBuffer<T>(ResourceDescriptorHeap[index]); }
+
+template<typename ResourceAndInstanceType>
+ResourceAndInstanceType GetInstanceFromBuffer(uint resourceIndex)
+{ 
+	return GetBufferT<ResourceAndInstanceType>(resourceIndex)[0];
+}
+
+template<typename ResourceAndInstanceType>
+ResourceAndInstanceType GetInstanceFromBufferT(uint resourceIndex, uint instanceIndex)
+{ 
+	return GetBufferT<ResourceAndInstanceType>(resourceIndex)[instanceIndex];
+}
+
+template<typename ResourceType, typename InstanceType>
+InstanceType GetInstanceFromBufferT(uint resourceIndex, uint instanceIndex) 
+{
+	return InstanceType(GetBufferT<ResourceType>(resourceIndex)[instanceIndex]);
+}

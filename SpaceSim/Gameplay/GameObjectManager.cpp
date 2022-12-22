@@ -84,6 +84,7 @@ const std::vector<GameObject*> GameObjectManager::getGameObjectsThatDontContain(
 void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime, const Input& input)
 {
     PROFILE_EVENT("GameObjectManagerUpdate", Red);
+    OPTICK_EVENT();
     for (auto gameObject : m_gameObjects)
     {
         if (gameObject.second != nullptr && !gameObject.second->IsInitialising())
@@ -98,6 +99,7 @@ void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime
 ///-------------------------------------------------------------------------
 void GameObjectManager::handleMessage( const MessageSystem::Message& message )
 {
+    OPTICK_EVENT();
     UNUSEDPARAM(message);
     //std::for_each(m_gameObjects.begin(), m_gameObjects.end(), DispatchFunctor(message));
     if (MESSAGE_ID(CreatedRenderResourceMessage) == message.getMessageId())

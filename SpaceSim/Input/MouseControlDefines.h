@@ -40,7 +40,7 @@ public:
     }
 
 private:
-    static constexpr size_t m_inputNameHash[MouseInput::NumInputActions] =
+    static constexpr size_t m_inputNameHash[static_cast<std::underlying_type_t<MouseInput>>(MouseInput::NumInputActions)] =
     {
         "positive_x"_hash,
         "negative_x"_hash,

@@ -7,6 +7,7 @@
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/GameMessages.h"
 #include "Core/MessageSystem/RenderMessages.h"
+#include "Core/Resource/GameResource.h"
 
 #include <iostream>
 

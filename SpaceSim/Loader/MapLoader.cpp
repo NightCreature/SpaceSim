@@ -23,6 +23,7 @@
 
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/RenderMessages.h"
+#include "Core/Resource/GameResource.h"
 
 MapLoader::~MapLoader()
 {
@@ -326,6 +327,8 @@ void MapLoader::getCollisionNormal(PlanesMap::const_iterator& it, Vector3& norma
 ///-------------------------------------------------------------------------
 void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement* element )
 {
+    ECS::Entity wallEntity;
+
     const tinyxml2::XMLElement* childElement = element->FirstChildElement();
     Material mat;
     Vector3 corners[4];

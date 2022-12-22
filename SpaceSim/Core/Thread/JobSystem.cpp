@@ -5,6 +5,7 @@
 #include <atomic>
 #include <sstream>
 #include "../Types/TypeHelpers.h"
+#include <Optick.h>
 
 
 ///-----------------------------------------------------------------------------
@@ -117,13 +118,13 @@ void JobSystem::SignalWorkAvailable()
 ///-----------------------------------------------------------------------------
 void JobSystem::WaitfForJobsToFinish()
 {
-    std::stringstream str("");
-    str << "<<<<< JobSystem >>>>>\n";
-    str << "Number of sleeping threads: " << m_numberOfSleepingThreads << "\n";
-    str << "Number of WorkerThreads: " << m_workerThreads.size() << "\n";
-    str << "Number of tasks: " << m_jobQueue.m_jobs.size() << "\n";
-    str << "<<<<< JobSystem >>>>>\n";
-    OutputDebugString(str.str().c_str());
+    //std::stringstream str("");
+    //str << "<<<<< JobSystem >>>>>\n";
+    //str << "Number of sleeping threads: " << m_numberOfSleepingThreads << "\n";
+    //str << "Number of WorkerThreads: " << m_workerThreads.size() << "\n";
+    //str << "Number of tasks: " << m_jobQueue.m_jobs.size() << "\n";
+    //str << "<<<<< JobSystem >>>>>\n";
+    //OutputDebugString(str.str().c_str());
 
     ResetEvent(m_workFinishedEvent);
     if (!m_jobQueue.m_jobs.empty())
@@ -132,15 +133,16 @@ void JobSystem::WaitfForJobsToFinish()
         SetEvent(m_workAvaliable);
     }
     DWORD waitReturn = WaitForSingleObject(m_workFinishedEvent, INFINITE);
+    UNUSEDPARAM(waitReturn);
 
-    str.str("");
-    str << "<<<<< JobSystem >>>>>\n";
-    str << "Number of sleeping threads: " << m_numberOfSleepingThreads << "\n";
-    str << "Number of WorkerThreads: " << m_workerThreads.size() << "\n";
-    str << "Number of tasks: " << m_jobQueue.m_jobs.size() << "\n";
-    str << "waitReturn: " << waitReturn << "\n";
-    str << "<<<<< JobSystem >>>>>\n";
-    OutputDebugString(str.str().c_str());
+    //str.str("");
+    //str << "<<<<< JobSystem >>>>>\n";
+    //str << "Number of sleeping threads: " << m_numberOfSleepingThreads << "\n";
+    //str << "Number of WorkerThreads: " << m_workerThreads.size() << "\n";
+    //str << "Number of tasks: " << m_jobQueue.m_jobs.size() << "\n";
+    //str << "waitReturn: " << waitReturn << "\n";
+    //str << "<<<<< JobSystem >>>>>\n";
+    //OutputDebugString(str.str().c_str());
 }
 
 ///-----------------------------------------------------------------------------
@@ -149,6 +151,7 @@ void JobSystem::WaitfForJobsToFinish()
 ///-----------------------------------------------------------------------------
 void JobSystem::ProcessWork()
 {
+    OPTICK_EVENT();
     ResetEvent(m_workFinishedEvent);
     if (!m_jobQueue.m_jobs.empty())
     {

@@ -2,6 +2,11 @@
 #include "Core/tinyxml2.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+IMPLEMENT_SERIALIZATION_OBJECT(ISettingBase);
+IMPLEMENT_SERIALIZATION_OBJECT(DeserialisableSetting);
+IMPLEMENT_SERIALIZATION_OBJECT(RenderSetting);
+IMPLEMENT_SERIALIZATION_OBJECT(VectorSetting);
+
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
@@ -54,6 +59,7 @@ void RenderSetting::deserialise( const tinyxml2::XMLElement* element)
         }
     }
 }
+
 ///-----------------------------------------------------------------------------
 ///! @brief   Deserialise a material from an xml node
 ///! @remark

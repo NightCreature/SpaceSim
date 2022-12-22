@@ -2,7 +2,10 @@
 
 #include "Core/Settings/Settings.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+
+#include <filesystem>
 #include <vector>
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief  Todo Add comment
@@ -53,6 +56,12 @@ public:
             m_settings.push_back(value);
         }
     }
+    ///-----------------------------------------------------------------------------
+    ///! @brief   
+    ///! @remark
+    ///-----------------------------------------------------------------------------
+    void SaveSettings(const std::filesystem::path& settingsFilePath);
+    void LoadSettings(const std::filesystem::path& settingsFilePath);
 protected:
 private:
     int getSettingIndex(const std::string& settingName) const 

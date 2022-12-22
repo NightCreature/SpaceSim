@@ -15,10 +15,12 @@
 
 #include "Loader/ModelLoaders/ModelLoader.h"
 #include "Core/MessageSystem/GameMessages.h"
+#include "Frustum.h"
+#include "Gameplay/box.h"
+#include "DebugBox.h"
 
 ModelManager::~ModelManager()
 {
-    cleanup();
 }
 
 void ModelManager::cleanup()
@@ -28,7 +30,42 @@ void ModelManager::cleanup()
         delete createdModel.m_model.model;
     }
 
+    if (m_createDebugBoundingBoxes)
+    {
+        for (auto& debugBox: m_debugBoundingBoxes)
+        {
+            delete debugBox.second;
+        }
+    }
+
     m_models.clear();
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void ModelManager::OnMessage(const MessageSystem::Message& msg)
+{
+    const MessageSystem::RenderInformation::RenderInfo* info = static_cast<const MessageSystem::RenderInformation&>(msg).GetData();
+
+    const CreatedModel* model = GetRenderResource(info->m_renderObjectid);
+    if (model)
+    {
+        //need to pass commanlist here
+        model->model->Update(*info);
+
+        //const_cast<CreatedModel*>(model)->boundingBox.transformAccordingToMatrix(info->m_world);
+    }
+
+    if (m_createDebugBoundingBoxes)
+    {
+        auto it = m_debugBoundingBoxes.find(info->m_renderObjectid);
+        if (it != m_debugBoundingBoxes.end())
+        {
+            it->second->Update(*info);
+        }
+    }
 }
 
 ///-------------------------------------------------------------------------
@@ -97,7 +134,8 @@ size_t ModelManager::AddFace(void* data, size_t commandQueueHandle, size_t comma
         creationParams->m_fixedData.m_commandList = &(commandQueue.GetCommandList(commandLisHandle));
 
         //register face with model manager
-        RegisterCreatedModel(Face::CreateFace((creationParams->m_fixedData), m_resource), renderResourceId);
+        auto face = Face::CreateFace((creationParams->m_fixedData), m_resource);
+        RegisterCreatedModel(face, renderResourceId);
     }
 
     return renderResourceId;
@@ -127,6 +165,13 @@ void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourc
 
         m_models.push_back(handle);
 
+        if (m_createDebugBoundingBoxes)
+        {
+            DebugGraphics::DebugBox* debugBox = new DebugGraphics::DebugBox(m_resource, handle.m_model.boundingBox.getMin(), handle.m_model.boundingBox.getMax());
+            debugBox->initialise();
+            m_debugBoundingBoxes.insert(std::make_pair(renderResourceId, debugBox));
+        }
+
         //We want to sort these here
         std::sort(begin(m_models), end(m_models), [](const ModelResourceHandle& lhs, const ModelResourceHandle& rhs) { return lhs.m_model.model->GetSortKey() < rhs.m_model.model->GetSortKey(); });
     }
@@ -150,9 +195,54 @@ const CreatedModel* ModelManager::GetRenderResource(size_t renderResourceId) con
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+const std::vector<RenderInterface*> ModelManager::GetRenderables(const Frustum& viewFrustum) const
+{
+    OPTICK_EVENT();
+
+    std::vector<RenderInterface*> retVal;
+
+    for (auto& modelHandle : m_models)
+    {
+        if (viewFrustum.IsInside(modelHandle.m_model.boundingBox))
+        {
+            retVal.push_back(modelHandle.m_model.model);
+        }
+    }
+
+    if (m_createDebugBoundingBoxes)
+    {
+        for (auto& box : m_debugBoundingBoxes)
+        {
+            retVal.push_back(box.second);
+        }
+    }
+
+    return retVal;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
 ///! @remark This might not be needed, does this function need to actually lock
 ///-----------------------------------------------------------------------------
 bool ModelManager::InternalHasRenderResource(size_t resourceId) const
 {
     return (std::find_if(cbegin(m_models), cend(m_models), [resourceId](const auto& entry) { return entry.m_resourceId == resourceId; })) != cend(m_models);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void ModelManager::UpdateDebugModels(size_t objectId, Matrix44 m_world) const
+{
+    if (m_createDebugBoundingBoxes)
+    {
+        auto it = m_debugBoundingBoxes.find(objectId);
+        if (it != m_debugBoundingBoxes.end())
+        {
+            it->second->UpdateCbs();
+        }
+    }
 }

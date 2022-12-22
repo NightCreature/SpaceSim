@@ -18,28 +18,28 @@ public:
 
     void SetVertextShader(const Shader& shader) 
     {
-        m_pipeLineStateDescriptor.VS.BytecodeLength = shader.getShaderBlob()->GetBufferSize();
-        m_pipeLineStateDescriptor.VS.pShaderBytecode = shader.getShaderBlob()->GetBufferPointer();
+        m_pipeLineStateDescriptor.VS.BytecodeLength = shader.GetShaderBufferLength();
+        m_pipeLineStateDescriptor.VS.pShaderBytecode = shader.GetShaderBufferPointer();
     }
     void SetPixelShader(const Shader& shader)
     {
-        m_pipeLineStateDescriptor.PS.BytecodeLength = shader.getShaderBlob()->GetBufferSize();
-        m_pipeLineStateDescriptor.PS.pShaderBytecode = shader.getShaderBlob()->GetBufferPointer();
+        m_pipeLineStateDescriptor.PS.BytecodeLength = shader.GetShaderBufferLength();
+        m_pipeLineStateDescriptor.PS.pShaderBytecode = shader.GetShaderBufferPointer();
     }
     void SetDomainShader(const Shader& shader)
     {
-        m_pipeLineStateDescriptor.DS.BytecodeLength = shader.getShaderBlob()->GetBufferSize();
-        m_pipeLineStateDescriptor.DS.pShaderBytecode = shader.getShaderBlob()->GetBufferPointer();
+        m_pipeLineStateDescriptor.DS.BytecodeLength = shader.GetShaderBufferLength();
+        m_pipeLineStateDescriptor.DS.pShaderBytecode = shader.GetShaderBufferPointer();
     }
     void SetHullShader(const Shader& shader)
     {
-        m_pipeLineStateDescriptor.HS.BytecodeLength = shader.getShaderBlob()->GetBufferSize();
-        m_pipeLineStateDescriptor.HS.pShaderBytecode = shader.getShaderBlob()->GetBufferPointer();
+        m_pipeLineStateDescriptor.HS.BytecodeLength = shader.GetShaderBufferLength();
+        m_pipeLineStateDescriptor.HS.pShaderBytecode = shader.GetShaderBufferPointer();
     }
     void SetGeometryShader(const Shader& shader)
     {
-        m_pipeLineStateDescriptor.GS.BytecodeLength = shader.getShaderBlob()->GetBufferSize();
-        m_pipeLineStateDescriptor.GS.pShaderBytecode = shader.getShaderBlob()->GetBufferPointer();
+        m_pipeLineStateDescriptor.GS.BytecodeLength = shader.GetShaderBufferLength();
+        m_pipeLineStateDescriptor.GS.pShaderBytecode = shader.GetShaderBufferPointer();
     }
 
     D3D12_BLEND_DESC& GetBLendDescriptor() { return m_pipeLineStateDescriptor.BlendState; }
@@ -58,6 +58,8 @@ public:
     }
 
     void BindToCommandList(CommandList& commandList);
+
+    bool IsValid() const { return m_pipeLineStateDescriptor.VS.pShaderBytecode != nullptr; }
 
     ID3D12PipelineState* m_pipelineObject = nullptr;
     D3D12_GRAPHICS_PIPELINE_STATE_DESC m_pipeLineStateDescriptor = { 0 };

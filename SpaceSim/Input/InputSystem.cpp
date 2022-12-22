@@ -3,6 +3,7 @@
 #include "Input/KeyboardController.h"
 #include "Input/MouseController.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include <Optick.h>
 
 InputSystem::AvailableActions InputSystem::m_availableActions;
 #ifdef DEBUG
@@ -70,6 +71,7 @@ IInputDevice* InputSystem::createController(const ControllerType type)
 ///-----------------------------------------------------------------------------
 void InputSystem::update( float elapsedTime, double time )
 {
+    OPTICK_EVENT();
     for (ControllersAndStateIt it = m_controllers.begin(); it != m_controllers.end(); ++it)
     {
         IInputDevice* controller = (*it).first;

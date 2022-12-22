@@ -112,5 +112,7 @@ private:
     bool m_hit;
     //GLUquadric*		 m_forcefieldinside;
     //GLUquadric*		 m_forcefieldoutside;
+
+    ECS::Entity m_entity;
 };
 #endif

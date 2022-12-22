@@ -217,7 +217,7 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
         wvp.m_view = view;
         wvp.m_projection = projection;
 
-        PROFILE_EVENT("ParticleEmitter::SubmitInstance", DarkBlue);
+        //PROFILE_EVENT("ParticleEmitter::SubmitInstance", Color::DarkBlue);
 
         const Effect* effect = helper.getWriteableResource().getEffectCache().getEffect(hashString("ParticleSystem.xml"));
         Technique* technique = const_cast<Technique*>(effect->getTechnique(hashString("default")));
@@ -284,6 +284,24 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
     ID3D11Buffer* nullBuffer = nullptr;
     deviceContext->VSSetConstantBuffers(0, 1, &nullBuffer);
     deviceContext->VSSetConstantBuffers(1, 1, &nullBuffer);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void ParticleEmitterComponentBased::UpdateCbs()
+{
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void ParticleEmitterComponentBased::PopulateCommandlist(Resource* resource, CommandList& commandList)
+{
+    UNUSEDPARAM(resource);
+    UNUSEDPARAM(commandList);
 }
 
 ///-----------------------------------------------------------------------------

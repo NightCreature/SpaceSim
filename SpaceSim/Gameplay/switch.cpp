@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 
+#include "Core/Resource/GameResource.h"
 #include "Core/Resource/renderResource.h"
 #include "Gameplay/GameObjectManager.h"
 #include "Core/Types/TypeHelpers.h"

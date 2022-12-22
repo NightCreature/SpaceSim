@@ -41,4 +41,9 @@ private:
 	float m_move;
 	bool m_plus;
 };
+
+//Door as Entity
+//MaterialCompoenent
+//PositionComponent
+//DoorAnimateComponent
 #endif

@@ -1,0 +1,243 @@
+Running "cmake"  -DHLSL_OPTIONAL_PROJS_IN_DEFAULT:BOOL=OFF -DHLSL_ENABLE_ANALYZE:BOOL=OFF -DHLSL_OFFICIAL_BUILD:BOOL=OFF -DHLSL_ENABLE_FIXED_VER:BOOL=OFF -DHLSL_ENABLE_FIXED_VER:BOOL=OFF -DHLSL_FIXED_VERSION_LOCATION:STRING= -DHLSL_BUILD_DXILCONV:BOOL=ON -DCLANG_VENDOR:STRING= -DENABLE_SPIRV_CODEGEN:BOOL=OFF -DSPIRV_BUILD_TESTS:BOOL=OFF -DCLANG_ENABLE_ARCMT:BOOL=OFF -DCLANG_ENABLE_STATIC_ANALYZER:BOOL=OFF -DCLANG_INCLUDE_TESTS:BOOL=Off -DLLVM_INCLUDE_TESTS:BOOL=Off -DHLSL_INCLUDE_TESTS:BOOL=ON -DLLVM_TARGETS_TO_BUILD:STRING=None -DLLVM_INCLUDE_DOCS:BOOL=OFF -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF -DLIBCLANG_BUILD_STATIC:BOOL=ON -DLLVM_OPTIMIZED_TABLEGEN:BOOL=OFF -DLLVM_APPEND_VC_REV:BOOL=ON -DLLVM_ENABLE_RTTI:BOOL=ON -DLLVM_ENABLE_EH:BOOL=ON -DLLVM_DEFAULT_TARGET_TRIPLE:STRING=dxil-ms-dx -DCLANG_BUILD_EXAMPLES:BOOL=OFF -DCLANG_CL:BOOL=OFF -DCMAKE_SYSTEM_VERSION=10.0.17763.0 -G "Visual Studio 17 2022" "-Ax64" E:\SDK\Demo\SpaceSim\SDK\DirectXCompiler\source 
+-- No build type selected, default to Debug
+CMake Deprecation Warning at CMakeLists.txt:23 (cmake_policy):
+  The OLD behavior for policy CMP0051 will be removed from a future version
+  of CMake.
+
+  The cmake-policies(7) manual explains that the OLD behaviors of all
+  policies are deprecated and that a policy should be set to OLD only under
+  specific short-term circumstances.  Projects should be ported to the NEW
+  behavior and not rely on setting a policy to OLD.
+
+
+-- The C compiler identification is MSVC 19.33.31629.0
+-- The CXX compiler identification is MSVC 19.33.31629.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.33.31629/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.33.31629/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Looking for dirent.h
+-- Looking for dirent.h - not found
+-- Looking for dlfcn.h
+-- Looking for dlfcn.h - not found
+-- Looking for errno.h
+-- Looking for errno.h - found
+-- Looking for execinfo.h
+-- Looking for execinfo.h - not found
+-- Looking for fcntl.h
+-- Looking for fcntl.h - found
+-- Looking for inttypes.h
+-- Looking for inttypes.h - found
+-- Looking for limits.h
+-- Looking for limits.h - found
+-- Looking for link.h
+-- Looking for link.h - not found
+-- Looking for malloc.h
+-- Looking for malloc.h - found
+-- Looking for malloc/malloc.h
+-- Looking for malloc/malloc.h - not found
+-- Looking for ndir.h
+-- Looking for ndir.h - not found
+-- Looking for signal.h
+-- Looking for signal.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for sys/dir.h
+-- Looking for sys/dir.h - not found
+-- Looking for sys/ioctl.h
+-- Looking for sys/ioctl.h - not found
+-- Looking for sys/mman.h
+-- Looking for sys/mman.h - not found
+-- Looking for sys/ndir.h
+-- Looking for sys/ndir.h - not found
+-- Looking for sys/param.h
+-- Looking for sys/param.h - not found
+-- Looking for sys/resource.h
+-- Looking for sys/resource.h - not found
+-- Looking for sys/stat.h
+-- Looking for sys/stat.h - found
+-- Looking for sys/time.h
+-- Looking for sys/time.h - not found
+-- Looking for sys/uio.h
+-- Looking for sys/uio.h - not found
+-- Looking for sys/wait.h
+-- Looking for sys/wait.h - not found
+-- Looking for termios.h
+-- Looking for termios.h - not found
+-- Looking for unistd.h
+-- Looking for unistd.h - not found
+-- Looking for utime.h
+-- Looking for utime.h - not found
+-- Looking for valgrind/valgrind.h
+-- Looking for valgrind/valgrind.h - not found
+-- Looking for zlib.h
+-- Looking for zlib.h - not found
+-- Looking for fenv.h
+-- Looking for fenv.h - found
+-- Looking for FE_ALL_EXCEPT
+-- Looking for FE_ALL_EXCEPT - found
+-- Looking for FE_INEXACT
+-- Looking for FE_INEXACT - found
+-- Looking for mach/mach.h
+-- Looking for mach/mach.h - not found
+-- Looking for mach-o/dyld.h
+-- Looking for mach-o/dyld.h - not found
+-- Looking for histedit.h
+-- Looking for histedit.h - not found
+-- Performing Test HAVE_CXXABI_H
+-- Performing Test HAVE_CXXABI_H - Failed
+-- Looking for arc4random
+-- Looking for arc4random - not found
+-- Looking for backtrace
+-- Looking for backtrace - not found
+-- Looking for getpagesize
+-- Looking for getpagesize - not found
+-- Looking for getrusage
+-- Looking for getrusage - not found
+-- Looking for setrlimit
+-- Looking for setrlimit - not found
+-- Looking for isatty
+-- Looking for isatty - not found
+-- Looking for futimens
+-- Looking for futimens - not found
+-- Looking for futimes
+-- Looking for futimes - not found
+-- Looking for mallctl
+-- Looking for mallctl - not found
+-- Looking for mallinfo
+-- Looking for mallinfo - not found
+-- Looking for mallinfo2
+-- Looking for mallinfo2 - not found
+-- Looking for malloc_zone_statistics
+-- Looking for malloc_zone_statistics - not found
+-- Looking for mkdtemp
+-- Looking for mkdtemp - not found
+-- Looking for mkstemp
+-- Looking for mkstemp - not found
+-- Looking for mktemp
+-- Looking for mktemp - not found
+-- Looking for closedir
+-- Looking for closedir - not found
+-- Looking for opendir
+-- Looking for opendir - not found
+-- Looking for readdir
+-- Looking for readdir - not found
+-- Looking for getcwd
+-- Looking for getcwd - not found
+-- Looking for gettimeofday
+-- Looking for gettimeofday - not found
+-- Looking for getrlimit
+-- Looking for getrlimit - not found
+-- Looking for posix_spawn
+-- Looking for posix_spawn - not found
+-- Looking for pread
+-- Looking for pread - not found
+-- Looking for realpath
+-- Looking for realpath - not found
+-- Looking for sbrk
+-- Looking for sbrk - not found
+-- Looking for srand48
+-- Looking for srand48 - not found
+-- Looking for strtoll
+-- Looking for strtoll - found
+-- Looking for strtoq
+-- Looking for strtoq - not found
+-- Looking for strerror
+-- Looking for strerror - found
+-- Looking for strerror_r
+-- Looking for strerror_r - not found
+-- Looking for strerror_s
+-- Looking for strerror_s - found
+-- Looking for setenv
+-- Looking for setenv - not found
+-- Looking for _chsize_s
+-- Looking for _chsize_s - found
+-- Looking for _alloca
+-- Looking for _alloca - not found
+-- Looking for __alloca
+-- Looking for __alloca - not found
+-- Looking for __chkstk
+-- Looking for __chkstk - found
+-- Looking for __chkstk_ms
+-- Looking for __chkstk_ms - not found
+-- Looking for ___chkstk
+-- Looking for ___chkstk - not found
+-- Looking for ___chkstk_ms
+-- Looking for ___chkstk_ms - not found
+-- Looking for __ashldi3
+-- Looking for __ashldi3 - not found
+-- Looking for __ashrdi3
+-- Looking for __ashrdi3 - not found
+-- Looking for __divdi3
+-- Looking for __divdi3 - not found
+-- Looking for __fixdfdi
+-- Looking for __fixdfdi - not found
+-- Looking for __fixsfdi
+-- Looking for __fixsfdi - not found
+-- Looking for __floatdidf
+-- Looking for __floatdidf - not found
+-- Looking for __lshrdi3
+-- Looking for __lshrdi3 - not found
+-- Looking for __moddi3
+-- Looking for __moddi3 - not found
+-- Looking for __udivdi3
+-- Looking for __udivdi3 - not found
+-- Looking for __umoddi3
+-- Looking for __umoddi3 - not found
+-- Looking for __main
+-- Looking for __main - not found
+-- Looking for __cmpdi2
+-- Looking for __cmpdi2 - not found
+-- Looking for __GLIBC__
+-- Looking for __GLIBC__ - not found
+-- Performing Test HAVE_INT64_T
+-- Performing Test HAVE_INT64_T - Success
+-- Performing Test HAVE_UINT64_T
+-- Performing Test HAVE_UINT64_T - Success
+-- Performing Test HAVE_U_INT64_T
+-- Performing Test HAVE_U_INT64_T - Failed
+-- Performing Test LLVM_HAS_ATOMICS
+-- Performing Test LLVM_HAS_ATOMICS - Success
+-- Performing Test SUPPORTS_NO_VARIADIC_MACROS_FLAG
+-- Performing Test SUPPORTS_NO_VARIADIC_MACROS_FLAG - Failed
+-- Target triple: x86_64-pc-win32
+-- Native target X86 is not selected; lli will not JIT code
+-- Performing Test HAVE_ELMCB_PCSTR
+-- Performing Test HAVE_ELMCB_PCSTR - Success
+-- Threads enabled.
+-- Doxygen disabled.
+-- Sphinx disabled.
+-- Go bindings disabled.
+-- Could NOT find OCaml (missing: OCAMLFIND OCAML_VERSION OCAML_STDLIB_PATH) 
+-- OCaml bindings disabled.
+-- Using Debug VC++ CRT: MDd
+-- Using Release VC++ CRT: MD
+-- Using MinSizeRel VC++ CRT: MD
+-- Using RelWithDebInfo VC++ CRT: MD
+-- Using Debug VC++ CRT: MDd
+-- Performing Test SUPPORTS_SIZED_DEALLOC
+-- Performing Test SUPPORTS_SIZED_DEALLOC - Success
+-- Found PythonInterp: C:/Python39/python.exe (found suitable version "3.9", minimum required is "3") 
+-- Constructing LLVMBuild project information
+-- Git checkout autocrlf: On
+-- Found DiaSDK: C:/Program Files/Microsoft Visual Studio/2022/Community/DIA SDK/lib/amd64/diaguids.lib  
+Will generate dev build version based on current commit count
+E:/SDK/Demo/SpaceSim/SDK/DirectXCompiler/hlsl.bin/utils/version/version.inc
+-- Found D3D12: C:/Program Files (x86)/Windows Kits/10/Include/10.0.17763.0/um;C:/Program Files (x86)/Windows Kits/10/Include/10.0.17763.0/shared  
+CMake Error at C:/Program Files/CMake/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake:230 (message):
+  Could NOT find TAEF (missing: TAEF_COMMON_LIBRARY TAEF_INCLUDE_DIR)
+Call Stack (most recent call first):
+  C:/Program Files/CMake/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake:594 (_FPHSA_FAILURE_MESSAGE)
+  cmake/modules/FindTAEF.cmake:63 (find_package_handle_standard_args)
+  projects/dxilconv/unittests/CMakeLists.txt:4 (find_package)
+
+
+-- Configuring incomplete, errors occurred!
+See also "E:/SDK/Demo/SpaceSim/SDK/DirectXCompiler/hlsl.bin/CMakeFiles/CMakeOutput.log".
+See also "E:/SDK/Demo/SpaceSim/SDK/DirectXCompiler/hlsl.bin/CMakeFiles/CMakeError.log".

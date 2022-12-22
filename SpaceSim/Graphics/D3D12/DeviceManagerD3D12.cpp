@@ -6,6 +6,10 @@
 #include "D3D12X.h"
 #include <sstream>
 
+extern "C" { __declspec(dllexport) extern const UINT D3D12SDKVersion = 608; }
+
+extern "C" { __declspec(dllexport) extern const char* D3D12SDKPath = ".\\D3D12\\"; } //Path to where we can find D3D12Core.dll
+
 ///-----------------------------------------------------------------------------
 ///! @brief 
 ///! @remark
@@ -144,8 +148,8 @@ IDXGIAdapter* DeviceManager::EnumerateAdapters()
     //{
         adapter = nullptr;
         //Ask for the high performance GPU, this should be the dedicated GPU in a laptop
-        hr = m_dxgiFactory->EnumAdapterByGpuPreference((UINT)counter, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter));
-        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter number: %d", counter);
+        hr = m_dxgiFactory->EnumAdapterByGpuPreference((UINT)0, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter));
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter number: %d", 0);
         if (adapter != nullptr)
         {
             DXGI_ADAPTER_DESC adapterDesc;
@@ -201,6 +205,13 @@ bool DeviceManager::CheckFeatures()
     architecture.NodeIndex = 0;
     m_device->CheckFeatureSupport(D3D12_FEATURE_ARCHITECTURE, &architecture, sizeof(architecture));
     MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Type of GPU: %s", architecture.UMA ? "APU" : "DGPU");
+
+    //Initialise this with the highest possible value, if its supported it will return that value or the highest the device does support
+    D3D12_FEATURE_DATA_SHADER_MODEL shaderModel;
+    shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_7;
+    m_device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel));
+
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Highest Shader Model supported: 0x%X", shaderModel.HighestShaderModel);
 
     return true;
 }

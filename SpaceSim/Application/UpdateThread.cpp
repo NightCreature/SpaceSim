@@ -14,6 +14,17 @@
 
 #include "Core/Profiler/ProfilerMacros.h"
 
+#include "Physics/PhysicsManager.h"
+#include "Gameplay/ECS/SystemsManager.h"
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+UpdateThread::~UpdateThread()
+{
+    
+}
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
@@ -23,6 +34,9 @@ void UpdateThread::Initialise(Resource* resource)
 {
     m_resource = resource;
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedRenderResourceMessage), fastdelegate::MakeDelegate(m_gameObjectManager, &GameObjectManager::handleMessage));
+    //m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedRenderResourceMessage), fastdelegate::MakeDelegate(&m_renderableSystem, &ECS::RenderableSystem::HandleMessage));
+
+    
     m_done = true;
 }
 
@@ -35,6 +49,7 @@ int UpdateThread::WorkerFunction()
     while (isAlive())
     {
         PROFILE_THREAD("UpdateThread");
+        OPTICK_THREAD("UpdateThread");
         if (!m_done)
         {
             EnterCriticalSection(&m_criticalSection);
@@ -45,6 +60,16 @@ int UpdateThread::WorkerFunction()
             m_renderList.clear();
 
             m_gameObjectManager->update(m_renderList, m_elapsedTime, m_input);
+            
+            auto& entitySystemsManager = m_entityManager->GetSystemsManager();
+            {
+                //This group could be on its own job
+                entitySystemsManager.PrePhysicsUpdate();
+                m_physicsManager->Update(m_elapsedTime);
+                entitySystemsManager.PostPhysicsUpdate();
+            }
+            //Potentially own job
+            entitySystemsManager.Update(); //This one is system that dont have a link with the physics, this could be farmed off to a job
             m_laserManager->update(m_renderList, m_elapsedTime, Matrix44(), Matrix44()); //TODO FIX LASERS
 
             m_done = true;

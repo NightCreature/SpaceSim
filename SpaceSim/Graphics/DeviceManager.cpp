@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include <Optick.h>
 
 ///-----------------------------------------------------------------------------
 ///! @brief 

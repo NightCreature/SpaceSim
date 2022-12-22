@@ -129,15 +129,22 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         auto elmentHash = hashString(childElement->Value());
         if (hashString("VertexShader") == elmentHash)
         {
-            auto* shader = shaderCache.getVertexShader(shaderCache.getVertexShader(childElement, deviceManager));
-            if (shader != nullptr)
+            size_t shaderId = shaderCache.getVertexShader(childElement, deviceManager);
+            if (shaderId != InvalidShaderId)
             {
-                m_pso.SetVertextShader(*shader);
-                auto parameters = shader->GetParameters();
-                std::copy(parameters.begin(), parameters.end(), std::back_inserter(m_shaderParameters));
+                auto* shader = shaderCache.getVertexShader(shaderCache.getVertexShader(childElement, deviceManager));
+                if (shader != nullptr)
+                {
+                    m_pso.SetVertextShader(*shader);
+                    auto parameters = shader->GetParameters();
+                    std::copy(parameters.begin(), parameters.end(), std::back_inserter(m_shaderParameters));
+                }
+                loadedShaders[static_cast<std::underlying_type_t<ShaderType>>(ShaderType::eVertexShader)] = shader;
             }
-
-            loadedShaders[static_cast<std::underlying_type_t<ShaderType>>(ShaderType::eVertexShader)] = shader;
+            else
+            {
+                MSG_ERROR_CHANNEL("EFFECT", "FAILED TO COMPILE SHADER SHOULD ABORT");
+            }
         }
         else if (hashString("HullShader") == elmentHash)
         {
@@ -293,7 +300,7 @@ void Technique::BuildRootParamaterLayout(const std::array<const Shader*, static_
     {
         if (shaders[counter] != nullptr)
         {
-            ShaderParamMatcher matcher(shaders[counter]->getShaderBlob());
+            ShaderParamMatcher matcher(shaders[counter]->GetCompiledShader());
             matcher.MatchSignatureWithRefeclection(rootParameterInfo);
             if (static_cast<ShaderType>(counter) == ShaderType::eVertexShader)
             {

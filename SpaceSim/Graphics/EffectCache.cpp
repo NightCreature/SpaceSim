@@ -1,4 +1,5 @@
 #include "EffectCache.h"
+#include <Optick.h>
 
 EffectCache::EffectCache()
 {
@@ -59,6 +60,7 @@ const Effect* EffectCache::getEffect(const std::string& name) const
 
 const Effect* EffectCache::getEffect(size_t effectHash) const
 {
+    OPTICK_EVENT();
     if (m_effects.empty())
     {
         return nullptr;

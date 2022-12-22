@@ -1,9 +1,9 @@
 #pragma once
 
-#include "UI/Messages.h"
-#include "Core/Resource/Resourceable.h"
-#include "Core/Resource/GameResource.h"
-#include "Core/Resource/RenderResource.h"
+//#include "UI/Messages.h"
+//#include "Core/Resource/Resourceable.h"
+//#include "Core/Resource/GameResource.h"
+//#include "Core/Resource/RenderResource.h"
 #include <cstddef>
 #include <cstdint>
 #include <vector>

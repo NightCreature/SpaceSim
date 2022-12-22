@@ -110,7 +110,7 @@ void VFS::File::Write(const byte* data, size_t length)
             data += std::numeric_limits<unsigned long>::max();
         }
 
-        platformData->m_overlapped.Offset = platformData->m_filePosition + static_cast<unsigned long>(amountToWrite);
+        platformData->m_overlapped.Offset = platformData->m_filePosition;
         platformData->m_overlapped.OffsetHigh = static_cast<unsigned long>(amountToWrite >> 32);
         numberOfBytesWritten = 0;
         if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(dataPtr), static_cast<unsigned long>(amountToWrite), &numberOfBytesWritten, &(platformData->m_overlapped)))
@@ -180,7 +180,7 @@ void VFS::File::Write(const byte* data, size_t offset, size_t length)
 byte* VFS::File::Read(byte*& data)
 {
     PlatformSpecficFileDataWin* platformData = static_cast<PlatformSpecficFileDataWin*>(m_platformSpecificData);
-    if (data == nullptr || m_platformSpecificData == nullptr || platformData->m_fileHandle == INVALID_HANDLE_VALUE)
+    if (m_platformSpecificData == nullptr || platformData->m_fileHandle == INVALID_HANDLE_VALUE)
     {
         return nullptr;
     }
@@ -216,7 +216,7 @@ byte* VFS::File::Read(byte*& data)
 byte* VFS::File::Read(byte*& data, size_t amount)
 {
     PlatformSpecficFileDataWin* platformData = static_cast<PlatformSpecficFileDataWin*>(m_platformSpecificData);
-    if (data == nullptr || amount <= 0 || platformData == nullptr || platformData->m_fileHandle == INVALID_HANDLE_VALUE)
+    if (amount <= 0 || platformData == nullptr || platformData->m_fileHandle == INVALID_HANDLE_VALUE)
     {
         return nullptr; //nothing to read or nowhere to move the data to
     }
@@ -230,9 +230,12 @@ byte* VFS::File::Read(byte*& data, size_t amount)
 
     //This should be done with an overlapped structure in the end
     platformData->m_fileSize = fileSize.QuadPart;
-    byte* fileData = new byte[platformData->m_fileSize];
+    byte* fileData = new byte[amount];
 
-    if (!ReadFileEx(platformData->m_fileHandle, static_cast<void*>(fileData), static_cast<unsigned long>(platformData->m_fileSize), NULL, NULL))
+
+    //Dont read the whole file here, also since size_t this could read way too much
+    DWORD numberOfBytesRead = 0;
+    if (!ReadFile(platformData->m_fileHandle, static_cast<void*>(fileData), amount, &numberOfBytesRead, NULL))
     {
         //Handle error file writing fucked up
         delete[] fileData;
@@ -240,15 +243,15 @@ byte* VFS::File::Read(byte*& data, size_t amount)
         return nullptr;
     }
 
-    size_t amountToCopy = amount;
-    if ((platformData->m_filePosition + amount) >= platformData->m_fileSize)
-    {
-        amountToCopy = amount - ((platformData->m_filePosition + amount) - platformData->m_fileSize);
-    }
+    //size_t amountToCopy = amount;
+    //if ((platformData->m_filePosition + amount) >= platformData->m_fileSize)
+    //{
+    //    amountToCopy = amount - ((platformData->m_filePosition + amount) - platformData->m_fileSize);
+    //}
     
-    data = new byte[amountToCopy];
-    memcpy(static_cast<void*>(data), static_cast<void*>(&(fileData[platformData->m_filePosition])), amountToCopy);
-    platformData->m_filePosition += amountToCopy;
+    data = new byte[numberOfBytesRead];
+    memcpy(static_cast<void*>(data), static_cast<void*>(fileData), numberOfBytesRead);
+    platformData->m_filePosition += numberOfBytesRead;
 
     delete[] fileData;
 

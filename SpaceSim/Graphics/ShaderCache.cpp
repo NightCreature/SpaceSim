@@ -21,6 +21,15 @@ ShaderCache::~ShaderCache()
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
+void ShaderCache::Initialise()
+{
+    m_compiler.Initialise();
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
 void ShaderCache::cleanup()
 {
     for (auto& shader : m_vertexShaders)
@@ -66,9 +75,13 @@ const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, c
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getVertexShader(resourceName) == nullptr)
     {
-        if (shader.createShader(deviceManager))
+        if (shader.createShader(deviceManager, m_compiler))
         {
             m_vertexShaders.emplace(VertexShaderHandle(resourceName, shader));
+        }
+        else
+        {
+            return InvalidShaderId;
         }
     }
     
@@ -85,9 +98,13 @@ const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, con
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getHullShader(resourceName) == nullptr)
     {
-        if (shader.createShader(deviceManager))
+        if (shader.createShader(deviceManager, m_compiler))
         {
             m_hullShaders.emplace(HullShaderHandle(resourceName, shader));
+        }
+        else
+        {
+            return InvalidShaderId;
         }
     }
 
@@ -104,9 +121,13 @@ const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, c
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getDomainShader(resourceName) == nullptr)
     {
-        if (shader.createShader(deviceManager))
+        if (shader.createShader(deviceManager, m_compiler))
         {
             m_domainShaders.emplace(DomainShaderHandle(resourceName, shader));
+        }
+        else
+        {
+            return InvalidShaderId;
         }
     }
 
@@ -123,9 +144,13 @@ const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element,
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getGeometryShader(resourceName) == nullptr)
     {
-        if (shader.createShader(deviceManager))
+        if (shader.createShader(deviceManager, m_compiler))
         {
             m_geometryShaders.emplace(GeometryShaderHandle(resourceName, shader));
+        }
+        else
+        {
+            return InvalidShaderId;
         }
     }
 
@@ -142,9 +167,13 @@ const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, co
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getPixelShader(resourceName) == nullptr)
     {
-        if (shader.createShader(deviceManager))
+        if (shader.createShader(deviceManager, m_compiler))
         {
             m_pixelShaders.emplace(PixelShaderHandle(resourceName, shader));
+        }
+        else
+        {
+            return InvalidShaderId;
         }
     }
 
@@ -161,9 +190,13 @@ const size_t  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element,
     size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
     if (getComputeShader(resourceName) == nullptr)
     {
-        if (shader.createShader(deviceManager))
+        if (shader.createShader(deviceManager, m_compiler))
         {
             m_computeShaders.emplace(ComputeShaderHandle(resourceName, shader));
+        }
+        else
+        {
+            return InvalidShaderId;
         }
     }
 

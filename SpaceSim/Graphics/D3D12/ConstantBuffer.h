@@ -9,10 +9,12 @@
 
 #include <windows.h>
 #include <combaseapi.h>
+#include <Optick.h>
 
-struct ConstantBufferData
+struct ConstantData
 {
-    ConstantBufferData(size_t size) : m_size(CalculateCBSize(size)) {}
+    ConstantData() = default;
+    ConstantData(size_t size) : m_size(CalculateCBSize(size)) {}
 
     size_t CalculateCBSize(size_t size)
     {
@@ -34,9 +36,9 @@ struct ConstantBufferData
 };
 
 template<class T>
-ConstantBufferData CreateConstantBufferData(const T& data)
+ConstantData CreateConstantBufferData(const T& data)
 {
-    ConstantBufferData retval(sizeof(T));
+    ConstantData retval(sizeof(T));
     memcpy(retval.m_data, static_cast<const byte*>(&data), sizeof(T));
     return retval;
 }
@@ -48,17 +50,19 @@ public:
     void Destroy();
     void UpdateGpuData() 
     {
+        OPTICK_EVENT();
         memcpy(m_GPUDataBegin, m_cpuSideData.m_data, m_cpuSideData.m_size); 
     }
 
     template<class T>
     void UpdateCpuData(const T& data) 
     {
+        OPTICK_EVENT();
         memcpy(m_cpuSideData.m_data, &data, sizeof(T));
     }
     ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
 private:
-    ConstantBufferData m_cpuSideData = {0};
+    ConstantData m_cpuSideData = {0};
     ID3D12Resource* m_constantBuffer = nullptr;
     byte* m_GPUDataBegin = nullptr;
     size_t m_heapIndex = DescriptorHeap::invalidDescriptorIndex;

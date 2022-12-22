@@ -2,6 +2,7 @@
 
 #include "Math/matrix44.h"
 #include "Memory/AlignMacros.h"
+#include "Core/Types/Types.h"
 
 struct WVPBufferContent
 {
@@ -18,6 +19,7 @@ struct LightConstants
     ALIGN16 float m_specular[4];
     ALIGN16 float m_attenuationFallOff[4];
     ALIGN16 float m_range[4];//last three elements are empty
+    ALIGN16 uint32 m_type[4];//Only the 1st value is used really
 };
 
 struct PerFrameConstants

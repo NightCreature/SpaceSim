@@ -1,9 +1,14 @@
 #pragma once
 
+
+#include "Graphics/D3D12/ShaderCompiler.h"
 #include "Shaders.h"
+
 #include <map>
 
 class DeviceManager;
+
+constexpr size_t InvalidShaderId = static_cast<size_t>(-1);
 
 class ShaderCache
 {
@@ -11,6 +16,7 @@ public:
     ShaderCache();
     ~ShaderCache();
 
+    void Initialise();
     void cleanup();
 
     //These should be renamed to shader create functions and return handles
@@ -28,6 +34,8 @@ public:
     const Shader* getGeometryShader(size_t resourceName) const;
     const Shader* getPixelShader(size_t resourceName) const;
     const Shader* getComputeShader(size_t resourceName) const;
+
+    const ShaderCompiler GetCompiler() const { return m_compiler; }
 
 #ifdef DEBUG
     void DumpLoadedShaderNames();
@@ -55,5 +63,7 @@ private:
     GeometryShaders m_geometryShaders;
     PixelShaders m_pixelShaders;
     ComputeShaders m_computeShaders;
+
+    ShaderCompiler m_compiler;
 };
 

@@ -58,6 +58,8 @@ public:
     const GameResource* getResource() const { return m_gameResource; }
 
     JobSystem* GetJobSystem() { return &m_jobSystem; }
+
+    const Paths& GetPaths() const { return m_paths; }
 private:
     JobSystem m_jobSystem;
     EntityManager      m_entityManager;
@@ -68,7 +70,7 @@ private:
     LaserManager    m_laserManager;
 
     UIManger m_uiManager;
-    PhysicsManager m_physicsManger;
+    Physics::PhysicsManager m_physicsManger;
     GameResource*      m_gameResource;
     bool               m_controllerConnected;
     bool               m_useController;

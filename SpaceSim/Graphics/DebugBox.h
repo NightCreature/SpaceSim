@@ -13,13 +13,18 @@ struct ColorVertex
     float a,r,g,b;
 };
 
-class DebugBox
+class DebugBox : public DebugRenderInterface
 {
 public:
     DebugBox(Resource* resource, const Vector3& lowerLeft, const Vector3& upperRight);
     virtual ~DebugBox();
 
-    virtual void initialise( const ShaderInstance& shaderInstance, const Matrix44& view, const Matrix44& projection);
+    virtual void initialise();
+
+    void UpdateCbs() override;
+    void PopulateCommandlist(Resource* resource, CommandList& commandList) override;
+    void Update(const MessageSystem::RenderInformation::RenderInfo& context) override;
+
 private:
     Vector3 m_lowerLeft;
     Vector3 m_upperRight;

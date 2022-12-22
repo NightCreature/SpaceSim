@@ -9,12 +9,14 @@
 #include <vector>
 
 #include <D3D12.h>
+#include <Optick.h>
+#include "Graphics/RenderInterface.h"
 
 
 class Input;
 class Resource;
 
-class Model
+class Model : public RenderInterface
 {
 public:
     struct CreationParams
@@ -48,16 +50,43 @@ public:
     ///! @brief   
     ///! @remark Since View and porjections are mostly per frame or per pass constants we dont need to set them
     ///-----------------------------------------------------------------------------
-    void Update(Resource* resource, CommandList& list, float elapsedTime, const Matrix44& world, const std::string& name)
+    void Update(float elapsedTime, const Matrix44& world, const std::string& name)
+    {
+        UNUSEDPARAM(elapsedTime);
+
+        if (!m_modelData.empty())
+        {
+            for (size_t counter = 0; counter < m_modelData.size(); ++counter)
+            {
+                m_modelData[counter].Update(world, name, m_boundingBox);
+            }
+        }
+    }
+
+    void Update(const MessageSystem::RenderInformation::RenderInfo& context)
     {
         if (!m_modelData.empty())
         {
             for (size_t counter = 0; counter < m_modelData.size(); ++counter)
             {
-                m_modelData[counter].Update(resource, list, elapsedTime, world, name, m_boundingBox);
+                m_modelData[counter].Update(context);
             }
         }
     }
+
+    void PopulateCommandlist(Resource* resource, CommandList& commandList) override
+    {
+        OPTICK_EVENT();
+        if (!m_modelData.empty())
+        {
+            for (auto& group : m_modelData)
+            {
+                group.PopulateCommandlist(resource, commandList);
+            }
+        }
+    }
+
+    void UpdateCbs() {}
 
     //Deprecated bad code
     void addMeshGroup(MeshGroup* meshGroup) { m_modelData.push_back(*meshGroup); }
@@ -76,7 +105,7 @@ public:
 
     void setDirty()
     {
-        for (auto meshGroup : m_modelData)
+        for (auto& meshGroup : m_modelData)
         {
             meshGroup.setDirty();
         }
@@ -85,10 +114,10 @@ public:
     void setShaderInstance(const ShaderInstance& shaderInstance)
     {
         UNUSEDPARAM(shaderInstance);
-        for (auto meshGroup : m_modelData)
-        {
-            //meshGroup.setShaderInstance(shaderInstance);
-        }
+        //for (auto& meshGroup : m_modelData)
+        //{
+        //    //meshGroup.setShaderInstance(shaderInstance);
+        //}
     }
 
     MeshGroup& CreateMeshGroup()
@@ -118,16 +147,6 @@ public:
     }
 
 
-    void PopulateCommandList(Resource* resource, CommandList& commandList)
-    {
-        if (!m_modelData.empty())
-        {
-            for (auto& group : m_modelData)
-            {
-                group.PopulateCommandlist(resource, commandList);
-            }
-        }
-    }
 protected:
     std::vector<MeshGroup> m_modelData; //Why is meshgroup a pointer here and not just owned?
     Bbox m_originalBBox;

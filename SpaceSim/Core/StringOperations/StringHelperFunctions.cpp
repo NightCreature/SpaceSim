@@ -78,6 +78,17 @@ void convertToWideString(const std::string& str, std::wstring& out)
 }
 
 ///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+std::wstring convertToWideString(const std::string str)
+{
+    std::wstring output;
+    convertToWideString(str, output);
+    return output;
+}
+
+///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
@@ -118,6 +129,8 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
     {
         prefixInternal = "TRACE";
     }
+    prefixInternal = toUpperCase(prefixInternal);
+    
     switch (severity)
     {
     default:
@@ -128,6 +141,10 @@ void debugOutput(TraceSeverity severity, const std::string& prefix, const char* 
     case TraceSeverity::EWARN:
 
         outputFormatString = "%s(%d): [%s] WARNING : %s\n";
+        break;
+    case TraceSeverity::EERROR:
+
+        outputFormatString = "%s(%d): [%s] : ERROR : %s\n";
         break;
     case TraceSeverity::EASSERT:
 
@@ -149,7 +166,23 @@ std::string FormatString(const char* format, ...)
     va_start(args, format);
     vsprintf_s(buf, format, args);
     va_end(args);
-    
+
+    return buf;
+}
+
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+std::wstring FormatString(const wchar_t* format, ...)
+{
+    static wchar_t buf[2048];
+    va_list args;
+    va_start(args, format);
+    vswprintf_s(buf, format, args);
+    va_end(args);
+
     return buf;
 }
 

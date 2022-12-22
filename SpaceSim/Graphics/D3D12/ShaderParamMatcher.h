@@ -2,9 +2,6 @@
 
 #include "Graphics/D3D12/ShaderParameter.h"
 
-#include <d3d12.h>
-#include <d3d12shader.h>
-
 
 struct RootParamInformation
 {
@@ -14,6 +11,9 @@ struct RootParamInformation
 	size_t type = 0;
 };
 
+struct IDxcBlob;
+struct ID3D12ShaderReflection;
+struct CreatedShaderObjects;
 
 using  RootParamtersInfo = std::vector<D3D12_ROOT_PARAMETER1>;
 
@@ -21,7 +21,7 @@ using  RootParamtersInfo = std::vector<D3D12_ROOT_PARAMETER1>;
 class ShaderParamMatcher
 {
 public:
-	ShaderParamMatcher(ID3DBlob* shaderBlob);
+	ShaderParamMatcher(const CreatedShaderObjects& compiledShader);
 	
 	bool MatchSignatureWithRefeclection(const RootParamtersInfo& rootParamInfo);
 
@@ -32,7 +32,8 @@ private:
 	//RootParamInformation HandleRootConstants(D3D12_ROOT_PARAMETER1 parameter, size_t rootParamIndex);
 	//RootParamInformation HandleCBVSRVUAV(D3D12_ROOT_PARAMETER1 parameter, size_t rootParamIndex);
 
-	ID3DBlob* m_shaderBlob;
+	IDxcBlob* m_shaderBlob;
+	ID3D12ShaderReflection* m_reflectionObject;
 
 	ShaderParameters m_parameters;
 	RootParamtersInfo m_rootParametersInfo;

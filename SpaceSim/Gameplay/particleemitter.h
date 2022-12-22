@@ -55,7 +55,7 @@ struct ParticleEmitterData
     std::array<IUpdater*, maxNumberOf> m_updaters; //only allow 32 for now
 };
 
-class ParticleEmitterComponentBased
+class ParticleEmitterComponentBased : public RenderInterface
 {
 public:
     ~ParticleEmitterComponentBased();
@@ -66,6 +66,10 @@ public:
 
     void addGenerator(IGenerator* generator) { m_generators.push_back(generator); }
     void addUpdater(IUpdater* updater) { m_updaters.push_back(updater); }
+
+    void UpdateCbs() override;
+    void PopulateCommandlist(Resource* resource, CommandList& commandList) override;
+
 private:
     ParticleData m_particleData;
     std::vector<IGenerator*> m_generators;

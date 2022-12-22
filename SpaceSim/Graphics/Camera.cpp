@@ -9,17 +9,17 @@
 #include <Windows.h>
 #include <directxmath.h>
 
-const float Camera::m_maxPitchAngle = 89.9f;
-const HashString moveForward("move_forwards");
-const HashString moveBackWards("move_backwards");
-const HashString moveLeft("move_left");
-const HashString moveRight("move_right");
-const HashString yawLeft("move_yaw_left");
-const HashString yawRight("move_yaw_right");
-const HashString pitchUp("move_pitch_up");
-const HashString pitchDown("move_pitch_down");
-const HashString rollLeft("move_roll_left");
-const HashString rollRight("move_roll_right");
+
+constexpr HashString moveForward("move_forwards");
+constexpr HashString moveBackWards("move_backwards");
+constexpr HashString moveLeft("move_left");
+constexpr HashString moveRight("move_right");
+constexpr HashString yawLeft("move_yaw_left");
+constexpr HashString yawRight("move_yaw_right");
+constexpr HashString pitchUp("move_pitch_up");
+constexpr HashString pitchDown("move_pitch_down");
+constexpr HashString rollLeft("move_roll_left");
+constexpr HashString rollRight("move_roll_right");
 
 Camera::Camera() :
 m_roll(0.0f),

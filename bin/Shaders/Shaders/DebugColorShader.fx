@@ -1,15 +1,13 @@
 #include "CommonConstantBuffers.ivs"
 #include "rootsignatures.ifx"
-//--------------------------------------------------------------------------------------
-// Constant Buffer Variables
-//--------------------------------------------------------------------------------------
+
+
+#include "BindlessBuffers.ifx"
+#include "Rootsignatures.ifx"
+
+ConstantBuffer<MeshResourceIndices> renderIndices : register(b0);
 
 //--------------------------------------------------------------------------------------
-struct VS_INPUT
-{
-    float4 Pos  : POSITION0;
-};
-
 struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
@@ -19,16 +17,19 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-[RootSignature(worldTransformRS)]
-PS_INPUT vs_main( VS_INPUT input )
+[RootSignature(bindlessRS)]
+PS_INPUT vs_main( uint id:SV_VERTEXID )
 {
+    float4 pos = float4(GetInstanceFromBufferT<float3>(renderIndices.posBufferIndex, id),0);
+    WVPData wvpData = GetInstanceFromBuffer<WVPData>(renderIndices.transformIndex);
+
     PS_INPUT output = (PS_INPUT)0;
-    output.Pos = mul( input.Pos, World );
-    output.Pos = mul( output.Pos, View );
-    output.Pos = mul( output.Pos, Projection );
+    output.Pos = mul( pos, wvpData.World );
+    output.Pos = mul( output.Pos, wvpData.View );
+    output.Pos = mul( output.Pos, wvpData.Projection );
+
     return output;
 }
-
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader

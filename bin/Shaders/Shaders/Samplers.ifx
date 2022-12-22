@@ -1,0 +1,10 @@
+// Samplers, this maps to the samplers defined in bindlessRS
+SamplerState pointClampSampler : register(s0);
+SamplerState pointWrapSampler : register(s1);
+SamplerState linearWrapSampler : register(s2);
+SamplerState linearClampSampler: register(s3);
+SamplerState minMapLinearMipPointClampSampler : register(s4);
+SamplerState minMapLinearMipPointWrapSampler : register(s5);
+SamplerState minMapPointMipLinearClampSampler : register(s6);
+SamplerState minMapPointMipLinearWrapSampler : register(s7);
+SamplerState anisotropicSampler : register(s8);

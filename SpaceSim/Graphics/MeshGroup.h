@@ -9,13 +9,15 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 
 #include <string>
+#include "Graphics/RenderInterface.h"
+#include "Core/MessageSystem/GameMessages.h"
 
 class DeviceManager;
 class Resource;
 class Bbox;
 
 //Wrapper to hold more then one Geometry instance and material together
-class MeshGroup
+class MeshGroup : public RenderInterface
 {
 public:
     MeshGroup(const Material& material) : m_material(material)
@@ -31,9 +33,12 @@ public:
     //Create and add a RenderInstance into the tree to be rendered
     void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box);
     
-    void Update(Resource* resource, CommandList& list, float elapsedTime, const Matrix44& world, const std::string& name, const Bbox& box);
+    void Update(const Matrix44& world, const std::string& name, const Bbox& box);
+    void Update(const MessageSystem::RenderInformation::RenderInfo& context);
+    
+    void UpdateCbs() override {}
 
-    void PopulateCommandlist(Resource* resource, CommandList& list);
+    void PopulateCommandlist(Resource* resource, CommandList& list) override;
 
     void setMaterial(const Material& material) { m_material = material; m_renderInstanceDirty = true; }
     void setWorld(const Matrix44& world) { m_world = world; m_renderInstanceDirty = true; }

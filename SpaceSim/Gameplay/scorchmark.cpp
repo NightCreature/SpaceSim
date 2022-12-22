@@ -6,6 +6,8 @@
 #include "Core/MessageSystem/GameMessages.h"
 #include "Core/MessageSystem/RenderMessages.h"
 
+#include "Core/Resource/GameResource.h"
+
 ScorchMark::ScorchMark(Resource* resource, const Vector3& position, const Vector3& normal, float lifetime):
 GameObject(resource)
 {

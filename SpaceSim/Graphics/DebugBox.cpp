@@ -28,34 +28,19 @@ m_resource(resource)
 ///-------------------------------------------------------------------------
 DebugBox::~DebugBox()
 {
+    delete box;
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44& view, const Matrix44& projection)
+void DebugBox::initialise()
 {
-    UNUSEDPARAM(shaderInstance);
     box = new Model();
     RenderResourceHelper helper(m_resource);
     if (box->getMeshData().empty())
     {
-        VertexBuffer* vb = new VertexBuffer();
-        IndexBuffer* ib = new IndexBuffer();
-
-        WVPBufferContent wvp;
-        Matrix44 temp;
-        temp.identity();
-        wvp.m_world = temp;
-        wvp.m_view = view;
-        wvp.m_projection = projection;
-        Material mat;
-        mat.setEffectHash(hashString("debug_effect.xml"));
         auto& group = box->CreateMeshGroup();
-        //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        //{
-        //box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));
-        //}
 
         ColorVertex boxVerts[] = 
         {
@@ -78,7 +63,7 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
         auto& commandQueue = helper.getWriteableResource().getCommandQueueManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
         auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
 
-        vb->Create(helper.getResource().getDeviceManager(), commandList, numberOfBytes, (void*)boxVerts, vertexDesc.GetVertexStride());
+        group.GetVB().Create(helper.getResource().getDeviceManager(), commandList, numberOfBytes, (void*)boxVerts, vertexDesc.GetVertexStride());
         unsigned int indexData[] =
         {
             0, 2,
@@ -95,14 +80,51 @@ void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44&
             3, 1
         };
 
-        ib->Create(helper.getResource().getDeviceManager(), commandList, sizeof(indexData), (void*)&indexData[0]);
-        ib->setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
+        group.GetIB().Create(helper.getResource().getDeviceManager(), commandList, sizeof(indexData), (void*)&indexData[0]);
+        group.GetIB().setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
 
         group.SetPrimitiveLayout(static_cast<uint32>(D3D_PRIMITIVE_TOPOLOGY_LINELIST));
+
+        Material& mat = group.GetMaterial();
+        //This late bind to the Pipeline object fucks up the stride we really need to make sure this is getting the same stride size as set in the PSO and also the topology
+        mat.setEffectHash(hashString(getResourceNameFromFileName("Shaders\\Effects\\debug_effect.xml")));
+        mat.Prepare(helper.getResource().getEffectCache());
+
+        for (auto& shaderParam : mat.GetShaderParameters())
+        {
+            group.CreateConstantBuffer(GetVariantSize(shaderParam.m_data.index()), shaderParam.m_rootParamIndex, helper.getWriteableResource().getDeviceManager(), helper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap());
+        }
     }
     else
     {
     }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void DebugBox::UpdateCbs()
+{
+    box->UpdateCbs();
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void DebugBox::PopulateCommandlist(Resource* resource, CommandList& commandList)
+{
+    box->PopulateCommandlist(resource, commandList);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void DebugBox::Update(const MessageSystem::RenderInformation::RenderInfo& context)
+{
+    box->Update(context);
 }
 
 }
