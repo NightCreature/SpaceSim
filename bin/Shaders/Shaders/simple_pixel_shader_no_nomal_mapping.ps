@@ -1,17 +1,12 @@
-#define LIGHTING
-#include "CommonConstantBuffers.ips"
+#include "BindlessBuffers.ifx"
+#include "CommonStructures.ifx"
+#include "rootsignatures.ifx"
+#include "Samplers.ifx"
 
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-
-Texture2D<float4> shaderTextures : register(t8);
-SamplerState SampleType
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
+ConstantBuffer<MeshResourceIndices> resourceIndices : register(b0);
 
 //--------------------------------------------------------------------------------------
 struct PS_INPUT
@@ -30,27 +25,29 @@ float4 ps_main( PS_INPUT input) : SV_Target
     float3 vertexPos = input.WorldPos;
     float4 color;
 
-    float4 texColor = shaderTextures.Sample(SampleType, input.Tex);
+    Texture2D<float4> shaderTextures = GetColorTexture(resourceIndices.albedoMapIndex);
+    float4 texColor = shaderTextures.Sample(linearWrapSampler, input.Tex);
     float3 nnormal = normalize(input.Nor);
 
-    float3 nviewdirection = normalize(camera_position - vertexPos);
-    color = float4(ambient.rgb, 1.0) * texColor + float4(emissive.rgb, 0.0);
+    MaterialConstants material = GetInstanceFromBufferT<MaterialConstants>(resourceIndices.materialIndex, 0);
+    LightParameters lights = GetInstanceFromBufferT<LightParameters>(resourceIndices.LightBufferIndex, 0);
+    float3 nviewdirection = normalize(lights.camera_position - vertexPos);
+    color = float4(material.ambient.rgb, 1.0) * texColor + float4(material.emissive.rgb, 0.0);
     for (int counter = 0; counter < 8; ++counter)
     {
-        float3 lightDir = m_lights[counter].m_position.xyz - vertexPos;
+        float3 lightDir = lights.m_lights[counter].m_position.xyz - vertexPos;
         float distance = length(lightDir);
-        if (distance <= m_lights[counter].m_range.x )
+        if (distance <= lights.m_lights[counter].m_range.x )
         {
-            m_lights[counter].m_attenuationFallOff.x;
-            float attenuation = clamp(0.0, 1.0, 1.0 / (m_lights[counter].m_attenuationFallOff.x + m_lights[counter].m_attenuationFallOff.y * distance + m_lights[counter].m_attenuationFallOff.z * distance * distance));
+            float attenuation = clamp(0.0, 1.0, 1.0 / (lights.m_lights[counter].m_attenuationFallOff.x + lights.m_lights[counter].m_attenuationFallOff.y * distance + lights.m_lights[counter].m_attenuationFallOff.z * distance * distance));
 
             lightDir = normalize(lightDir);
             float ndotl = dot(nnormal, -lightDir);
             float3 reflection = normalize(((2.0 * nnormal) * ndotl) - lightDir);
-            float rdotv = pow(saturate(dot(reflection, nviewdirection)), shininess);
+            float rdotv = pow(saturate(dot(reflection, nviewdirection)), material.shininess);
             if (ndotl > 0.0)
             {
-                color = color + (m_lights[counter].m_diffuse * ndotl * (texColor * float4(diffuse.rgb, 1.0))) * attenuation + rdotv * m_lights[counter].m_specular;
+                color = color + (lights.m_lights[counter].m_diffuse * ndotl * (texColor * float4(material.diffuse.rgb, 1.0))) * attenuation + rdotv * lights.m_lights[counter].m_specular;
             }
         }
     }

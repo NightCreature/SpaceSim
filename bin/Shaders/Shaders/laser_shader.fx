@@ -1,15 +1,11 @@
-#include "CommonConstantBuffers.ivs"
-#include "CommonConstantBuffers.ips"
-#include "RootSignatures.ifx"
+#include "BindlessBuffers.ifx"
+#include "CommonStructures.ifx"
+#include "rootsignatures.ifx"
+#include "Samplers.ifx"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------------------
-struct VS_INPUT
-{
-    float4 Pos  : POSITION;
-};
+ConstantBuffer<MeshResourceIndices> resourceIndices : register(b0);
 
 struct PS_INPUT
 {
@@ -19,13 +15,20 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
+// Vertex Shader
+//--------------------------------------------------------------------------------------
 [RootSignature(bindlessRS)]
-PS_INPUT vs_main( VS_INPUT input )
+PS_INPUT vs_main( uint vertexID : SV_VertexID )
 {
+    float4 pos = float4(GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, vertexID),0);
+    WVPData wvpData = GetInstanceFromBuffer<WVPData>(resourceIndices.transformIndex);
+
     PS_INPUT output = (PS_INPUT)0;
-    output.Pos = mul( input.Pos, World );
-    output.Pos = mul( output.Pos, View );
-    output.Pos = mul( output.Pos, Projection );
+    output.Pos = mul( pos, wvpData.World );
+    output.Pos = mul( output.Pos, wvpData.View );
+    output.Pos = mul( output.Pos, wvpData.Projection );
+
     return output;
 }
 
@@ -34,7 +37,8 @@ PS_INPUT vs_main( VS_INPUT input )
 //--------------------------------------------------------------------------------------
 float4 ps_main( PS_INPUT input) : SV_Target
 {
-    float4 color = saturate(diffuse + emissive);
+    StructuredBuffer<MaterialConstants> materialConstants = GetBufferT<MaterialConstants>(resourceIndices.materialIndex);
+    float4 color = saturate(materialConstants[0].diffuse + materialConstants[0].emissive);
     color.a = 0.5;
     return color;
 }

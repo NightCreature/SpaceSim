@@ -1,17 +1,11 @@
-#define LIGHTING
-#include "CommonConstantBuffers.ips"
-
+#include "BindlessBuffers.ifx"
+#include "CommonStructures.ifx"
+#include "rootsignatures.ifx"
+#include "Samplers.ifx"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-
-Texture2D<float4> shaderTextures : register(t8);
-SamplerState SampleType
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
+ConstantBuffer<MeshResourceIndices> resourceIndices : register(b0);
 
 //--------------------------------------------------------------------------------------
 struct PS_INPUT
@@ -25,8 +19,8 @@ float contour(float d, float w) {
     return smoothstep(0.5 - w , 0.5 + w , d);
 }
 
-float samp(float2 uv, float w) {
-    return contour(shaderTextures.Sample( SampleType, uv).a, w);
+float samp(float2 uv, float w, Texture2D<float4> shaderTextures) {
+    return contour(shaderTextures.Sample( linearWrapSampler, uv).a, w);
 }
 
 //--------------------------------------------------------------------------------------
@@ -34,10 +28,12 @@ float samp(float2 uv, float w) {
 //--------------------------------------------------------------------------------------
 float4 ps_main( PS_INPUT input) : SV_Target
 { 
+    Texture2D<float4> shaderTextures = GetColorTexture(resourceIndices.albedoMapIndex);
+    StructuredBuffer<MaterialConstants> materialConstants = GetBufferT<MaterialConstants>(resourceIndices.materialIndex);
     // retrieve distance from texture
-    float mask = shaderTextures.Sample( SampleType, input.Tex).a;
+    float mask = shaderTextures.Sample( linearWrapSampler, input.Tex).a;
 
-    float4 color = diffuse; //Pick the diffuse material color for the text
+    float4 color = materialConstants[0].diffuse; //Pick the diffuse material color for the text
      
     // perform simple thresholding
     if( mask < 0.5 )  
@@ -57,10 +53,10 @@ float4 ps_main( PS_INPUT input) : SV_Target
     float2 duv = dscale * (ddx(input.Tex) + ddy(input.Tex));
     float4 box = float4(input.Tex-duv, input.Tex+duv);
 
-    float asum = samp( box.xy, width )
-               + samp( box.zw, width )
-               + samp( box.xw, width )
-               + samp( box.zy, width );
+    float asum = samp( box.xy, width, shaderTextures )
+               + samp( box.zw, width, shaderTextures )
+               + samp( box.xw, width, shaderTextures )
+               + samp( box.zy, width, shaderTextures );
 
     // weighted average, with 4 extra points having 0.5 weight each,
     // so 1 + 0.5*4 = 3 is the divisor

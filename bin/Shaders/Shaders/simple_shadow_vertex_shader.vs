@@ -1,18 +1,9 @@
-#include "CommonConstantBuffers.ivs"
-#include "rootsignatures.ifx"
-//--------------------------------------------------------------------------------------
-// Constant Buffer Variables
-//--------------------------------------------------------------------------------------
+#include "BindlessBuffers.ifx"
+#include "Rootsignatures.ifx"
+
+ConstantBuffer<MeshResourceIndices> renderIndices : register(b0);
 
 //--------------------------------------------------------------------------------------
-struct VS_INPUT
-{
-    float4 Pos  : POSITION0;
-    float3 Nor  : NORMAL0;
-    float3 Tan  : TANGENT0;
-    float2 Tex1 : TEXCOORD0;
-};
-
 struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
@@ -23,26 +14,28 @@ struct PS_INPUT
     float3 WorldPos : TEXCOORD1;
 };
 
+
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
 [RootSignature(bindlessRS)]
-PS_INPUT vs_main( VS_INPUT input )
+PS_INPUT vs_main( uint id:SV_VERTEXID )
 {
+    float4 pos = float4(GetInstanceFromBufferT<float3>(renderIndices.posBufferIndex, id),0);
+    WVPData wvpData = GetInstanceFromBuffer<WVPData>(renderIndices.transformIndex);
+
     PS_INPUT output = (PS_INPUT)0;
-    output.Pos = mul( input.Pos, World );
-    output.Pos = mul( output.Pos, View );
-    output.Pos = mul( output.Pos, Projection );
+    output.Pos = mul( pos, wvpData.World );
     output.WorldPos = output.Pos.xyz;
+    output.Pos = mul( output.Pos, wvpData.View );
+    output.Pos = mul( output.Pos, wvpData.Projection );
 
-    float3 biNormal = cross(input.Nor, input.Tan);
-
-    output.Nor = input.Nor;
-    output.Tan = input.Tan;
-    output.BiN = biNormal;
+    output.Nor = GetInstanceFromBufferT<float3>(renderIndices.normalBufferIndex, id);
+    output.Tan = GetInstanceFromBufferT<float3>(renderIndices.tangentBufferIndex, id);
+    output.BiN = cross(output.Nor, output.Tan);
 
     //output.inpos = input.Tex1;
     //output.Pos = input.Pos;
-    output.Tex = input.Tex1; 
+    output.Tex = GetInstanceFromBufferT<float2>(renderIndices.textureBufferIndex, id);
     return output;
 }

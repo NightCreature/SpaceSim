@@ -1,6 +1,3 @@
-//#define LIGHTHING
-#define SHADOW
-//#include "CommonConstantBuffers.ivs"
 #include "rootsignatures.ifx"
 #include "BindlessBuffers.ifx"
 
