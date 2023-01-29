@@ -12,8 +12,18 @@
 #include "Graphics/texturemanager.h"
 #include "Core/MessageSystem/GameMessages.h"
 
+#include "Loader/ResourceLoader.h"
 //None of this can send a return msg until the command list has been executed on the GPU
 
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void ResourceLoadJob::Finish()
+{
+    m_loader->CompleteCommandList(m_commandListHandle);
+}
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
@@ -40,10 +50,20 @@ void FaceJob::Execute(size_t threadIndex)
     UNUSEDPARAM(threadIndex);
     
     RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
-    auto resourceHandle = renderResource.getModelManager().AddFace(m_loadData, m_commandQueueHandle, m_commandListHandle);//needs to be thread safe
-    SendReturnMsg(m_gameObjectId, resourceHandle);
+    m_resourceHandle = renderResource.getModelManager().AddFace(m_loadData, m_commandQueueHandle, m_commandListHandle, this);//needs to be thread safe
 
+    //Since we handled the loading of our data get rid of the jobs data
     delete m_loadData;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void FaceJob::Finish()
+{
+    ResourceLoadJob::Finish();
+    SendReturnMsg(m_gameObjectId, m_resourceHandle);
 }
 
 ///-----------------------------------------------------------------------------
@@ -91,4 +111,3 @@ void LoadModelJob::Execute(size_t threadIndex)
 
     delete m_loadData;
 }
-

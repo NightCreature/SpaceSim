@@ -3,7 +3,10 @@
 #include "Core/Thread/Job.h"
 #include "Core/Resource/Resourceable.h"
 #include "Graphics/D3D12/CommandQueue.h"
+#include "Graphics/modelmanager.h"
 
+
+class ResourceLoader;
 
 ////Do actual loading that update usually does 
 //PROFILE_EVENT("ResourceLoaderJob::Execute", Crimson);
@@ -45,11 +48,16 @@
 class ResourceLoadJob : public Job
 {
 public:
-    ResourceLoadJob(Resource* resource, size_t queueHandle, size_t commandHandle) : m_resource(resource), m_commandQueueHandle(queueHandle), m_commandListHandle(commandHandle) {}
+    ResourceLoadJob(Resource* resource, size_t queueHandle, size_t commandHandle, ResourceLoader* loader) : m_resource(resource), m_commandQueueHandle(queueHandle), m_commandListHandle(commandHandle), m_loader(loader) {}
+
+    virtual void Finish();
 
     void SendReturnMsg(size_t gameObjectId, size_t resourceHandle);
+
+    void SetCommandListHandle(size_t handle) { m_commandListHandle = handle; }
 protected:
     Resource* m_resource = nullptr;
+    ResourceLoader* m_loader = nullptr;
     size_t m_commandQueueHandle;
     size_t m_commandListHandle;
 };
@@ -57,18 +65,22 @@ protected:
 class FaceJob : public ResourceLoadJob
 {
 public:
-    FaceJob(Resource* resource, size_t queueHandle, size_t commandHandle, size_t gameObjectId, void* loadData) : ResourceLoadJob(resource, queueHandle, commandHandle), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
+    FaceJob(Resource* resource, size_t queueHandle, size_t commandHandle, size_t gameObjectId, void* loadData, ResourceLoader* loader) : ResourceLoadJob(resource, queueHandle, commandHandle, loader), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
 
     void Execute(size_t threadIndex) override;
+
+    void Finish() override;
+
 private:
     size_t m_gameObjectId = 0;
     void* m_loadData = nullptr;
+    size_t m_resourceHandle = InvalidResourceHandle;
 };
 
 class LoadTextureJob : public ResourceLoadJob
 {
 public:
-    LoadTextureJob(Resource* resource, size_t queueHandle, size_t commandHandle, const std::string& fileName) : ResourceLoadJob(resource, queueHandle, commandHandle), m_fileName(fileName) {}
+    LoadTextureJob(Resource* resource, size_t queueHandle, size_t commandHandle, const std::string& fileName, ResourceLoader* loader) : ResourceLoadJob(resource, queueHandle, commandHandle, loader), m_fileName(fileName) {}
 
     void Execute(size_t threadIndex) override;
 private:
@@ -79,10 +91,11 @@ private:
 class LoadModelJob : public ResourceLoadJob
 {
 public:
-    LoadModelJob(Resource* resource, size_t queueHandle, size_t commandHandle, size_t gameObjectId, void* loadData) : ResourceLoadJob(resource, queueHandle, commandHandle), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
+    LoadModelJob(Resource* resource, size_t queueHandle, size_t commandHandle, size_t gameObjectId, void* loadData, ResourceLoader* loader) : ResourceLoadJob(resource, queueHandle, commandHandle, loader), m_gameObjectId(gameObjectId), m_loadData(loadData) {}
 
     void Execute(size_t threadIndex) override;
 private:
     size_t m_gameObjectId = 0;;
     void* m_loadData = nullptr;
+    size_t m_resourceHandle = InvalidResourceHandle;
 };

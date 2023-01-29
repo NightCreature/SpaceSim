@@ -5,8 +5,12 @@
 
 #include <vector>
 #include "Graphics/D3D12/CommandQueue.h"
+#include <list>
+#include <mutex>
+#include <deque>
 
 class Resource;
+class ResourceLoadJob;
 
 namespace MessageSystem
 {
@@ -38,10 +42,20 @@ public:
 
     void DispatchResourceCommandQueue();
 
+    void CompleteCommandList(size_t commandListHandle);
+    size_t GetCommandQueueHandle() const { return m_uploadQueueHandle; }
+    size_t GetCommandListHandle();
+
+private:
 
     Resource* m_resource;
-    std::vector<Job*> m_jobs;
-    std::vector<Job*> m_newJobs;
+    std::vector<ResourceLoadJob*> m_jobs;
+    std::deque<ResourceLoadJob*> m_newJobs;
+
+    std::list<size_t> m_freeCommandLists;
+    std::list<size_t> m_commandListsToProcess;
+
+    std::mutex m_mutex;
 
     size_t m_uploadQueueHandle = ~0ull;
     size_t m_currentUploadCommandListHandle = ~0ull;

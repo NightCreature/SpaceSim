@@ -10,6 +10,9 @@
 int WorkerThread::WorkerFunction()
 {
     OPTICK_THREAD("WorkerThread");
+
+    CoInitialize(NULL);
+
     while(isAlive())
     {
         if (m_threadPaused) //if this is set we need to see if there is more work instead of just activating it it will keep toggling other wise instead of waiting
@@ -19,15 +22,27 @@ int WorkerThread::WorkerFunction()
         }
         auto& queue = m_jobSystem->GetJobQueue();
         auto workLoad = queue.GetNextWorkLoad();
-        if (workLoad.m_job != nullptr)
+        if (!workLoad.m_empty)
         {
             //Execute this workload
-
             workLoad.m_job->Execute(m_index);
+            workLoad.m_job->FinishJob();
+            //Job might not be finished here we need to deal with that
+            if (!workLoad.m_job->IsFinished())
+            {
+                //Other threads might be sleeping
+                if (!queue.IsEmpty())
+                {
+                    m_jobSystem->SignalWorkAvailable();
+                }
 
-            //once we are done with the work load get ride of it, this should probably be done better
-            //delete workLoad.m_job;
-            workLoad.m_job = nullptr;
+                while (!workLoad.m_job->IsFinished())
+                {
+                    //Not good to spin but no other solution right now
+
+                }
+            }
+            //Should deallocate the job here
         }
         else
         {

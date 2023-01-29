@@ -10,21 +10,6 @@
 ///-----------------------------------------------------------------------------
 JobQueue::JobQueue()
 {
-    InitializeCriticalSectionAndSpinCount(&m_criticalSection, 50);
-}
-
-///-----------------------------------------------------------------------------
-///! @brief 
-///! @remark
-///-----------------------------------------------------------------------------
-void JobQueue::AddJob(Job* job)
-{
-    std::scoped_lock<std::mutex> aquireLock(m_mutex);
-    //EnterCriticalSection(&m_criticalSection);
-    Workload load;
-    load.m_job = job;
-    m_jobs.push_back(load);
-    //LeaveCriticalSection(&m_criticalSection);
 }
 
 ///-----------------------------------------------------------------------------
@@ -35,15 +20,11 @@ Workload JobQueue::GetNextWorkLoad()
 {
     std::scoped_lock<std::mutex> aquireLock(m_mutex);
     Workload workload;
-    //Use critical sections for now
-    //EnterCriticalSection(&m_criticalSection);
     if (!m_jobs.empty())
     {
         workload = *m_jobs.rbegin();
-        m_finishedJobs.push_back(workload);
         m_jobs.pop_back();
     }
-    //LeaveCriticalSection(&m_criticalSection);
     return workload;
 }
 

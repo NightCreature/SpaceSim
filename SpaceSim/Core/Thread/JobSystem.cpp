@@ -160,15 +160,14 @@ void JobSystem::ProcessWork()
 
     //pick up a job here until there is nothing left
     auto workLoad = m_jobQueue.GetNextWorkLoad();
-    while (workLoad.m_job != nullptr)
+    while (!workLoad.m_empty)
     {
         //Execute this workload
-
+        
         workLoad.m_job->Execute(0); //running on the main thread
-
+        workLoad.m_job->FinishJob();
         //once we are done with the work load get ride of it, this should probably be done better
         //delete workLoad.m_job;
-        workLoad.m_job = nullptr;
         workLoad = m_jobQueue.GetNextWorkLoad();
     }
 
