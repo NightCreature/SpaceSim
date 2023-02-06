@@ -7,6 +7,7 @@
 #include <map>
 
 class DeviceManager;
+class Resource;
 
 constexpr size_t InvalidShaderId = static_cast<size_t>(-1);
 
@@ -16,7 +17,7 @@ public:
     ShaderCache();
     ~ShaderCache();
 
-    void Initialise();
+    void Initialise(Resource* resource);
     void cleanup();
 
     //These should be renamed to shader create functions and return handles
@@ -41,22 +42,25 @@ public:
     void DumpLoadedShaderNames();
 #endif
 private:
+    using ShaderMap = std::map<size_t, Shader>;
+    const size_t GetShader(ShaderType type, const tinyxml2::XMLElement* element, ShaderMap& shaderMap);
+    bool GetPreCompiledOrCreateShader(Shader& shader);
 
-    size_t getShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    using ShaderHandle = std::pair<size_t, Shader>;
+    typedef ShaderHandle   VertexShaderHandle;
+    typedef ShaderHandle     HullShaderHandle;
+    typedef ShaderHandle   DomainShaderHandle;
+    typedef ShaderHandle GeometryShaderHandle;
+    typedef ShaderHandle    PixelShaderHandle;
+    typedef ShaderHandle  ComputeShaderHandle;
+    typedef ShaderMap   VertexShaders;
+    typedef ShaderMap     HullShaders;
+    typedef ShaderMap   DomainShaders;
+    typedef ShaderMap GeometryShaders;
+    typedef ShaderMap    PixelShaders;
+    typedef ShaderMap  ComputeShaders;
 
-    typedef std::pair<size_t, Shader>   VertexShaderHandle;
-    typedef std::pair<size_t, Shader>     HullShaderHandle;
-    typedef std::pair<size_t, Shader>   DomainShaderHandle;
-    typedef std::pair<size_t, Shader> GeometryShaderHandle;
-    typedef std::pair<size_t, Shader>    PixelShaderHandle;
-    typedef std::pair<size_t, Shader>  ComputeShaderHandle;
-    typedef std::map<size_t, Shader>   VertexShaders;
-    typedef std::map<size_t, Shader>     HullShaders;
-    typedef std::map<size_t, Shader>   DomainShaders;
-    typedef std::map<size_t, Shader> GeometryShaders;
-    typedef std::map<size_t, Shader>    PixelShaders;
-    typedef std::map<size_t, Shader>  ComputeShaders;
-
+    Resource* m_resource = nullptr;
     VertexShaders m_vertexShaders;
     HullShaders m_hullShaders;
     DomainShaders m_domainShaders;
@@ -65,5 +69,6 @@ private:
     ComputeShaders m_computeShaders;
 
     ShaderCompiler m_compiler;
+    std::vector<std::filesystem::path> m_compiledShaderSources;
 };
 

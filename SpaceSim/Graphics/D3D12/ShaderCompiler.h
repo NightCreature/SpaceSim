@@ -12,7 +12,7 @@ public:
 
     bool Initialise();
 
-    bool CreateShader(const std::filesystem::path& filePath, const std::wstring& entrypoint, const std::wstring& profileName, size_t compilerFlags, CreatedShaderObjects& shaderObject) const;
+    bool CreateShader(const std::filesystem::path& filePath, const std::wstring& entrypoint, const std::wstring& profileName, size_t compilerFlags, bool createRootDescriptor, CreatedShaderObjects& shaderObject) const;
 private:
     IDxcUtils* m_dxcUtils = nullptr;
     IDxcCompiler3* m_compiler = nullptr;

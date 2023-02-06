@@ -1,6 +1,10 @@
 #include "ShaderCache.h"
 #include <fstream>
-
+#include "Core/FileSystem/FileSystem.h"
+#include "Core/Resource/Resourceable.h"
+#include "Core/Paths.h"
+#include "Core/Resource/RenderResource.h"
+#include <D3Dcompiler.h>
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
@@ -21,9 +25,15 @@ ShaderCache::~ShaderCache()
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ShaderCache::Initialise()
+void ShaderCache::Initialise(Resource* resource)
 {
     m_compiler.Initialise();
+
+    //Build file list of compiled shaders, looking for .cso in /Shaders/Compiled/
+    VFS::FileSystem* fileSystem = resource->m_fileSystem;
+    m_compiledShaderSources = fileSystem->ListFiles("Shaders/Compiled/");
+
+    m_resource = resource;
 }
 
 ///-----------------------------------------------------------------------------
@@ -67,25 +77,9 @@ void ShaderCache::cleanup()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-
 const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    Shader shader;
-    shader.deserialise(element, ShaderType::eVertexShader);
-    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
-    if (getVertexShader(resourceName) == nullptr)
-    {
-        if (shader.createShader(deviceManager, m_compiler))
-        {
-            m_vertexShaders.emplace(VertexShaderHandle(resourceName, shader));
-        }
-        else
-        {
-            return InvalidShaderId;
-        }
-    }
-    
-    return resourceName;
+    return GetShader(ShaderType::eVertexShader, element, m_vertexShaders);
 }
 
 ///-------------------------------------------------------------------------
@@ -93,22 +87,7 @@ const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, c
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    Shader shader;
-    shader.deserialise(element, ShaderType::eHullShader);
-    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
-    if (getHullShader(resourceName) == nullptr)
-    {
-        if (shader.createShader(deviceManager, m_compiler))
-        {
-            m_hullShaders.emplace(HullShaderHandle(resourceName, shader));
-        }
-        else
-        {
-            return InvalidShaderId;
-        }
-    }
-
-    return resourceName;
+    return GetShader(ShaderType::eHullShader, element, m_hullShaders);
 }
 
 ///-------------------------------------------------------------------------
@@ -116,22 +95,7 @@ const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, con
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    Shader shader;
-    shader.deserialise(element, ShaderType::eDomainShader);
-    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
-    if (getDomainShader(resourceName) == nullptr)
-    {
-        if (shader.createShader(deviceManager, m_compiler))
-        {
-            m_domainShaders.emplace(DomainShaderHandle(resourceName, shader));
-        }
-        else
-        {
-            return InvalidShaderId;
-        }
-    }
-
-    return resourceName;
+    return GetShader(ShaderType::eDomainShader, element, m_domainShaders);
 }
 
 ///-------------------------------------------------------------------------
@@ -139,22 +103,7 @@ const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, c
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    Shader shader;
-    shader.deserialise(element, ShaderType::eGeometryShader);
-    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
-    if (getGeometryShader(resourceName) == nullptr)
-    {
-        if (shader.createShader(deviceManager, m_compiler))
-        {
-            m_geometryShaders.emplace(GeometryShaderHandle(resourceName, shader));
-        }
-        else
-        {
-            return InvalidShaderId;
-        }
-    }
-
-    return resourceName;
+    return GetShader(ShaderType::eGeometryShader, element, m_geometryShaders);
 }
 
 ///-------------------------------------------------------------------------
@@ -162,22 +111,7 @@ const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element,
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    Shader shader;
-    shader.deserialise(element, ShaderType::ePixelShader);
-    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
-    if (getPixelShader(resourceName) == nullptr)
-    {
-        if (shader.createShader(deviceManager, m_compiler))
-        {
-            m_pixelShaders.emplace(PixelShaderHandle(resourceName, shader));
-        }
-        else
-        {
-            return InvalidShaderId;
-        }
-    }
-
-    return resourceName;
+    return GetShader(ShaderType::ePixelShader, element, m_pixelShaders);
 }
 
 ///-------------------------------------------------------------------------
@@ -185,22 +119,7 @@ const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, co
 ///-------------------------------------------------------------------------
 const size_t  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
-    Shader shader;
-    shader.deserialise(element, ShaderType::eComputeShader);
-    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
-    if (getComputeShader(resourceName) == nullptr)
-    {
-        if (shader.createShader(deviceManager, m_compiler))
-        {
-            m_computeShaders.emplace(ComputeShaderHandle(resourceName, shader));
-        }
-        else
-        {
-            return InvalidShaderId;
-        }
-    }
-
-    return resourceName;
+    return GetShader(ShaderType::eComputeShader, element, m_computeShaders);
 }
 
 ///-------------------------------------------------------------------------
@@ -330,5 +249,74 @@ void ShaderCache::DumpLoadedShaderNames()
         MSG_TRACE_CHANNEL("ShaderCache", "Vertex Shader: %s", it->second.getFileName().c_str());
     }
 }
+
+const size_t ShaderCache::GetShader(ShaderType type, const tinyxml2::XMLElement* element, ShaderMap& shaderMap)
+{
+    Shader shader;
+    shader.deserialise(element, type);
+    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
+
+    auto shaderIt = shaderMap.find(resourceName);
+    if (shaderIt == shaderMap.end())
+    {
+        if (GetPreCompiledOrCreateShader(shader))
+        {
+            shaderMap.emplace(std::make_pair(resourceName, shader));
+        }
+        else
+        {
+            return InvalidShaderId;
+        }
+    }
+
+    return resourceName;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+bool ShaderCache::GetPreCompiledOrCreateShader(Shader& shader)
+{
+    auto shaderPrecompiledPath = m_resource->m_paths->getEffectShaderPath() / "Shaders/Compiled/";
+
+    auto prefix = getShaderPrefix(shader.GetType());
+
+    auto shaderFilePath = std::filesystem::path(shader.getFileName());
+    auto shaderName = std::filesystem::path(prefix + "_" + shaderFilePath.stem().string() + ".cso");
+    auto findShaderName = [shaderName](const auto& path) { return shaderName == path; };
+    auto& deviceManager = RenderResourceHelper(m_resource).getWriteableResource().getDeviceManager();
+
+    auto iterator = std::find_if(std::cbegin(m_compiledShaderSources), std::cend(m_compiledShaderSources), findShaderName);
+    if (iterator != std::cend(m_compiledShaderSources))
+    {
+        CreatedShaderObjects shaderObjects;
+        
+        shaderName = shaderPrecompiledPath / shaderName;
+        HRESULT hr = D3DReadFileToBlob(shaderName.wstring().c_str(), &shaderObjects.m_shaderObject);
+        if (FAILED(hr))
+        {
+            MSG_ERROR_CHANNEL("Shader", "Failed to get precompiled shader with error: )x%d, %s", hr, getLastErrorMessage(hr));
+        }
+
+        ShaderType type = shader.GetType();
+        if (type == ShaderType::eComputeShader || type == ShaderType::eVertexShader)
+        {
+            //Have to pick up the rootsignature
+            auto shaderName = shaderPrecompiledPath / std::filesystem::path(prefix + "_" + shaderFilePath.stem().string() + ".rs");
+            HRESULT hr = D3DReadFileToBlob(shaderName.wstring().c_str(), &shaderObjects.m_rootSignatureBlob);
+            if (FAILED(hr))
+            {
+                MSG_ERROR_CHANNEL("Shader", "Failed to get precompiled shader with error: )x%d, %s", hr, getLastErrorMessage(hr));
+            }
+        }
+
+        shader.SetCompiledShader(shaderObjects);
+        return true;
+    }
+
+    return shader.createShader(deviceManager, m_compiler);
+}
+
 
 #endif

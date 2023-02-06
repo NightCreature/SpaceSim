@@ -11,6 +11,7 @@
 #include "D3D12/ShaderParamMatcher.h"
 #include "D3D12/ShaderCompiler.h"
 #include <dxcapi.h>
+#include <D3Dcompiler.h>
 
 
 const char* shaderTypeNames[] =
@@ -23,6 +24,45 @@ const char* shaderTypeNames[] =
     "CS"
 };
 
+std::string getShaderPrefix(ShaderType type)
+{
+    switch (type)
+    {
+    case ShaderType::eVertexShader:
+    {
+        return "vs";
+    }
+    break;
+    case ShaderType::eHullShader:
+    {
+        return "hs";
+    }
+    break;
+    case ShaderType::eDomainShader:
+    {
+        return "ds";
+    }
+    break;
+    case ShaderType::eGeometryShader:
+    {
+        return "gs";
+    }
+    break;
+    case ShaderType::ePixelShader:
+    {
+        return "ps";
+    }
+    break;
+    case ShaderType::eComputeShader:
+    {
+        return "cs";
+    }
+    break;
+    }
+
+    return "";
+}
+
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
@@ -31,39 +71,8 @@ void getProfileName(const DeviceManager& deviceManager, ShaderType type, std::st
 {
     D3D_FEATURE_LEVEL featureLevel = deviceManager.getFreatureLevel();
 
-    switch (type)
-    {
-    case ShaderType::eVertexShader:
-    {
-        profileName = "vs";
-    }
-    break;
-    case ShaderType::eHullShader:
-    {
-        profileName = "hs";
-    }
-    break;
-    case ShaderType::eDomainShader:
-    {
-        profileName = "ds";
-    }
-    break;
-    case ShaderType::eGeometryShader:
-    {
-        profileName = "gs";
-    }
-    break;
-    case ShaderType::ePixelShader:
-    {
-        profileName = "ps";
-    }
-    break;
-    case ShaderType::eComputeShader:
-    {
-        profileName = "cs";
-    }
-    break;
-    }
+    profileName = getShaderPrefix(type);
+
     if (profileVersion.empty())
     {
         switch (featureLevel)
@@ -214,7 +223,8 @@ bool Shader::createShader(const DeviceManager& deviceManager, const ShaderCompil
 {
     std::string profileName = "";
     getProfileName(deviceManager, m_type, profileName);
-    if (!compiler.CreateShader(m_fileName, convertToWideString(m_entryPoint), convertToWideString(profileName), 0, m_shader))
+
+    if (!compiler.CreateShader(m_fileName, convertToWideString(m_entryPoint), convertToWideString(profileName), 0, m_type == ShaderType::eVertexShader || m_type == ShaderType::eComputeShader, m_shader))
     {
         return false;
     }

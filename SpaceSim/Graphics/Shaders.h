@@ -9,6 +9,8 @@
 #include <string>
 #include <dxcapi.h>
 #include <d3d12shader.h>
+#include <filesystem>
+#include <vector>
 
 class DeviceManager;
 class ShaderCompiler;
@@ -25,18 +27,20 @@ enum class ShaderType : uint8
     Count
 };
 
+std::string getShaderPrefix(ShaderType type);
+
 struct CreatedShaderObjects
 {
-    IDxcBlob* m_shaderObject;
-    ID3D12ShaderReflection* m_reflectionObject;
-    IDxcBlob* m_rootSignatureBlob;
+    ID3DBlob* m_shaderObject = nullptr;
+    ID3D12ShaderReflection* m_reflectionObject = nullptr;
+    ID3DBlob* m_rootSignatureBlob = nullptr;
 };
 
 class Shader
 {
 public:
     Shader() = default;
-    void cleanup() { m_shaderBlob->Release(); }
+    void cleanup() { if (m_shaderBlob != nullptr) { m_shaderBlob->Release(); } }
 
     void deserialise(const tinyxml2::XMLElement* element, ShaderType defaultType);
 
@@ -46,11 +50,14 @@ public:
     const void* GetShaderBufferPointer() const { return m_shader.m_shaderObject->GetBufferPointer(); }
     const size_t GetShaderBufferLength() const { return m_shader.m_shaderObject->GetBufferSize(); }
     const CreatedShaderObjects& GetCompiledShader() const { return m_shader; }
+    void SetCompiledShader(const CreatedShaderObjects& shader) { m_shader = shader; }
 
     const ShaderParameters GetParameters() const { return m_parameters; }
 
+    ShaderType GetType() const { return m_type; }
     HASH_ELEMENT_DEFINITION(Shader);
 private:
+
     CreatedShaderObjects m_shader;
 
     ID3DBlob* m_shaderBlob;
