@@ -3,6 +3,13 @@
 #include "JobSystem.h"
 #include <Optick.h>
 
+void CleanupWorkLoad(Workload& workLoad)
+{
+    workLoad.m_job->Finish(); //Do operations before we delete the object
+
+    delete workLoad.m_job;
+}
+
 ///-----------------------------------------------------------------------------
 ///! @brief Main function of this thread
 ///! @remark
@@ -42,7 +49,9 @@ int WorkerThread::WorkerFunction()
 
                 }
             }
+            
             //Should deallocate the job here
+            CleanupWorkLoad(workLoad);
         }
         else
         {

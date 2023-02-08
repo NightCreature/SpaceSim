@@ -12,20 +12,17 @@ class Job
 public:
     Job() :
         m_numberOfUnfinishedJobs(1)
-    {
-    }
+    {}
     virtual ~Job() = default;
     
     virtual void Execute(size_t threadIndex) = 0;
-    virtual void Finish() = 0;
+    virtual void Finish() = 0; //This function is called before we delete the object, this can be handy if you know the job is a parent and relying on actions done in its children
 
     void FinishJob()
     {
         --m_numberOfUnfinishedJobs;
-        if (m_numberOfUnfinishedJobs < 0)
+        if (m_numberOfUnfinishedJobs <= 0) //Since this can be called form a child it, the parent can go to 0 and destroy its object before we Call finish on the parent
         {
-            Finish(); //Do anything that needs to happen when the job is done
-
             if (m_parent)
             {
                 m_parent->FinishJob();
@@ -38,12 +35,6 @@ public:
     std::atomic<size_t> m_numberOfUnfinishedJobs;
     Job* m_parent = nullptr;
 };
-
-inline void CreateJobAsChild(Job* parent, Job* currentJob)
-{
-    ++(parent->m_numberOfUnfinishedJobs);
-    currentJob->m_parent = parent;
-}
 
 struct Workload
 {
