@@ -30,5 +30,7 @@ public:
 private:
 
     std::map<size_t, Effect> m_effects;
+
+    std::mutex m_mutex;
 };
 

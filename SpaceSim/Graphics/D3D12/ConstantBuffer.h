@@ -61,6 +61,7 @@ public:
         memcpy(m_cpuSideData.m_data, &data, sizeof(T));
     }
     ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
+    size_t GetHeapIndex() const { return m_heapIndex; }
 private:
     ConstantData m_cpuSideData = {0};
     ID3D12Resource* m_constantBuffer = nullptr;

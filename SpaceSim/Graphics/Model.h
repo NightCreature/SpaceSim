@@ -135,8 +135,11 @@ public:
         {
             auto& material = meshGroup.GetMaterial();
             const Effect* effect = effectCache.getEffect(material.getEffectHash());
-            m_sortKey |= effect->getTechnique(material.getTechnique())->getTechniqueId();
-            hasAlphaBlending |= material.getBlendState();
+            if (effect != nullptr)
+            {
+                m_sortKey |= effect->getTechnique(material.getTechnique())->getTechniqueId();
+                hasAlphaBlending |= material.getBlendState();
+            }
         }
 
         if (hasAlphaBlending)

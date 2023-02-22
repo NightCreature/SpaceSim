@@ -18,9 +18,9 @@ static size_t vbCounter = 0;
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
-///! @remark
+///! @remark This should be a normal buffer more like how our constant buffers work
 ///-----------------------------------------------------------------------------
-void VertexBuffer::Create(const DeviceManager& deviceManager, CommandList& commandList, size_t bufferSize, void* data, size_t vertexStride)
+void VertexBuffer2::Create(const DeviceManager& deviceManager, CommandList& commandList, size_t bufferSize, void* data, size_t vertexStride)
 {
     //D3D12 resource creation
     D3D12_HEAP_PROPERTIES defaultHeap;
@@ -201,149 +201,151 @@ void VertexDeclarationDescriptor::Deserialise(const tinyxml2::XMLElement* node)
 }
 
 ///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
+///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-const std::vector<D3D12_INPUT_ELEMENT_DESC>& VertexDeclarationDescriptor::createInputElementLayout(size_t& vertexStride)
+MeshResourceIndices VertexBuffer::CreateBuffer(const DeviceManager& deviceManager, CommandList& commandList, DescriptorHeap& heap, const VertexDataStreams& data)
 {
-    //Create the buffer layout elements
-    unsigned int numberOfElements = 0;
-    if (position > 0)
+    MeshResourceIndices resourceIndices;
+
+    //Figure out how
+    size_t numberOfDataStreams = data.m_streams.size();
+    m_data.resize(numberOfDataStreams);
+
+    //Copy data from our inbound data to the GPU here
+    auto iterator = data.m_streams.begin();
+    auto endIterator = data.m_streams.end();
+    size_t strucutredBufferArrayIndex = 0;
+    resourceIndices.numberOfTextureStreams = 0;
+    for (;iterator != endIterator; ++iterator)
     {
-        ++numberOfElements;
-    }
-    if (normal)
-    {
-        ++numberOfElements;
-    }
-    numberOfElements += (unsigned int)textureCoordinateDimensions.size();
-    m_vertexDataLayoutElements.reserve(numberOfElements);//New overwrites data on the stack
-    vertexStride = 0;
-    if (position > 0)
-    {
-        D3D12_INPUT_ELEMENT_DESC layout;
-        layout.SemanticName = "POSITION";
-        layout.SemanticIndex = 0; 
-        switch (position)
+        const VertexStreamType streamType = iterator->first;
+        m_data[strucutredBufferArrayIndex] = std::make_pair(streamType, StructuredBuffer());
+        const auto& dataVariantArray = iterator->second;
+        switch (dataVariantArray.index())
         {
+        case 0:
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<0>(dataVariantArray));
+            break;
         case 1:
-            layout.Format = DXGI_FORMAT_R32_FLOAT;
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<1>(dataVariantArray));
             break;
         case 2:
-            layout.Format = DXGI_FORMAT_R32G32_FLOAT;
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<2>(dataVariantArray));
             break;
-        default:
         case 3:
-            layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<3>(dataVariantArray));
             break;
         case 4:
-            layout.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<4>(dataVariantArray));
+            break;
+        default:
+            MSG_TRACE_CHANNEL("VertexBuffer", "Sending unknonwn data to a vertex buffer, known types are float, Vector2, Vector3, Vector4 and Color");
             break;
         }
-        layout.InputSlot = 0;
-        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
-        layout.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
-        layout.InstanceDataStepRate = 0;
-        m_vertexDataLayoutElements.push_back(layout);
-        vertexStride += sizeof(float) * position;
-    }
 
-    if (normal)
-    {
-        D3D12_INPUT_ELEMENT_DESC layout;
-        layout.SemanticName = "NORMAL";
-        layout.SemanticIndex = 0; 
-        layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-        layout.InputSlot = 0;
-        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
-        layout.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
-        layout.InstanceDataStepRate = 0;
-        m_vertexDataLayoutElements.push_back(layout);
-        vertexStride += 12;
-    }
-
-    if (tangent)
-    {
-        D3D12_INPUT_ELEMENT_DESC layout;
-        layout.SemanticName = "TANGENT";
-        layout.SemanticIndex = 0;
-        layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-        layout.InputSlot = 0;
-        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
-        layout.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
-        layout.InstanceDataStepRate = 0;
-        m_vertexDataLayoutElements.push_back(layout);
-        vertexStride += 12;
-    }
-
-    if (vertexColor)
-    {
-        D3D12_INPUT_ELEMENT_DESC layout;
-        layout.SemanticName = "COLOR";
-        layout.SemanticIndex = 0; 
-        layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-        layout.InputSlot = 0;
-        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
-        layout.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
-        layout.InstanceDataStepRate = 0;
-        m_vertexDataLayoutElements.push_back(layout);
-        vertexStride += 16;
-    }
-
-    for (unsigned int counter = 0; counter < textureCoordinateDimensions.size(); ++counter)
-    {
-        D3D12_INPUT_ELEMENT_DESC layout;
-        layout.SemanticName = "TEXCOORD";
-        layout.SemanticIndex = counter; 
-        layout.InputSlot = 0;
-        layout.AlignedByteOffset = static_cast<unsigned int>(vertexStride);
-        layout.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
-        layout.InstanceDataStepRate = 0;
-        if (textureCoordinateDimensions[counter] == 2)
+        switch (streamType)
         {
-            layout.Format = DXGI_FORMAT_R32G32_FLOAT;
-            vertexStride += 8;
+        case VertexStreamType::Position:
+            resourceIndices.posBufferIndex = static_cast<uint>(m_data[strucutredBufferArrayIndex].second.GetDescriptorIndex());
+            break;
+        case VertexStreamType::Normal:
+            resourceIndices.normalBufferIndex = static_cast<uint>(m_data[strucutredBufferArrayIndex].second.GetDescriptorIndex());
+            break;
+        case VertexStreamType::Tangent:
+            resourceIndices.tangentBufferIndex = static_cast<uint>(m_data[strucutredBufferArrayIndex].second.GetDescriptorIndex());
+            break;
+        case VertexStreamType::Color:
+            resourceIndices.vertexColorBufferIndex = static_cast<uint>(m_data[strucutredBufferArrayIndex].second.GetDescriptorIndex());
+            break;
+        default:
+            break;
         }
-        else if (textureCoordinateDimensions[counter] == 3)
-        {
-            layout.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-            vertexStride += 12;
-        }
-        else if (textureCoordinateDimensions[counter] == 4)
-        {
-            layout.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-            vertexStride += 16;
-        }
-        else
-        {
-            //Assume 2D texcoords
-            layout.Format = DXGI_FORMAT_R32G32_FLOAT;
-            vertexStride += 8;
-        }
-        m_vertexDataLayoutElements.push_back(layout);
-        
-    }
 
-    return m_vertexDataLayoutElements;
+        if (streamType >= VertexStreamType::UVStart)
+        {
+            resourceIndices.textureBufferIndex = static_cast<uint>(m_data[strucutredBufferArrayIndex].second.GetDescriptorIndex());
+            ++resourceIndices.numberOfTextureStreams;
+        }
+    }
+    
+    return resourceIndices;
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-size_t VertexDeclarationDescriptor::GetVertexStride() const
+void VertexBuffer::Destroy()
 {
-    size_t stride = 0;
-    stride = position * sizeof(float);
-    stride += normal ? 3 * sizeof(float) : 0;
-    stride += tangent ? 3 * sizeof(float) : 0;
-    stride += vertexColor ? 4 * sizeof(float) : 0;
-    
-    for (unsigned int counter = 0; counter < textureCoordinateDimensions.size(); ++counter)
+    for (auto structuredBuffer : m_data)
     {
-        stride += textureCoordinateDimensions[counter] * sizeof(float);
+        structuredBuffer.second.Destroy();
     }
-
-    return stride;
 }
 
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+VertexDataStreams CreateDataStreams(const VertexDeclarationDescriptor& descriptor)
+{
+    VertexDataStreams dataStreams;
+    switch (descriptor.position)
+    {
+    case 2:
+        dataStreams.m_streams[VertexStreamType::Position] = std::vector<Vector2>();
+        break;
+    case 3:
+    default:
+        dataStreams.m_streams[VertexStreamType::Position] = std::vector<Vector3>();
+        break;
+    case 4:
+        dataStreams.m_streams[VertexStreamType::Position] = std::vector<Vector4>();
+        break;
+    }
+    
+    if (descriptor.normal)
+    {
+        dataStreams.m_streams[VertexStreamType::Normal] = std::vector<Vector3>();
+    }
+
+    if (descriptor.tangent)
+    {
+        dataStreams.m_streams[VertexStreamType::Tangent] = std::vector<Vector3>();
+    }
+
+    if (descriptor.vertexColor)
+    {
+        dataStreams.m_streams[VertexStreamType::Color] = std::vector<Color>();
+    }
+
+    if (!descriptor.textureCoordinateDimensions.empty())
+    {
+        //Add UV Streams
+        dataStreams.m_uvStreamCount = 0;
+        size_t uvStreamStart = static_cast<std::underlying_type_t<VertexStreamType>>(VertexStreamType::UVStart);
+        for (const auto& uvDimensions : descriptor.textureCoordinateDimensions)
+        {
+            switch (uvDimensions)
+            {
+            case 1:
+                dataStreams.m_streams[static_cast<VertexStreamType>(uvStreamStart + dataStreams.m_uvStreamCount)] = std::vector<float>();
+            default:
+            case 2:
+                dataStreams.m_streams[static_cast<VertexStreamType>(uvStreamStart + dataStreams.m_uvStreamCount)] = std::vector<Vector2>();
+                break;
+            case 3:
+                dataStreams.m_streams[static_cast<VertexStreamType>(uvStreamStart + dataStreams.m_uvStreamCount)] = std::vector<Vector3>();
+                break;
+            case 4:
+                dataStreams.m_streams[static_cast<VertexStreamType>(uvStreamStart + dataStreams.m_uvStreamCount)] = std::vector<Vector4>();
+                break;
+            }
+            ++dataStreams.m_uvStreamCount;
+        }
+
+    }
+
+    return dataStreams;
+}

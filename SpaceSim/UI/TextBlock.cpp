@@ -529,39 +529,43 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 ///-----------------------------------------------------------------------------
 void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
-	RenderResourceHelper renderResourceHelper(resource);
-	VertexDeclarationDescriptor descriptor;
-	descriptor.position = 3;
-	descriptor.textureCoordinateDimensions.push_back(2);
-    
-    auto& commandQueue = renderResourceHelper.getWriteableResource().getCommandQueueManager().GetCommandQueue(renderResourceHelper.getResource().getResourceLoader().m_uploadQueueHandle);
-    auto& commandList = commandQueue.GetCommandList(renderResourceHelper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
+	//RenderResourceHelper renderResourceHelper(resource);
+	//VertexDeclarationDescriptor descriptor;
+	//descriptor.position = 3;
+	//descriptor.textureCoordinateDimensions.push_back(2);
+ //   
+ //   auto& commandQueue = renderResourceHelper.getWriteableResource().getCommandQueueManager().GetCommandQueue(renderResourceHelper.getResource().getResourceLoader().GetCommandQueueHandle());
+ //   auto& commandList = commandQueue.GetCommandList();
+ //   auto& srvCBVUAVHeap = renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap();
 
-	vb.Create(renderResourceHelper.getResource().getDeviceManager(), commandList, sizeof(GlyphVertex) * m_glyphVerts.size(), &m_glyphVerts[0], descriptor.GetVertexStride());
-	m_geometryInstance.setPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+ //   VertexDataStreams dataStreams;
+ //   //Fit the Glyph Vertex into the streams needs some rewriting
+ //   MSG_ERROR_CHANNEL("TextBlockInfo", "Glyph Vertex has not been transformed yet created an empty buffer for text!");
+	//vb.CreateBuffer(renderResourceHelper.getResource().getDeviceManager(), commandList, srvCBVUAVHeap, dataStreams);
+	//m_geometryInstance.setPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	unsigned int glyphIndexBufer[] = 
-	{
-		0, 1, 2,
-		2, 3, 0
-	};
+	//unsigned int glyphIndexBufer[] = 
+	//{
+	//	0, 1, 2,
+	//	2, 3, 0
+	//};
 
-	size_t numberIndecis = 6 * (m_glyphVerts.size() / 4);
-	unsigned int* indexBuffer = new unsigned int[numberIndecis];
-	for (size_t counter = 0; counter < m_glyphVerts.size() / 4; ++counter)
-	{
-		for (size_t indexCounter = 0; indexCounter < 6; ++indexCounter)
-		{
-			indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
-		}
-	}
-	ib.Create(renderResourceHelper.getResource().getDeviceManager(), commandList, static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer);
-	ib.setNumberOfIndecis(static_cast<unsigned int>(numberIndecis));
+	//size_t numberIndecis = 6 * (m_glyphVerts.size() / 4);
+	//unsigned int* indexBuffer = new unsigned int[numberIndecis];
+	//for (size_t counter = 0; counter < m_glyphVerts.size() / 4; ++counter)
+	//{
+	//	for (size_t indexCounter = 0; indexCounter < 6; ++indexCounter)
+	//	{
+	//		indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
+	//	}
+	//}
+	//ib.Create(renderResourceHelper.getResource().getDeviceManager(), commandList, static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer);
+	//ib.setNumberOfIndecis(static_cast<unsigned int>(numberIndecis));
 
-	m_geometryInstance.setVB(&vb);
-	m_geometryInstance.setIB(&ib);
+	//m_geometryInstance.setVB(&vb);
+	//m_geometryInstance.setIB(&ib);
 
-	delete [] indexBuffer;
+	//delete [] indexBuffer;
 }
 
 ///-----------------------------------------------------------------------------

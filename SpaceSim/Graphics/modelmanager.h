@@ -14,12 +14,15 @@ class Frustum;
 class Model;
 class Resource;
 class ShaderInstance;
+class Job;
 
 struct ModelResourceHandle
 {
     CreatedModel m_model;
     size_t m_resourceId;
 };
+
+const size_t InvalidResourceHandle = static_cast<size_t>(-1);
 
 class ModelManager 
 {
@@ -33,7 +36,7 @@ public:
     void OnMessage(const MessageSystem::Message& msg);
 
     size_t LoadModel(void* data, size_t commandQueueHandle, size_t commandLisHandle);
-    size_t AddFace(void* data, size_t commandQueueHandle, size_t commandLisHandle);
+    size_t AddFace(void* data, size_t commandQueueHandle, size_t commandLisHandle, Job* currentJob);
 
     bool HasRenderResource(size_t resource_id) const;
     void RegisterCreatedModel(CreatedModel model, size_t renderResourceId);

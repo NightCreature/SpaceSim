@@ -28,6 +28,7 @@
 #include "Memory.h"
 
 #include "Logging/Logger.h"
+#include "Core/FileSystem/FileSystem.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -80,6 +81,7 @@ private:
     InputSystem        m_inputSystem;
     MapLoader                m_map;
     Paths              m_paths;
+    VFS::FileSystem m_fileSystem;
 
     size_t m_previousRenderInstanceListSize;
 

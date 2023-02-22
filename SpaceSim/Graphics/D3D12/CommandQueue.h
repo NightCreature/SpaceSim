@@ -22,7 +22,10 @@ struct CommandList
 
 struct CommandQueue
 {
-    using CommandLists = std::array<CommandList, 16>;
+    constexpr static size_t MaxCommandLists = 16;
+    constexpr static size_t InvalidCommandListHandle = MaxCommandLists;
+    using CommandLists = std::array<CommandList, MaxCommandLists>;
+    
 
     CommandQueue(const DeviceManager& deviceManager) : m_deviceManager(deviceManager) {}
 

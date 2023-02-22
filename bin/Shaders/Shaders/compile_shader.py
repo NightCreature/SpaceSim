@@ -16,21 +16,24 @@ def main():
         prefix = "vs"
     else:
         #check out the 3rd commandline argument for the prefix of our entry and profile
-        if (sys.argv[2] != "") :
-            prefix = sys.argv[2]
-        else:
-            print("Should provide entry point and profile")
+        for arg in sys.argv:
+            print(arg)
+        # if (sys.argv[2] != "") :
+        #     print(sys.argv[2])
+        #     prefix = sys.argv[2]
+        # else:
+        #     print("Should provide entry point and profile")
 
-    entrypoint = prefix + "_main"
-    profile = prefix + "_6_6"
-    ouputfilename = "./Compiled/" + filename + ".bin"
-    outputPdb = "./Compiled/" + filename + ".pdb"
-    outputrs = "./Compiled/" + filename + ".rs"
-    outputasm = "./Compiled/" + filename + ".asm"
+    # entrypoint = prefix + "_main"
+    # profile = prefix + "_6_6"
+    # ouputfilename = "./Compiled/" + filename + ".bin"
+    # outputPdb = "./Compiled/" + filename + ".pdb"
+    # outputrs = "./Compiled/" + filename + ".rs"
+    # outputasm = "./Compiled/" + filename + ".asm"
 
-    command = os.getcwd() + "/../../../SDK/DirectXCompiler/bin/x64/dxc.exe"
-    commandline = command + " -E " + entrypoint + " -T " + profile + " -Zs -Fo " + ouputfilename + " -Fc " + outputasm + " -Fd " + outputPdb + " -Frs " + outputrs +  " -HV 2021 " +  filename + fileextenstion
-    print(subprocess.check_output(commandline))
+    # command = os.getcwd() + "/../../../SDK/DirectXCompiler/bin/x64/dxc.exe"
+    # commandline = command + " -E " + entrypoint + " -T " + profile + " -Zs -Fo " + ouputfilename + " -Fc " + outputasm + " -Fd " + outputPdb + " -Frs " + outputrs +  " -HV 2021 " +  filename + fileextenstion
+    # print(subprocess.check_output(commandline))
 
 if __name__ == "__main__":
     main()

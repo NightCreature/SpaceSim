@@ -123,7 +123,7 @@ size_t ModelManager::LoadModel( void* data, size_t commandQueueHandle, size_t co
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-size_t ModelManager::AddFace(void* data, size_t commandQueueHandle, size_t commandLisHandle)
+size_t ModelManager::AddFace(void* data, size_t commandQueueHandle, size_t commandLisHandle, Job* currentJob)
 {
     auto* creationParams = static_cast<MessageSystem::CreateRenderResource<Face::CreationParams>::ResourceData<Face::CreationParams>*>(data);
     size_t renderResourceId = HASH_BINARY(creationParams);
@@ -134,7 +134,7 @@ size_t ModelManager::AddFace(void* data, size_t commandQueueHandle, size_t comma
         creationParams->m_fixedData.m_commandList = &(commandQueue.GetCommandList(commandLisHandle));
 
         //register face with model manager
-        auto face = Face::CreateFace((creationParams->m_fixedData), m_resource);
+        auto face = Face::CreateFace((creationParams->m_fixedData), m_resource, currentJob);
         RegisterCreatedModel(face, renderResourceId);
     }
 
@@ -167,12 +167,12 @@ void ModelManager::RegisterCreatedModel(CreatedModel model, size_t renderResourc
 
         if (m_createDebugBoundingBoxes)
         {
-            DebugGraphics::DebugBox* debugBox = new DebugGraphics::DebugBox(m_resource, handle.m_model.boundingBox.getMin(), handle.m_model.boundingBox.getMax());
-            debugBox->initialise();
-            m_debugBoundingBoxes.insert(std::make_pair(renderResourceId, debugBox));
+            //DebugGraphics::DebugBox* debugBox = new DebugGraphics::DebugBox(m_resource, handle.m_model.boundingBox.getMin(), handle.m_model.boundingBox.getMax());
+            //debugBox->initialise();
+            //m_debugBoundingBoxes.insert(std::make_pair(renderResourceId, debugBox));
         }
 
-        //We want to sort these here
+        //We want to sort these here, these might not be valid here so we need to sort again later
         std::sort(begin(m_models), end(m_models), [](const ModelResourceHandle& lhs, const ModelResourceHandle& rhs) { return lhs.m_model.model->GetSortKey() < rhs.m_model.model->GetSortKey(); });
     }
 }

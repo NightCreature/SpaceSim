@@ -50,66 +50,93 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
     for (size_t meshCounter = 0; meshCounter < scene->mNumMeshes; ++meshCounter)
     {
         MeshGroupCreator::CreationParams meshGroupParams;
+
         aiMesh* subMesh = scene->mMeshes[meshCounter];
+        
+        size_t sourceDataStreamsSize = 1; //Position Stream
+        VertexDeclarationDescriptor descriptor;
+        descriptor.normal = subMesh->HasNormals();
+        descriptor.tangent = subMesh->HasTangentsAndBitangents();
+        //Multiple streams :(
+        descriptor.vertexColor = subMesh->HasVertexColors(0);
+
+        for (unsigned int uvChannel = 0; uvChannel < subMesh->GetNumUVChannels(); ++uvChannel)
+        {
+            if (subMesh->HasTextureCoords(uvChannel))
+            {
+                descriptor.textureCoordinateDimensions.push_back(subMesh->mNumUVComponents[uvChannel]);
+            }
+        }
+
+        meshGroupParams.m_dataStream = CreateDataStreams(descriptor);
+        
+        size_t dataStreamIndex = 0;
         for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
         {
-            meshGroupParams.m_vertices.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
+            std::vector<Vector3>& positionStream = std::get<2>(meshGroupParams.m_dataStream.m_streams[VertexStreamType::Position]);
+            ++dataStreamIndex;
+            //Need to create a descriptor here and fetch and set the data streams
+            positionStream.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
 
             if (subMesh->HasNormals())
             {
-                meshGroupParams.m_normals.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
+                std::vector<Vector3>& normalStream = std::get<2>(meshGroupParams.m_dataStream.m_streams[VertexStreamType::Normal]);
+                ++dataStreamIndex;
+                normalStream.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
                 //MSG_TRACE_CHANNEL("NORMAL DEBUG", "Normal: %f, %f, %f", subMesh->mNormals[vertCounter].x, subMesh->mNormals[vertCounter].y, subMesh->mNormals[vertCounter].z);
             }
+
             if (subMesh->mTangents != nullptr)
             {
-                meshGroupParams.m_tangents.push_back(Vector3(-subMesh->mTangents[vertCounter].x, -subMesh->mTangents[vertCounter].y, -subMesh->mTangents[vertCounter].z));
+                std::vector<Vector3>& tangentStream = std::get<2>(meshGroupParams.m_dataStream.m_streams[VertexStreamType::Tangent]);
+                ++dataStreamIndex;
+                tangentStream.push_back(Vector3(-subMesh->mTangents[vertCounter].x, -subMesh->mTangents[vertCounter].y, -subMesh->mTangents[vertCounter].z));
             }
             if (subMesh->mBitangents != nullptr)
             {
                 meshGroupParams.m_tangents.push_back(Vector3(-subMesh->mBitangents[vertCounter].x, -subMesh->mBitangents[vertCounter].y, -subMesh->mBitangents[vertCounter].z));
             }
 
+            if (subMesh->HasVertexColors(0))
+            {
+                std::vector<Color>& colorStream = std::get<4>(meshGroupParams.m_dataStream.m_streams[VertexStreamType::Color]);
+                colorStream.push_back(Color(subMesh->mColors[0]->r, subMesh->mColors[0]->g, subMesh->mColors[0]->b, subMesh->mColors[0]->a));
+                ++dataStreamIndex;
+            }
+
+            size_t uvStreamStart = static_cast<std::underlying_type_t<VertexStreamType>>(VertexStreamType::UVStart);
             for (unsigned int uvChannel = 0; uvChannel < subMesh->GetNumUVChannels(); ++uvChannel)
             {
                 if (subMesh->HasTextureCoords(uvChannel))
                 {
                     aiVector3D* texCoordChannel = subMesh->mTextureCoords[uvChannel];
-                    while (meshGroupParams.m_texcoords.size() <= uvChannel)
-                    {
-                        meshGroupParams.m_texcoords.push_back(std::vector<Vector3>());
-                    }
+
                     switch (subMesh->mNumUVComponents[uvChannel])
                     {
                     case 1:
                     {
-                        Vector3 vec(texCoordChannel[vertCounter].x, 0.0f, 0.0f);
-                        std::vector<Vector3>& smit = meshGroupParams.m_texcoords[uvChannel];
-                        smit.push_back(vec);
+                        std::vector<float>& uStream = std::get<0>(meshGroupParams.m_dataStream.m_streams[static_cast<VertexStreamType>(uvStreamStart + uvChannel)]);
+                        uStream.push_back(texCoordChannel[vertCounter].x);
                     }
                     break;
                     case 2:
                     {
-                        Vector3 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y, 0.0f);
-                        std::vector<Vector3>& smit = meshGroupParams.m_texcoords[uvChannel];
-                        smit.push_back(vec);
+                        std::vector<Vector2>& uvStream = std::get<1>(meshGroupParams.m_dataStream.m_streams[static_cast<VertexStreamType>(uvStreamStart + uvChannel)]);
+                        uvStream.push_back(Vector2(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y));
                     }
                     break;
                     case 3:
                     {
-                        Vector3 vec(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y, texCoordChannel[vertCounter].z);
-                        std::vector<Vector3>& smit = meshGroupParams.m_texcoords[uvChannel];
-
-                        smit.push_back(vec);
-
-                        //    uvs.push_back(texCoordChannel[vertCounter].x);
-                        //    uvs.push_back(texCoordChannel[vertCounter].y);
-                        //    uvs.push_back(texCoordChannel[vertCounter].z);
+                        std::vector<Vector3>& uvwStream = std::get<2>(meshGroupParams.m_dataStream.m_streams[static_cast<VertexStreamType>(uvStreamStart + uvChannel)]);
+                        uvwStream.push_back(Vector3(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y, texCoordChannel[vertCounter].z));
                     }
                     break;
                     default:
                         break;
                     }
                 }
+
+                ++dataStreamIndex;
             }
         }
 

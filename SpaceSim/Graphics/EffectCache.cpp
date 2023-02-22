@@ -21,6 +21,7 @@ void EffectCache::Initialise(Resource* resource)
 
 const Effect* EffectCache::createEffect(Resource* resource, const std::string& resourceFileName)
 {
+    OPTICK_EVENT();
     std::string resourceName = getResourceNameFromFileName(resourceFileName);
     const Effect* returnValue = getEffect(resourceName);
     if (returnValue == nullptr)
@@ -45,8 +46,12 @@ const Effect* EffectCache::createEffect(Resource* resource, const std::string& r
 #ifdef _DEBUG
 			effect.m_name = resourceName;
 #endif
-            m_effects.emplace(std::pair<size_t, Effect>(hashString(resourceName), effect));
-            returnValue = getEffect(resourceName);
+            //This operation needs thread protection
+            {
+                const std::lock_guard<std::mutex> guard(m_mutex);
+                m_effects.emplace(std::pair<size_t, Effect>(hashString(resourceName), effect));
+                returnValue = getEffect(resourceName);
+            }
         }
     }
 

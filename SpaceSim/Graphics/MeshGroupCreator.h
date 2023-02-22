@@ -6,6 +6,7 @@
 #include "Graphics/VertexBuffer.h"
 
 #include <vector>
+#include <variant>
 
 namespace MeshGroupCreator
 {
@@ -18,18 +19,24 @@ namespace MeshGroupCreator
         CommandList* m_commandList;
         ShaderInstance m_shaderInstance;
         Material mat;
+
+        //Index data
+        std::vector<unsigned int>	 m_indices;
+
+        //Vertex Data
         VertexDeclarationDescriptor m_vertexDeclaration;
         std::vector<Vector3>		 m_vertices;
         std::vector<Vector3>		 m_normals;
         std::vector<Vector3>		 m_tangents;
         std::vector<Vector3>		 m_binormals;
-        std::vector<unsigned int>	 m_indices;
         MultiTexCoords				 m_texcoords;
         size_t m_numvertices;
-        size_t m_numindices;
         size_t m_numnormals;
         size_t m_numtangents;
         size_t m_numtexcoords;
+
+        size_t m_numindices;
+        VertexDataStreams m_dataStream;
     };
 
     CreatedMeshGroup CreateMeshGroup(const CreationParams& params);

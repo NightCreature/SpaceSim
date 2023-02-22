@@ -2,6 +2,9 @@
 
 #include "Core/Types/Types.h"
 #include "Math\VectorBySize.h"
+#include "Math/Vector2.h"
+#include "Math/Vector3.h"
+#include "Math/Vector4.h"
 #include <limits>
 
 using Vector2i = VectorBySize<int, 2>;

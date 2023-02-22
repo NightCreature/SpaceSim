@@ -12,6 +12,9 @@
 #include "Graphics/RenderInterface.h"
 #include "Core/MessageSystem/GameMessages.h"
 
+#include "..\bin\Shaders\Shaders\BindlessBuffers.h"
+#include <unordered_map>
+
 class DeviceManager;
 class Resource;
 class Bbox;
@@ -26,6 +29,7 @@ public:
         //m_shaderInstance.AddPsConstantBuffer(sizeof(MaterialContent), deviceManager, "material content buffer for meshgroup");
         //m_shaderInstance.AddVsConstantBuffer(sizeof(WVPBufferContent), deviceManager, "WVP content buffer for meshgroup");
         m_material = material;
+        memset(reinterpret_cast<void*>(&m_renderIndices), 0, sizeof(MeshResourceIndices));
     }
     MeshGroup(const MeshGroup& source);
     ~MeshGroup();
@@ -49,7 +53,7 @@ public:
     VertexBuffer& GetVB() { return m_vertexBuffer; }
     IndexBuffer& GetIB() { return m_indexBuffer; }
     Material& GetMaterial() { return m_material; }
-    void CreateConstantBuffer(size_t size, size_t rootParamIndex, const DeviceManager& deviceManager, DescriptorHeap& heap);
+    size_t CreateConstantBuffer(size_t size, size_t bufferNameHash, const DeviceManager& deviceManager, DescriptorHeap& heap);
     //std::vector<ConstantBuffer>& GetConstantBuffers() { return m_constantBuffers; }
     //const std::vector<ConstantBuffer>& GetConstantBuffers() const { return m_constantBuffers; }
     void SetPrimitiveLayout(size_t layout) { m_primitiveLayout = layout; }
@@ -57,8 +61,13 @@ public:
     void Cleanup();
 
     void SetName(const std::string& name) { m_name = name; }
+
+    void UpdateRenderIndices();
+    MeshResourceIndices& GetResourceInices() { return m_renderIndices; }
 private:
-    std::vector<std::pair<size_t, ConstantBuffer>> m_constantBuffers;
+    std::unordered_map<size_t, ConstantBuffer> m_constantBuffers;
+
+    MeshResourceIndices m_renderIndices;
     Matrix44 m_world;
     Material m_material;
     IndexBuffer m_indexBuffer;

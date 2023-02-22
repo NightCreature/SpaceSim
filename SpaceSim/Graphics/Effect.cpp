@@ -257,7 +257,7 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
     BuildRootParamaterLayout(loadedShaders);
 
 
-    m_pso.SetVertexInformation(vertextDeclaration, D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED, primitiveTopology);
+    m_pso.SetVertexInformation(vertextDeclaration, D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
     m_pso.CreatePipelineStateObject(deviceManager.GetDevice());
 
     m_techniqueId = hashBinaryData(reinterpret_cast<char*>(&m_pso), sizeof(PipelineObject)); //Not sure this works well

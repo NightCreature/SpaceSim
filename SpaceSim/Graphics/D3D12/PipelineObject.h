@@ -5,6 +5,7 @@
 #include "CommandQueue.h"
 
 struct VertexDeclarationDescriptor;
+struct IDxcBlob;
 
 class PipelineObject
 {
@@ -20,6 +21,7 @@ public:
     {
         m_pipeLineStateDescriptor.VS.BytecodeLength = shader.GetShaderBufferLength();
         m_pipeLineStateDescriptor.VS.pShaderBytecode = shader.GetShaderBufferPointer();
+        m_rootSignatureBlob = shader.GetCompiledShader().m_rootSignatureBlob;
     }
     void SetPixelShader(const Shader& shader)
     {
@@ -66,6 +68,7 @@ public:
 private:
     
     //ID3D12RootSignature* m_rootSignature = nullptr;
+    ID3DBlob* m_rootSignatureBlob = nullptr;
 
     
 };

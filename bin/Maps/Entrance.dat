@@ -1,4 +1,19 @@
 <xml>
+        <!--Single Front wall at orign so we have simple things-->
+    <Wall type="4">
+        <Material>
+            <Effect file_name="Shaders\Effects\debug_effect.xml" />
+            <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+            <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
+        </Material>
+
+        <Vector3 x="100" y="100" z="0"/>
+        <Vector3 x="100" y="-100" z="0"/>
+        <Vector3 x="-100" y="-100" z="0"/>
+        <Vector3 x="-100" y="100" z="0"/>
+    </Wall>
+    
+    <!--
   <Light name="light_0" type="0" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="1500">
     <Vector3 x="525" y="-75" z="150" />
     <Vector3 x="0" y="0" z="-1" />
@@ -19,6 +34,7 @@
     <Color r="1" g="0" b="0" a="1"/>
   </Light>
 !-->
+    
   <Wall type="6">
     <Material>
       <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
@@ -1110,6 +1126,7 @@
     </Material>
     <Vector3 x="525" y="-300" z="375"/>
   </RotatingBlades>
+  
   <!--<GunTurret name="turret_2" >
     <!--<Vector3 name="position"  x="175" y="-300" z="525"/>
     <Vector3 name="position"  x="0" y="0" z="0"/>

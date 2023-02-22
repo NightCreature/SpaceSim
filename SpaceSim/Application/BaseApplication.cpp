@@ -54,7 +54,8 @@ constexpr size_t numOfJobsToSpawn = 16;
 Application::Application():
 m_jobSystem(numOfJobsToSpawn), //Spawn the job queue with 8 threads
 m_gameResource(nullptr),
-m_previousRenderInstanceListSize(1)
+m_previousRenderInstanceListSize(1),
+m_fileSystem(m_paths)
 {
     m_controllerConnected = false;
     m_useController = false;
@@ -79,7 +80,7 @@ bool Application::initialise()
         delete file_logger;
     }
 
-    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
+    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_fileSystem, &m_entityManager, &m_gameObjectManager,
         &m_laserManager, &m_uiManager, nullptr, &m_logger, m_jobSystem.GetJobQueuePtr());
     
     bool returnValue = true;

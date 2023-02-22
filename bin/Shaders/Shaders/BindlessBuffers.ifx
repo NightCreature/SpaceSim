@@ -1,48 +1,8 @@
 #pragma once
 
 #include "CommonStructures.ifx"
+#include "BindlessBuffers.h"
 
-struct MeshResourceIndices
-{
-	//mesh information
-	uint posBufferIndex;
-	uint textureBufferIndex;
-	uint normalBufferIndex;
-	uint tangentBufferIndex;
-
-	//transform information
-	uint transformIndex;
-
-	uint materialIndex;
-	
-	//textures information
-	uint shadowMapIndex;
-	uint shadowSamplerIndex;
-
-	uint albedoMapIndex;
-	uint albedoSamplerIndex;
-	
-	uint normalMapIndex;
-	uint normalSamplerIndex;
-
-	uint cubeReflectionIndex;
-
-	uint ShadowProjection;
-
-	//Light info
-	uint LightBufferIndex;
-	uint NumberOfLights;
-};
-
-struct ParticleData
-{
-	uint positionIndex;
-	uint colorIndex;
-	uint sizeIndex;
-	uint transformIndex;
-
-	uint textureIndex;
-};
 
 Texture2D<float4> GetColorTexture(uint index) { return ResourceDescriptorHeap[index]; }
 Texture2D<float4> GetNormalTexture(uint index) { return ResourceDescriptorHeap[index]; }
@@ -68,4 +28,10 @@ template<typename ResourceType, typename InstanceType>
 InstanceType GetInstanceFromBufferT(uint resourceIndex, uint instanceIndex) 
 {
 	return InstanceType(GetBufferT<ResourceType>(resourceIndex)[instanceIndex]);
+}
+
+template<typename BufferType>
+ConstantBuffer<BufferType> GetConstantBuffer(uint index) 
+{
+	return ConstantBuffer<BufferType>(ResourceDescriptorHeap[index]);
 }

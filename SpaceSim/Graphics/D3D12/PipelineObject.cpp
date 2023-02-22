@@ -2,7 +2,7 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/VertexBuffer.h"
 #include "D3D12X.h"
-
+#include <dxcapi.h>
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
@@ -17,7 +17,7 @@ PipelineObject::PipelineObject()
     SetRenderTargetInformation(1, rtFormats, DXGI_FORMAT_D32_FLOAT);
     
     D3D12_RASTERIZER_DESC& rasterizerStateDesc = m_pipeLineStateDescriptor.RasterizerState;
-    rasterizerStateDesc.CullMode = D3D12_CULL_MODE_BACK;
+    rasterizerStateDesc.CullMode = D3D12_CULL_MODE_NONE;
     rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;
     rasterizerStateDesc.AntialiasedLineEnable = false;
     rasterizerStateDesc.DepthBias = 0;
@@ -106,7 +106,7 @@ void PipelineObject::CreatePipelineStateObject(ID3D12Device6* device)
         return;
     }
 
-    HRESULT hr  = device->CreateRootSignature(0, m_pipeLineStateDescriptor.VS.pShaderBytecode, m_pipeLineStateDescriptor.VS.BytecodeLength, IID_PPV_ARGS(&m_pipeLineStateDescriptor.pRootSignature));
+    HRESULT hr  = device->CreateRootSignature(0, m_rootSignatureBlob->GetBufferPointer(), m_rootSignatureBlob->GetBufferSize(), IID_PPV_ARGS(&m_pipeLineStateDescriptor.pRootSignature));
     if (hr != S_OK)
     {
         MSG_TRACE_CHANNEL("PipelineObject", "Failed to create Root signature from shader data with error: 0x%x, %s", hr, getLastErrorMessage(hr));
@@ -130,17 +130,19 @@ void PipelineObject::CreatePipelineStateObject(ID3D12Device6* device)
 ///-----------------------------------------------------------------------------
 void PipelineObject::SetVertexInformation(VertexDeclarationDescriptor& vertexDeclaration, D3D12_INDEX_BUFFER_STRIP_CUT_VALUE cutValue, D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveType)
 {
-    size_t stride = 0;
-    const auto& vertexElements = vertexDeclaration.createInputElementLayout(stride);
-    if (vertexElements.size() > 0)
-    {
-        m_pipeLineStateDescriptor.InputLayout = { &vertexElements[0], static_cast<unsigned int> (vertexElements.size()) };
-    }
-    else
-    {
+    UNUSEDPARAM(vertexDeclaration);
+
+    //size_t stride = 0;
+    //const auto& vertexElements;// = vertexDeclaration.createInputElementLayout(stride);
+    //if (vertexElements.size() > 0)
+    //{
+    //    m_pipeLineStateDescriptor.InputLayout = { &vertexElements[0], static_cast<unsigned int> (vertexElements.size()) };
+    //}
+    //else
+    //{
         m_pipeLineStateDescriptor.InputLayout.NumElements = 0;
         m_pipeLineStateDescriptor.InputLayout.pInputElementDescs = nullptr;
-    }
+   //}
     m_pipeLineStateDescriptor.IBStripCutValue = cutValue;
     m_pipeLineStateDescriptor.PrimitiveTopologyType = primitiveType; // type of primitive we are rendering, point, line, triangle, patch
 }

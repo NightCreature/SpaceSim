@@ -126,15 +126,16 @@ RenderSystem::~RenderSystem()
 ///-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource)
 {
+    OPTICK_EVENT();
     GameResource& gameResource = GameResourceHelper(resource).getWriteableResource();
-    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, &(gameResource.getJobQueue()), &m_heapManager, &m_commandQueueManager, &m_perFrameDataStorage);
+    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, resource->m_fileSystem, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, &(gameResource.getJobQueue()), &m_heapManager, &m_commandQueueManager, &m_perFrameDataStorage);
 
     m_deviceManager.Initialise(m_renderResource);
     m_modelManger.initialise(m_renderResource);
     m_heapManager.Initialise(m_renderResource);
     m_commandQueueManager.Initialise(m_renderResource);
     m_perFrameDataStorage.Initialise(m_renderResource);
-    m_shaderCache.Initialise();
+    m_shaderCache.Initialise(resource);
     
     m_appName = "Demo app";
     m_windowName = "Demo app";
@@ -649,6 +650,9 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 ///-------------------------------------------------------------------------
 void RenderSystem::endDraw()
 {
+    OPTICK_STOP_CAPTURE();
+    OPTICK_SAVE_CAPTURE("E:\\SDK\\Demo\\SpaceSim\\bin\\Profile\\shaderCompileDuration.opt");
+
     OPTICK_EVENT();
     //PIXBeginEvent(0, "End Draw");
     PROFILE_EVENT("RenderSystem::endDraw", Orange);
@@ -658,7 +662,7 @@ void RenderSystem::endDraw()
 
     //if (m_numberOfInstancePerFrame > 0)
     {
-        HRESULT hr = m_swapChain->Present(0, 0);
+         HRESULT hr = m_swapChain->Present(0, 0);
         OPTICK_GPU_FLIP(m_swapChain);
         OPTICK_CATEGORY("Present", Optick::Category::Wait);
         //++m_totalNumberOfRenderedFrames;

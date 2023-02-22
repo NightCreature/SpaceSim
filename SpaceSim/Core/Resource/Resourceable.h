@@ -10,14 +10,18 @@ namespace MessageSystem
 {
 class MessageQueues;
 }
+namespace VFS
+{
+    class FileSystem;
+}
 
-#define RESOURCE_PARAMETER_LIST Logger* logger, MessageSystem::MessageQueues* messageQueues, Paths* paths, PerformanceTimer* timer, SettingsManager* settings
+#define RESOURCE_PARAMETER_LIST Logger* logger, MessageSystem::MessageQueues* messageQueues, Paths* paths, PerformanceTimer* timer, SettingsManager* settings, VFS::FileSystem* fileSystem
 
 //Should be rewritten as an aggregation object 
 class Resource
 {
 public:
-    Resource(RESOURCE_PARAMETER_LIST) : m_logger(logger), m_messageQueues(messageQueues), m_paths(paths), m_performanceTimer(timer), m_settingsManager(settings) {}
+    Resource(RESOURCE_PARAMETER_LIST) : m_logger(logger), m_messageQueues(messageQueues), m_paths(paths), m_performanceTimer(timer), m_settingsManager(settings), m_fileSystem(fileSystem) {}
     virtual ~Resource() {}
 
     Logger* m_logger;
@@ -25,6 +29,7 @@ public:
     Paths* m_paths;
     PerformanceTimer* m_performanceTimer;
     SettingsManager* m_settingsManager;
+    VFS::FileSystem* m_fileSystem;
 };
 
 class Resourceable
@@ -72,7 +77,7 @@ class name : public Resource\
 public: \
     name(RESOURCE_PARAMETER_LIST,
 
-#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : Resource(logger, messageQueues, paths, timer, settings),
+#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : Resource(logger, messageQueues, paths, timer, settings, fileSystem),
 #define RESOURCE_CLASS_CONSTRUCTOR_BODY(name) {}
 #define RESOURCE_CLASS_END(name) };
 

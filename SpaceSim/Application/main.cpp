@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     //    MSG_TRACE_CHANNEL("COM ERROR", "Failed to make COM act in a multithreaded fashion");
     //}
 
-    //OPTICK_START_CAPTURE();
+    OPTICK_START_CAPTURE();
 
     Application application = Application();
     if( application.initialise() ) //Need to take the path manager from shader engine

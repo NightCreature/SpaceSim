@@ -43,19 +43,19 @@ void ResourceLoader::update()
 {
     m_updating = true;
 
-    for (auto* job : m_newJobs)
-    {
-        m_jobs.push_back(job);
-    }
-    m_newJobs.clear();
+    //for (auto* job : m_newJobs)
+    //{
+    //    m_jobs.push_back(job);
+    //}
+    //m_newJobs.clear();
 
-    for (auto* job : m_jobs)
-    {
-        job->Execute(0);
-        delete job;
-    }
+    //for (auto* job : m_jobs)
+    //{
+    //    job->Execute(0);
+    //    delete job;
+    //}
 
-    m_jobs.clear();
+    //m_jobs.clear();
 
 
     m_updating = false;
@@ -108,7 +108,7 @@ void ResourceLoader::DispatchResourceCommandQueue()
                 MSG_TRACE_CHANNEL("ResourceLoader", "Failed to close the resource command list 0x%x %s", hr, getLastErrorMessage(hr));
             }
         }
-
+         
         resourceCommandQueue.m_queue->ExecuteCommandLists(static_cast<UINT>(commandLists.size()), &commandLists[0]);
 
         //have to wait for the GPU to be done this is not the best but fuck it for now

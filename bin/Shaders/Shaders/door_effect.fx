@@ -33,8 +33,8 @@ float4 checker(float2 uv)
 [RootSignature(bindlessRS)]
 PS_INPUT vs_main( uint vertexID : SV_VertexID )
 {
-    float4 pos = float4(GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, vertexID),0);
-    WVPData wvpData = GetInstanceFromBuffer<WVPData>(resourceIndices.transformIndex);
+    float3 pos = GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, vertexID);
+    ConstantBuffer<WVPData> wvpData = GetConstantBuffer<WVPData>(resourceIndices.transformIndex);
 
     PS_INPUT output = (PS_INPUT)0;
     output.Pos = mul( pos, wvpData.World );

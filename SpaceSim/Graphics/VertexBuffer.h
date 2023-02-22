@@ -2,7 +2,14 @@
 
 #include <D3D12.h>
 #include <vector>
+#include "Core/Types/Types.h"
 #include "Core/tinyxml2.h"
+#include "D3D12/StructuredBuffer.h"
+#include "Math/VectorTypes.h"
+#include "Graphics/Color.h"
+#include <map>
+#include <variant>
+#include "../bin/Shaders/Shaders/BindlessBuffers.h"
 
 class DeviceManager;
 struct CommandList;
@@ -21,24 +28,18 @@ struct VertexDeclarationDescriptor
 
     void Deserialise(const tinyxml2::XMLElement* node);
 
-    const std::vector<D3D12_INPUT_ELEMENT_DESC>& createInputElementLayout(size_t& vertexStride);
-
-    size_t GetVertexStride() const;
-
     size_t position;
     bool normal;
     bool tangent;
     bool vertexColor;
     std::vector<unsigned int> textureCoordinateDimensions;
-
-    std::vector<D3D12_INPUT_ELEMENT_DESC> m_vertexDataLayoutElements;
 };
 
-class VertexBuffer
+class VertexBuffer2
 {
 public:
-    VertexBuffer(void){}
-    ~VertexBuffer(void) {}
+    VertexBuffer2(void){}
+    ~VertexBuffer2(void) {}
 
     void cleanup()
     {
@@ -71,4 +72,38 @@ private:
     ID3D12Resource* m_defaultResource = nullptr;
     ID3D12Resource* m_uploadResource = nullptr;
     D3D12_VERTEX_BUFFER_VIEW m_bufferView;
+};
+
+using VertexSourceDataStream = std::variant<
+    std::vector<float>,
+    std::vector<Vector2>,
+    std::vector<Vector3>,
+    std::vector<Vector4>,
+    std::vector<Color>
+>;
+
+enum class VertexStreamType : size_t
+{
+    Position = 0,
+    Normal,
+    Tangent,
+    Color,
+    UVStart
+};
+
+struct VertexDataStreams
+{
+    std::map<VertexStreamType, VertexSourceDataStream> m_streams;
+    size_t m_uvStreamCount = 0;
+};
+
+VertexDataStreams CreateDataStreams(const VertexDeclarationDescriptor& descriptor);
+
+class VertexBuffer
+{
+public:
+    MeshResourceIndices CreateBuffer(const DeviceManager& deviceManager, CommandList& commandList, DescriptorHeap& heap, const VertexDataStreams& data);
+    void Destroy();
+private:
+    std::vector<std::pair< VertexStreamType, StructuredBuffer>> m_data; //Data arrays on GPU
 };

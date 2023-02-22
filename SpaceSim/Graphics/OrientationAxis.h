@@ -8,6 +8,7 @@
 #endif
 #include <Windows.h>
 #include <d3d11.h>
+#include <vector>
 
 class DeviceManager;
 class Resource;
@@ -40,7 +41,8 @@ public:
     void draw(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection, Resource* resource);
 private:
     void transform(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection);
-    static LineVertex m_vertices[];
+    static std::vector<Vector3> m_vertices;
+    //static Color m_colorStream[];
     Effect* m_effect;
     VertexBuffer m_vertexBuffer;
     WVPBufferContent m_wvpConstants;

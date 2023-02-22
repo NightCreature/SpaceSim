@@ -68,3 +68,19 @@ VFS::File VFS::FileSystem::CreateFile(const std::filesystem::path& name, FileMod
 
     return File();
 }
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+std::vector<std::filesystem::path> VFS::FileSystem::ListFiles(const std::filesystem::path& path)
+{
+    std::vector<std::filesystem::path> files;
+    for (auto mountPoint : m_mountPoints)
+    {
+        auto fileList = mountPoint.ListFiles(path);
+        files.insert(files.end(), fileList.begin(), fileList.end());
+    }
+
+    return files;
+}

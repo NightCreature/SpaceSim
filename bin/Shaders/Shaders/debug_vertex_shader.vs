@@ -10,21 +10,23 @@ struct PS_INPUT
     float4 Color : COLOR;
 };
 
-
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
 [RootSignature(bindlessRS)]
 PS_INPUT vs_main( uint id:SV_VERTEXID )
 {
-    float4 pos = float4(GetInstanceFromBufferT<float3>(renderIndices.posBufferIndex, id),0);
-    WVPData wvpData = GetInstanceFromBuffer<WVPData>(renderIndices.transformIndex);
+    float3 posBuffer = GetInstanceFromBufferT<float3>(renderIndices.posBufferIndex, id);
+    ConstantBuffer<WVPData> wvpData = GetConstantBuffer<WVPData>(renderIndices.transformIndex);
+    ConstantBuffer<MaterialConstants> material = GetConstantBuffer<MaterialConstants>(renderIndices.materialIndex);
 
     PS_INPUT output = (PS_INPUT)0;
-    output.Pos = mul( pos, wvpData.World );
-    output.Pos = mul( output.Pos, wvpData.View );
-    output.Pos = mul( output.Pos, wvpData.Projection );
+    float4 pos = float4(posBuffer, 1.0f);
+    pos = mul (mul ( mul( pos, wvpData.World ), wvpData.View), wvpData.Projection);
+    output.Pos = pos;
+    output.Pos.w = 1.0f;
 
-    output.Color = GetInstanceFromBuffer<MaterialConstants>(renderIndices.materialIndex).diffuse;
+
+    output.Color = float4(1,1,1,1);
     return output;
 }

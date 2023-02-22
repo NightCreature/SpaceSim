@@ -251,3 +251,6 @@ psuedo code.c
 *.prf
 SDK/JSON/
 bin/ProfileCaptures/TypeScript/node_modules/
+bin/Shaders/Shaders/Compiled/
+bin/Shaders/Shaders/OLD/particle_system.fx
+bin/Shaders/Shaders/OLD/

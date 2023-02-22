@@ -41,7 +41,7 @@ std::vector<std::filesystem::path> MountPoint::ListFiles()
     HANDLE hFind = INVALID_HANDLE_VALUE;
 
     // Find the first file in the directory.
-    auto searchPath = m_rootPath / "*"; 
+    auto searchPath = m_rootPath / "*";
     hFind = FindFirstFile(searchPath.string().c_str(), &ffd);
 
     if (INVALID_HANDLE_VALUE != hFind)
@@ -50,8 +50,39 @@ std::vector<std::filesystem::path> MountPoint::ListFiles()
         do
         {
             paths.push_back(std::filesystem::path(ffd.cFileName));
-        }
-        while (FindNextFile(hFind, &ffd) != 0);
+        } while (FindNextFile(hFind, &ffd) != 0);
+
+    }
+
+    FindClose(hFind);
+
+    return paths;
+}
+
+
+///-----------------------------------------------------------------------------
+///! @brief This expects a relative path
+///! @remark
+///-----------------------------------------------------------------------------
+std::vector<std::filesystem::path> MountPoint::ListFiles(const std::filesystem::path& path)
+{
+    std::vector<std::filesystem::path> paths;
+
+
+    WIN32_FIND_DATA ffd;
+    HANDLE hFind = INVALID_HANDLE_VALUE;
+
+    // Find the first file in the directory.
+    auto searchPath = m_rootPath / path / "*";
+    hFind = FindFirstFile(searchPath.string().c_str(), &ffd);
+
+    if (INVALID_HANDLE_VALUE != hFind)
+    {
+        paths.push_back(std::filesystem::path(ffd.cFileName));
+        do
+        {
+            paths.push_back(std::filesystem::path(ffd.cFileName));
+        } while (FindNextFile(hFind, &ffd) != 0);
 
     }
 

@@ -10,7 +10,7 @@
 #include <assert.h>
 #include "D3D12/CommandQueue.h"
 
-OrientationAxis::LineVertex OrientationAxis::m_vertices[] = 
+std::vector<Vector3> OrientationAxis::m_vertices = 
 {//		x		y	  z	
     {-1000.0f, 0.0f, 0.0f},//, 0xFFFFFFFF
     {1000.0f , 0.0f, 0.0f},//, 0xFFFFFFFF
@@ -33,7 +33,7 @@ OrientationAxis::LineVertex OrientationAxis::m_vertices[] =
 ///-----------------------------------------------------------------------------
 void OrientationAxis::cleanup()
 {
-    m_vertexBuffer.cleanup();
+    m_vertexBuffer.Destroy();
 }
 
 ///-----------------------------------------------------------------------------
@@ -42,15 +42,15 @@ void OrientationAxis::cleanup()
 ///-----------------------------------------------------------------------------
 void OrientationAxis::initialise(Resource* resource, const DeviceManager& deviceManger)
 {
-    RenderResourceHelper helper(resource);
-    unsigned int bufferSize = 12 * sizeof(LineVertex);
+    //RenderResourceHelper helper(resource);
+    //auto& commandQueue = helper.getWriteableResource().getCommandQueueManager().GetCommandQueue(helper.getResource().getResourceLoader().GetCommandQueueHandle());
+    //auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().GetCommandListHandle()); //This might give us a bad handle
+    //auto& srvCBVUAVHeap = helper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap();
 
-    auto& commandQueue = helper.getWriteableResource().getCommandQueueManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
-    auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
-
-    //Move pointer to start of vertex array
-    VertexDeclarationDescriptor vertexDesc;
-    m_vertexBuffer.Create(deviceManger, commandList, bufferSize, m_vertices, vertexDesc.GetVertexStride());
+    ////Move pointer to start of vertex array
+    //VertexDataStreams vertexStreams;
+    //vertexStreams.m_streams[VertexStreamType::Position] = m_vertices;
+    //m_vertexBuffer.CreateBuffer(deviceManger, commandList, srvCBVUAVHeap, vertexStreams);
 }
 
 ///-----------------------------------------------------------------------------

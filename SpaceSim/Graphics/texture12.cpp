@@ -27,6 +27,24 @@ Texture12::~Texture12()
 ///-----------------------------------------------------------------------------
 bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename, size_t commandQeueuHandle, size_t commandListHandle, D3D12_CPU_DESCRIPTOR_HANDLE handle)
 {
+    auto& commandList = commandQueueManager.GetCommandQueue(commandQeueuHandle).GetCommandList(commandListHandle);
+    return loadTextureFromFile(deviceManager, commandList, filename, handle);
+}
+
+
+
+bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename) //shouldnt use this function
+{
+    MSG_TRACE_CHANNEL("TEXTURE12", "This cannot create a working texture");
+    return loadTextureFromFile(deviceManager, commandQueueManager, filename, 0, 0, D3D12_CPU_DESCRIPTOR_HANDLE());
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandList& commandList, const std::string& filename, D3D12_CPU_DESCRIPTOR_HANDLE handle)
+{
     ID3D12Device* device = deviceManager.GetDevice();
     HRESULT hr = S_OK;
 
@@ -56,6 +74,7 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueMa
     if (hr != S_OK)
     {
         MSG_TRACE_CHANNEL("Texture12", "Failed to load texture (%s) for reason: %d, %s", filename.c_str(), hr, getLastErrorMessage(hr));
+        MSG_TRACE_CHANNEL("Texture12", "Fail reason: %s", getLastErrorMessage(deviceManager.GetDevice()->GetDeviceRemovedReason()));
     }
 
 
@@ -70,7 +89,7 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueMa
     hr = device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&uploadRes));
 
     //have to pass commandlist here
-    auto& commandList = commandQueueManager.GetCommandQueue(commandQeueuHandle).GetCommandList(commandListHandle);
+
     UpdateSubresources(commandList.m_list, m_texture, uploadRes, 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
 
     auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_texture, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
@@ -111,14 +130,6 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueMa
     //D3DDebugHelperFunctions::SetDebugChildName(m_textureSamplerState, FormatString("Sampler for Texture %s", filename.c_str()));
 
     return true;
-}
-
-
-
-bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename) //shouldnt use this function
-{
-    MSG_TRACE_CHANNEL("TEXTURE12", "This cannot create a working texture");
-    return loadTextureFromFile(deviceManager, commandQueueManager, filename, 0, 0, D3D12_CPU_DESCRIPTOR_HANDLE());
 }
 
 ///-----------------------------------------------------------------------------

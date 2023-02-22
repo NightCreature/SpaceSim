@@ -32,7 +32,7 @@ private:
 	//RootParamInformation HandleRootConstants(D3D12_ROOT_PARAMETER1 parameter, size_t rootParamIndex);
 	//RootParamInformation HandleCBVSRVUAV(D3D12_ROOT_PARAMETER1 parameter, size_t rootParamIndex);
 
-	IDxcBlob* m_shaderBlob;
+	ID3DBlob* m_shaderBlob;
 	ID3D12ShaderReflection* m_reflectionObject;
 
 	ShaderParameters m_parameters;
