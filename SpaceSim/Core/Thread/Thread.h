@@ -4,6 +4,7 @@
 
 #include <string>
 
+
 //Implement termination of the thread in the destructor
 class Thread
 {

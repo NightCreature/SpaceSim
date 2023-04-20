@@ -3,11 +3,22 @@
 #include "JobSystem.h"
 #include <Optick.h>
 
-void CleanupWorkLoad(Workload& workLoad)
+void ReturnJobToQueueToWait(Workload& workLoad, JobQueue& queue)
 {
-    workLoad.m_job->Finish(); //Do operations before we delete the object
+    //workLoad.m_job->m_waitingForChildren = true;
+    queue.AddJob(workLoad.m_job);
+    workLoad.m_job = nullptr;
+    workLoad.m_empty = true;
+}
 
-    delete workLoad.m_job;
+void CleanupWorkLoad(Workload& workLoad, ThreadContext* context)
+{
+    if (workLoad.m_job != nullptr)
+    {
+        workLoad.m_job->Finish(context); //Do operations before we delete the object
+
+        delete workLoad.m_job;
+    }
 }
 
 ///-----------------------------------------------------------------------------
@@ -19,6 +30,7 @@ int WorkerThread::WorkerFunction()
     OPTICK_THREAD("WorkerThread");
 
     CoInitialize(NULL);
+    ThreadContext* context = m_jobSystem->GetThreadStatus(m_index);
 
     while(isAlive())
     {
@@ -28,30 +40,43 @@ int WorkerThread::WorkerFunction()
             m_jobSystem->WorkerThreadActive(m_index);
         }
         auto& queue = m_jobSystem->GetJobQueue();
+        
+
         auto workLoad = queue.GetNextWorkLoad();
         if (!workLoad.m_empty)
         {
-            //Execute this workload
-            workLoad.m_job->Execute(m_index);
-            workLoad.m_job->FinishJob();
-            //Job might not be finished here we need to deal with that
-            if (!workLoad.m_job->IsFinished())
-            {
-                //Other threads might be sleeping
-                if (!queue.IsEmpty())
+            OPTICK_EVENT();
+            if (!workLoad.IsFinished() && !workLoad.m_job->m_waitingForChildren)
+            {//Execute this workload
+                if (workLoad.m_job->Execute(context))
                 {
-                    m_jobSystem->SignalWorkAvailable();
+                    workLoad.m_job->FinishJob();
                 }
-
-                while (!workLoad.m_job->IsFinished())
+                //Job might not be finished here we need to deal with that
+                if (!workLoad.m_job->IsFinished())
                 {
-                    //Not good to spin but no other solution right now
+                    //Other threads might be sleeping
+                    if (!queue.IsEmpty())
+                    {
+                        m_jobSystem->SignalWorkAvailable();
+                    }
 
+                    //return the job to the queue lets handle all other first, likely we are done after, we have to mark this somehow too
+                    ReturnJobToQueueToWait(workLoad, queue);
+
+                }
+            }
+            else
+            {
+                //This job was rescheduled because it children werent finished lets check if they are
+                if (!workLoad.m_job->IsFinished())
+                {
+                    ReturnJobToQueueToWait(workLoad, queue);
                 }
             }
             
             //Should deallocate the job here
-            CleanupWorkLoad(workLoad);
+            CleanupWorkLoad(workLoad, context);
         }
         else
         {
@@ -62,6 +87,7 @@ int WorkerThread::WorkerFunction()
 
     return 0;
 }
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief 

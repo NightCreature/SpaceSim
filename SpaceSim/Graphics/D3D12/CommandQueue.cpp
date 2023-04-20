@@ -54,14 +54,38 @@ size_t CommandQueue::CreateCommandList()
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void CommandQueue::SetName(std::string commandQueueName)
+void CommandQueue::SetName(const std::string_view& commandQueueName)
 {
 #ifdef DEBUG
     std::wstring temp;
-    convertToWideString(commandQueueName, temp);
+    convertToWideString(std::string(commandQueueName), temp);
     m_name += temp;
     //m_queue->SetName(m_name.c_str());
 #endif
+}
+
+void CommandQueue::Cleanup()
+{
+    for (size_t index = 0; index < m_commandListHighIndex; ++index)
+    {
+        m_commandLists[index].m_alloctor->Release();
+        m_commandLists[index].m_list->Release();
+    }
+
+    m_queue->Release();
+    m_fence->Release();
+
+    CloseHandle(m_fenceEvent);
+}
+
+void CommandQueueManager::Cleanup()
+{
+    for (CommandQueue& queue : m_commandQueues)
+    {
+        queue.Cleanup();
+    }
+
+    m_commandQueues.clear();
 }
 
 ///-----------------------------------------------------------------------------

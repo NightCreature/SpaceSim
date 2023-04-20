@@ -13,6 +13,7 @@
 #include "Loader/ResourceLoadRequests.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include <mutex>
+#include <chrono>
 
 
 ///-----------------------------------------------------------------------------
@@ -23,16 +24,7 @@ void ResourceLoader::initialise(Resource* resource)
 {
     m_resource = resource;
 
-    //Should probably use a dubble buffered command list here
-    auto& helper = RenderResourceHelper(m_resource).getWriteableResource();
-    m_uploadQueueHandle = helper.getCommandQueueManager().CreateCommandQueue();
-    CommandQueue& commandQueue = helper.getCommandQueueManager().GetCommandQueue(m_uploadQueueHandle);
-    commandQueue.SetName("ResourceLoaderQueue");
-
-    for (size_t freeCommandListIndex = 0; freeCommandListIndex < commandQueue.m_commandLists.size(); ++freeCommandListIndex)
-    {
-        m_freeCommandLists.push_back(commandQueue.CreateCommandList());
-    }
+    m_commandListManager.Initialise(resource, "ResourceCommandLists");
 }
 
 ///-----------------------------------------------------------------------------
@@ -89,93 +81,17 @@ void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
 ///-----------------------------------------------------------------------------
 void ResourceLoader::DispatchResourceCommandQueue()
 {
-    std::scoped_lock lock(m_mutex);
-    if (!m_commandListsToProcess.empty())
-    {
-        auto& helper = RenderResourceHelper(m_resource).getWriteableResource();
-        auto& resourceCommandQueue = helper.getCommandQueueManager().GetCommandQueue(m_uploadQueueHandle);
-
-        std::vector<ID3D12CommandList*> commandLists;
-        HRESULT hr = E_FAIL;
-        for (size_t commandListHandle : m_commandListsToProcess)
-        {
-            auto& resourceCommandList = resourceCommandQueue.GetCommandList(commandListHandle);
-            commandLists.push_back(resourceCommandList.m_list);
-
-            hr = resourceCommandList.m_list->Close();
-            if (hr != S_OK)
-            {
-                MSG_TRACE_CHANNEL("ResourceLoader", "Failed to close the resource command list 0x%x %s", hr, getLastErrorMessage(hr));
-            }
-        }
-         
-        resourceCommandQueue.m_queue->ExecuteCommandLists(static_cast<UINT>(commandLists.size()), &commandLists[0]);
-
-        //have to wait for the GPU to be done this is not the best but fuck it for now
-        const UINT64 fence = resourceCommandQueue.m_fenceValue;
-        hr = resourceCommandQueue.m_queue->Signal(resourceCommandQueue.m_fence, fence);
-        if (hr != S_OK)
-        {
-            MSG_TRACE_CHANNEL("ERROR", "Fence Signal failed with error code: 0x%x %s", hr, getLastErrorMessage(hr));
-        }
-        resourceCommandQueue.m_fenceValue++;
-
-        // Wait until the previous frame is finished.
-        UINT64 fenceValue = resourceCommandQueue.m_fence->GetCompletedValue();
-        if (fenceValue < fence)
-        {
-            resourceCommandQueue.m_fence->SetEventOnCompletion(fence, resourceCommandQueue.m_fenceEvent);
-            WaitForSingleObject(resourceCommandQueue.m_fenceEvent, INFINITE); //This could stall
-        }
-
-        for (size_t commandListHandle : m_commandListsToProcess)
-        {
-            auto& commandList = helper.getCommandQueueManager().GetCommandQueue(m_uploadQueueHandle).GetCommandList(commandListHandle);
-            commandList.m_alloctor->Reset();
-            commandList.m_list->Reset(commandList.m_alloctor, nullptr);
-            //If we have no outstanding jobs free up this index for commands otherwise setup the new job
-            if (!m_newJobs.empty())
-            {
-                ResourceLoadJob* job = m_newJobs.front();
-                m_newJobs.pop_front();
-                job->SetCommandListHandle(commandListHandle);
-            }
-            else
-            {
-                m_freeCommandLists.push_back(commandListHandle);
-            }
-        }
-        m_commandListsToProcess.clear();
-
-    }
-
+    m_commandListManager.Update();
 }
 
-///-----------------------------------------------------------------------------
-///! @brief   
-///! @remark
-///-----------------------------------------------------------------------------
-void ResourceLoader::CompleteCommandList(size_t commandListHandle)
+bool ResourceLoader::GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList)
 {
-    std::scoped_lock lock(m_mutex);
-    m_commandListsToProcess.push_back(commandListHandle);
+    return m_commandListManager.GetCommandListHandleForThreadIndex(threadIndex, commandList);
 }
 
-///-----------------------------------------------------------------------------
-///! @brief   
-///! @remark
-///-----------------------------------------------------------------------------
-size_t ResourceLoader::GetCommandListHandle()
+void ResourceLoader::ReturnCommandListForThreadIndex(size_t threadIndex)
 {
-    std::scoped_lock lock(m_mutex);
-    if (!m_freeCommandLists.empty())
-    {
-        size_t commandHandle = m_freeCommandLists.front();
-        m_freeCommandLists.pop_front();
-        return commandHandle;
-    }
-
-    return CommandQueue::InvalidCommandListHandle;
+    m_commandListManager.ReturnCommandListForThreadIndex(threadIndex);
 }
 
 ///-----------------------------------------------------------------------------
@@ -185,37 +101,25 @@ size_t ResourceLoader::GetCommandListHandle()
 void ResourceLoader::AddLoadRequest(const LoadRequest& request)
 {
     // These jobs will have to wait until the commandlist they have put there commands in is done on the GPU before sending messages back to the update side
-    size_t commandListHandle = GetCommandListHandle();
     ResourceLoadJob* job = nullptr;
     switch (request.m_resourceType)
     {
     case "Face::CreationParams"_hash:
-        job = new FaceJob(m_resource, m_uploadQueueHandle, commandListHandle, request.m_gameObjectId, request.m_loadData, this);
+        job = new FaceJob(request.m_gameObjectId, request.m_loadData, this);
         break;
     case "LOAD_TEXTURE"_hash:
     {
-        job = new LoadTextureJob(m_resource, m_uploadQueueHandle, commandListHandle, (char*)(request.m_loadData), this);
+        job = new LoadTextureJob((char*)(request.m_loadData), this);
         delete request.m_loadData;
     }
     break;
     case "LoadModelResource"_hash:
-        job = new LoadModelJob(m_resource, m_uploadQueueHandle, commandListHandle, request.m_gameObjectId, request.m_loadData, this);
+        job = new LoadModelJob(request.m_gameObjectId, request.m_loadData, this);
         break;
     default:
         break;
     }
-    if (commandListHandle != CommandQueue::InvalidCommandListHandle)
-    {
-        if (job != nullptr)
-        {
-            RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
-            renderResource.getJobQueue().AddJob(job);
 
-        }
-    }
-    else
-    {
-        //These jobs have been created with an invalid handle and as such we can dispatch them until a queue is free, this probably will have to change
-        m_newJobs.push_back(job);
-    }
+    RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
+    renderResource.getJobQueue().AddJob(job);
 }

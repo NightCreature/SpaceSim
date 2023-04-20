@@ -4,8 +4,9 @@
 
 #include <atomic>
 #include <sstream>
-#include "../Types/TypeHelpers.h"
+#include "Core/Types/TypeHelpers.h"
 #include <Optick.h>
+#include "Core/Resource/Resourceable.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -20,7 +21,7 @@ JobSystem::JobSystem(size_t numThreads)
     m_workAvaliable = CreateEvent(NULL, TRUE, FALSE, "SignalWorkAvailable");
     m_workFinishedEvent = CreateEvent(NULL, TRUE, FALSE, "WorkFinishedEvent");
 
-    size_t index = 1; //this starts at one so we can use this thread as a working thread too
+    size_t index = 0; //this starts at one so we can use this thread as a working thread too
     for (auto& threadStatus : m_workerThreads)
     {
         threadStatus.m_thread.SetJobsystem(this, index, m_workAvaliable);
@@ -37,9 +38,18 @@ JobSystem::JobSystem(size_t numThreads)
     for (auto& threadStatus : m_workerThreads)
     {
         std::stringstream str;
-        str << "WorkerThread" << index;
-        threadStatus.m_working = true;
-        threadStatus.m_thread.createThread(1024*1024, str.str());
+        threadStatus.m_threadIndex = index;
+        if (index == 0)
+        {
+            str << "JobSystemThread";
+        }
+        else
+        {
+            str << "WorkerThread" << index;
+            threadStatus.m_working = true;
+            threadStatus.m_thread.createThread(1024 * 1024, str.str());
+        }
+        ++index;
     }
 }
 
@@ -164,7 +174,7 @@ void JobSystem::ProcessWork()
     {
         //Execute this workload
         
-        workLoad.m_job->Execute(0); //running on the main thread
+        workLoad.m_job->Execute(&m_workerThreads[0]); //running on the main thread
         workLoad.m_job->FinishJob();
         //once we are done with the work load get ride of it, this should probably be done better
         //delete workLoad.m_job;
@@ -182,4 +192,21 @@ void JobSystem::ProcessWork()
         DWORD waitReturn = WaitForSingleObject(m_workFinishedEvent, INFINITE);
         UNUSEDPARAM(waitReturn);
     }
+}
+
+void JobSystem::SetGameResource(Resource* resource)
+{
+    for (auto& threadStatus : m_workerThreads)
+    {
+        threadStatus.m_gameResource = resource;
+    }
+}
+
+void JobSystem::SetRenderResource(Resource* resource)
+{
+    for (auto& threadStatus : m_workerThreads)
+    {
+        threadStatus.m_renderResource = resource;
+    }
+
 }

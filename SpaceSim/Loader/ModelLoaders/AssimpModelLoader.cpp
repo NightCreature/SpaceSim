@@ -8,6 +8,10 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
 #include "../ResourceLoader.h"
+#include "../ResourceLoadJobs.h"
+
+
+#include <thread>
 
 namespace AssimpModelLoader
 {
@@ -53,7 +57,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
 
         aiMesh* subMesh = scene->mMeshes[meshCounter];
         
-        size_t sourceDataStreamsSize = 1; //Position Stream
+        //size_t sourceDataStreamsSize = 1; //Position Stream
         VertexDeclarationDescriptor descriptor;
         descriptor.normal = subMesh->HasNormals();
         descriptor.tangent = subMesh->HasTangentsAndBitangents();
@@ -156,7 +160,8 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
 
         meshGroupParams.m_shaderInstance = shaderInstance;
         aiMaterial* aimaterial = scene->mMaterials[subMesh->mMaterialIndex];
-        Material shaderMaterial;// = meshGroupParams.m_shaderInstance.getMaterial();
+        Material& shaderMaterial =  meshGroupParams.mat;
+        shaderMaterial = material;
         aiColor4D color;
         aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
         shaderMaterial.setAmbient(Color(color.r, color.g, color.b, color.a));

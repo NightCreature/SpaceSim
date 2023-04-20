@@ -1,11 +1,14 @@
 #pragma once
 
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/Types/TypeHelpers.h"
 
 #include <mutex>
 #include <vector>
 #include <windows.h>
 #include <atomic>
+
+struct ThreadContext;
 
 class Job
 {
@@ -15,8 +18,8 @@ public:
     {}
     virtual ~Job() = default;
     
-    virtual void Execute(size_t threadIndex) = 0;
-    virtual void Finish() = 0; //This function is called before we delete the object, this can be handy if you know the job is a parent and relying on actions done in its children
+    virtual bool Execute(ThreadContext* context) = 0;
+    virtual void Finish(ThreadContext* context) = 0; //This function is called before we delete the object, this can be handy if you know the job is a parent and relying on actions done in its children
 
     void FinishJob()
     {
@@ -34,6 +37,7 @@ public:
 
     std::atomic<size_t> m_numberOfUnfinishedJobs;
     Job* m_parent = nullptr;
+    bool m_waitingForChildren = false;
 };
 
 struct Workload
@@ -48,21 +52,21 @@ struct Workload
 class SimplePrintTask //: public Job
 {
 public:
-    virtual void Execute(size_t threadIndex);
+    virtual void Execute(size_t threadIndex, ThreadContext* context);
 };
 
 template<class Function>
 class FunctionWrapperJob : public Job
 {
 public:
-    FunctionWrapperJob(Function func) : m_function(func) {}
+    explicit FunctionWrapperJob(Function func) : m_function(func) {}
 
-    void Execute(size_t threadIndex) override
+    bool Execute(ThreadContext* context) override
     {
-        m_function. template operator()(threadIndex);
+        return m_function. template operator()(context);
     }
 
-    void Finish() {}
+    void Finish(ThreadContext* context) { UNUSEDPARAM(context); }
 private:
 
     Function m_function;
@@ -87,9 +91,8 @@ public:
 
     template <class Function>
     void
-    AddJob(Function function)
+    AddFunctionJob(Function function)
     {
-        MSG_TRACE_CHANNEL("JobQueue", "Adding Function job"); 
         FunctionWrapperJob<Function>* fwj = CreateFunctionWrapper(function);
         AddJob(fwj);
     }
@@ -97,9 +100,8 @@ public:
 
     template <class Function>
     void
-    AddChildJob(Function function, Job* parent)
+    AddChildFunctionJob(Function function, Job* parent)
     {
-        MSG_TRACE_CHANNEL("JobQueue", "Adding Child Function job");
         FunctionWrapperJob<Function>* fwj = CreateFunctionWrapper(function);
         AddChildJob(fwj, parent);
     }
@@ -107,7 +109,6 @@ public:
     template<IsAJob T>
     void AddJob(T job)
     {
-        MSG_TRACE_CHANNEL("JobQueue", "Adding a job");
         std::scoped_lock<std::mutex> aquireLock(m_mutex);
         Workload load;
         load.m_empty = false;
@@ -120,7 +121,6 @@ public:
     template<IsAJob T>
     void AddChildJob(T* job, Job* parent)
     {
-        MSG_TRACE_CHANNEL("JobQueue", "Adding a child job");
         std::scoped_lock<std::mutex> aquireLock(m_mutex);
         Workload load;
         load.m_empty = false;

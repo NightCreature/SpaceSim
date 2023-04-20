@@ -7,6 +7,17 @@
 #include <mutex>
 #include <vector>
 
+class Resource;
+
+struct ThreadContext
+{
+    WorkerThread m_thread;
+    Resource* m_gameResource = nullptr;
+    Resource* m_renderResource = nullptr;
+    size_t m_threadIndex = static_cast<size_t>(-1);
+    bool m_working = false;
+};
+
 class JobSystem
 {
 public:
@@ -26,13 +37,15 @@ public:
 
     void ProcessWork(); //this thread will also be used to execute jobs on
 
-    struct ThreadStatus
-    {
-        WorkerThread m_thread;
-        bool m_working;
-    };
+    void SetGameResource(Resource* resource);
+    void SetRenderResource(Resource* resource);
 
-    std::vector<ThreadStatus> m_workerThreads;
+    ThreadContext* GetThreadStatus(size_t index)
+    {
+        return &m_workerThreads[index];
+    }
+
+    std::vector<ThreadContext> m_workerThreads;
     JobQueue m_jobQueue;
 
     HANDLE m_workAvaliable; //Signal event to worker threads that they should wake up
@@ -40,5 +53,6 @@ public:
 
     std::mutex m_finishedMutex;
     std::atomic_size_t m_numberOfSleepingThreads;
+
 };
 

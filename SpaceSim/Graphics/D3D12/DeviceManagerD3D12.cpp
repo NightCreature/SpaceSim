@@ -208,10 +208,16 @@ bool DeviceManager::CheckFeatures()
 
     //Initialise this with the highest possible value, if its supported it will return that value or the highest the device does support
     D3D12_FEATURE_DATA_SHADER_MODEL shaderModel;
-    shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_7;
+    shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_6;
     m_device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel));
 
     MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Highest Shader Model supported: 0x%X", shaderModel.HighestShaderModel);
+    
+    D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureSupport5{};
+    m_device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureSupport5, sizeof(featureSupport5));
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Raytracing tier: %d", featureSupport5.RaytracingTier);
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Render Passes Tier: %d", featureSupport5.RenderPassesTier);
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "SRV Only tiled resources tier 3: %s", featureSupport5.SRVOnlyTiledResourceTier3 ? "true" : "false");
 
     return true;
 }
@@ -380,6 +386,12 @@ bool DeviceManager::InitialiseDebugLayers()
         MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create the debug interface with error: 0x%x, %s", hr, getLastErrorMessage(hr));
         return false;
     }
+
+    ID3D12Debug* spDebugController0;
+    ID3D12Debug1* spDebugController1;
+    D3D12GetDebugInterface(IID_PPV_ARGS(&spDebugController0));
+    spDebugController0->QueryInterface(IID_PPV_ARGS(&spDebugController1));
+    spDebugController1->SetEnableGPUBasedValidation(true);
 
     m_debugInterface->EnableDebugLayer();
 #endif

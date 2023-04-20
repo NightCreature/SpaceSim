@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <sstream>
+#include "Core/Types/TypeHelpers.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -34,8 +35,9 @@ std::atomic<size_t> globalCounter = 0;
 ///! @brief 
 ///! @remark
 ///-----------------------------------------------------------------------------
-void SimplePrintTask::Execute(size_t threadIndex)
+void SimplePrintTask::Execute(size_t threadIndex, ThreadContext* context)
 {
+    UNUSEDPARAM(context);
     std::stringstream str("");
     str << ++globalCounter << " Thread " << threadIndex << " executing\n";
     OutputDebugString(str.str().c_str());

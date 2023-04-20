@@ -13,6 +13,7 @@
 #include "Core/MessageSystem/GameMessages.h"
 
 #include "Loader/ResourceLoader.h"
+#include "Core/Thread/JobSystem.h"
 //None of this can send a return msg until the command list has been executed on the GPU
 
 
@@ -20,16 +21,17 @@
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ResourceLoadJob::Finish()
+void ResourceLoadJob::Finish(ThreadContext* context)
 {
-    m_loader->CompleteCommandList(m_commandListHandle);
+    //m_loader->CompleteCommandList(m_commandListHandle);
+    m_loader->ReturnCommandListForThreadIndex(context->m_threadIndex);
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ResourceLoadJob::SendReturnMsg(size_t gameObjectId, size_t resourceHandle)
+void ResourceLoadJob::SendReturnMsg(Resource* resource, size_t gameObjectId, size_t resourceHandle)
 {
     MessageSystem::CreatedRenderResourceMessage returnMessage;
     MessageSystem::CreatedRenderResourceMessage::CreatedRenderResource data;
@@ -37,21 +39,45 @@ void ResourceLoadJob::SendReturnMsg(size_t gameObjectId, size_t resourceHandle)
     data.m_gameObjectId = gameObjectId;
     returnMessage.SetData(data);
 
-    RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
+    RenderResource& renderResource = RenderResourceHelper(resource).getWriteableResource();
     renderResource.m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage);
+}
+
+CommandList* ResourceLoadJob::GetCommandList()
+{
+    //If we cant get the commandlist we cant handle the job yet
+    //m_loader->GetCommandListHandleForThreadIndex();
+    
+    return nullptr;
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void FaceJob::Execute(size_t threadIndex)
+bool FaceJob::Execute(ThreadContext* context)
 {
-    UNUSEDPARAM(threadIndex);
-    
-    RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
-    m_resourceHandle = renderResource.getModelManager().AddFace(m_loadData, m_commandQueueHandle, m_commandListHandle, this);//needs to be thread safe
+    OPTICK_EVENT();
 
+    RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
+    CommandList commandList;
+    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+    if (retVal)
+    {
+        m_resourceHandle = renderResource.getModelManager().AddFace(m_loadData, commandList, this);
+        SendReturnMsg(context->m_renderResource, m_gameObjectId, m_resourceHandle);
+    }
+
+    return retVal;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void FaceJob::Finish(ThreadContext* context)
+{
+    ResourceLoadJob::Finish(context);
     //Since we handled the loading of our data get rid of the jobs data
     delete m_loadData;
 }
@@ -60,54 +86,60 @@ void FaceJob::Execute(size_t threadIndex)
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void FaceJob::Finish()
+bool LoadTextureJob::Execute(ThreadContext* context)
 {
-    ResourceLoadJob::Finish();
-    SendReturnMsg(m_gameObjectId, m_resourceHandle);
-}
+    OPTICK_EVENT();
 
-///-----------------------------------------------------------------------------
-///! @brief   
-///! @remark
-///-----------------------------------------------------------------------------
-void LoadTextureJob::Execute(size_t threadIndex)
-{
     if (m_fileName.empty())
-        return;
+        return true; //do nothing
 
-    RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
-
-    //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
-    std::string textureName = getTextureNameFromFileName(m_fileName);
-
-    TextureManager& texManager = renderResource.getTextureManager();
-    if (texManager.find(textureName))
+    CommandList commandList;
+    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+    if (retVal)
     {
-        return;
+        RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
+
+        //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
+        std::string textureName = getTextureNameFromFileName(m_fileName);
+
+        TextureManager& texManager = renderResource.getTextureManager();
+        auto& textureInformation = texManager.AddOrCreateTexture(textureName);
+        if (textureInformation.m_heapIndex == DescriptorHeap::invalidDescriptorIndex && textureInformation.m_loadRequested == false)
+        {
+            Texture12 texture;
+            size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
+            if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, m_fileName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
+            {
+                MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", textureName.c_str(), context->m_threadIndex);
+                return true;
+            }
+
+            texManager.addTexture(textureName, texture, descriptorIndex);
+        }
     }
 
-    Texture12 texture;
-    size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
-    if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), renderResource.getCommandQueueManager(), m_fileName, m_commandQueueHandle, m_commandListHandle, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
-    {
-        MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", m_fileName.c_str(), threadIndex);
-        return;
-    }
-
-    texManager.addTexture(textureName, texture, descriptorIndex);
+    return retVal;
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void LoadModelJob::Execute(size_t threadIndex)
+bool LoadModelJob::Execute(ThreadContext* context)
 {
-    UNUSEDPARAM(threadIndex);
-    RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
+    OPTICK_EVENT();
 
-    auto resourceHandle = renderResource.getModelManager().LoadModel(m_loadData, m_commandQueueHandle, m_commandListHandle);//needs to be thread safe, and should be a job
-    SendReturnMsg(m_gameObjectId, resourceHandle);
+    CommandList commandList;
+    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+    if (retVal)
+    {
+        RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
 
-    delete m_loadData;
+        auto resourceHandle = renderResource.getModelManager().LoadModel(m_loadData, commandList);//needs to be thread safe, and should be a job
+        SendReturnMsg(context->m_renderResource, m_gameObjectId, resourceHandle);
+
+        delete m_loadData;
+    }
+
+    return retVal;
 }

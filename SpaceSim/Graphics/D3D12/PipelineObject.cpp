@@ -171,3 +171,9 @@ void PipelineObject::BindToCommandList(CommandList& commandList)
     commandList.m_list->SetPipelineState(m_pipelineObject);
 }
 
+void PipelineObject::Destroy()
+{
+    m_pipelineObject->Release();
+    m_rootSignatureBlob->Release();
+}
+

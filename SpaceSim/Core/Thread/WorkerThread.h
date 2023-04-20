@@ -4,6 +4,8 @@
 
 class JobSystem;
 
+struct WorkerThreadContext {};
+
 class WorkerThread : public Thread
 {
 public:
@@ -19,5 +21,6 @@ public:
     HANDLE m_workAvailableHandle;
 
     bool m_threadPaused = false;
+
 };
 

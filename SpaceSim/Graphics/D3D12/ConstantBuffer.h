@@ -60,6 +60,14 @@ public:
         OPTICK_EVENT();
         memcpy(m_cpuSideData.m_data, &data, sizeof(T));
     }
+
+    template<class T, size_t ElementCount>
+    void UpdateCpuData(const T (&data)[ElementCount])
+    {
+        OPTICK_EVENT();
+        memcpy(m_cpuSideData.m_data, &data, sizeof(T) * ElementCount);
+    }
+
     ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
     size_t GetHeapIndex() const { return m_heapIndex; }
 private:

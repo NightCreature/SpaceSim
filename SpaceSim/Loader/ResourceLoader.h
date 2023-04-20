@@ -8,25 +8,18 @@
 #include <list>
 #include <mutex>
 #include <deque>
+#include "Graphics/DebugHelperFunctions.h"
+#include <semaphore>
+#include "Graphics/D3D12/MultithreadedCommandlistManager.h"
 
 class Resource;
 class ResourceLoadJob;
+struct LoadRequest;
 
 namespace MessageSystem
 {
 class LoadResourceRequest;
 }
-
-struct LoadRequest
-{
-    size_t m_resourceType = 0;
-    size_t m_gameObjectId = 0;
-    void* m_loadData = nullptr;
-
-#ifdef _DEBUG
-    SourceInfo m_sourceInfo;
-#endif
-}; 
 
 class ResourceLoader : public MessageSystem::IMessageDispatcher
 {
@@ -42,9 +35,8 @@ public:
 
     void DispatchResourceCommandQueue();
 
-    void CompleteCommandList(size_t commandListHandle);
-    size_t GetCommandQueueHandle() const { return m_uploadQueueHandle; }
-    size_t GetCommandListHandle();
+    bool GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList);
+    void ReturnCommandListForThreadIndex(size_t threadIndex);
 
 private:
 
@@ -52,14 +44,9 @@ private:
     std::vector<ResourceLoadJob*> m_jobs;
     std::deque<ResourceLoadJob*> m_newJobs;
 
-    std::list<size_t> m_freeCommandLists;
-    std::list<size_t> m_commandListsToProcess;
-
     std::mutex m_mutex;
 
-    size_t m_uploadQueueHandle = ~0ull;
-    size_t m_currentUploadCommandListHandle = ~0ull;
-    size_t m_previousCommandListHandle = ~0ull;
+    MultithreadedCommandlistManager m_commandListManager;
 
     bool m_updating = false;
 };
