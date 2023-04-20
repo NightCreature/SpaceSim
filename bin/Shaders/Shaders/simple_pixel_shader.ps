@@ -56,13 +56,15 @@ float4 ps_main( PS_INPUT input) : SV_Target
     float3 nnormal = normalize(input.Tan * sampledNormalMap.x + input.BiN * sampledNormalMap.y + input.Nor * sampledNormalMap.z);
     //nnormal = normalize(input.Nor);
 
-    LightParameters lights = GetInstanceFromBufferT<LightParameters>(resourceIndices.LightBufferIndex, 0);
-    MaterialConstants material = GetInstanceFromBufferT<MaterialConstants>(resourceIndices.materialIndex, 0);
+    ConstantBuffer<MaterialConstants> material = GetConstantBuffer<MaterialConstants>(resourceIndices.materialIndex);
+    ConstantBuffer<LightParameters> lights = GetConstantBuffer<LightParameters>(resourceIndices.LightBufferIndex);
+    ConstantBuffer<CameraConstantArray> cameraSettings = GetConstantBuffer<CameraConstantArray>(resourceIndices.CameraBufferIndex);
+    uint NumberOfLights = lights.NumberOfLights;
 
-    float3 nviewdirection = normalize(lights.camera_position - vertexPos);
+    float3 nviewdirection = normalize(cameraSettings.m_constants[0].m_position - vertexPos);
     color = float4(material.ambient.rgb, 1.0) * texColor + float4(material.emissive.rgb, 0.0);
 
-    for (int counter = 0; counter < 3; ++counter)
+    for (int counter = 0; counter < NumberOfLights; ++counter)
     {
         float3 lightDir = lights.m_lights[counter].m_position.xyz - vertexPos;
         float distance = length(lightDir);

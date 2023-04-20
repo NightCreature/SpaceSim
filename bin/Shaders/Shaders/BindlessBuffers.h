@@ -23,6 +23,7 @@ struct MeshResourceIndices
 
 	//transform information
 	uint transformIndex;
+	uint sceneTransformIndex; //This is view projection
 
 	uint materialIndex;
 	
@@ -42,7 +43,10 @@ struct MeshResourceIndices
 
 	//Light info
 	uint LightBufferIndex;
-	uint NumberOfLights;
+	uint NumberOfLights; //This is now in the light data buffer
+
+	//Camera info
+	uint CameraBufferIndex;
 };
 
 struct ParticleData

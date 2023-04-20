@@ -26,21 +26,22 @@ struct PS_INPUT
 [RootSignature(bindlessRS)]
 PS_INPUT vs_main( uint vertexID : SV_VertexID )
 {
-    float4 pos = float4(GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, vertexID),0);
+    float4 pos = float4(GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, vertexID),1);
     ConstantBuffer<WVPData> wvpData = GetConstantBuffer<WVPData>(resourceIndices.transformIndex);
+    ConstantBuffer<WVPData> perScene = GetConstantBuffer<WVPData>(resourceIndices.sceneTransformIndex);
+    ConstantBuffer<WVPData> shadowWVP = GetConstantBuffer<WVPData>(resourceIndices.ShadowProjection);
 
     PS_INPUT output = (PS_INPUT)0;
     output.Pos = mul( pos, wvpData.World );
     output.WorldPos = output.Pos.xyz;
-    output.Pos = mul( output.Pos, wvpData.View );
-    output.Pos = mul( output.Pos, wvpData.Projection );
+    output.Pos = mul( output.Pos, perScene.View );
+    output.Pos = mul( output.Pos, perScene.Projection );
 
     output.Nor = GetInstanceFromBufferT<float3>(resourceIndices.normalBufferIndex, vertexID);
     output.Tan = GetInstanceFromBufferT<float3>(resourceIndices.tangentBufferIndex, vertexID);
     output.BiN = cross(output.Nor, output.Tan);
 
     float4 shadowPos = float4(pos.xyz, 1.0);
-    WVPData shadowWVP = GetInstanceFromBuffer<WVPData>(resourceIndices.ShadowProjection);
     output.LightToPixel = mul( shadowPos, wvpData.World );
     output.LightToPixel = mul( output.LightToPixel, shadowWVP.View );
     output.LightToPixel = mul( output.LightToPixel, shadowWVP.Projection );

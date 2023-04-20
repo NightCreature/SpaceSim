@@ -37,8 +37,8 @@ PS_INPUT vs_main( uint vertexID : SV_VertexID )
 //--------------------------------------------------------------------------------------
 float4 ps_main( PS_INPUT input) : SV_Target
 {
-    StructuredBuffer<MaterialConstants> materialConstants = GetBufferT<MaterialConstants>(resourceIndices.materialIndex);
-    float4 color = saturate(materialConstants[0].diffuse + materialConstants[0].emissive);
+    ConstantBuffer<MaterialConstants> material = GetConstantBuffer<MaterialConstants>(resourceIndices.materialIndex);
+    float4 color = saturate(material.diffuse + material.emissive);
     color.a = 0.5;
     return color;
 }

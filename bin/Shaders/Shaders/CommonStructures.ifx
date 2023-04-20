@@ -29,8 +29,18 @@ struct MaterialConstants
 
 struct LightParameters
 {
-    //float3 eyePosition;
-    LightConstants m_lights[8];
-    float3 camera_position;
+    LightConstants m_lights[32];
+    uint NumberOfLights;
 };
 
+struct CameraConstants
+{
+    float4x4 m_matrix;
+    float4x4 m_inverseMatrix;
+    float3 m_position;
+};
+
+struct CameraConstantArray
+{
+    CameraConstants m_constants[32];
+};

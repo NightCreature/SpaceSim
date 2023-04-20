@@ -35,11 +35,12 @@ PS_INPUT vs_main( uint vertexID : SV_VertexID )
 {
     float3 pos = GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, vertexID);
     ConstantBuffer<WVPData> wvpData = GetConstantBuffer<WVPData>(resourceIndices.transformIndex);
+    ConstantBuffer<WVPData> perScene = GetConstantBuffer<WVPData>(resourceIndices.sceneTransformIndex);
 
     PS_INPUT output = (PS_INPUT)0;
-    output.Pos = mul( pos, wvpData.World );
-    output.Pos = mul( output.Pos, wvpData.View );
-    output.Pos = mul( output.Pos, wvpData.Projection );
+    output.Pos = mul( float4(pos,1.0f), wvpData.World );
+    output.Pos = mul( output.Pos, perScene.View );
+    output.Pos = mul( output.Pos, perScene.Projection );
 
     output.Tex = GetInstanceFromBufferT<float2>(resourceIndices.textureBufferIndex, vertexID ); 
     return output;
@@ -51,8 +52,8 @@ PS_INPUT vs_main( uint vertexID : SV_VertexID )
 float4 ps_main( PS_INPUT input) : SV_Target
 {
     Texture2D<float4> shaderTextures = GetColorTexture(resourceIndices.albedoMapIndex);
-    MaterialConstants material = GetInstanceFromBuffer<MaterialConstants>(resourceIndices.materialIndex);
+    ConstantBuffer<MaterialConstants> material = GetConstantBuffer<MaterialConstants>(resourceIndices.materialIndex);
     float4 color = material.ambient + shaderTextures.Sample(linearWrapSampler, input.Tex) * material.diffuse + material.emissive;
     color.a = shaderTextures.Sample(linearWrapSampler, input.Tex).a;
-    return saturate(color);
+    return saturate(float4(1,1,1,1));
 }

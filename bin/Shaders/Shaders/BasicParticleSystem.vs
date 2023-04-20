@@ -6,7 +6,7 @@
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 
-ConstantBuffer<ParticleData> renderIndices : register(b0);
+ConstantBuffer<ParticleData> resourceIndices : register(b0);
 
 struct VSOutput
 {
@@ -22,10 +22,10 @@ VSOutput vs_main(uint id:SV_VERTEXID)
 	uint vertexInQuad = id % 4;
 
 
-	StructuredBuffer<float3> posData = GetBufferT<float3>(renderIndices.positionIndex);
-	StructuredBuffer<float4> colorData = GetBufferT<float4>(renderIndices.colorIndex);
-	StructuredBuffer<float4> sizeData = GetBufferT<float4>(renderIndices.sizeIndex);
-	WVPData wvpData = GetInstanceFromBuffer<WVPData>(renderIndices.transformIndex);
+	StructuredBuffer<float3> posData = GetBufferT<float3>(resourceIndices.positionIndex);
+	StructuredBuffer<float4> colorData = GetBufferT<float4>(resourceIndices.colorIndex);
+	StructuredBuffer<float4> sizeData = GetBufferT<float4>(resourceIndices.sizeIndex);
+	WVPData wvpData = GetInstanceFromBuffer<WVPData>(resourceIndices.transformIndex);
 
 	float3 position;
 	position.x = (vertexInQuad % 2) ? 1.0 : -1.0;
@@ -33,7 +33,7 @@ VSOutput vs_main(uint id:SV_VERTEXID)
 	position.z = 0.0;
 	position.xy *= 0.5;//sizeData[particleIndex].size.x;
 
-	WVPData inverseView = GetInstanceFromBuffer<WVPData>(renderIndices.transformIndex);
+	WVPData inverseView = GetInstanceFromBuffer<WVPData>(resourceIndices.transformIndex);
 	position = mul(position, (float3x3)inverseView.View); //Game needs to store inverse view in this view object
 	position += posData[particleIndex]; //transition from screen space to world space and add world space position
 	VSOutput output = (VSOutput)0;
@@ -44,7 +44,7 @@ VSOutput vs_main(uint id:SV_VERTEXID)
     output.Tex.x = (vertexInQuad % 2) ? 1.0 : 0.0;
     output.Tex.y = (vertexInQuad & 2) ? 1.0 : 0.0;
 
-	output.textureIndex = renderIndices.textureIndex;
+	output.textureIndex = resourceIndices.textureIndex;
 
     return output;
 }

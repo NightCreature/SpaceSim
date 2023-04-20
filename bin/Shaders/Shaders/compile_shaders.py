@@ -4,20 +4,30 @@ import subprocess
 import shutil
 #..\..\..\SDK\DirectXCompiler\bin\x64\dxc.exe -E ps_main -T ps_6_6 -Zs -Fo .\Compiled\coreps.bin -Fc .\Compiled\Coreps.asm -Fd .\Compiled\coreps.pdb -Qstrip_reflect -Frs .\Compiled\Coreps.rs -HV 2021 .\core_pixel_shader.ps
 
-def compileShader(fileName, prefix, fileExtension):
+def compileShader(fileName, prefix, fileExtension, isDebug):
     entrypoint = prefix + "_main"
     profile = prefix + "_6_6"
     ouputfilename = "./Compiled/" + prefix + "_" + fileName + ".cso"
-    outputPdb = "./Compiled/" + prefix + "_" + fileName + ".pdb"
+    outputPdb = "./Compiled/" #+ prefix + "_" + fileName + ".pdb"
     outputrs = "./Compiled/" + prefix + "_"  + fileName + ".rs"
     outputasm = "./Compiled/" + prefix + "_" + fileName + ".asm"
 
+    generateFullPdbCommandlineArg = ""
+    if (isDebug):
+        generateFullPdbCommandlineArg = " -Zi"
+    else:
+        generateFullPdbCommandlineArg = " -Zs"
+
     command = os.getcwd() + "/../../../SDK/DirectXCompiler/bin/x64/dxc.exe"
-    commandline = command + " -E " + entrypoint + " -T " + profile + " -Zs -Fo " + ouputfilename + " -Fc " + outputasm + " -Fd " + outputPdb + " -Frs " + outputrs +  " -HV 2021 " +  fileName + fileExtension
+    commandline = command + " -E " + entrypoint + " -T " + profile + generateFullPdbCommandlineArg + " -Zpr -Fo " + ouputfilename + " -Fc " + outputasm + " -Fd " + outputPdb + " -Frs " + outputrs +  " -HV 2021 " +  fileName + fileExtension
     print(commandline)
     print(subprocess.check_output(commandline))
 
 def main():
+    isDebug = 0
+    for arg in sys.argv:
+        if (arg == "debug"):
+            isDebug = 1
     currentDir = os.getcwd();
     outputDirectory = currentDir + "/Compiled/"
     if (os.path.exists(outputDirectory)) :
@@ -58,10 +68,10 @@ def main():
             print("\n")
             #fx file run command twice
             if (shaderType != 3):
-                compileShader(fileName, shaderPrefix, fileExtention)
+                compileShader(fileName, shaderPrefix, fileExtention, isDebug)
             else:
-                compileShader(fileName, "ps", fileExtention)
-                compileShader(fileName, "vs", fileExtention)
+                compileShader(fileName, "ps", fileExtention, isDebug)
+                compileShader(fileName, "vs", fileExtention, isDebug)
 
 if __name__ == "__main__":
     main()
