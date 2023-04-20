@@ -91,6 +91,16 @@ void Camera::moveOverPlane(float deltau, float deltav, float deltan)
     m_eye = m_eye + m_cameraPositionDelta;
 }
 
+CameraConstants Camera::GetConstantData() const
+{
+    CameraConstants constants;
+    constants.m_position = m_eye;
+    constants.m_matrix = m_camera;
+    constants.m_inverseMatrix = m_invcamera;
+
+    return constants;
+}
+
 Matrix44 Camera::createCamera()
 {
     m_cameraForward.normalize();
@@ -131,26 +141,26 @@ void Camera::update( float elapsedTime, double time, const Input& input )
     const InputState* inputState = input.getInput(0);
     if (inputState)
     {
-		InputActions::ActionType fowardAction;
-		InputActions::ActionType backwardAction;
-		InputActions::ActionType moveLeftAction;
-		InputActions::ActionType moveRightAction;
-		InputActions::ActionType yawLeftAction;
-		InputActions::ActionType yawRightAction;
-		InputActions::ActionType pitchUpAction;
-		InputActions::ActionType pitchDownAction;
-		InputActions::ActionType rollLeftAction;
-		InputActions::ActionType rollRightAction;
-		InputSystem::getInputActionFromName(moveForward.getHash(), fowardAction);
-		InputSystem::getInputActionFromName(moveBackWards.getHash(), backwardAction);
-		InputSystem::getInputActionFromName(moveLeft.getHash(), moveLeftAction);
-		InputSystem::getInputActionFromName(moveRight.getHash(), moveRightAction);
-		InputSystem::getInputActionFromName(yawLeft.getHash(), yawLeftAction);
-		InputSystem::getInputActionFromName(yawRight.getHash(), yawRightAction);
-		InputSystem::getInputActionFromName(pitchUp.getHash(), pitchUpAction);
-		InputSystem::getInputActionFromName(pitchDown.getHash(), pitchDownAction);
-		InputSystem::getInputActionFromName(rollLeft.getHash(), rollLeftAction);
-		InputSystem::getInputActionFromName(rollRight.getHash(), rollRightAction);
+        InputActions::ActionType fowardAction;
+        InputActions::ActionType backwardAction;
+        InputActions::ActionType moveLeftAction;
+        InputActions::ActionType moveRightAction;
+        InputActions::ActionType yawLeftAction;
+        InputActions::ActionType yawRightAction;
+        InputActions::ActionType pitchUpAction;
+        InputActions::ActionType pitchDownAction;
+        InputActions::ActionType rollLeftAction;
+        InputActions::ActionType rollRightAction;
+        InputSystem::getInputActionFromName(moveForward.getHash(), fowardAction);
+        InputSystem::getInputActionFromName(moveBackWards.getHash(), backwardAction);
+        InputSystem::getInputActionFromName(moveLeft.getHash(), moveLeftAction);
+        InputSystem::getInputActionFromName(moveRight.getHash(), moveRightAction);
+        InputSystem::getInputActionFromName(yawLeft.getHash(), yawLeftAction);
+        InputSystem::getInputActionFromName(yawRight.getHash(), yawRightAction);
+        InputSystem::getInputActionFromName(pitchUp.getHash(), pitchUpAction);
+        InputSystem::getInputActionFromName(pitchDown.getHash(), pitchDownAction);
+        InputSystem::getInputActionFromName(rollLeft.getHash(), rollLeftAction);
+        InputSystem::getInputActionFromName(rollRight.getHash(), rollRightAction);
 
         float moveAlongDirectionFactor = inputState->getActionValue(fowardAction) - inputState->getActionValue(backwardAction);
         moveAlongDirection(moveAlongDirectionFactor * m_movementSpeed * elapsedTime );//Move forwared, backward

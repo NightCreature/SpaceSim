@@ -529,6 +529,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 ///-----------------------------------------------------------------------------
 void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
+    UNUSEDPARAM(resource);
 	//RenderResourceHelper renderResourceHelper(resource);
 	//VertexDeclarationDescriptor descriptor;
 	//descriptor.position = 3;

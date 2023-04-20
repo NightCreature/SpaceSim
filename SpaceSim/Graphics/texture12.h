@@ -38,9 +38,13 @@ public:
 
     D3D12_CPU_DESCRIPTOR_HANDLE GetTextureHandle() const { return m_handle; }
     D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress() const { return m_gpuAddress; }
+
+    bool IsValid() const { return m_isValid; }
 protected:
+
 private:
     ID3D12Resource* m_texture;
     D3D12_CPU_DESCRIPTOR_HANDLE m_handle;
     D3D12_GPU_VIRTUAL_ADDRESS m_gpuAddress;
+    bool m_isValid = false;
 };

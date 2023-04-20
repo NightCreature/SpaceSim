@@ -32,6 +32,7 @@ public:
 
     void cleanup() 
     {
+        m_pso.Destroy();
     }
 
     void deserialise(const tinyxml2::XMLElement* element);

@@ -79,6 +79,7 @@ void ShaderCache::cleanup()
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
+    UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eVertexShader, element, m_vertexShaders);
 }
 
@@ -87,6 +88,7 @@ const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, c
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
+    UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eHullShader, element, m_hullShaders);
 }
 
@@ -95,6 +97,7 @@ const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, con
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
+    UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eDomainShader, element, m_domainShaders);
 }
 
@@ -103,6 +106,7 @@ const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, c
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
+    UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eGeometryShader, element, m_geometryShaders);
 }
 
@@ -111,6 +115,7 @@ const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element,
 ///-------------------------------------------------------------------------
 const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
+    UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::ePixelShader, element, m_pixelShaders);
 }
 
@@ -119,6 +124,7 @@ const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, co
 ///-------------------------------------------------------------------------
 const size_t  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
+    UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eComputeShader, element, m_computeShaders);
 }
 
@@ -249,6 +255,7 @@ void ShaderCache::DumpLoadedShaderNames()
         MSG_TRACE_CHANNEL("ShaderCache", "Vertex Shader: %s", it->second.getFileName().c_str());
     }
 }
+#endif
 
 const size_t ShaderCache::GetShader(ShaderType type, const tinyxml2::XMLElement* element, ShaderMap& shaderMap)
 {
@@ -272,12 +279,15 @@ const size_t ShaderCache::GetShader(ShaderType type, const tinyxml2::XMLElement*
     return resourceName;
 }
 
+
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
 bool ShaderCache::GetPreCompiledOrCreateShader(Shader& shader)
 {
+    OPTICK_EVENT();
+
     auto shaderPrecompiledPath = m_resource->m_paths->getEffectShaderPath() / "Shaders/Compiled/";
 
     auto prefix = getShaderPrefix(shader.GetType());
@@ -303,8 +313,8 @@ bool ShaderCache::GetPreCompiledOrCreateShader(Shader& shader)
         if (type == ShaderType::eComputeShader || type == ShaderType::eVertexShader)
         {
             //Have to pick up the rootsignature
-            auto shaderName = shaderPrecompiledPath / std::filesystem::path(prefix + "_" + shaderFilePath.stem().string() + ".rs");
-            HRESULT hr = D3DReadFileToBlob(shaderName.wstring().c_str(), &shaderObjects.m_rootSignatureBlob);
+            auto rootSignatureName = shaderPrecompiledPath / std::filesystem::path(prefix + "_" + shaderFilePath.stem().string() + ".rs");
+            hr = D3DReadFileToBlob(rootSignatureName.wstring().c_str(), &shaderObjects.m_rootSignatureBlob);
             if (FAILED(hr))
             {
                 MSG_ERROR_CHANNEL("Shader", "Failed to get precompiled shader with error: )x%d, %s", hr, getLastErrorMessage(hr));
@@ -317,6 +327,3 @@ bool ShaderCache::GetPreCompiledOrCreateShader(Shader& shader)
 
     return shader.createShader(deviceManager, m_compiler);
 }
-
-
-#endif

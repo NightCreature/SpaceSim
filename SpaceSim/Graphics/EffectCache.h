@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include "D3D12/DescriptorHeapManager.h"
+#include <mutex>
 
 class EffectCache
 {

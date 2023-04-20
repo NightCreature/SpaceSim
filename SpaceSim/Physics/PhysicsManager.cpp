@@ -88,6 +88,7 @@ void PhysicsManager::Update(float elpasedTime)
 ///-----------------------------------------------------------------------------
 void PhysicsManager::CreateAndAddNewObject(size_t& id, const PhysicsProperties& properties)
 {
+    UNUSEDPARAM(properties);
     id = m_currentFreeId;
     ++m_currentFreeId;
 

@@ -100,8 +100,8 @@
     <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDIr)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;E:\SDK\optick-master\src;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Windows10_2019\x64\Debug\;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\optick\include;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDIr)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;E:\SDK\optick-master\src;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
@@ -111,8 +111,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>SpaceSim_x64</TargetName>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
-    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\bin\Shaders\Shaders\;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Brofiler;E:\SDK\optick-master\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Release\;E:\SDK\optick-master\bin\vs2019\x64\Release;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(SolutionDir)..\..\SDK\PhysX\physx\install\vc17win64\PhysX\bin\win.x86_64.vc143.md\release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)..\..\SDK\VLD\lib\Win64</LibraryPath>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\bin\Shaders\Shaders\;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Optick\include;E:\SDK\optick-master\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\release;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Release\;E:\SDK\optick-master\bin\vs2019\x64\Release;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\bin\win.x86_64.vc142.mt\release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)..\..\SDK\VLD\lib\Win64</LibraryPath>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
@@ -150,16 +150,10 @@
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\SDK\PhysX\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;ProfilerCore64.lib;vld.lib;WinPixEventRuntime.lib;OptickCore.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK12.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;OptickCore.lib;vld.lib;WinPixEventRuntime.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <Profile>false</Profile>
     </Link>
-    <FxCompile>
-      <ShaderModel>5.1</ShaderModel>
-      <EntryPointName>vs_main</EntryPointName>
-      <ObjectFileOutput>$(SolutionDir)..\..\bin\Shaders\Compiled\(Filename).cso</ObjectFileOutput>
-      <ShaderType>Vertex</ShaderType>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -205,7 +199,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp.lib;D3D11.lib;DXGI.lib;dxguid.lib;DirectXTK.lib;D3dcompiler.lib;dxcompiler.lib;XInput.lib;ProfilerCore64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;D3D12.lib;WinPixEventRuntime.lib;OptickCore.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;D3D11.lib;DXGI.lib;dxguid.lib;DirectXTK12.lib;D3dcompiler.lib;dxcompiler.lib;XInput.lib;OptickCore.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;D3D12.lib;WinPixEventRuntime.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ShowProgress>NotSet</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'">
@@ -329,6 +324,7 @@
     <ClInclude Include="..\..\Graphics\color.h" />
     <ClInclude Include="..\..\Graphics\CubeMapRenderer.h" />
     <ClInclude Include="..\..\Graphics\D3D11\Profiler\D3D11GPUProfiler.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\MultithreadedCommandlistManager.h" />
     <ClInclude Include="..\..\Graphics\D3D12\StructuredBuffer.h" />
     <ClInclude Include="..\..\Graphics\D3D12\CommandQueue.h" />
     <ClInclude Include="..\..\Graphics\D3D12\ConstantBuffer.h" />
@@ -361,6 +357,7 @@
     <ClInclude Include="..\..\Graphics\Model\MeshHelperFunctions.h" />
     <ClInclude Include="..\..\Graphics\OrientationAxis.h" />
     <ClInclude Include="..\..\Graphics\Renderable.h" />
+    <ClInclude Include="..\..\Graphics\RenderGraph\Pass.h" />
     <ClInclude Include="..\..\Graphics\RenderInstance.h" />
     <ClInclude Include="..\..\Graphics\RenderInterface.h" />
     <ClInclude Include="..\..\Graphics\RenderJobs.h" />
@@ -517,6 +514,7 @@
     <ClCompile Include="..\..\Graphics\color.cpp" />
     <ClCompile Include="..\..\Graphics\CubeMapRenderer.cpp" />
     <ClCompile Include="..\..\Graphics\D3D11\Profiler\D3D11GPUProfiler.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\MultithreadedCommandlistManager.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\StructuredBuffer.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\CommandQueue.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\ConstantBuffer.cpp" />
@@ -611,15 +609,7 @@
     <None Include="..\..\Gameplay\ECS\DataStoreArrayIterator.h" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\..\bin\Shaders\Shaders\laser_shader.fx" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets" Condition="Exists('..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets')" />
-    <Import Project="..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets" Condition="Exists('..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets')" />
-    <Import Project="..\..\..\..\..\..\ms.fxcompile.targets" />
-  </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

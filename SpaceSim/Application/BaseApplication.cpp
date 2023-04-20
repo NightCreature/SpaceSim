@@ -68,6 +68,7 @@ m_fileSystem(m_paths)
 ///-----------------------------------------------------------------------------
 bool Application::initialise()
 {
+    OPTICK_EVENT();
 
     m_logger.addLogger(new OutputDebugLog());
     FileLogger* file_logger = new FileLogger(m_paths.getLogPathStr());
@@ -83,6 +84,8 @@ bool Application::initialise()
     m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_fileSystem, &m_entityManager, &m_gameObjectManager,
         &m_laserManager, &m_uiManager, nullptr, &m_logger, m_jobSystem.GetJobQueuePtr());
     
+    m_jobSystem.SetGameResource(m_gameResource);
+
     bool returnValue = true;
 
 
@@ -114,6 +117,7 @@ bool Application::initialise()
 
     //m_uiManager.initialise();
     m_renderSystem.initialise(m_gameResource);
+    m_jobSystem.SetRenderResource(m_renderSystem.GetResource());
     //m_inputSystem.createController(Gamepad);
     auto inputMapPath = m_paths.getSettingsPath() / "Input Maps\\input_mapping.xml";
     m_inputSystem.initialise(inputMapPath.string(), m_renderSystem.getWindowHandle());

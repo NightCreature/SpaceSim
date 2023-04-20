@@ -8,6 +8,7 @@
 #include "Core/tinyxml2.h"
 #include "Loader/ResourceLoader.h"
 #include <filesystem>
+#include "Loader/ResourceLoadJobs.h"
 
 namespace Text
 {

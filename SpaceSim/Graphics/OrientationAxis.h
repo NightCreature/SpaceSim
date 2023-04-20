@@ -2,6 +2,7 @@
 
 #include "Graphics/Effect.h"
 #include "Graphics/VertexBuffer.h"
+#include "Graphics/IndexBuffer.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -9,6 +10,7 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <vector>
+
 
 class DeviceManager;
 class Resource;
@@ -29,21 +31,21 @@ public:
     OrientationAxis() :
         m_effect()
     {
-        m_wvpConstants.m_world.identity();
-        m_wvpConstants.m_view.identity();
-        m_wvpConstants.m_projection.identity();
     }
     ~OrientationAxis() {}
 
     void cleanup();
 
-    void initialise(Resource* resource, const DeviceManager& deviceManager);
-    void draw(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection, Resource* resource);
+    void initialise(Resource* resource, const DeviceManager& deviceManager, CommandList& list);
+    void draw(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection, Resource* resource, CommandList& list);
 private:
+
+    size_t CreateConstantBuffer(size_t size, const DeviceManager& deviceManager, DescriptorHeap& heap);
     void transform(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection);
-    static std::vector<Vector3> m_vertices;
     //static Color m_colorStream[];
     Effect* m_effect;
+    MeshResourceIndices m_renderIndices;
     VertexBuffer m_vertexBuffer;
-    WVPBufferContent m_wvpConstants;
+    IndexBuffer m_indexBuffer;
+    ConstantBuffer m_constantBuffer;
 };

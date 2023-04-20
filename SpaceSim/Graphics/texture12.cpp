@@ -12,6 +12,7 @@
 #include "Graphics/D3D12/D3D12X.h"
 #include <NewSpaceSim/packages/directxtk12_desktop_2017.2021.8.2.1/include/DirectXHelpers.h>
 #include "D3D12/CommandQueue.h"
+#include <optick.h>
 
 Texture12::Texture12()
 {
@@ -45,6 +46,8 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueMa
 ///-----------------------------------------------------------------------------
 bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandList& commandList, const std::string& filename, D3D12_CPU_DESCRIPTOR_HANDLE handle)
 {
+    OPTICK_EVENT();
+
     ID3D12Device* device = deviceManager.GetDevice();
     HRESULT hr = S_OK;
 
@@ -98,6 +101,7 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandList& c
     //Need to find a way to get this here
     DirectX::CreateShaderResourceView(device, m_texture, handle);
     m_handle = handle;
+    m_isValid = true;
     //Create resource view here, CPU handle
 
     //m_gpuAddress = m_texture->GetGPUVirtualAddress();
@@ -147,9 +151,10 @@ void Texture12::cleanup()
     //}
     //}
 
-    if (m_texture)
+    if (m_texture && m_isValid)
     {
         m_texture->Release();
         m_texture = nullptr;
+        m_isValid = false;
     }
 }

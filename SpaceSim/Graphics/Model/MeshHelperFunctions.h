@@ -6,6 +6,7 @@
 #include "Graphics/texturemanager.h"
 
 #include <vector>
+#include "../RenderSystem.h"
 
 namespace ModelHelperFunctions
 {
@@ -22,16 +23,16 @@ inline void AssignTextureIndices(const RenderResource& renderResource, const std
             switch (textureSlotMapping.m_textureSlot)
             {
             case Material::TextureSlotMapping::Diffuse0:
-                resourceIndices.albedoMapIndex = heapIndex;
+                resourceIndices.albedoMapIndex = static_cast<uint>(heapIndex);
                 break;
             case Material::TextureSlotMapping::Normals:
-                resourceIndices.normalMapIndex = heapIndex;
+                resourceIndices.normalMapIndex = static_cast<uint>(heapIndex);
                 break;
             case Material::TextureSlotMapping::ReflectionMap:
-                resourceIndices.normalMapIndex = heapIndex;
+                resourceIndices.normalMapIndex = static_cast<uint>(heapIndex);
                 break;
             case Material::TextureSlotMapping::ShadowMap:
-                resourceIndices.normalMapIndex = heapIndex;
+                resourceIndices.normalMapIndex = static_cast<uint>(heapIndex);
                 break;
             default:
                 MSG_TRACE_CHANNEL(__FUNCTION__, "Didn't handle texture slot: %d", textureSlotMapping.m_textureSlot);
@@ -46,13 +47,22 @@ inline void CreateConstantBuffers(MeshResourceIndices& resourceIndices, MeshGrou
     //By default we have 2 constant buffers the material and Per instance data
     if (meshGroup != nullptr)
     {
-        resourceIndices.transformIndex = meshGroup->CreateConstantBuffer(sizeof(WVPBufferContent), "WVPBuffer"_hash, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap());
-        resourceIndices.materialIndex = meshGroup->CreateConstantBuffer(sizeof(MaterialContent), "Material"_hash, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap());
+        resourceIndices.transformIndex = static_cast<uint>(meshGroup->CreateConstantBuffer(sizeof(WVPBufferContent), "WVPBuffer"_hash, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap()));
+        resourceIndices.materialIndex = static_cast<uint>(meshGroup->CreateConstantBuffer(sizeof(MaterialContent), "Material"_hash, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap()));
     }
     else
     {
         MSG_ERROR_CHANNEL(__FUNCTION__, "Passed a nullptr mesh group to this function");
     }
+}
+
+inline void AssignPerSceneIndices(const RenderResource& renderResource, MeshResourceIndices& resourceIndices)
+{
+    const RenderSystem& renderSystem = renderResource.getRenderSystem();
+    resourceIndices.sceneTransformIndex = static_cast<uint>(renderSystem.GetSceneTransformBufferIndex());
+    resourceIndices.CameraBufferIndex = static_cast<uint>(renderSystem.GetCameraBufferIndex());
+    const LightManager& lightManager = renderResource.getLightManager();
+    resourceIndices.LightBufferIndex = static_cast<uint>(lightManager.getLightBufferIndex());
 }
 
 }

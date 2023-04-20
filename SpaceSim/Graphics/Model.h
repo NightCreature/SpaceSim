@@ -159,13 +159,13 @@ protected:
 
 struct CreatedModel
 {
-    Model* model;
+    Model* model = nullptr;
     Bbox boundingBox;
 };
 
 //This should be different
 struct CreatedMeshGroup
 {
-    MeshGroup* meshGroup;
+    MeshGroup* meshGroup = nullptr;
     Bbox boundingBox;
 };

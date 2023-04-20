@@ -110,7 +110,7 @@ void VFS::File::Write(const byte* data, size_t length)
             data += std::numeric_limits<unsigned long>::max();
         }
 
-        platformData->m_overlapped.Offset = platformData->m_filePosition;
+        platformData->m_overlapped.Offset = static_cast<DWORD>(platformData->m_filePosition);
         platformData->m_overlapped.OffsetHigh = static_cast<unsigned long>(amountToWrite >> 32);
         numberOfBytesWritten = 0;
         if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(dataPtr), static_cast<unsigned long>(amountToWrite), &numberOfBytesWritten, &(platformData->m_overlapped)))
@@ -235,7 +235,7 @@ byte* VFS::File::Read(byte*& data, size_t amount)
 
     //Dont read the whole file here, also since size_t this could read way too much
     DWORD numberOfBytesRead = 0;
-    if (!ReadFile(platformData->m_fileHandle, static_cast<void*>(fileData), amount, &numberOfBytesRead, NULL))
+    if (!ReadFile(platformData->m_fileHandle, static_cast<void*>(fileData), static_cast<DWORD>(amount), &numberOfBytesRead, NULL))
     {
         //Handle error file writing fucked up
         delete[] fileData;

@@ -85,6 +85,11 @@ public:
 
     void setInput(Input input) { m_input = input; }
 
+    size_t GetSceneTransformBufferIndex() const { return m_sceneTransformBuffer.GetHeapIndex(); }
+    size_t GetCameraBufferIndex() const { return m_cameraBuffer.GetHeapIndex(); }
+    
+    Resource* GetResource() { return m_renderResource; }
+
     //Fix this
     static Matrix44 m_view;
     static Matrix44 m_inverseView;
@@ -135,6 +140,8 @@ private:
     ID3D11DepthStencilState* m_depthStencilState;
     ID3D11Buffer* m_lightConstantBuffer;
     ID3D11Buffer* m_shadowConstantBuffer;
+    ConstantBuffer m_sceneTransformBuffer;
+    ConstantBuffer m_cameraBuffer;
 
 #ifdef PROFILING
     ID3D11Query* m_beginDrawQuery;

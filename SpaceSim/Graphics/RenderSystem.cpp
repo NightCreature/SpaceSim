@@ -20,10 +20,13 @@
 #include <pix3.h>
 #include <Optick.h>
 #include "modelmanager.h"
+#include "DebugHelperFunctions.h"
 
 Matrix44 RenderSystem::m_view;
 Matrix44 RenderSystem::m_inverseView;
 Matrix44 RenderSystem::m_projection;
+
+constexpr size_t maxCameraConstants = 32;
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -102,21 +105,24 @@ RenderSystem::~RenderSystem()
     m_shaderCache.cleanup();
     m_effectCache.cleanup();
    
+    m_sceneTransformBuffer.Destroy();
 
 #ifdef _DEBUG
     //pPerf->Release();
-    m_debugAxis->cleanup();
-#endif
 
-#ifdef _DEBUG
     if (m_debugAxis != nullptr)
     {
+        m_debugAxis->cleanup();
         delete m_debugAxis;
         m_debugAxis = nullptr;
     }
 #endif
 
     m_perFrameDataStorage.Destroy();
+
+    m_commandQueueManager.Cleanup();
+    m_heapManager.Cleanup();
+    
 }
 
 
@@ -128,7 +134,9 @@ void RenderSystem::initialise(Resource* resource)
 {
     OPTICK_EVENT();
     GameResource& gameResource = GameResourceHelper(resource).getWriteableResource();
-    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, resource->m_fileSystem, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, &(gameResource.getJobQueue()), &m_heapManager, &m_commandQueueManager, &m_perFrameDataStorage);
+    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, resource->m_fileSystem, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, &(gameResource.getJobQueue()), &m_heapManager, &m_commandQueueManager, &m_perFrameDataStorage, this);
+
+    
 
     m_deviceManager.Initialise(m_renderResource);
     m_modelManger.initialise(m_renderResource);
@@ -156,6 +164,7 @@ void RenderSystem::initialise(Resource* resource)
     //needs the device for init
     m_textureManager.Initialise(m_renderResource);
     m_effectCache.Initialise(m_renderResource);
+    m_lightManager.Initialise(m_renderResource);
 
     int windowWidth = 1280;
     int windowHeight = 720;
@@ -209,6 +218,8 @@ void RenderSystem::initialise(Resource* resource)
 
     m_textureManager.createSamplerStates(m_deviceManager);
 
+    m_sceneTransformBuffer.Create(m_deviceManager, m_heapManager.GetSRVCBVUAVHeap(), sizeof(WVPBufferContent));
+    m_cameraBuffer.Create(m_deviceManager, m_heapManager.GetSRVCBVUAVHeap(), sizeof(CameraConstants) * maxCameraConstants);
 
     //Thiss all needs to move
     //D3D11_BUFFER_DESC lightContantsDescriptor;
@@ -247,8 +258,6 @@ void RenderSystem::initialise(Resource* resource)
     //D3DDebugHelperFunctions::SetDebugChildName(m_samplerState, "RenderSystem SamplerState");
 
 #ifdef _DEBUG
-    m_debugAxis = new OrientationAxis();
-    //m_debugAxis->initialise(m_renderResource, m_deviceManager);
 
 
     //hr = m_deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
@@ -257,7 +266,10 @@ void RenderSystem::initialise(Resource* resource)
     MSG_WARN_CHANNEL("RENDERSYSTEM", "HARDCODED CAMERAS IN USE THESE SHOULD BE CREATED THROUGH MESSAGES");
     m_cameraSystem.createCamera(*m_renderResource, "global", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
     m_cameraSystem.createCamera(*m_renderResource, "text_block_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
-    m_cameraSystem.createCamera(*m_renderResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis());
+    if (m_cameraSystem.createCamera(*m_renderResource, "player_camera", Vector3(0.0f, 0.0f, 200.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3::yAxis()))
+    {
+        m_cameraSystem.getCamera("player_camera")->SetActive();
+    }
 
     //initialiseCubemapRendererAndResources(m_renderResource);
     //m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
@@ -266,7 +278,7 @@ void RenderSystem::initialise(Resource* resource)
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(&m_modelManger, &ModelManager::OnMessage));
 
-    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 1500.0f, 0.001f);
+    m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 1500.001f, 0.001f);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
 
     //not awesome but zero is the perframe data
@@ -314,8 +326,8 @@ void RenderSystem::CreatePipelineStates(ID3D11Device* device)
 ///-----------------------------------------------------------------------------
 void RenderSystem::update(float elapsedTime, double time)
 {
-    OPTICK_CATEGORY("RenderSystem::Update", Optick::Category::GPU_Scene);
-    OPTICK_CATEGORY("RenderSystem::Update", Optick::Category::Scene);
+    //OPTICK_CATEGORY("RenderSystem::Update", Optick::Category::GPU_Scene);
+    //OPTICK_CATEGORY("RenderSystem::Update", Optick::Category::Scene);
     OPTICK_EVENT();
     m_window.update(elapsedTime, time);
     
@@ -351,6 +363,21 @@ void RenderSystem::update(float elapsedTime, double time)
         handle->PopulateCommandlist(m_renderResource, renderCommandList);
     }
 
+
+#ifdef _DEBUG
+    {
+        OPTICK_EVENT("debug axis");
+        if (m_debugAxis != nullptr)
+        {
+            m_debugAxis->draw(m_deviceManager, m_view, m_projection, m_renderResource, renderCommandList);
+        }
+        else
+        {
+            m_debugAxis = new OrientationAxis();
+            m_debugAxis->initialise(m_renderResource, m_deviceManager, renderCommandList);
+        }
+    }
+#endif
 
     D3D12_RESOURCE_BARRIER barrier2;
     ZeroMemory(&barrier2, sizeof(D3D12_RESOURCE_BARRIER));
@@ -417,6 +444,9 @@ void RenderSystem::cleanup()
     //m_blendState->Release();
     //m_alphaBlendState->Release();
     //m_samplerState->Release();
+
+    m_sceneTransformBuffer.Destroy();
+    m_cameraBuffer.Destroy();
 
 
 #ifdef D3DPROFILING
@@ -498,8 +528,24 @@ void RenderSystem::beginDraw()
     m_view = m_cameraSystem.getCamera("global")->getCamera();
     m_inverseView = m_cameraSystem.getCamera("global")->getInvCamera();
 
-    MeshGroup::m_projection = m_projection;
-    MeshGroup::m_view = m_view;
+    WVPBufferContent sceneTransformData;
+    sceneTransformData.m_view = m_view;
+    sceneTransformData.m_projection = m_projection;
+    m_sceneTransformBuffer.UpdateCpuData(sceneTransformData);
+    m_sceneTransformBuffer.UpdateGpuData();
+
+    std::vector<const Camera*> activeCameras = m_cameraSystem.GetActiveCameras();
+    std::array<CameraConstants, maxCameraConstants> activeCameraConstants;
+    size_t index = 0;
+    for (const Camera* cam : activeCameras)
+    {
+        ASSERT(index < maxCameraConstants, "Too many active cameras");
+        activeCameraConstants[index] = cam->GetConstantData();
+        ++index;
+    }
+
+    m_cameraBuffer.UpdateCpuData(activeCameraConstants);
+    m_cameraBuffer.UpdateGpuData();
 
     m_messageObservers.DispatchMessages(*(m_renderResource->m_messageQueues->getRenderMessageQueue()));
     m_renderResource->m_messageQueues->getRenderMessageQueue()->reset();
@@ -534,8 +580,6 @@ void RenderSystem::beginDraw()
     
     RenderResourceHelper helper(m_renderResource);
     Vector3 camPos;
-    PerFrameConstants perFrameConstants;
-    ZeroMemory(&perFrameConstants.m_lightConstants, sizeof(LightConstants) * 8);
     LightManager& lm = helper.getWriteableResource().getLightManager();
     const CameraManager& cm = helper.getResource().getCameraManager();
     const Camera* cam = cm.getCamera("global");
@@ -553,12 +597,7 @@ void RenderSystem::beginDraw()
         light0->setPosition(camPos);
     }
 
-    unsigned int lightCounter = 0;
-    for (auto light : lm.getLights())
-    {
-        perFrameConstants.m_lightConstants[lightCounter] = light->getLightConstants();
-        ++lightCounter;
-    }
+    lm.update();
 
 #ifdef D3DPROFILING
     deviceContext->End(m_cubemapBeginDrawQuery);
@@ -600,9 +639,6 @@ void RenderSystem::beginDraw()
     deviceContext->End(m_shadoEndDrawQuery);
 #endif
 
-    perFrameConstants.m_cameraPosition[0] = camPos.x();
-    perFrameConstants.m_cameraPosition[1] = camPos.y();
-    perFrameConstants.m_cameraPosition[2] = camPos.z();
     //perFrameConstants.m_shadowMVP = m_shadowMapRenderer->getShadowMapMVP();
     //deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
     //deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
@@ -620,10 +656,6 @@ void RenderSystem::beginDraw()
     //deviceContext->PSSetShaderResources(33, 1, &shadowMapSRV);
 
     //Update perframe constant Data
-    auto& constantBuffer = m_perFrameDataStorage.GetConstantBuffer(0);
-    constantBuffer.UpdateCpuData(perFrameConstants);
-    constantBuffer.UpdateGpuData();
-
     //PIXEndEvent();
 }
 
@@ -636,6 +668,7 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
     PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
     visibleInstances.clear();
     Frustum frustum(m_view, m_CullingProjectionMatrix);
+
     for (auto instance : renderInstances)
     {
         if (frustum.IsInside(instance->getBoundingBox()))
@@ -650,15 +683,12 @@ void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
 ///-------------------------------------------------------------------------
 void RenderSystem::endDraw()
 {
-    OPTICK_STOP_CAPTURE();
-    OPTICK_SAVE_CAPTURE("E:\\SDK\\Demo\\SpaceSim\\bin\\Profile\\shaderCompileDuration.opt");
+    //OPTICK_STOP_CAPTURE();
+    //OPTICK_SAVE_CAPTURE("E:\\SDK\\Demo\\SpaceSim\\bin\\Profile\\shaderCompileDuration.opt");
 
     OPTICK_EVENT();
     //PIXBeginEvent(0, "End Draw");
     PROFILE_EVENT("RenderSystem::endDraw", Orange);
-#ifdef _DEBUG
-    m_debugAxis->draw(m_deviceManager, m_view, m_projection, m_renderResource);
-#endif
 
     //if (m_numberOfInstancePerFrame > 0)
     {

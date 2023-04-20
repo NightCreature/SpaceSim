@@ -29,8 +29,10 @@ const size_t numberOfTexcoords = 1;
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* currentJob)
+CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* currentJob, CommandList& commandList)
 { 
+    OPTICK_EVENT();
+
     RenderResourceHelper renderResourceHelper(resource);
     const RenderResource& renderResource = renderResourceHelper.getResource();
     //const ShaderInstance& shaderInstance = *(params.shaderInstance);
@@ -69,9 +71,9 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
     VertexDataStreams dataStreams = createVertexData(params, face.boundingBox, corridorheight, corridorwidth, rows, columns);
 
     MeshResourceIndices& resourceIndices = group.GetResourceInices();
-    if (params.m_commandList != nullptr && !dataStreams.m_streams.empty())
+    if (!dataStreams.m_streams.empty())
     {
-        resourceIndices = vb.CreateBuffer(renderResource.getDeviceManager(), *params.m_commandList, renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap(), dataStreams);
+        resourceIndices = vb.CreateBuffer(renderResource.getDeviceManager(), commandList, renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap(), dataStreams);
     }
     else
     {
@@ -84,7 +86,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
     unsigned int* startOfIndexData = indecis;
     createIndexData(indecis, params.changeWindingOrder, rows, columns);
 
-    ib.Create(renderResource.getDeviceManager(), *params.m_commandList, static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData);
+    ib.Create(renderResource.getDeviceManager(), commandList, static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData);
     delete[] startOfIndexData; //cleanup
     indecis = nullptr;
     startOfIndexData = nullptr;
@@ -113,34 +115,46 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
 
             //This might need to be a function
             std::string inputTextureName = params.m_materialParameters.m_textureNames[counter];
-            auto loadTextureLambda = [inputTextureName, resource, commandList = params.m_commandList](size_t threadIndex)
+            auto loadTextureLambda = [inputTextureName](ThreadContext* context)
             {
+                OPTICK_EVENT("Load Texture lambda");
+
                 if (inputTextureName.empty())
-                    return;
+                    return true;
 
-                RenderResource& renderResource = RenderResourceHelper(resource).getWriteableResource();
+                RenderResource renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
 
-                //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
-                std::string textureName = getTextureNameFromFileName(inputTextureName);
-
-                TextureManager& texManager = renderResource.getTextureManager();
-                if (texManager.find(textureName))
+                CommandList commandList;
+                bool retVal = renderResource.getResourceLoader().GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+                if (retVal)
                 {
-                    return;
+                    //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
+                    std::string textureName = getTextureNameFromFileName(inputTextureName);
+
+                    TextureManager& texManager = renderResource.getTextureManager();
+
+                    auto& info = texManager.AddOrCreateTexture(textureName);
+                    if (info.m_heapIndex == DescriptorHeap::invalidDescriptorIndex && info.m_loadRequested == false && !info.m_texture.IsValid())
+                    {
+                        info.m_loadRequested == true;
+                        Texture12 texture;
+                        size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
+                        if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, inputTextureName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
+                        {
+                            MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", inputTextureName.c_str(), context->m_threadIndex);
+                            return true;
+                        }
+
+                        texManager.addTexture(textureName, texture, descriptorIndex);
+                    } 
+
+                    renderResource.getResourceLoader().ReturnCommandListForThreadIndex(context->m_threadIndex);
                 }
 
-                Texture12 texture;
-                size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
-                if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), *commandList, inputTextureName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
-                {
-                    MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", inputTextureName.c_str(), threadIndex);
-                    return;
-                }
-
-                texManager.addTexture(textureName, texture, descriptorIndex);
+                return retVal;
             };
 
-            renderResourceHelper.getWriteableResource().getJobQueue().AddChildJob(loadTextureLambda, currentJob);
+            renderResourceHelper.getWriteableResource().getJobQueue().AddFunctionJob(loadTextureLambda);
         }
     }
     mat.Prepare(renderResourceHelper.getResource().getEffectCache());
@@ -149,6 +163,8 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
     //Dit werkt niet want textures zijn nog niet geladen
     ModelHelperFunctions::AssignTextureIndices(renderResource, mat.getTextureHashes(), resourceIndices);
     ModelHelperFunctions::CreateConstantBuffers(resourceIndices, &group, renderResourceHelper.getWriteableResource());
+
+    ModelHelperFunctions::AssignPerSceneIndices(renderResource, resourceIndices);
 
     group.SetName(params.m_name);
     face.model->CalculateSortKey(renderResource.getEffectCache());
@@ -161,6 +177,8 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
 ///-----------------------------------------------------------------------------
 VertexDataStreams Face::createVertexData(const CreationParams& params, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns)
 {
+    OPTICK_EVENT();
+
     VertexDeclarationDescriptor vertexDesc;
     vertexDesc.position = 3;
     vertexDesc.normal = true;
@@ -264,6 +282,7 @@ VertexDataStreams Face::createVertexData(const CreationParams& params, Bbox& bou
 ///-----------------------------------------------------------------------------
 void Face::createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns)
 {
+    OPTICK_EVENT();
     unsigned int nrcolumns = static_cast<unsigned int>(columns);
     for (unsigned int i = 0; i < static_cast<unsigned int>(rows - 1); i++)
     {

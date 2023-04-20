@@ -660,6 +660,12 @@
     <ClInclude Include="..\..\Graphics\Model\MeshHelperFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Graphics\RenderGraph\Pass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Graphics\D3D12\MultithreadedCommandlistManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Application\BaseApplication.cpp">
@@ -1127,6 +1133,9 @@
     <ClCompile Include="..\..\Graphics\D3D12\StructuredBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Graphics\D3D12\MultithreadedCommandlistManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Core\StringOperations\StringTemplate.inl">
@@ -1137,10 +1146,5 @@
     </None>
     <None Include="packages.config" />
     <None Include="..\..\Gameplay\ECS\DataStoreArrayIterator.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\..\bin\Shaders\Shaders\laser_shader.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

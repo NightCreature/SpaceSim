@@ -61,3 +61,10 @@ struct MaterialContent
     float m_emissive[4];
     ALIGN16 float m_shininess;
 };
+
+struct CameraConstants
+{
+    Matrix44 m_matrix;
+    Matrix44 m_inverseMatrix;
+    Vector3 m_position;
+};

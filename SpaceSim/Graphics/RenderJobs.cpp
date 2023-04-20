@@ -1,17 +1,20 @@
 #include "RenderJobs.h"
 
 #include "Core/Resource/RenderResource.h"
+#include "Core/Thread/JobSystem.h"
 
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void CompileShaderJob::Execute(size_t threadIndex)
+bool CompileShaderJob::Execute(ThreadContext* context)
 {
-    RenderResourceHelper renderResource = { m_resource };
+    RenderResourceHelper renderResource = { context->m_renderResource };
     auto& effectCache = renderResource.getWriteableResource().getEffectCache();
     //Have to protect this now
-    effectCache.createEffect(m_resource, m_fileName);
+    effectCache.createEffect(context->m_renderResource, m_fileName);
+
+    return true;
 }
 

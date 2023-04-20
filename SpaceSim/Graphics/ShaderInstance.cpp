@@ -117,19 +117,5 @@ void ShaderInstance::FixSrvReferences(RenderResource& resource)
 ///-----------------------------------------------------------------------------
 void ShaderInstanceHelpers::FixTextureSRVReferences(ShaderInstance& shaderInstance, const Material& mat, RenderResource& renderResource)
 {
-    const std::vector<Material::TextureSlotMapping>& textureHashes = mat.getTextureHashes();
-
-    size_t currentTextureIndex = 0;
-    for (unsigned int counter = 0; counter < Material::TextureSlotMapping::NumSlots && currentTextureIndex < textureHashes.size(); ++counter) //We assume these are put in as order for the slots demand
-    {
-        const Texture12* texture = nullptr;
-        if (static_cast<Material::TextureSlotMapping::TextureSlot>(counter) == textureHashes[currentTextureIndex].m_textureSlot)
-        {
-            texture = &(renderResource.getTextureManager().getTexture(textureHashes[currentTextureIndex].m_textureHash)->m_texture);
-            ++currentTextureIndex;
-        }
-        //ID3D11ShaderResourceView* srv = texture != nullptr ? texture->getShaderResourceView() : nullptr;
-        //shaderInstance.AddPsSRV(srv);
-        UNUSEDPARAM(shaderInstance);
-    }
+    MSG_TRACE_CHANNEL("ShaderInstanceHelpers","Bindless makes this not needed, Fix SRVs");
 }

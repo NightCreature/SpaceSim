@@ -50,7 +50,7 @@ namespace Face
         bool invertNormal;
     };
 
-    CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* currentJob);
+    CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* currentJob, CommandList& commandList);
 
     static unsigned long long m_totalNumberOfVerts;
     static unsigned long long m_totalNumberOfPolygons;

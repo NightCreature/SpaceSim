@@ -18,6 +18,19 @@ bool CameraManager::createCamera( const Resource& resource, const std::string& n
     return false;
 }
 
+std::vector<const Camera*> CameraManager::GetActiveCameras() const
+{
+    std::vector<const Camera*> returnValue;
+    for (auto&& camPair : m_cameras)
+    {
+        if (camPair.second.IsActive())
+        {
+            returnValue.push_back(&(camPair.second));
+        }
+    }
+    return returnValue;
+}
+
 void CameraManager::update( float elapsedTime, double time )
 {
     for (std::map<std::string, Camera>::iterator it = m_cameras.begin(); it != m_cameras.end(); ++it)

@@ -221,6 +221,8 @@ void Shader::deserialise(const tinyxml2::XMLElement* element, ShaderType default
 ///-----------------------------------------------------------------------------
 bool Shader::createShader(const DeviceManager& deviceManager, const ShaderCompiler& compiler)
 {
+    OPTICK_EVENT();
+
     std::string profileName = "";
     getProfileName(deviceManager, m_type, profileName);
 

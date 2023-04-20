@@ -79,10 +79,5 @@ private:
 
     //SHould all be done here since we can execute commands here :)
     bool m_renderInstanceDirty;
-
-public:
-    //shouldnt be here just want to be able to draw something
-    static Matrix44 m_projection;
-    static Matrix44 m_view;
 };
 

@@ -1,7 +1,11 @@
 #include "Gameplay/InfinitySphere.h"
+#include "Core/MessageSystem/MessageQueue.h"
+#include "Core/Resource/GameResource.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/CameraManager.h"
 #include "Graphics/ModelManager.h"
+#include "Loader/ModelLoaders/ModelLoader.h"
+#include <string>
 
 
 
@@ -31,6 +35,20 @@ const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* nod
                 //m_drawableObject = getWriteableResource().getModelManager().LoadModel(m_resource, shaderInstance, attribute->Value());
                 //m_drawableObject->getMeshData()[0]->getShaderInstance().getMaterial().addTextureReference(Material::TextureSlotMapping(hashString("skybox_small.dds"), Material::TextureSlotMapping::Diffuse0)); //Hacky
                 //m_drawableObject->setDirty();
+                std::string_view modelFileName(attribute->Value());
+                LoadModelResource modelResource;
+                memcpy(&modelResource.m_fileName, modelFileName.data(), modelFileName.size());
+                modelResource.m_fileName[modelFileName.size()] = 0;
+
+                auto resource = GameResourceHelper(m_resource).getWriteableResource();
+                DECLAREANDCREATERESOURCEMESSAGE(createModel, LoadModelResource);
+                createModel.SetData(modelResource);
+                createModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
+
+                resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createModel);
+
+                Super::initialise(shaderInstance);
+
             }
         }
         else if (Vector3::m_hash == childElementHash)

@@ -74,6 +74,16 @@ private:
     D3D12_VERTEX_BUFFER_VIEW m_bufferView;
 };
 
+//The index here has to match the type in the variant
+enum class VertexSourceType : size_t
+{
+    Single = 0,
+    Double,
+    Triple,
+    Quadruple,
+    Color
+};
+
 using VertexSourceDataStream = std::variant<
     std::vector<float>,
     std::vector<Vector2>,

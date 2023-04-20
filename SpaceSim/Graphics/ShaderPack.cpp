@@ -31,7 +31,7 @@ bool ShaderPack::loadShaderPack( std::string shaderPack )
     
 
     auto& jobQueue = helper.getWriteableResource().getJobQueue();
-
+    UNUSEDPARAM(jobQueue);
     for (const tinyxml2::XMLElement* effectElement = shaderPackElement->FirstChildElement( "Effect" ); effectElement != nullptr; effectElement = effectElement->NextSiblingElement())
     {
         const tinyxml2::XMLAttribute* fileNameAttr = effectElement->FindAttribute("file_name");

@@ -9,8 +9,9 @@
 #include <d3d11.h>
 #include <assert.h>
 #include "D3D12/CommandQueue.h"
+#include "Model/MeshHelperFunctions.h"
 
-std::vector<Vector3> OrientationAxis::m_vertices = 
+std::vector<Vector3> m_vertices = 
 {//		x		y	  z	
     {-1000.0f, 0.0f, 0.0f},//, 0xFFFFFFFF
     {1000.0f , 0.0f, 0.0f},//, 0xFFFFFFFF
@@ -27,6 +28,32 @@ std::vector<Vector3> OrientationAxis::m_vertices =
     {0.0f, 0.25f, 1.0f} //, 0xFFFFFFFF
 };
 
+std::vector<Color> m_colors =
+{
+    Color::red(),
+    Color::red(),
+    Color::green(),
+    Color::green(),
+    Color::blue(),
+    Color::blue(),
+    Color::red(),
+    Color::red(),
+    Color::green(),
+    Color::green(),
+    Color::blue(),
+    Color::blue()
+};
+
+unsigned int indexBuffer[] =
+{
+    0,1,
+    2,3,
+    4,5,
+    6,7,
+    8,9,
+    10,11
+};
+
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
@@ -34,61 +61,66 @@ std::vector<Vector3> OrientationAxis::m_vertices =
 void OrientationAxis::cleanup()
 {
     m_vertexBuffer.Destroy();
+    m_indexBuffer.cleanup();
+    m_constantBuffer.Destroy();
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void OrientationAxis::initialise(Resource* resource, const DeviceManager& deviceManger)
+void OrientationAxis::initialise(Resource* resource, const DeviceManager& deviceManger, CommandList& list)
 {
-    //RenderResourceHelper helper(resource);
-    //auto& commandQueue = helper.getWriteableResource().getCommandQueueManager().GetCommandQueue(helper.getResource().getResourceLoader().GetCommandQueueHandle());
-    //auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().GetCommandListHandle()); //This might give us a bad handle
-    //auto& srvCBVUAVHeap = helper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap();
+    RenderResourceHelper helper(resource);
+    auto& srvCBVUAVHeap = helper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap();
+
+    m_effect = const_cast<Effect*>(helper.getWriteableResource().getEffectCache().getEffect("debug_color_shader.xml"_hash)); //Not the right name
 
     ////Move pointer to start of vertex array
-    //VertexDataStreams vertexStreams;
-    //vertexStreams.m_streams[VertexStreamType::Position] = m_vertices;
-    //m_vertexBuffer.CreateBuffer(deviceManger, commandList, srvCBVUAVHeap, vertexStreams);
+    VertexDeclarationDescriptor vertexDesc;
+    vertexDesc.vertexColor = true;
+    VertexDataStreams dataStreams = CreateDataStreams(vertexDesc);
+    dataStreams.m_streams[VertexStreamType::Position] = m_vertices;
+    dataStreams.m_streams[VertexStreamType::Color] = m_colors;
+    m_renderIndices = m_vertexBuffer.CreateBuffer(deviceManger, list, srvCBVUAVHeap, dataStreams);
+    m_indexBuffer.Create(deviceManger, list, 12 * sizeof(unsigned int), &indexBuffer);
+    m_renderIndices.transformIndex = static_cast<uint>(CreateConstantBuffer(sizeof(WVPBufferContent), deviceManger, srvCBVUAVHeap));
+
+    ModelHelperFunctions::AssignPerSceneIndices(helper.getWriteableResource(), m_renderIndices);
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void OrientationAxis::draw( const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection, Resource* resource )
-{   
+void OrientationAxis::draw( const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection, Resource* resource, CommandList& list)
+{
+    transform(deviceManager, view, projection);
 
-    UNUSEDPARAM(resource);
-    UNUSEDPARAM(deviceManager);
-    UNUSEDPARAM(view);
-    UNUSEDPARAM(projection);
-    //UNUSEDPARAM(resource);
-    //transform(deviceManager, view, projection); //Needs to move to the update of an object not the draw step
-    //ID3D11DeviceContext* deviceContext = deviceManager.getDeviceContext();
-    ////const Technique* technique = m_effect->getTechnique("default");
-    ////technique->setWVPContent(deviceManager, m_wvpConstants);
+    if (m_effect)
+    {
+        auto& writableResource = RenderResourceHelper(resource).getWriteableResource();
+        auto& heapManager = writableResource.getDescriptorHeapManager();
 
-    ////RenderResourceHelper renderResource = RenderResourceHelper(resource);
-    ////const ShaderCache& shaderCache = renderResource.getResource().getShaderCache();
-    //////this will crash, also we shouldnt set this if the shader id hasnt changed from the previous set
-    ////deviceContext->VSSetShader(shaderCache.getVertexShader(technique->getVertexShader()) ? shaderCache.getVertexShader(technique->getVertexShader())->getShader() : nullptr, nullptr, 0);
-    ////deviceContext->HSSetShader(shaderCache.getHullShader(technique->getHullShader()) ? shaderCache.getHullShader(technique->getHullShader())->getShader() : nullptr, nullptr, 0);
-    ////deviceContext->DSSetShader(shaderCache.getDomainShader(technique->getDomainShader()) ? shaderCache.getDomainShader(technique->getDomainShader())->getShader() : nullptr, nullptr, 0);
-    ////deviceContext->GSSetShader(shaderCache.getGeometryShader(technique->getGeometryShader()) ? shaderCache.getGeometryShader(technique->getGeometryShader())->getShader() : nullptr, nullptr, 0);
-    ////deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
+        //Might need to offset this but for now set the whole heap for CRV etc.
+        ID3D12DescriptorHeap* ppHeaps[] = { heapManager.GetSRVCBVUAVHeap().m_heap, heapManager.GetSamplerHeap().m_heap };
+        list.m_list->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-    ////technique->setupTechnique();
+        //Set PSO object
 
-    //// Set vertex buffer stride and offset.
-    //unsigned int offset = 0;
-    //unsigned int stride = static_cast<unsigned int>(m_vertexBuffer.getVertexStride());
-    //ID3D11Buffer* buffer = m_vertexBuffer.getBuffer();
-    //deviceContext->IASetInputLayout( m_vertexBuffer.getInputLayout() );
-    //deviceContext->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-    //deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-    //deviceContext->Draw(12, 0);
+        const Technique* technique = m_effect->getTechnique("default"_hash);
+        list.m_list->SetPipelineState(technique->GetPipelineState().m_pipelineObject);
+        list.m_list->SetGraphicsRootSignature(technique->GetPipelineState().m_pipeLineStateDescriptor.pRootSignature);
+
+        list.m_list->SetGraphicsRoot32BitConstants(0, 32, &m_renderIndices, 0);
+
+        //Set Shader constants and samplers here this is different
+        list.m_list->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST); //This needs to match the PSO setting think about particle effects
+        //list.m_list->IASetPrimitiveTopology(static_cast<D3D_PRIMITIVE_TOPOLOGY>(m_primitiveLayout)); //Adjecency infocmtoin
+
+        list.m_list->IASetIndexBuffer(&m_indexBuffer.GetBufferView());
+        list.m_list->DrawIndexedInstanced(m_indexBuffer.getNumberOfIndecis(), 1, 0, 0, 0);
+    }
 }
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
@@ -96,10 +128,25 @@ void OrientationAxis::draw( const DeviceManager& deviceManager, const Matrix44& 
 ///-----------------------------------------------------------------------------
 void OrientationAxis::transform(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection)
 {
-    m_wvpConstants.m_projection = projection;
-    m_wvpConstants.m_view = view;
+    WVPBufferContent data;
+    data.m_projection = projection;
+    data.m_view = view;
     Matrix44 world;
     world.identity();
-    m_wvpConstants.m_world = world; 
+    data.m_world = world;
     UNUSEDPARAM(deviceManager);
+
+    m_constantBuffer.UpdateCpuData(data);
+    m_constantBuffer.UpdateGpuData();
+}
+
+size_t OrientationAxis::CreateConstantBuffer(size_t size, const DeviceManager& deviceManager, DescriptorHeap& heap)
+{
+    size_t heapIndex = InvalidDescriptorHeapIndex;
+
+    m_constantBuffer.Create(deviceManager, heap, size);
+    heapIndex = m_constantBuffer.GetHeapIndex();
+
+
+    return heapIndex;
 }

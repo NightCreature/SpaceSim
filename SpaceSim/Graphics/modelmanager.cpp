@@ -71,7 +71,7 @@ void ModelManager::OnMessage(const MessageSystem::Message& msg)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-size_t ModelManager::LoadModel( void* data, size_t commandQueueHandle, size_t commandLisHandle)
+size_t ModelManager::LoadModel( void* data, CommandList& commandList)
 {
     auto modelData = static_cast<MessageSystem::CreateRenderResource<LoadModelResource>::ResourceData<LoadModelResource>*>(data);
 
@@ -86,10 +86,6 @@ size_t ModelManager::LoadModel( void* data, size_t commandQueueHandle, size_t co
         }
 
         std::string extension = extractExtensionFromFileName(loadData.m_fileName);
-
-        auto& resource = RenderResourceHelper(m_resource).getWriteableResource();
-        auto& commandQueue = resource.getCommandQueueManager().GetCommandQueue(commandQueueHandle);
-        auto& commandList = commandQueue.GetCommandList(commandLisHandle);
 
         CreatedModel createdModel;
         if (strICmp(extension, "dat") || strICmp(extension, "xml"))
@@ -123,18 +119,14 @@ size_t ModelManager::LoadModel( void* data, size_t commandQueueHandle, size_t co
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-size_t ModelManager::AddFace(void* data, size_t commandQueueHandle, size_t commandLisHandle, Job* currentJob)
+size_t ModelManager::AddFace(void* data, CommandList& commandList, Job* currentJob)
 {
     auto* creationParams = static_cast<MessageSystem::CreateRenderResource<Face::CreationParams>::ResourceData<Face::CreationParams>*>(data);
     size_t renderResourceId = HASH_BINARY(creationParams);
     if (!HasRenderResource(renderResourceId))
     {
-        auto& resource = RenderResourceHelper(m_resource).getWriteableResource();
-        auto& commandQueue = resource.getCommandQueueManager().GetCommandQueue(commandQueueHandle);
-        creationParams->m_fixedData.m_commandList = &(commandQueue.GetCommandList(commandLisHandle));
-
         //register face with model manager
-        auto face = Face::CreateFace((creationParams->m_fixedData), m_resource, currentJob);
+        auto face = Face::CreateFace((creationParams->m_fixedData), m_resource, currentJob, commandList);
         RegisterCreatedModel(face, renderResourceId);
     }
 
@@ -205,7 +197,7 @@ const std::vector<RenderInterface*> ModelManager::GetRenderables(const Frustum& 
 
     for (auto& modelHandle : m_models)
     {
-        if (viewFrustum.IsInside(modelHandle.m_model.boundingBox))
+        //if (viewFrustum.IsInside(modelHandle.m_model.boundingBox))
         {
             retVal.push_back(modelHandle.m_model.model);
         }

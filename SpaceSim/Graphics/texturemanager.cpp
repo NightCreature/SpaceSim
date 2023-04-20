@@ -8,6 +8,7 @@
 
 #include "assert.h"
 #include "Loader/ResourceLoader.h"
+#include "Loader/ResourceLoadJobs.h"
 
 TextureManager::~TextureManager()
 {
@@ -212,13 +213,57 @@ Material::TextureSlotMapping TextureManager::deserialise( DeviceManager& deviceM
 ///-------------------------------------------------------------------------
 void TextureManager::addTexture( const std::string& textureName, const Texture12& texture, size_t heapIndex )
 {
+    OPTICK_EVENT();
+
+    //MSG_TRACE_CHANNEL("TextureManager","Adding texture: %s", textureName.c_str());
+
+    std::scoped_lock<std::mutex> lock(m_mutex);
+    TextureInfo* info = getTexture(hashString(textureName));
+    ASSERT(info != nullptr, "Trying to add a non existing texture");
+    
+    info->m_texture = texture;
+    info->m_heapIndex = heapIndex;
+    info->m_loadRequested = false;
+}
+
+TextureInfo& TextureManager::AddOrCreateTexture(std::string textureName)
+{
+    OPTICK_EVENT();
+
+    //MSG_TRACE_CHANNEL("TextureManager","Adding texture: %s", textureName.c_str());
+
     std::scoped_lock<std::mutex> lock(m_mutex);
     auto textureNameHash = hashString(textureName);
+    TextureInfo info;
     if (!find(textureName))
     {
-        TextureInfo info;
-        info.m_texture = texture;
-        info.m_heapIndex = heapIndex;
+        info.m_heapIndex = DescriptorHeap::invalidDescriptorIndex;
         m_textures.insert(std::make_pair(textureNameHash, info));
     }
+    else
+    {
+        //Since our find at the beginning should tell us it exists already we can safely dereference this object
+        info = *getTexture(textureNameHash);
+        if (!info.m_texture.IsValid())
+        {
+            info.m_loadRequested = true;
+        }
+    }
+
+    return info;
+}
+
+TextureInfo* TextureManager::getTexture(const std::string& filename)
+{
+    auto textureFileNameHash = hashString(filename);
+    return getTexture(textureFileNameHash);
+}
+
+TextureInfo* TextureManager::getTexture(const size_t textureNameHash)
+{
+    TextureMap::iterator tmit = m_textures.find(textureNameHash);
+    if (tmit != m_textures.end())
+        return &(tmit->second);
+    return nullptr;
+
 }

@@ -7,6 +7,7 @@
 
 #include <string>
 
+struct ThreadContext;
 
 class MeshUpdateJob : public Job
 {
@@ -15,21 +16,12 @@ public:
 private:
 };
 
-class RenderJob : public Job
+class CompileShaderJob : public Job
 {
 public:
-    RenderJob(Resource* resource) : m_resource(resource) {}
+    CompileShaderJob(const std::string& filename) : m_fileName(filename) {}
 
-protected:
-    Resource* m_resource;
-};
-
-class CompileShaderJob : public RenderJob
-{
-public:
-    CompileShaderJob(Resource* resource, const std::string& filename) : RenderJob(resource), m_fileName(filename) {}
-
-    void Execute(size_t threadIndex) override;
+    bool Execute(ThreadContext* context) override;
 
 private:
     std::string m_fileName;

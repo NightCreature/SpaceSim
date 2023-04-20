@@ -18,10 +18,6 @@
 #include <pix3.h>
 #include <Optick.h>
 
-//shouldnt be here just want to be able to draw something
-Matrix44 MeshGroup::m_projection;
-Matrix44 MeshGroup::m_view;
-
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
@@ -145,8 +141,6 @@ void MeshGroup::Update(const Matrix44& world, const std::string& name, const Bbo
     //Update Content buffer data
     WVPBufferContent wvpData;
     wvpData.m_world = world;
-    wvpData.m_view = m_view;
-    wvpData.m_projection = m_projection;
 
     ConstantBuffer & wvpBuffer = m_constantBuffers["WVPBuffer"_hash];
     wvpBuffer.UpdateCpuData(wvpData);
@@ -184,6 +178,7 @@ void MeshGroup::PopulateCommandlist(Resource* resource, CommandList& list)
 
     //update constant buffers
     ShaderParameters& shaderParams = m_material.GetShaderParameters();
+    UNUSEDPARAM(shaderParams);
 
     auto& writableResource = RenderResourceHelper(resource).getWriteableResource();
     auto& effectCache = writableResource.getEffectCache();
@@ -201,96 +196,103 @@ void MeshGroup::PopulateCommandlist(Resource* resource, CommandList& list)
 
     //Set PSO object
     const Effect* effect = effectCache.getEffect(m_material.getEffectHash());
-    const Technique* technique = effect->getTechnique(m_material.getTechnique());
-    list.m_list->SetPipelineState(technique->GetPipelineState().m_pipelineObject);
-    list.m_list->SetGraphicsRootSignature(technique->GetPipelineState().m_pipeLineStateDescriptor.pRootSignature);
-
-    //Descriptor table might be an issue here, we need to set this through the texture objects themselves I think
-    //We can set Shader Resource views and buffer resource views for constants
-    ////This should come from teh material
-    //size_t startOfRangeIndex = heapManager.GetSRVCBVUAVHeap().m_heap.GetCPUDescriptorHeapRangeRingBuffer(m_material.GetNumberOfNeededDescriptors());
-    //size_t copiedNumberOfDescriptors = 0;
-    //if (startOfRangeIndex == static_cast<size_t>(-1))
-    //{
-    //    //We have an error here and our range is out of scope
-    //}
-
-    //Count zero is always our mesh indices
-
+    if (effect != nullptr)
     {
-        OPTICK_EVENT("Set Root Params");
-        //Currently param 0 is going to be the index buffer for all the streams
-        list.m_list->SetGraphicsRoot32BitConstants(0, 32, &m_renderIndices, 0);
-        //for (size_t counter = 1; counter < shaderParams.size(); ++counter)
+        const Technique* technique = effect->getTechnique(m_material.getTechnique());
+        list.m_list->SetPipelineState(technique->GetPipelineState().m_pipelineObject);
+        list.m_list->SetGraphicsRootSignature(technique->GetPipelineState().m_pipeLineStateDescriptor.pRootSignature);
+
+        //Descriptor table might be an issue here, we need to set this through the texture objects themselves I think
+        //We can set Shader Resource views and buffer resource views for constants
+        ////This should come from teh material
+        //size_t startOfRangeIndex = heapManager.GetSRVCBVUAVHeap().m_heap.GetCPUDescriptorHeapRangeRingBuffer(m_material.GetNumberOfNeededDescriptors());
+        //size_t copiedNumberOfDescriptors = 0;
+        //if (startOfRangeIndex == static_cast<size_t>(-1))
         //{
-        //    ShaderParameter& shaderParam = shaderParams[counter];
-        //    {
-        //        OPTICK_EVENT("Dispatch Root Param")
-        //        auto index = shaderParam.m_data.index();
-        //        switch (index)
-        //        {
-        //        case 0:
-        //        case 1:
-        //        {
-        //            auto& constantBuffer = m_constantBuffers[shaderParam.m_rootParamIndex];
-        //            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), constantBuffer.second.GetConstantBuffer()->GetGPUVirtualAddress());
-        //        }
-        //        break;
-        //        case 2:
-        //        {
-        //            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), writableResource.getPerFrameDataStorage().GetConstantBuffer(0).GetConstantBuffer()->GetGPUVirtualAddress());
-        //        }
-        //        break;
-        //        case 3:
-        //        {
-        //            OPTICK_EVENT("SetTexture PAram");
-        //            auto* textureData = std::get_if<3>(&shaderParam.m_data);
-        //            if (textureData != nullptr)
-        //            {
-        //                auto& textureHashes = m_material.getTextureHashes();
-        //                TextureManager& tm = writableResource.getTextureManager();
-        //                //need to allocate range here
-        //                for (size_t textureSlotIndex = textureData->m_startingSlot; textureSlotIndex < textureData->m_numberOfTextures + textureData->m_startingSlot; ++textureSlotIndex)
-        //                {
-        //                    auto textureSlotIterator = std::find_if(textureHashes.begin(), textureHashes.end(), [textureSlotIndex](const auto& slotMapping) { return textureSlotIndex == slotMapping.m_textureSlot; });
-        //                    if (textureSlotIterator != textureHashes.end())
-        //                    {
-        //                        //this should create a new descriptor range and set that in a table
-        //                        const TextureInfo* texInfo = tm.getTexture(textureSlotIterator->m_textureHash);
-        //                        if (texInfo != nullptr)
-        //                        {
-        //                            size_t heapIndex = texInfo->m_heapIndex;
-        //                            auto textureCPUHandle = heapManager.GetSRVCBVUAVHeap().GetGPUDescriptorHandle(heapIndex);
-        //                            list.m_list->SetGraphicsRootDescriptorTable(static_cast<UINT>(shaderParam.m_rootParamIndex), textureCPUHandle);
-        //                        }
-        //                        else
-        //                        {
-        //                            auto nullDescriptors = tm.GetNullDescriptor();
-        //                            list.m_list->SetGraphicsRootDescriptorTable(static_cast<UINT>(shaderParam.m_rootParamIndex), heapManager.GetSRVCBVUAVHeap().GetGPUDescriptorHandle(nullDescriptors.second));
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        default:
-        //            break;
-        //        }
-        //    }
+        //    //We have an error here and our range is out of scope
         //}
-    }
 
+        //Count zero is always our mesh indices
+
+        {
+            OPTICK_EVENT("Set Root Params");
+            //Currently param 0 is going to be the index buffer for all the streams
+            list.m_list->SetGraphicsRoot32BitConstants(0, 32, &m_renderIndices, 0);
+            //for (size_t counter = 1; counter < shaderParams.size(); ++counter)
+            //{
+            //    ShaderParameter& shaderParam = shaderParams[counter];
+            //    {
+            //        OPTICK_EVENT("Dispatch Root Param")
+            //        auto index = shaderParam.m_data.index();
+            //        switch (index)
+            //        {
+            //        case 0:
+            //        case 1:
+            //        {
+            //            auto& constantBuffer = m_constantBuffers[shaderParam.m_rootParamIndex];
+            //            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), constantBuffer.second.GetConstantBuffer()->GetGPUVirtualAddress());
+            //        }
+            //        break;
+            //        case 2:
+            //        {
+            //            list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), writableResource.getPerFrameDataStorage().GetConstantBuffer(0).GetConstantBuffer()->GetGPUVirtualAddress());
+            //        }
+            //        break;
+            //        case 3:
+            //        {
+            //            OPTICK_EVENT("SetTexture PAram");
+            //            auto* textureData = std::get_if<3>(&shaderParam.m_data);
+            //            if (textureData != nullptr)
+            //            {
+            //                auto& textureHashes = m_material.getTextureHashes();
+            //                TextureManager& tm = writableResource.getTextureManager();
+            //                //need to allocate range here
+            //                for (size_t textureSlotIndex = textureData->m_startingSlot; textureSlotIndex < textureData->m_numberOfTextures + textureData->m_startingSlot; ++textureSlotIndex)
+            //                {
+            //                    auto textureSlotIterator = std::find_if(textureHashes.begin(), textureHashes.end(), [textureSlotIndex](const auto& slotMapping) { return textureSlotIndex == slotMapping.m_textureSlot; });
+            //                    if (textureSlotIterator != textureHashes.end())
+            //                    {
+            //                        //this should create a new descriptor range and set that in a table
+            //                        const TextureInfo* texInfo = tm.getTexture(textureSlotIterator->m_textureHash);
+            //                        if (texInfo != nullptr)
+            //                        {
+            //                            size_t heapIndex = texInfo->m_heapIndex;
+            //                            auto textureCPUHandle = heapManager.GetSRVCBVUAVHeap().GetGPUDescriptorHandle(heapIndex);
+            //                            list.m_list->SetGraphicsRootDescriptorTable(static_cast<UINT>(shaderParam.m_rootParamIndex), textureCPUHandle);
+            //                        }
+            //                        else
+            //                        {
+            //                            auto nullDescriptors = tm.GetNullDescriptor();
+            //                            list.m_list->SetGraphicsRootDescriptorTable(static_cast<UINT>(shaderParam.m_rootParamIndex), heapManager.GetSRVCBVUAVHeap().GetGPUDescriptorHandle(nullDescriptors.second));
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        default:
+            //            break;
+            //        }
+            //    }
+            //}
+        }
+
+        {
+            OPTICK_EVENT("Draw");
+            OPTICK_GPU_EVENT("Draw MeshGroup");
+            //Set Shader constants and samplers here this is different
+            list.m_list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //This needs to match the PSO setting think about particle effects
+            //list.m_list->IASetPrimitiveTopology(static_cast<D3D_PRIMITIVE_TOPOLOGY>(m_primitiveLayout)); //Adjecency infocmtoin
+
+            list.m_list->IASetIndexBuffer(&m_indexBuffer.GetBufferView());
+            list.m_list->DrawIndexedInstanced(m_indexBuffer.getNumberOfIndecis(), 1, 0, 0, 0);
+        }
+
+        //PIXEndEvent(list.m_list);
+    }
+    else
     {
-        OPTICK_EVENT("Draw");
-        OPTICK_GPU_EVENT("Draw MeshGroup");
-        //Set Shader constants and samplers here this is different
-        list.m_list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //This needs to match the PSO setting think about particle effects
-        //list.m_list->IASetPrimitiveTopology(static_cast<D3D_PRIMITIVE_TOPOLOGY>(m_primitiveLayout)); //Adjecency infocmtoin
-
-        list.m_list->IASetIndexBuffer(&m_indexBuffer.GetBufferView());
-        list.m_list->DrawIndexedInstanced(m_indexBuffer.getNumberOfIndecis(), 1, 0, 0, 0);
+        OPTICK_EVENT("Failing Drawcall");
     }
-    
-    //PIXEndEvent(list.m_list);
 }
 
 ///-----------------------------------------------------------------------------

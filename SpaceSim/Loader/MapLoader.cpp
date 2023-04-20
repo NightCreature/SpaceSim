@@ -43,6 +43,8 @@ void MapLoader::reset()
 //Just transform this to reading of an xml file more structure and less debugging/easier to debug in the end
 bool MapLoader::loadMap(Resource* resource, const std::string& filename)
 {
+    OPTICK_EVENT();
+
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_NO_ERROR)
     {
@@ -124,7 +126,6 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
                 lightName = attribute->Value();
             }
 
-            MSG_TRACE_CHANNEL("REFACTOR", "SEND message to add a light to the render side");
             MessageSystem::CreateLightMessage lightMessage;
             Light light;
             light.deserialise(element);
