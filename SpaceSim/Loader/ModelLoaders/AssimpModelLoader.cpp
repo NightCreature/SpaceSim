@@ -12,6 +12,7 @@
 
 
 #include <thread>
+#include "Graphics/Model/MeshHelperFunctions.h"
 
 namespace AssimpModelLoader
 {
@@ -24,217 +25,251 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
 {
     UNUSEDPARAM(material);
 
-    if (fileName.empty())
+    CreatedModel model;
+
+    if (!fileName.empty())
     {
-        return CreatedModel();
-    }
-
-    //Load the model here
-    Assimp::Importer importer;
-    // And have it read the given file with some example postprocessing  
-    // Usually - if speed is not the most important aspect for you - you'll   
-    // propably to request more postprocessing than we do in this example.  aiProcessPreset_TargetRealtime_Quality
-    const aiScene* scene = importer.ReadFile(fileName, aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_FlipWindingOrder | aiProcess_FlipUVs); //Optimize the mesh and scenegraph to reduce drawcalls
-    if (!scene)
-    {
-        MSG_TRACE_CHANNEL("ASSIMPMODELLOADER", "failed to open the model file ( %s ) importer error: %s", fileName.c_str(), importer.GetErrorString())
-            return CreatedModel();
-    }  // Now we can access the file's contents.
-
-    MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to load model %s", fileName.c_str());
-
-    //Grab the verts here
-    Mesh::CreationParams params;
-    ShaderInstance shaderInstance;
-    //shaderInstance.setMaterial(material);
-    params.m_shaderInstance = const_cast<ShaderInstance*>(&shaderInstance);
-    params.m_resource = resource;
-    unsigned int highestIndex = 0;
-    //Extract vertices from the mesh here and store in our own vertex buffer
-    for (size_t meshCounter = 0; meshCounter < scene->mNumMeshes; ++meshCounter)
-    {
-        MeshGroupCreator::CreationParams meshGroupParams;
-
-        aiMesh* subMesh = scene->mMeshes[meshCounter];
-        
-        //size_t sourceDataStreamsSize = 1; //Position Stream
-        VertexDeclarationDescriptor descriptor;
-        descriptor.normal = subMesh->HasNormals();
-        descriptor.tangent = subMesh->HasTangentsAndBitangents();
-        //Multiple streams :(
-        descriptor.vertexColor = subMesh->HasVertexColors(0);
-
-        for (unsigned int uvChannel = 0; uvChannel < subMesh->GetNumUVChannels(); ++uvChannel)
+        model.model = new Model();
+        //Load the model here
+        Assimp::Importer importer;
+        // And have it read the given file with some example postprocessing  
+        // Usually - if speed is not the most important aspect for you - you'll   
+        // propably to request more postprocessing than we do in this example.  aiProcessPreset_TargetRealtime_Quality
+        const aiScene* scene = importer.ReadFile(fileName, aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_FlipWindingOrder | aiProcess_FlipUVs); //Optimize the mesh and scenegraph to reduce drawcalls
+        if (!scene)
         {
-            if (subMesh->HasTextureCoords(uvChannel))
-            {
-                descriptor.textureCoordinateDimensions.push_back(subMesh->mNumUVComponents[uvChannel]);
-            }
-        }
+            MSG_TRACE_CHANNEL("ASSIMPMODELLOADER", "failed to open the model file ( %s ) importer error: %s", fileName.c_str(), importer.GetErrorString())
+                return CreatedModel();
+        }  // Now we can access the file's contents.
 
-        meshGroupParams.m_dataStream = CreateDataStreams(descriptor);
-        
-        size_t dataStreamIndex = 0;
-        for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
+        MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to load model %s", fileName.c_str());
+
+        //Grab the verts here
+        RenderResourceHelper renderResourceHelper(resource);
+        RenderResource& renderResource = renderResourceHelper.getWriteableResource();
+
+        unsigned int highestIndex = 0;
+        //Extract vertices from the mesh here and store in our own vertex buffer
+        for (size_t meshCounter = 0; meshCounter < scene->mNumMeshes; ++meshCounter)
         {
-            std::vector<Vector3>& positionStream = std::get<2>(meshGroupParams.m_dataStream.m_streams[VertexStreamType::Position]);
-            ++dataStreamIndex;
-            //Need to create a descriptor here and fetch and set the data streams
-            positionStream.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
+            MeshGroup& group = model.model->CreateMeshGroup();
 
-            if (subMesh->HasNormals())
-            {
-                std::vector<Vector3>& normalStream = std::get<2>(meshGroupParams.m_dataStream.m_streams[VertexStreamType::Normal]);
-                ++dataStreamIndex;
-                normalStream.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
-                //MSG_TRACE_CHANNEL("NORMAL DEBUG", "Normal: %f, %f, %f", subMesh->mNormals[vertCounter].x, subMesh->mNormals[vertCounter].y, subMesh->mNormals[vertCounter].z);
-            }
+            aiMesh* subMesh = scene->mMeshes[meshCounter];
 
-            if (subMesh->mTangents != nullptr)
-            {
-                std::vector<Vector3>& tangentStream = std::get<2>(meshGroupParams.m_dataStream.m_streams[VertexStreamType::Tangent]);
-                ++dataStreamIndex;
-                tangentStream.push_back(Vector3(-subMesh->mTangents[vertCounter].x, -subMesh->mTangents[vertCounter].y, -subMesh->mTangents[vertCounter].z));
-            }
-            if (subMesh->mBitangents != nullptr)
-            {
-                meshGroupParams.m_tangents.push_back(Vector3(-subMesh->mBitangents[vertCounter].x, -subMesh->mBitangents[vertCounter].y, -subMesh->mBitangents[vertCounter].z));
-            }
+            //size_t sourceDataStreamsSize = 1; //Position Stream
+            VertexDeclarationDescriptor descriptor;
+            descriptor.normal = subMesh->HasNormals();
+            descriptor.tangent = subMesh->HasTangentsAndBitangents();
+            //Multiple streams :(
+            descriptor.vertexColor = subMesh->HasVertexColors(0);
 
-            if (subMesh->HasVertexColors(0))
-            {
-                std::vector<Color>& colorStream = std::get<4>(meshGroupParams.m_dataStream.m_streams[VertexStreamType::Color]);
-                colorStream.push_back(Color(subMesh->mColors[0]->r, subMesh->mColors[0]->g, subMesh->mColors[0]->b, subMesh->mColors[0]->a));
-                ++dataStreamIndex;
-            }
-
-            size_t uvStreamStart = static_cast<std::underlying_type_t<VertexStreamType>>(VertexStreamType::UVStart);
             for (unsigned int uvChannel = 0; uvChannel < subMesh->GetNumUVChannels(); ++uvChannel)
             {
                 if (subMesh->HasTextureCoords(uvChannel))
                 {
-                    aiVector3D* texCoordChannel = subMesh->mTextureCoords[uvChannel];
-
-                    switch (subMesh->mNumUVComponents[uvChannel])
-                    {
-                    case 1:
-                    {
-                        std::vector<float>& uStream = std::get<0>(meshGroupParams.m_dataStream.m_streams[static_cast<VertexStreamType>(uvStreamStart + uvChannel)]);
-                        uStream.push_back(texCoordChannel[vertCounter].x);
-                    }
-                    break;
-                    case 2:
-                    {
-                        std::vector<Vector2>& uvStream = std::get<1>(meshGroupParams.m_dataStream.m_streams[static_cast<VertexStreamType>(uvStreamStart + uvChannel)]);
-                        uvStream.push_back(Vector2(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y));
-                    }
-                    break;
-                    case 3:
-                    {
-                        std::vector<Vector3>& uvwStream = std::get<2>(meshGroupParams.m_dataStream.m_streams[static_cast<VertexStreamType>(uvStreamStart + uvChannel)]);
-                        uvwStream.push_back(Vector3(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y, texCoordChannel[vertCounter].z));
-                    }
-                    break;
-                    default:
-                        break;
-                    }
+                    descriptor.textureCoordinateDimensions.push_back(subMesh->mNumUVComponents[uvChannel]);
                 }
+            }
 
+            VertexDataStreams dataStream = CreateDataStreams(descriptor);
+
+            size_t dataStreamIndex = 0;
+            for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
+            {
+                std::vector<Vector3>& positionStream = std::get<2>(dataStream.m_streams[VertexStreamType::Position]);
                 ++dataStreamIndex;
-            }
-        }
+                //Need to create a descriptor here and fetch and set the data streams
+                positionStream.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
 
-        //Need to keep track of highest index and add it to the next batch and so one sadly
-        unsigned int baseIndexOffset = highestIndex;
-        for (size_t indexCounter = 0; indexCounter < subMesh->mNumFaces; ++indexCounter)
-        {
-            for (size_t counterIndex = 0; counterIndex < subMesh->mFaces[indexCounter].mNumIndices; ++counterIndex)
-            {
-                meshGroupParams.m_indices.push_back(subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset);
-                if (subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset > highestIndex)
+                if (subMesh->HasNormals())
                 {
-                    highestIndex = subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset;
+                    std::vector<Vector3>& normalStream = std::get<2>(dataStream.m_streams[VertexStreamType::Normal]);
+                    ++dataStreamIndex;
+                    normalStream.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
+                    //MSG_TRACE_CHANNEL("NORMAL DEBUG", "Normal: %f, %f, %f", subMesh->mNormals[vertCounter].x, subMesh->mNormals[vertCounter].y, subMesh->mNormals[vertCounter].z);
                 }
-            }
-        }
 
-        meshGroupParams.m_shaderInstance = shaderInstance;
-        aiMaterial* aimaterial = scene->mMaterials[subMesh->mMaterialIndex];
-        Material& shaderMaterial =  meshGroupParams.mat;
-        shaderMaterial = material;
-        aiColor4D color;
-        aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
-        shaderMaterial.setAmbient(Color(color.r, color.g, color.b, color.a));
-
-        aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-        shaderMaterial.setDiffuse(Color(color.r, color.g, color.b, color.a));
-
-        aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
-        shaderMaterial.setSpecular(Color(color.r, color.g, color.b, color.a));
-
-        aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, color);
-        shaderMaterial.setEmissive(Color(color.r, color.g, color.b, color.a));
-
-        float shininess;
-        aimaterial->Get(AI_MATKEY_SHININESS, shininess);
-        shaderMaterial.setShininess(shininess);
-
-        //load the texture maps here
-        RenderResourceHelper renderResourceHelper(resource);
-        ResourceLoader& resourceLoader = renderResourceHelper.getWriteableResource().getResourceLoader();
-        aiString path;
-        aiTextureMapping uvMapping;
-        unsigned int uv_index = 0xFFFFFFFF;
-
-
-        //SHould early out on all of these when we cant go past slots any more or we are not getting a slot
-        for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_AMBIENT) && counter < Material::TextureSlotMapping::Ambient7; ++counter)
-        {
-            if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_AMBIENT, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
-            {
-                LoadRequest loadRequest;
-                loadRequest.m_gameObjectId = 0;
-                loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                loadRequest.m_loadData = static_cast<void*>(new char[256]);
-                memcpy(loadRequest.m_loadData, path.C_Str(), 256);
-                resourceLoader.AddLoadRequest(loadRequest);
-
-                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Ambient0 + counter)));
-            }
-        }
-        for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_DIFFUSE) && counter < Material::TextureSlotMapping::Diffuse7; ++counter)
-        {
-            if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_DIFFUSE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
-            {
-                int val;
-                aiTextureType type = aiTextureType_DIFFUSE;
-                if (AI_SUCCESS == aiGetMaterialInteger(aimaterial, AI_MATKEY_UVWSRC(type, 0), &val))
+                if (subMesh->mTangents != nullptr)
                 {
-                }
-                //Grab all texture information for this stage as texture coordinates could need to be transformed :(
-                aiUVTransform textureTransform;
-                const aiMaterialProperty* property = nullptr;
-                if (AI_SUCCESS == aiGetMaterialProperty(aimaterial, AI_MATKEY_UVTRANSFORM(aiTextureType_DIFFUSE, static_cast<unsigned int>(counter)), &property))
-                {
-                    if (property != nullptr)
-                    {
-                        textureTransform = *(aiUVTransform*)(property->mData);
-                    }
+                    std::vector<Vector3>& tangentStream = std::get<2>(dataStream.m_streams[VertexStreamType::Tangent]);
+                    ++dataStreamIndex;
+                    tangentStream.push_back(Vector3(-subMesh->mTangents[vertCounter].x, -subMesh->mTangents[vertCounter].y, -subMesh->mTangents[vertCounter].z));
                 }
                 
-                LoadRequest loadRequest;
-                loadRequest.m_gameObjectId = 0;
-                loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                loadRequest.m_loadData = static_cast<void*>(new char[256]);
-                memcpy(loadRequest.m_loadData, path.C_Str(), 256);
-                resourceLoader.AddLoadRequest(loadRequest);
+                if (subMesh->mBitangents != nullptr)
+                {
+                    //std::vector<Vector3>& biTangentStream = std::get<2>(dataStream.m_streams[VertexStreamType::BiTangent]);
+                    //++dataStreamIndex;
+                    //biTangentStream.push_back(Vector3(-subMesh->mBitangents[vertCounter].x, -subMesh->mBitangents[vertCounter].y, -subMesh->mBitangents[vertCounter].z));
 
-                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Diffuse0 + counter)));
+                    //meshGroupParams.m_tangents.push_back(Vector3(-subMesh->mBitangents[vertCounter].x, -subMesh->mBitangents[vertCounter].y, -subMesh->mBitangents[vertCounter].z));
+                }
+
+                if (subMesh->HasVertexColors(0))
+                {
+                    std::vector<Color>& colorStream = std::get<4>(dataStream.m_streams[VertexStreamType::Color]);
+                    colorStream.push_back(Color(subMesh->mColors[0]->r, subMesh->mColors[0]->g, subMesh->mColors[0]->b, subMesh->mColors[0]->a));
+                    ++dataStreamIndex;
+                }
+
+                size_t uvStreamStart = static_cast<std::underlying_type_t<VertexStreamType>>(VertexStreamType::UVStart);
+                for (unsigned int uvChannel = 0; uvChannel < subMesh->GetNumUVChannels(); ++uvChannel)
+                {
+                    if (subMesh->HasTextureCoords(uvChannel))
+                    {
+                        aiVector3D* texCoordChannel = subMesh->mTextureCoords[uvChannel];
+
+                        switch (subMesh->mNumUVComponents[uvChannel])
+                        {
+                        case 1:
+                        {
+                            std::vector<float>& uStream = std::get<0>(dataStream.m_streams[static_cast<VertexStreamType>(uvStreamStart + uvChannel)]);
+                            uStream.push_back(texCoordChannel[vertCounter].x);
+                        }
+                        break;
+                        case 2:
+                        {
+                            std::vector<Vector2>& uvStream = std::get<1>(dataStream.m_streams[static_cast<VertexStreamType>(uvStreamStart + uvChannel)]);
+                            uvStream.push_back(Vector2(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y));
+                        }
+                        break;
+                        case 3:
+                        {
+                            std::vector<Vector3>& uvwStream = std::get<2>(dataStream.m_streams[static_cast<VertexStreamType>(uvStreamStart + uvChannel)]);
+                            uvwStream.push_back(Vector3(texCoordChannel[vertCounter].x, texCoordChannel[vertCounter].y, texCoordChannel[vertCounter].z));
+                        }
+                        break;
+                        default:
+                            break;
+                        }
+                    }
+
+                    ++dataStreamIndex;
+                }
             }
-        }
-        for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_EMISSIVE) && counter < Material::TextureSlotMapping::Emmisive7; ++counter)
-        {
-            if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_EMISSIVE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
+
+            MeshResourceIndices& resourceIndices = group.GetResourceInices();
+            resourceIndices = group.GetVB().CreateBuffer(renderResource.getDeviceManager(), commandList, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap(), dataStream);
+
+            
+            //Need to keep track of highest index and add it to the next batch and so one sadly
+            unsigned int baseIndexOffset = highestIndex;
+            std::vector<uint32> indexBuffer;
+            for (size_t indexCounter = 0; indexCounter < subMesh->mNumFaces; ++indexCounter)
+            {
+                for (size_t counterIndex = 0; counterIndex < subMesh->mFaces[indexCounter].mNumIndices; ++counterIndex)
+                {
+                    indexBuffer.push_back(subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset);
+                    if (subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset > highestIndex)
+                    {
+                        highestIndex = subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset;
+                    }
+                }
+            }
+            group.GetIB().Create(renderResource.getDeviceManager(), commandList, static_cast<unsigned int>(indexBuffer.size()) * sizeof(unsigned int), static_cast< void*>(indexBuffer.data()));
+
+            aiMaterial* aimaterial = scene->mMaterials[subMesh->mMaterialIndex];
+            Material& shaderMaterial = group.GetMaterial();
+            shaderMaterial = material;
+            aiColor4D color;
+            aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
+            shaderMaterial.setAmbient(Color(color.r, color.g, color.b, color.a));
+
+            aimaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+            shaderMaterial.setDiffuse(Color(color.r, color.g, color.b, color.a));
+
+            aimaterial->Get(AI_MATKEY_COLOR_SPECULAR, color);
+            shaderMaterial.setSpecular(Color(color.r, color.g, color.b, color.a));
+
+            aimaterial->Get(AI_MATKEY_COLOR_EMISSIVE, color);
+            shaderMaterial.setEmissive(Color(color.r, color.g, color.b, color.a));
+
+            float shininess;
+            aimaterial->Get(AI_MATKEY_SHININESS, shininess);
+            shaderMaterial.setShininess(shininess);
+
+            //load the texture maps here
+            ResourceLoader& resourceLoader = renderResource.getResourceLoader();
+            aiString path;
+            aiTextureMapping uvMapping;
+            unsigned int uv_index = 0xFFFFFFFF;
+
+
+            //SHould early out on all of these when we cant go past slots any more or we are not getting a slot
+            for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_AMBIENT) && counter < Material::TextureSlotMapping::Ambient7; ++counter)
+            {
+                if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_AMBIENT, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
+                {
+                    LoadRequest loadRequest;
+                    loadRequest.m_gameObjectId = 0;
+                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
+                    memcpy(loadRequest.m_loadData, path.C_Str(), 256);
+                    resourceLoader.AddLoadRequest(loadRequest);
+
+                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Ambient0 + counter)));
+                }
+            }
+            for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_DIFFUSE) && counter < Material::TextureSlotMapping::Diffuse7; ++counter)
+            {
+                if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_DIFFUSE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
+                {
+                    int val;
+                    aiTextureType type = aiTextureType_DIFFUSE;
+                    if (AI_SUCCESS == aiGetMaterialInteger(aimaterial, AI_MATKEY_UVWSRC(type, 0), &val))
+                    {
+                    }
+                    //Grab all texture information for this stage as texture coordinates could need to be transformed :(
+                    aiUVTransform textureTransform;
+                    const aiMaterialProperty* property = nullptr;
+                    if (AI_SUCCESS == aiGetMaterialProperty(aimaterial, AI_MATKEY_UVTRANSFORM(aiTextureType_DIFFUSE, static_cast<unsigned int>(counter)), &property))
+                    {
+                        if (property != nullptr)
+                        {
+                            textureTransform = *(aiUVTransform*)(property->mData);
+                        }
+                    }
+
+                    LoadRequest loadRequest;
+                    loadRequest.m_gameObjectId = 0;
+                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
+                    memcpy(loadRequest.m_loadData, path.C_Str(), 256);
+                    resourceLoader.AddLoadRequest(loadRequest);
+
+                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Diffuse0 + counter)));
+                }
+            }
+            for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_EMISSIVE) && counter < Material::TextureSlotMapping::Emmisive7; ++counter)
+            {
+                if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_EMISSIVE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
+                {
+                    LoadRequest loadRequest;
+                    loadRequest.m_gameObjectId = 0;
+                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
+                    memcpy(loadRequest.m_loadData, path.C_Str(), 256);
+                    resourceLoader.AddLoadRequest(loadRequest);
+
+                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Emmisive0 + counter)));
+                }
+            }
+            for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_SPECULAR) && counter < Material::TextureSlotMapping::Specular7; ++counter)
+            {
+                if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_SPECULAR, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
+                {
+                    LoadRequest loadRequest;
+                    loadRequest.m_gameObjectId = 0;
+                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
+                    memcpy(loadRequest.m_loadData, path.C_Str(), 256);
+                    resourceLoader.AddLoadRequest(loadRequest);
+
+                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Specular0 + counter)));
+                }
+            }
+
+            if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_NORMALS, 0, &path, &uvMapping, &uv_index))
             {
                 LoadRequest loadRequest;
                 loadRequest.m_gameObjectId = 0;
@@ -243,57 +278,20 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                 memcpy(loadRequest.m_loadData, path.C_Str(), 256);
                 resourceLoader.AddLoadRequest(loadRequest);
 
-                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Emmisive0 + counter)));
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Normals));
             }
+            MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to read material %d", aimaterial);
+
+            shaderMaterial.Prepare(renderResourceHelper.getResource().getEffectCache());
+
+            ModelHelperFunctions::AssignTextureIndices(renderResource, shaderMaterial.getTextureHashes(), resourceIndices);
+            ModelHelperFunctions::CreateConstantBuffers(resourceIndices, &group, renderResourceHelper.getWriteableResource());
+
+            ModelHelperFunctions::AssignPerSceneIndices(renderResource, resourceIndices);
         }
-        for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_SPECULAR) && counter < Material::TextureSlotMapping::Specular7; ++counter)
-        {
-            if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_SPECULAR, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
-            {
-                LoadRequest loadRequest;
-                loadRequest.m_gameObjectId = 0;
-                loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                loadRequest.m_loadData = static_cast<void*>(new char[256]);
-                memcpy(loadRequest.m_loadData, path.C_Str(), 256);
-                resourceLoader.AddLoadRequest(loadRequest);
-
-                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Specular0 + counter)));
-            }
-        }
-
-        if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_NORMALS, 0, &path, &uvMapping, &uv_index))
-        {
-            LoadRequest loadRequest;
-            loadRequest.m_gameObjectId = 0;
-            loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-            loadRequest.m_loadData = static_cast<void*>(new char[256]);
-            memcpy(loadRequest.m_loadData, path.C_Str(), 256);
-            resourceLoader.AddLoadRequest(loadRequest);
-
-            shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Normals));
-        }
-        MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to read material %d", aimaterial);
-        
-        shaderMaterial.Prepare(renderResourceHelper.getResource().getEffectCache());
-
-        meshGroupParams.m_numtangents = meshGroupParams.m_tangents.size(); //TODO FIX this needs to look at the model to get this.
-        meshGroupParams.m_vertexDeclaration.position = 3;
-        meshGroupParams.m_vertexDeclaration.normal = meshGroupParams.m_normals.size() > 0;
-        meshGroupParams.m_vertexDeclaration.tangent = meshGroupParams.m_tangents.size() > 0;
-        meshGroupParams.m_vertexDeclaration.textureCoordinateDimensions.clear();
-        for (size_t counter = 0; counter < meshGroupParams.m_texcoords.size(); ++counter)
-        {
-            meshGroupParams.m_vertexDeclaration.textureCoordinateDimensions.push_back(2);
-        }
-        meshGroupParams.m_vertexDeclaration.vertexColor = false;
-        meshGroupParams.m_resource = resource;
-        meshGroupParams.m_commandList = &commandList;
-
-        //Add mesh group to the mesh creator params
-        params.m_meshGroups.emplace_back(MeshGroupCreator::CreateMeshGroup(meshGroupParams));
     }
 
-    return  Mesh::CreateMesh(params, static_cast<RenderResource*>(resource)->getEffectCache());
+    return model;
 }
 
 }

@@ -2,6 +2,7 @@
 #include "Graphics/mesh.h"
 #include "Graphics/MeshGroupCreator.h"
 #include "Graphics/EffectCache.h"
+#include "Graphics/DebugHelperFunctions.h"
 
 XMLModelLoader::XMLModelLoader(void)
 {
@@ -14,6 +15,7 @@ XMLModelLoader::~XMLModelLoader(void)
 
 ///-------------------------------------------------------------------------
 // @brief 
+// @remark this type should probably carry a data definition
 ///-------------------------------------------------------------------------
 CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadData, CommandList& commandList)
 {
@@ -27,6 +29,8 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
         return CreatedModel();
     }
 
+    CreatedModel model;
+
     tinyxml2::XMLElement* element;
     element = doc.FirstChildElement();
 
@@ -34,22 +38,44 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
     constexpr auto meshVertexHash = "MeshVertex"_hash;
     constexpr auto meshIndecisHash = "MeshIndices"_hash;
 
-    MeshGroupCreator::CreationParams params;
-    params.m_resource = resource;
-    ShaderInstance shaderInstance;
-    params.m_shaderInstance = shaderInstance;
+    tinyxml2::XMLElement* declarationElement = doc.FirstChildElement("VertexDeclaration");
+    if (declarationElement == nullptr)
+    {
+        return model;
+    }
 
-    //Mesh* mesh = new Mesh(resource);
-    std::vector<Vector3>& vertices = params.m_vertices;
-    std::vector<Vector3>& normals = params.m_normals;
-    std::vector< std::vector<Vector3> >& texCoords = params.m_texcoords;
-    size_t numberOfTexCoords = 0;
-    std::vector<unsigned int>& indices = params.m_indices;
+    VertexDeclarationDescriptor descriptor;
+    for (const tinyxml2::XMLAttribute* attribute = declarationElement->FirstAttribute(); attribute != nullptr; attribute->Next())
+    {
+        if (std::string_view(attribute->Name()) == "positions")
+        {
+            descriptor.position = attribute->IntValue();
+        }
+        else if (std::string_view(attribute->Name()) == "normal")
+        {
+            descriptor.normal = attribute->BoolValue();
+        }
+        else if (std::string_view(attribute->Name()) == "nrTextureCoords")
+        {
+            for (size_t index = 0; index < attribute->IntValue(); ++index)
+            {
+                descriptor.textureCoordinateDimensions.push_back(2);
+            }
+        }
+    }
+
+    VertexDataStreams dataStreams = CreateDataStreams(descriptor);
+    std::vector<Vector3>& positionStream = std::get<2>(dataStreams.m_streams[VertexStreamType::Position]);
+    std::vector<Vector3>& normalStream = std::get<2>(dataStreams.m_streams[VertexStreamType::Normal]);
+    size_t uvStreamStart = static_cast<std::underlying_type_t<VertexStreamType>>(VertexStreamType::UVStart);
+
+    std::vector<uint32> indices;
 
     element = element->FirstChildElement();
     for (;element; element = element->NextSiblingElement())
     {
         auto typeHash = hashString(element->Value());
+
         if (meshFaceHash == typeHash)
         {
             for (tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())
@@ -68,34 +94,27 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
                             vec.deserialise(vertexDataElement);
                             if (count == 0)
                             {
+                                
                                 //See this as position data
-                                vertices.push_back(vec);
+                                positionStream.push_back(vec);
                                 //mesh->getBoundingBox().enclose(vec);
                                 ++count;
                             }
                             else
                             {
+                                
                                 //See normal data
-                                normals.push_back(vec);
+                                normalStream.push_back(vec);
                             }
                         }
                         else if (Vector2::m_hash == typeHash)
                         {
                             Vector2 vec;
                             vec.deserialise(vertexDataElement);
-                            //Always see this as texture coordinate data
-                            while (params.m_texcoords.size() <= texCoordSetCount)
-                            {
-                                params.m_texcoords.push_back(std::vector<Vector3>());
-                            }
-                            std::vector<Vector3>& smit = texCoords[texCoordSetCount];
-                            smit.push_back(Vector3(vec));
+                            std::vector<Vector2>& uvStream = std::get<1>(dataStreams.m_streams[static_cast<VertexStreamType>(uvStreamStart + texCoordSetCount)]);
+                            uvStream.push_back(vec);
                             ++texCoordSetCount;
                         }
-                    }
-                    if (numberOfTexCoords == 0)
-                    {
-                        numberOfTexCoords = 1;
                     }
                 }
                 else if (meshIndecisHash == typeHash)
@@ -113,9 +132,15 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
         }
     }
 
-    params.m_commandList = &commandList;
+    Mesh::normalizeNormals(normalStream); //Avoid read in errors so that all the normals are actually unit vectors
 
-    Mesh::normalizeNormals(params.m_normals); //Avoid read in errors so that all the normals are actually unit vectors
+    model.model = new Model();
+    MeshGroup& group = model.model->CreateMeshGroup();
+    RenderResource& renderResource = RenderResourceHelper(resource).getWriteableResource();
+    group.GetVB().CreateBuffer(renderResource.getDeviceManager(), commandList, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap(), dataStreams);
+    group.GetIB().Create(renderResource.getDeviceManager(), commandList, indices.size() * sizeof(uint32), static_cast<void*>(indices.data()));
+
+    
     //if (mesh->getMeshData()[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
     //{
     //    renderResourceHelper helper(resource);
@@ -127,10 +152,5 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
     //}
     //mesh->initialise(ShaderInstance());
 
-    CreatedMeshGroup mesh = MeshGroupCreator::CreateMeshGroup(params);
-
-    Mesh::CreationParams meshParams;
-    meshParams.m_meshGroups.push_back(mesh);
-
-    return  Mesh::CreateMesh(meshParams, static_cast<RenderResource*>(resource)->getEffectCache());
+    return model;
 }
