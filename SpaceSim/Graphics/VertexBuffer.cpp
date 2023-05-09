@@ -267,6 +267,8 @@ MeshResourceIndices VertexBuffer::CreateBuffer(const DeviceManager& deviceManage
             resourceIndices.textureBufferIndex = static_cast<uint>(m_data[strucutredBufferArrayIndex].second.GetDescriptorIndex());
             ++resourceIndices.numberOfTextureStreams;
         }
+
+        ++strucutredBufferArrayIndex;
     }
     
     return resourceIndices;
