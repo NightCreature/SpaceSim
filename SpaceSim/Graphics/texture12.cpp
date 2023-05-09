@@ -78,6 +78,7 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandList& c
     {
         MSG_TRACE_CHANNEL("Texture12", "Failed to load texture (%s) for reason: %d, %s", filename.c_str(), hr, getLastErrorMessage(hr));
         MSG_TRACE_CHANNEL("Texture12", "Fail reason: %s", getLastErrorMessage(deviceManager.GetDevice()->GetDeviceRemovedReason()));
+        return false;
     }
 
 

@@ -4,6 +4,9 @@
 //#include "Core/Resource/Resourceable.h"
 //#include "Core/Resource/GameResource.h"
 //#include "Core/Resource/RenderResource.h"
+
+#include "Core/Types/FunctionWrapper.h"
+
 #include <cstddef>
 #include <cstdint>
 #include <vector>
@@ -24,7 +27,3 @@ using byte = uint8;
 using word = uint16;
 using dword = uint32;
 using qword = uint64;
-
-class RenderInstance;
-
-typedef std::vector<RenderInstance*> RenderInstanceTree;

@@ -25,76 +25,6 @@ MeshGroup::~MeshGroup()
 {
 }
 
-///-------------------------------------------------------------------------
-// @brief 
-///-------------------------------------------------------------------------
-void MeshGroup::update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box )
-{
-//    PROFILE_EVENT("MeshGroup::update", Aqua);
-//    //What if this just recorded its things into the CommandList?
-//    //if (m_renderInstanceDirty || m_renderInstance == nullptr)
-//    //{  
-//        //if ( m_renderInstance != nullptr)
-//        //{
-//        //    delete m_renderInstance;
-//        //    m_renderInstance = nullptr;
-//        //}
-//    if (m_renderInstance == nullptr)
-//    {
-//        PROFILE_EVENT("MeshGroup::update::Allocation", Black);
-//        m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
-//#ifdef _DEBUG
-//        convertToWideString(name, m_renderInstance->m_name);
-//        UNUSEDPARAM(name);
-//#else
-//        UNUSEDPARAM(name);
-//#endif
-//    }
-//
-//        WVPBufferContent wvpConstants; //= m_renderInstance->GetShaderInstance().getWVPConstants();
-//        wvpConstants.m_projection = projection;
-//        wvpConstants.m_view = view;
-//        wvpConstants.m_world = m_world * world; 
-//        auto vsConstants = m_renderInstance->GetShaderInstance().getVSConstantBufferSetup();
-//        RenderResourceHelper resourceHelper(resource);
-//        if (!vsConstants.empty())
-//        {
-//            resourceHelper.getResource().getDeviceManager().getDeferredDeviceContext()->UpdateSubresource(vsConstants[0], 0, 0, (void*)&wvpConstants, 0, 0); //Not sure about this
-//        }
-//
-//        //Fix shader resource view references for the material.
-//        m_renderInstance->GetShaderInstance().FixSrvReferences(resourceHelper.getWriteableResource());
-//
-//        auto psConstants = m_renderInstance->GetShaderInstance().getPSConstantBufferSetup();
-//        if (!psConstants.empty())
-//        {
-//            resourceHelper.getResource().getDeviceManager().getDeferredDeviceContext()->UpdateSubresource(psConstants[0], 0, 0, (void*)&m_material.getMaterialCB(), 0, 0); //Not sure about this
-//        }
-//
-//        UNUSEDPARAM(resource);
-//        UNUSEDPARAM(world);
-//        UNUSEDPARAM(view);
-//        UNUSEDPARAM(projection);
-//    //}
-//    
-//    if (m_renderInstance != nullptr)
-//    {
-//        m_renderInstance->setBoundingBox(box);
-//        renderInstance.emplace_back(m_renderInstance);
-//    }
-//
-//    UNUSEDPARAM(elapsedTime);
-
-    UNUSEDPARAM(resource);
-    UNUSEDPARAM(renderInstance);
-    UNUSEDPARAM(elapsedTime);
-    UNUSEDPARAM(world);
-    UNUSEDPARAM(view);
-    UNUSEDPARAM(projection);
-    UNUSEDPARAM(name);
-    UNUSEDPARAM(box);
-}
-
 void MeshGroup::Update(const Matrix44& world, const std::string& name, const Bbox& box)
 {
     OPTICK_EVENT();
@@ -341,10 +271,18 @@ void MeshGroup::UpdateRenderIndices()
 }
 
 ///-------------------------------------------------------------------------
-// @brief 
+// @brief There is an error here copying the index buffer kills us
 ///-------------------------------------------------------------------------
 MeshGroup::MeshGroup( const MeshGroup& source )
 {
     m_world = source.m_world;
     m_renderInstanceDirty = true;
+    
+    m_renderIndices = source.m_renderIndices;
+    m_material = source.m_material;
+    //m_indexBuffer = source.m_indexBuffer;
+
+    m_name = source.m_name;
+
+    m_primitiveLayout = source.m_primitiveLayout;
 }

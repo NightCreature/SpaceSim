@@ -50,10 +50,9 @@ struct GlyphQuad
 
 struct TextBlockInfo
 {
-	TextBlockInfo() : m_renderInstance(nullptr) {}
+	TextBlockInfo() {}
     ~TextBlockInfo()
     {
-        delete m_renderInstance;
     }
     Vector4 m_textBlockSize; //xy is top left, zw is bottom right
 	std::vector<GlyphQuad> m_glyphQuads;
@@ -67,12 +66,8 @@ struct TextBlockInfo
 	BitmapFont* m_font;
 	VertexBuffer vb;
 	IndexBuffer ib;
-	ShaderInstance m_shaderInstance;
-	GeometryInstance m_geometryInstance;
-	RenderInstance* m_renderInstance;
 
 	bool ProcessText(Resource* resource);
-	RenderInstance* getRenderInstance() { return m_renderInstance; }
 private:
 	void CreateVertexBuffer(Resource* resource);
 	void CreateShaderSetup(Resource* resource);
@@ -86,11 +81,6 @@ public:
     TextBlockCache(size_t maxTextblocks, Resource* resource) : m_maxTextBlocks(maxTextblocks), m_resource(resource) { m_textBlocks.reserve(maxTextblocks); }
     ~TextBlockCache() 
     {
-        for (size_t counter = 0; counter < m_textBlocksToRender.size(); ++counter)
-        {
-            delete m_textBlocksToRender[counter];
-        }
-
         m_fonts.clear();
         m_textBlocks.clear();
     }
@@ -103,14 +93,13 @@ public:
     bool removeText(size_t text);
     void removeAllTexts();
 
-	void ProvideRenderInstances(RenderInstanceTree& renderInstances);
+	void ProvideRenderInstances();
 
     TextBlockInfo& getTextBlock(size_t index) { return m_textBlocks[index]; } //Rewrite this so its safe if the index is not there
 private:
     BitmapFont* getBitmapFont(size_t fontNameHash);
 
     std::vector<TextBlockInfo> m_textBlocks;
-	std::vector<RenderInstance*> m_textBlocksToRender;
     std::vector<BitmapFont> m_fonts;
     size_t m_maxTextBlocks;
     Resource* m_resource;

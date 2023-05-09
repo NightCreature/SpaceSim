@@ -12,7 +12,7 @@ struct ThreadContext;
 class MeshUpdateJob : public Job
 {
 public:
-    MeshUpdateJob(Resource* resource, Model* model, RenderInstanceTree renderInstances, Matrix44 world, Matrix44 view, Matrix44 projection, std::string name);
+    MeshUpdateJob(Resource* resource, Model* model, Matrix44 world, Matrix44 view, Matrix44 projection, std::string name);
 private:
 };
 

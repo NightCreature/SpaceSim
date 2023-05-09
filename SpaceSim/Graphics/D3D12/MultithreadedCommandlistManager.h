@@ -4,6 +4,7 @@
 
 #include <array>
 #include <atomic>
+#include <functional>
 #include <mutex>
 #include <string>
 
@@ -23,6 +24,8 @@ public:
 
     void Update();
 
+    template<class T>
+    void SetCallbackOnCommandlistFinished(T func) { m_func = func; }
 private:
 
     HRESULT ResetCommandListAndAllocator(auto& resourceCommandQueue, size_t index);
@@ -39,4 +42,6 @@ private:
     std::array< CommandListStatus, CommandQueue::MaxCommandLists> m_commandListStatus;
 
     size_t m_queueHandle = ~0ull; //Handle to the actual command queue object
+
+    std::function<void(size_t)> m_func;
 };

@@ -45,15 +45,13 @@ public:
     virtual ~GameObject(void) 
     {
     }
-    virtual const ShaderInstance deserialise( const tinyxml2::XMLElement* node ) = 0;
-    virtual void initialise(const ShaderInstance& shaderInstance) 
+    virtual void deserialise( const tinyxml2::XMLElement* node ) = 0;
+    virtual void initialise() 
     {
-        UNUSEDPARAM(shaderInstance); 
     }
     //virtual void deserialise(const tinyxml2::XMLElement* xmlNode) = 0;
-    virtual void update(RenderInstanceTree& renderInstances,  float elapsedTime, const Input& input) 
+    virtual void update(float elapsedTime, const Input& input) 
     {
-        UNUSEDPARAM(renderInstances);
         UNUSEDPARAM(elapsedTime);
         UNUSEDPARAM(input);
 

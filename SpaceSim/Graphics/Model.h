@@ -22,7 +22,6 @@ public:
     struct CreationParams
     {
         Resource* m_resource;
-        const ShaderInstance* m_shaderInstance;
     };
 
     Model() {}
@@ -33,17 +32,6 @@ public:
             meshGroup.Cleanup();
         }
 
-    }
-
-    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name)
-    {
-        if (!m_modelData.empty())
-        {
-            for (size_t counter = 0; counter < m_modelData.size(); ++counter)
-            {
-                m_modelData[counter].update(resource, renderInstance, elapsedTime, world, view, projection, name, m_boundingBox);
-            }
-        }
     }
 
     ///-----------------------------------------------------------------------------
@@ -89,6 +77,7 @@ public:
     void UpdateCbs() {}
 
     //Deprecated bad code
+    void addMeshGroup(const MeshGroup& meshGroup) { m_modelData.push_back(meshGroup); }
     void addMeshGroup(MeshGroup* meshGroup) { m_modelData.push_back(*meshGroup); }
     const Bbox& getBoundingBox() const { return m_boundingBox; }
     Bbox& getBoundingBox() { return m_boundingBox; }
@@ -109,15 +98,6 @@ public:
         {
             meshGroup.setDirty();
         }
-    }
-
-    void setShaderInstance(const ShaderInstance& shaderInstance)
-    {
-        UNUSEDPARAM(shaderInstance);
-        //for (auto& meshGroup : m_modelData)
-        //{
-        //    //meshGroup.setShaderInstance(shaderInstance);
-        //}
     }
 
     MeshGroup& CreateMeshGroup()

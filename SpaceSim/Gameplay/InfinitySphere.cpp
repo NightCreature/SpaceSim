@@ -12,10 +12,9 @@
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* node)
+void InfinitySphere::deserialise(const tinyxml2::XMLElement* node)
 {
     m_name = "skydome";
-    ShaderInstance shaderInstance;
 
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())
     {
@@ -47,7 +46,7 @@ const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* nod
 
                 resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createModel);
 
-                Super::initialise(shaderInstance);
+                Super::initialise();
 
             }
         }
@@ -56,23 +55,21 @@ const ShaderInstance InfinitySphere::deserialise(const tinyxml2::XMLElement* nod
             m_scale.deserialise(childElement);
         }
     }
-
-    return shaderInstance;
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void InfinitySphere::initialise(const ShaderInstance& shaderInstance)
+void InfinitySphere::initialise()
 {
     //m_drawableObject->initialise(shaderInstance);
-    Super::initialise(shaderInstance);
+    Super::initialise();
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void InfinitySphere::update(RenderInstanceTree& renderInstances, float elapsedTime, const Input& input)
+void InfinitySphere::update(float elapsedTime, const Input& input)
 {
     MSG_TRACE_CHANNEL("REFACTOR", "SEND Cameraid this should be centered arround");
     //const Camera* cam = getResource().getCameraManager().getCamera("global");
@@ -84,7 +81,7 @@ void InfinitySphere::update(RenderInstanceTree& renderInstances, float elapsedTi
     //    m_world = m_world * temp;
     //}
 
-    Super::update(renderInstances, elapsedTime, input);
+    Super::update(elapsedTime, input);
 }
 
 ///-------------------------------------------------------------------------

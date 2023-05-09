@@ -275,6 +275,7 @@
     <ClInclude Include="..\..\Core\Thread\Timer.h" />
     <ClInclude Include="..\..\Core\Thread\WorkerThread.h" />
     <ClInclude Include="..\..\Core\tinyxml2.h" />
+    <ClInclude Include="..\..\Core\Types\FunctionWrapper.h" />
     <ClInclude Include="..\..\Core\Types\TemplateTypeMagic.h" />
     <ClInclude Include="..\..\Core\Types\TypeHelpers.h" />
     <ClInclude Include="..\..\Core\Types\Types.h" />

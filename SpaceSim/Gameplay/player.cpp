@@ -329,11 +329,10 @@ void Player::createScorchMark(const Vector3 &pos, const Vector3 &normal)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void Player::update( float elapsedTime, const Input& input )
 {
     PROFILE_EVENT("Player::update", Green);
     //Should do move update and render list creation here
-    UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(elapsedTime);
     UNUSEDPARAM(input);
 
@@ -358,7 +357,7 @@ void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, con
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance Player::deserialise( const tinyxml2::XMLElement* node )
+void Player::deserialise( const tinyxml2::XMLElement* node )
 {
     const tinyxml2::XMLAttribute* attribute = node->FindAttribute("name");
     if (attribute)
@@ -394,8 +393,6 @@ const ShaderInstance Player::deserialise( const tinyxml2::XMLElement* node )
             }
         }
     }
-
-    return ShaderInstance();
 }
 
 ///-------------------------------------------------------------------------

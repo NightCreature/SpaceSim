@@ -68,7 +68,6 @@ public:
 
     void cleanup();
     void beginDraw();
-    void CheckVisibility(RenderInstanceTree& renderInstances);
     void update(float elapsedTime, double time);
 
     void endDraw();
@@ -172,14 +171,8 @@ private:
     ShadowMapRenderer* m_shadowMapRenderer;
     ID3D11SamplerState* m_samplerState; //Fix this
 
-    
-    RenderInstanceTree visibleInstances;
-
     MessageSystem::MessageObserver m_messageObservers;
 
-
-    //TEMP HACK
-    RenderInstanceTree m_renderInstances;
 
     //No more need for these to be static
     Input m_input;

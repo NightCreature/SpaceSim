@@ -32,9 +32,8 @@ GameObject(resource)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder)
+void ForceField::initialise(bool changeWindingOrder)
 {
-	UNUSEDPARAM(shaderInstance);
     Face::CreationParams params;
 //    params.shaderInstance = &shaderInstance;
 //    params.resource = m_resource;
@@ -58,9 +57,8 @@ void ForceField::initialise(const ShaderInstance& shaderInstance, bool changeWin
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance ForceField::deserialise( const tinyxml2::XMLElement* element)
+void ForceField::deserialise( const tinyxml2::XMLElement* element)
 {
-    ShaderInstance shaderInstance;
     
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
@@ -85,19 +83,17 @@ const ShaderInstance ForceField::deserialise( const tinyxml2::XMLElement* elemen
             translate(m_world, m_position.x(), m_position.y(), m_position.z());
         }
     }
-
-    return shaderInstance;
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void ForceField::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void ForceField::update( float elapsedTime, const Input& input )
 {
     //React to input before doing the draw update below
     if (m_active)
     {
-        GameObject::update(renderInstances, elapsedTime, input);
+        GameObject::update(elapsedTime, input);
         if (m_texturespeed < 1.0f)
         {
         	m_texturespeed += 0.01f;

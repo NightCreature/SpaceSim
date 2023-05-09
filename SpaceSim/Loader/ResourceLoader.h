@@ -38,7 +38,12 @@ public:
     bool GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList);
     void ReturnCommandListForThreadIndex(size_t threadIndex);
 
+    void AddedReturnMessageDataForThreadIndex(size_t m_threadIndex, size_t m_gameObjectId, size_t resourceHandle);
+
+    void CallbackCommandListFinished(size_t threadIndex);
 private:
+
+    void SendReturnMsg(size_t gameObjectId, size_t resourceHandle);
 
     Resource* m_resource;
     std::vector<ResourceLoadJob*> m_jobs;
@@ -47,6 +52,9 @@ private:
     std::mutex m_mutex;
 
     MultithreadedCommandlistManager m_commandListManager;
+    //List of Gameobject Id to Render Handle
+    using ListOfReturnData = std::vector<std::pair<size_t, size_t>>;
+    std::array<ListOfReturnData, CommandQueue::MaxCommandLists> m_returnMessageDataPerThread;
 
     bool m_updating = false;
 };

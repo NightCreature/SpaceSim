@@ -71,32 +71,32 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
         else if (ForceField::m_hash == elementHash)
         {
             ForceField* forceField = new ForceField(resource);
-            ShaderInstance instance = forceField->deserialise(element);
-            forceField->initialise(instance, false);
+            forceField->deserialise(element);
+            forceField->initialise(false);
             map.insertSpecial(forceField);
             gameObjectManager.addGameObject(forceField);
         }
         else if (Door::m_hash == elementHash)
         {
             Door* door = new Door(resource);
-            ShaderInstance instance = door->deserialise(element);
-            door->initialise(instance, false);
+            door->deserialise(element);
+            door->initialise(false);
             map.insertSpecial(door);
             gameObjectManager.addGameObject(door);
         }
         else if (RotatingBlades::m_hash == elementHash)
         {
             RotatingBlades* rotatingBlades = new RotatingBlades(resource);
-            ShaderInstance instance = rotatingBlades->deserialise(element);
-            rotatingBlades->initialise(instance, false);
+            rotatingBlades->deserialise(element);
+            rotatingBlades->initialise(false);
             map.insertSpecial(rotatingBlades);
             gameObjectManager.addGameObject(rotatingBlades);
         }
         else if (Core::m_hash == elementHash)
         {
             Core* core = new Core(resource);
-            ShaderInstance instance = core->deserialise(element);
-            core->initialise(instance);
+            core->deserialise(element);
+            core->initialise();
             map.insertSpecial(core);
             gameObjectManager.addGameObject(core);
         }
@@ -104,16 +104,16 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
         {
             MSG_TRACE_CHANNEL("MAP", "Map loading switch");
             Switch* switchObject = new Switch(resource);
-            const ShaderInstance shaderInstance = switchObject->deserialise(element);
-            switchObject->initialise(shaderInstance);
+            switchObject->deserialise(element);
+            switchObject->initialise();
             map.insertSpecial(switchObject);
             gameObjectManager.addGameObject(switchObject);
         }
         else if (GunTurret::m_hash == elementHash)
         {
             GunTurret* gun = new GunTurret(resource);
-            const ShaderInstance shaderInstance = gun->deserialise(element);
-            gun->initialise(shaderInstance);
+            gun->deserialise(element);
+            gun->initialise();
             map.insertSpecial(gun);
             gameObjectManager.addGameObject(gun);
         }
@@ -137,7 +137,8 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
         else if (InfinitySphere::m_hash == elementHash)
         {
             InfinitySphere* infSphere = new InfinitySphere(resource);
-            infSphere->initialise(infSphere->deserialise(element));
+            infSphere->deserialise(element);
+            infSphere->initialise();
             gameObjectManager.addGameObject(infSphere);
         }
         element = element->NextSiblingElement();
@@ -377,7 +378,7 @@ void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement*
         p->invertNormal();
     }
 
-    const ShaderInstance shaderInstance = p->deserialise(element);
+    p->deserialise(element);
     PlanesMap::iterator pit = m_planes.find(type);
     if (pit != m_planes.end())
         pit->second.push_back(p);
@@ -385,7 +386,7 @@ void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement*
     {
         m_planes.insert(std::pair<int, Planes>(type, Planes(1, p)));
     }
-    p->initialise(shaderInstance);
+    p->initialise();
     GameResourceHelper gameResourceHelper(resource);
     GameObjectManager& gameObjectManager = gameResourceHelper.getWriteableResource().getGameObjectManager();
     gameObjectManager.addGameObject(p);

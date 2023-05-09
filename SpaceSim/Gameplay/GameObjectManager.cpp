@@ -81,7 +81,7 @@ const std::vector<GameObject*> GameObjectManager::getGameObjectsThatDontContain(
     return returnValue;
 }
 
-void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime, const Input& input)
+void GameObjectManager::update(float elapsedTime, const Input& input)
 {
     PROFILE_EVENT("GameObjectManagerUpdate", Red);
     OPTICK_EVENT();
@@ -89,7 +89,7 @@ void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime
     {
         if (gameObject.second != nullptr && !gameObject.second->IsInitialising())
         {
-            gameObject.second->update(renderList, elapsedTime, input);
+            gameObject.second->update(elapsedTime, input);
         }
     }
 }

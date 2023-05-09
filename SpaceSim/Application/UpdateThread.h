@@ -44,14 +44,10 @@ public:
     void SetElapsedTime(float elapsedTime, double time) { m_elapsedTime = elapsedTime; m_time = time; }
     void UnblockThread() { m_done = false; }
 
-    std::vector<RenderInstance*> GetRenderInstanceList() { return m_renderList; }
-
     void LockCriticalSection() { EnterCriticalSection(&m_criticalSection); }
     void UnLockCriticalSection() { LeaveCriticalSection(&m_criticalSection); }
 
     void setInput(Input input) { m_input = input; }
-
-    std::vector<RenderInstance*> m_renderList;
 
     EntityManager* m_entityManager = nullptr;
     ECS::SystemsManager* m_entitySystemsManager = nullptr;

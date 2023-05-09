@@ -43,7 +43,7 @@ void ModelManager::cleanup()
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
-///! @remark
+///! @remark This should probably build a list of models that do render too
 ///-----------------------------------------------------------------------------
 void ModelManager::OnMessage(const MessageSystem::Message& msg)
 {

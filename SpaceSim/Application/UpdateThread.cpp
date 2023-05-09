@@ -57,9 +57,8 @@ int UpdateThread::WorkerFunction()
             m_messageObservers.DispatchMessages(*(m_resource->m_messageQueues->getUpdateMessageQueue())); //Dispatch the messages
             m_resource->m_messageQueues->getUpdateMessageQueue()->reset();//m_messageQueue->reset(); //Reset the queue so we can track new message in it
 
-            m_renderList.clear();
 
-            m_gameObjectManager->update(m_renderList, m_elapsedTime, m_input);
+            m_gameObjectManager->update( m_elapsedTime, m_input);
             
             auto& entitySystemsManager = m_entityManager->GetSystemsManager();
             {
@@ -70,7 +69,7 @@ int UpdateThread::WorkerFunction()
             }
             //Potentially own job
             entitySystemsManager.Update(); //This one is system that dont have a link with the physics, this could be farmed off to a job
-            m_laserManager->update(m_renderList, m_elapsedTime, Matrix44(), Matrix44()); //TODO FIX LASERS
+            m_laserManager->update( m_elapsedTime, Matrix44(), Matrix44()); //TODO FIX LASERS
 
             m_done = true;
             LeaveCriticalSection(&m_criticalSection);

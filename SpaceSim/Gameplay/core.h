@@ -11,7 +11,7 @@ public:
 	Core(Resource* resource, const Vector3& position, float radius, int slices, int stacks, int ffstrength);
 	~Core() {}
 
-    void initialise(const ShaderInstance& shaderInstance);
+    void initialise();
 
 	void onHit();
 
@@ -20,12 +20,12 @@ public:
     ///-------------------------------------------------------------------------
     // @brief 
     ///-------------------------------------------------------------------------
-    const ShaderInstance deserialise( const tinyxml2::XMLElement* element );
+    void deserialise( const tinyxml2::XMLElement* element );
 
     ///-------------------------------------------------------------------------
     // @brief 
     ///-------------------------------------------------------------------------
-    virtual void update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input );
+    virtual void update(float elapsedTime, const Input& input);
 
     ///-------------------------------------------------------------------------
     // @brief 

@@ -68,6 +68,7 @@ public:
         size_t m_renderObjectid;
         size_t m_gameobjectid;
         const char* m_name;
+        bool m_shouldRender = false;
     };
 
     RenderInformation()

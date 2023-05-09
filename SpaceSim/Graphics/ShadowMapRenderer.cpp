@@ -179,29 +179,10 @@ void ShadowMapRenderer::cleanup()
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, const RenderInstanceTree& renderInstances)
-{
-    PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
-    visibileInstances.clear();
-    Frustum frustum(m_shadowMVP.m_view, m_shadowMVP.m_projection);
-    for (auto instance : renderInstances)
-    {
-        if (frustum.IsInside(instance->getBoundingBox()))
-        {
-            visibileInstances.push_back(instance);
-        }
-    }
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light)
+void ShadowMapRenderer::renderShadowMap(Resource* resource, const DeviceManager& deviceManager, const Light* light)
 {
 
     UNUSEDPARAM(resource);
-    UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(deviceManager);
     UNUSEDPARAM(light);
 

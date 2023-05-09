@@ -73,7 +73,7 @@ m_changeWindingOrder(changeWindingOrder)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void Plane::initialise(const ShaderInstance& shaderInstance)
+void Plane::initialise()
 {
     Face::CreationParams params;
 //    params.resource = m_resource;
@@ -106,7 +106,7 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
 
     resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); 
 
-    Super::initialise(shaderInstance);
+    Super::initialise();
 }
 
 void Plane::transform()
@@ -135,9 +135,8 @@ void Plane::transform()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance Plane::deserialise( const tinyxml2::XMLElement* node )
+void Plane::deserialise( const tinyxml2::XMLElement* node )
 {
-    ShaderInstance shaderInstance;
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != 0; childElement = childElement->NextSiblingElement())
     {
         auto childElementHash = hashString(childElement->Value());
@@ -146,15 +145,14 @@ const ShaderInstance Plane::deserialise( const tinyxml2::XMLElement* node )
             m_materialParameters = Material::GetMaterialParameters(childElement);
         }
     }
-    return shaderInstance;
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void Plane::update( float elapsedTime, const Input& input )
 {
-    Super::update(renderInstances, elapsedTime, input);
+    Super::update(elapsedTime, input);
     Vector3 lowerleft, upperright;
     //m_plane.fillMiniMapVectors(lowerleft, upperright);
     //glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
@@ -185,14 +183,17 @@ void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, cons
     //	(lowerleft.x() , upperright.y(), lowerleft.z());
     //	glEnd();
     //}
-    MessageSystem::RenderInformation renderInfo;
-    MessageSystem::RenderInformation::RenderInfo data;
-    data.m_renderObjectid = m_renderHandle;
-    data.m_gameobjectid = m_nameHash;
-    data.m_world = m_world;
-    data.m_name = m_name.c_str();
-    renderInfo.SetData(data);
-    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+    if (m_initialisationDone)
+    {
+        MessageSystem::RenderInformation renderInfo;
+        MessageSystem::RenderInformation::RenderInfo data;
+        data.m_renderObjectid = m_renderHandle;
+        data.m_gameobjectid = m_nameHash;
+        data.m_world = m_world;
+        data.m_name = m_name.c_str();
+        renderInfo.SetData(data);
+        m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+    }
 }
 
 ///-------------------------------------------------------------------------

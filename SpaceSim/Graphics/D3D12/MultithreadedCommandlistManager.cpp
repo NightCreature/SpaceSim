@@ -156,6 +156,9 @@ HRESULT MultithreadedCommandlistManager::ResetCommandListAndAllocator(auto& reso
         {
             MSG_TRACE_CHANNEL("ResourceLoader", "Failed to reset the resource command list 0x%x %s", hr, getLastErrorMessage(hr));
         }
+
+        //Callback for this index
+        m_func(index);
     }
 
     return hr;

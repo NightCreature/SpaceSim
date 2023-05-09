@@ -34,9 +34,6 @@ public:
     MeshGroup(const MeshGroup& source);
     ~MeshGroup();
 
-    //Create and add a RenderInstance into the tree to be rendered
-    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name, const Bbox& box);
-    
     void Update(const Matrix44& world, const std::string& name, const Bbox& box);
     void Update(const MessageSystem::RenderInformation::RenderInfo& context);
     

@@ -71,7 +71,6 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
     m_textBlocks.push_back(info);
 	if (m_textBlocks[m_textBlocks.size() - 1].ProcessText(m_resource))
 	{
-		m_textBlocksToRender.push_back(m_textBlocks[m_textBlocks.size() - 1].getRenderInstance());
 		return true;
 	}
 
@@ -153,7 +152,7 @@ void TextBlockCache::removeAllTexts()
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
+void TextBlockCache::ProvideRenderInstances()
 {
 	//Should only really do this for blocks that are active
 	//for (auto& textBlock : m_textBlocks)
@@ -163,10 +162,6 @@ void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 	//}
 
 	//std::copy(m_textBlocksToRender.begin(), m_textBlocksToRender.end(), renderInstances.end());
-	for (size_t counter = 0; counter < m_textBlocksToRender.size(); ++counter)
-	{
-		renderInstances.push_back(m_textBlocksToRender[counter]);
-	}
 }
 
 ///-----------------------------------------------------------------------------
@@ -511,15 +506,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 
     CreateVertexBuffer(resource);
 	CreateShaderSetup(resource);
-	if (m_renderInstance)
-	{
-		delete m_renderInstance;
-	}
-	m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
-#ifdef _DEBUG
-	m_renderInstance->m_name = L"TextBlock";
-#endif
-
+	
 	return true;
 }
 

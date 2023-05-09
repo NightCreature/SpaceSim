@@ -49,10 +49,8 @@ GunTurret::~GunTurret()
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void GunTurret::initialise(const ShaderInstance& shaderInstance)
+void GunTurret::initialise()
 {
-    UNUSEDPARAM(shaderInstance);
-
     const SettingsManager* sm = m_resource->m_settingsManager;
     const ISetting<std::string>* modelString = sm->getSetting<std::string>("Guns");
     if (modelString)
@@ -61,7 +59,7 @@ void GunTurret::initialise(const ShaderInstance& shaderInstance)
         //m_drawableObject = getWriteableResource().getModelManager().LoadModel(m_resource, shaderInstance, modelString->getData());
     }
 
-    Super::initialise(shaderInstance);
+    Super::initialise();
 }
 
 void GunTurret::cleanup()
@@ -252,9 +250,8 @@ void GunTurret::createScorchMark(const Vector3 &pos, const Vector3 &normal)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element)
+void GunTurret::deserialise( const tinyxml2::XMLElement* element)
 {
-    ShaderInstance shaderInstance;
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
     {
@@ -314,14 +311,12 @@ const ShaderInstance GunTurret::deserialise( const tinyxml2::XMLElement* element
 
     m_world = /*rotation */ scaleTransform * translation;
     //m_world.identity();
-
-    return shaderInstance;
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void GunTurret::update( float elapsedTime, const Input& input )
 {
     //From draw
     if (m_active)
@@ -404,7 +399,7 @@ void GunTurret::update( RenderInstanceTree& renderInstances, float elapsedTime, 
     //(m_position.x(), m_position.y(), m_position.z());
     //glEnd();
 
-    Super::update(renderInstances, elapsedTime, input);
+    Super::update(elapsedTime, input);
 
     MessageSystem::RenderInformation renderInfo;
     MessageSystem::RenderInformation::RenderInfo data;

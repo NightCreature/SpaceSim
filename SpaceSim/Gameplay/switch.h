@@ -19,7 +19,7 @@ public:
 	Switch(Resource* resource) : GameObject(resource) {}
 	Switch(Resource* resource, Vector3 position, GameObject* associatedspecial);
 	~Switch() {} //Only have a reference to the model
-	void initialise(const ShaderInstance& shaderInstance);
+	void initialise();
 
 	
 
@@ -30,12 +30,12 @@ public:
 	const Material getMaterial1() {return m_mat1;}
 	const Material getMaterial2() {return m_mat2;}
 
-    const ShaderInstance deserialise( const tinyxml2::XMLElement* element );
+    void deserialise( const tinyxml2::XMLElement* element );
 
     ///-------------------------------------------------------------------------
     // @brief 
     ///-------------------------------------------------------------------------
-    virtual void update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input );
+    virtual void update( float elapsedTime, const Input& input );
 
     ///-------------------------------------------------------------------------
     // @brief 

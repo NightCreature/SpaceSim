@@ -23,7 +23,7 @@ class Resource;
 class MapContainer
 {
 public:
-    void update(RenderInstanceTree& renderInstances, float elapsedTime, const Input& input) { UNUSEDPARAM(renderInstances);  UNUSEDPARAM(elapsedTime);  UNUSEDPARAM(input); }
+    void update(float elapsedTime, const Input& input) { UNUSEDPARAM(elapsedTime);  UNUSEDPARAM(input); }
     bool checkCollision(const Bbox& v, const Vector3& dir, Player& p, bool& special, Vector3& planenormal);
     bool checkLaserCollision(const Bbox& v, const Vector3& dir, bool& special, Vector3& planenormal, Player& p, bool lasertype = true);
 

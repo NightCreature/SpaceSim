@@ -400,7 +400,6 @@ void RenderSystem::update(float elapsedTime, double time)
 
     commandQueue.m_queue->ExecuteCommandLists(static_cast<UINT>(commandListsVector.size()), &commandListsVector[0]);
 
-    m_numberOfInstancesRenderingThisFrame = visibleInstances.size();
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
 
     //PIXEndEvent();
@@ -522,8 +521,6 @@ void RenderSystem::beginDraw()
 
     m_numberOfInstancePerFrame = 0;
 
-    m_renderInstances.clear();
-
     m_cameraSystem.update(m_renderResource->m_performanceTimer->getElapsedTime(), m_renderResource->m_performanceTimer->getTime(), m_input);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
     m_inverseView = m_cameraSystem.getCamera("global")->getInvCamera();
@@ -643,8 +640,6 @@ void RenderSystem::beginDraw()
     //deviceContext->UpdateSubresource(m_lightConstantBuffer, 0, 0, (void*)&perFrameConstants, 0, 0);
     //deviceContext->VSSetConstantBuffers(0, 1, &m_lightConstantBuffer);
 
-    //TODO: Maybe we need a pointer list here anyway to the models we should render
-    CheckVisibility(m_renderInstances);
 
     //WVPBufferContent shadowWVP = m_shadowMapRenderer->getShadowMapMVP();
     //deviceContext->UpdateSubresource(m_shadowConstantBuffer, 0, 0, (void*)&shadowWVP, 0, 0);
@@ -657,25 +652,6 @@ void RenderSystem::beginDraw()
 
     //Update perframe constant Data
     //PIXEndEvent();
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void RenderSystem::CheckVisibility(RenderInstanceTree& renderInstances)
-{
-    PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
-    visibleInstances.clear();
-    Frustum frustum(m_view, m_CullingProjectionMatrix);
-
-    for (auto instance : renderInstances)
-    {
-        if (frustum.IsInside(instance->getBoundingBox()))
-        {
-            visibleInstances.push_back(instance);
-        }
-    }
 }
 
 ///-------------------------------------------------------------------------

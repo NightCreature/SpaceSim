@@ -65,7 +65,7 @@ bool FaceJob::Execute(ThreadContext* context)
     if (retVal)
     {
         m_resourceHandle = renderResource.getModelManager().AddFace(m_loadData, commandList, this);
-        SendReturnMsg(context->m_renderResource, m_gameObjectId, m_resourceHandle);
+        m_loader->AddedReturnMessageDataForThreadIndex(context->m_threadIndex, m_gameObjectId, m_resourceHandle);
     }
 
     return retVal;
@@ -136,7 +136,7 @@ bool LoadModelJob::Execute(ThreadContext* context)
         RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
 
         auto resourceHandle = renderResource.getModelManager().LoadModel(m_loadData, commandList);//needs to be thread safe, and should be a job
-        SendReturnMsg(context->m_renderResource, m_gameObjectId, resourceHandle);
+        m_loader->AddedReturnMessageDataForThreadIndex(context->m_threadIndex, m_gameObjectId, resourceHandle);
 
         delete m_loadData;
     }

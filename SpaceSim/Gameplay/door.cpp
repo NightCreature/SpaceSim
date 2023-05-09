@@ -29,10 +29,8 @@ GameObject(resource)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder)
+void Door::initialise(bool changeWindingOrder)
 {
-    UNUSEDPARAM(shaderInstance);
-
     Face::CreationParams params;
 //    params.shaderInstance = &shaderInstance;
 //    params.resource = m_resource;
@@ -56,10 +54,8 @@ void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOr
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
+void Door::deserialise( const tinyxml2::XMLElement* element)
 {
-    ShaderInstance shaderInstance;
-
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
     {
@@ -73,8 +69,6 @@ const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
         if (Material::m_hash == typeHash)
         {
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
-            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
-            //shaderInstance.getMaterial().setBlendState(true);
             m_materialParameters = Material::GetMaterialParameters(element);
         }
         else if (Vector3::m_hash == typeHash)
@@ -83,14 +77,12 @@ const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
             translate(m_world, m_position.x(), m_position.y(), m_position.z());
         }
     }
-
-    return shaderInstance;
 }
 
 ///-------------------------------------------------------------------------
 // @brief
 ///-------------------------------------------------------------------------
-void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void Door::update( float elapsedTime, const Input& input )
 {
     //move
     if (!m_active)
@@ -113,7 +105,6 @@ void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const
     //renderInstances.back()->m_name = L"Door";
 #endif
 
-    UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(input);
 
     MessageSystem::RenderInformation renderInfo;

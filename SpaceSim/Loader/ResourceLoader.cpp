@@ -25,6 +25,16 @@ void ResourceLoader::initialise(Resource* resource)
     m_resource = resource;
 
     m_commandListManager.Initialise(resource, "ResourceCommandLists");
+    m_commandListManager.SetCallbackOnCommandlistFinished([=](size_t index) 
+        {    
+            std::scoped_lock(m_mutex);
+            for (auto pair : m_returnMessageDataPerThread[index])
+            {
+                SendReturnMsg(pair.first, pair.second);
+            }
+
+            m_returnMessageDataPerThread[index].clear();
+        });
 }
 
 ///-----------------------------------------------------------------------------
@@ -92,6 +102,48 @@ bool ResourceLoader::GetCommandListHandleForThreadIndex(size_t threadIndex, Comm
 void ResourceLoader::ReturnCommandListForThreadIndex(size_t threadIndex)
 {
     m_commandListManager.ReturnCommandListForThreadIndex(threadIndex);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void ResourceLoader::AddedReturnMessageDataForThreadIndex(size_t threadIndex, size_t gameObjectId, size_t resourceHandle)
+{
+    std::scoped_lock(m_mutex);
+    m_returnMessageDataPerThread[threadIndex].push_back(std::make_pair(gameObjectId, resourceHandle));
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark This might need to change to a slot of bools and then update sends the return messages
+///-----------------------------------------------------------------------------
+void ResourceLoader::CallbackCommandListFinished(size_t threadIndex)
+{
+    std::scoped_lock(m_mutex);
+    for (auto pair : m_returnMessageDataPerThread[threadIndex])
+    {
+        SendReturnMsg(pair.first, pair.second);
+    }
+
+    m_returnMessageDataPerThread[threadIndex].clear();
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void ResourceLoader::SendReturnMsg(size_t gameObjectId, size_t resourceHandle)
+
+{
+    MessageSystem::CreatedRenderResourceMessage returnMessage;
+    MessageSystem::CreatedRenderResourceMessage::CreatedRenderResource data;
+    data.m_renderResourceHandle = resourceHandle;
+    data.m_gameObjectId = gameObjectId;
+    returnMessage.SetData(data);
+
+    RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
+    renderResource.m_messageQueues->getRenderMessageQueue()->addMessage(returnMessage);
 }
 
 ///-----------------------------------------------------------------------------

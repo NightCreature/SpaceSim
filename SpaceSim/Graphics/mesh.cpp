@@ -29,7 +29,7 @@ CreatedModel CreateMesh(const CreationParams& params, const EffectCache& effectC
 
     for (size_t counter = 0; counter < params.m_meshGroups.size(); ++counter)
     {
-        mesh.model->addMeshGroup(params.m_meshGroups[counter].meshGroup);
+        mesh.model->addMeshGroup(*(params.m_meshGroups[counter].meshGroup));
         mesh.boundingBox.enclose(params.m_meshGroups[counter].boundingBox);
     }
 

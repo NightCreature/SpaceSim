@@ -17,7 +17,6 @@ namespace MeshGroupCreator
     struct CreationParams : public Model::CreationParams
     {
         CommandList* m_commandList;
-        ShaderInstance m_shaderInstance;
         Material mat;
 
         //Index data

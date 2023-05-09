@@ -97,6 +97,7 @@ enum class VertexStreamType : size_t
     Position = 0,
     Normal,
     Tangent,
+    BiTangent,
     Color,
     UVStart
 };

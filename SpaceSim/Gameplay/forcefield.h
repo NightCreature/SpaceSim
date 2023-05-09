@@ -14,13 +14,13 @@ public:
 	~ForceField(){}
 	ForceField(Resource* resource, const Vector3& position);
 
-    void initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder);
+    void initialise(bool changeWindingOrder);
 
 	
 	
 	int getNumVertices() const {return 0;}
-    const ShaderInstance deserialise( const tinyxml2::XMLElement* element );
-    virtual void update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input );
+    void deserialise( const tinyxml2::XMLElement* element );
+    virtual void update( float elapsedTime, const Input& input );
     virtual void handleMessage( const MessageSystem::Message& msg );
 
     HASH_ELEMENT_DEFINITION(ForceField)

@@ -30,7 +30,7 @@ public:
     Player(Resource* resource) : GameObject(resource) {}
     ~Player();
 
-    const ShaderInstance deserialise( const tinyxml2::XMLElement* node );
+    void deserialise( const tinyxml2::XMLElement* node );
     void initialize(const CameraManager& cameraManager);
     void reset();
     void cleanup();
@@ -38,7 +38,7 @@ public:
     void loadFromFile(const std::string& filename);
     void save(const std::string& filename) const;
 
-    void update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input);
+    void update( float elapsedTime, const Input& input);
 
     void draw();
     //void drawForceField(GLUquadric* sphere, const Vector3& translate);

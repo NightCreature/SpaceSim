@@ -26,9 +26,9 @@ public:
 	Plane(Resource* resource, const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4, bool changeWindingOrder);
 	~Plane() {}
 
-    void initialise(const ShaderInstance& shaderInstance);
-    virtual const ShaderInstance deserialise( const tinyxml2::XMLElement* node );
-    virtual void update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input );
+    void initialise();
+    virtual void deserialise( const tinyxml2::XMLElement* node );
+    virtual void update( float elapsedTime, const Input& input );
 
 	void transform();
 
