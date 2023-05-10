@@ -21,7 +21,7 @@ struct PS_INPUT
 PS_INPUT vs_main( uint id:SV_VERTEXID )
 {
     float4 pos = float4(GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, id),1);
-    WVPData wvpData = GetInstanceFromBuffer<WVPData>(resourceIndices.transformIndex);
+    ConstantBuffer<WVPData> wvpData = GetConstantBuffer<WVPData>(resourceIndices.transformIndex);
     ConstantBuffer<WVPData> perScene = GetConstantBuffer<WVPData>(resourceIndices.sceneTransformIndex);
 
     PS_INPUT output = (PS_INPUT)0;

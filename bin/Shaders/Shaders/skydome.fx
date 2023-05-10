@@ -22,13 +22,14 @@ struct PS_INPUT
 [RootSignature(bindlessRS)]
 PS_INPUT vs_main( uint id:SV_VERTEXID )
 {
-    float4 pos = float4(GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, id),0);
-    WVPData wvpData = GetInstanceFromBuffer<WVPData>(resourceIndices.transformIndex);
+    float4 pos = float4(GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, id), 1.0f);
+    ConstantBuffer<WVPData> wvpData = GetConstantBuffer<WVPData>(resourceIndices.transformIndex);
+    ConstantBuffer<WVPData> perScene = GetConstantBuffer<WVPData>(resourceIndices.sceneTransformIndex);
 
     PS_INPUT output = (PS_INPUT)0;
     output.Pos = mul( pos, wvpData.World );
-    output.Pos = mul( output.Pos, wvpData.View );
-    output.Pos = mul( output.Pos, wvpData.Projection );
+    output.Pos = mul( output.Pos, perScene.View );
+    output.Pos = mul( output.Pos, perScene.Projection );
 
     output.Nor = GetInstanceFromBufferT<float3>(resourceIndices.normalBufferIndex, id);
     output.Tex = GetInstanceFromBufferT<float2>(resourceIndices.textureBufferIndex, id);

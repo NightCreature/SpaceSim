@@ -22,12 +22,13 @@ struct PS_INPUT
 PS_INPUT vs_main( uint vertexID : SV_VertexID )
 {
     float4 pos = float4(GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, vertexID),0);
-    WVPData wvpData = GetInstanceFromBuffer<WVPData>(resourceIndices.transformIndex);
+    ConstantBuffer<WVPData> wvpData = GetConstantBuffer<WVPData>(resourceIndices.transformIndex);
+    ConstantBuffer<WVPData> perScene = GetConstantBuffer<WVPData>(resourceIndices.sceneTransformIndex);
 
     PS_INPUT output = (PS_INPUT)0;
     output.Pos = mul( pos, wvpData.World );
-    output.Pos = mul( output.Pos, wvpData.View );
-    output.Pos = mul( output.Pos, wvpData.Projection );
+    output.Pos = mul( output.Pos, perScene.View );
+    output.Pos = mul( output.Pos, perScene.Projection );
 
     return output;
 }
