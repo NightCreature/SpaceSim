@@ -107,4 +107,5 @@ protected:
     bool m_active;
     bool m_worldhaschanged;
     bool m_initialisationDone;
+    bool m_changed = false;
 };

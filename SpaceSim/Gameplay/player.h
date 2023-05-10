@@ -27,7 +27,7 @@ public:
         thirdperson,
     };
 
-    Player(Resource* resource) : GameObject(resource) {}
+    Player(Resource* resource) : GameObject(resource) { m_name = "player"; }
     ~Player();
 
     void deserialise( const tinyxml2::XMLElement* node );
@@ -72,7 +72,7 @@ public:
     float getLaserSpeed() const {return m_laserspeed;}
     int getMaxLasers() const {return m_maxlasers;}
     int     getUsedLasers() const {return m_count;}
-    std::string getName() const {return m_name;}
+    std::string getName() const { return "player"; }
     //void setPosition(const Vector3& pos) {m_position = pos; m_camera->setEye(pos);}
     void setDirection(const Vector3& dir) {m_direction = dir;}
     void setStartPosition(const Vector3& pos) {m_startposition = pos;}
@@ -87,7 +87,6 @@ private:
     void eraseLaser(std::list<Laser*>::iterator& it, Laser* l);
 
     std::string m_defaultname;
-    std::string m_name;
     std::string m_gameObjectName;
     std::list<Laser*> m_lasers;
     std::list<Laser*>::iterator m_lasersit;
@@ -113,6 +112,6 @@ private:
     //GLUquadric*		 m_forcefieldinside;
     //GLUquadric*		 m_forcefieldoutside;
 
-    ECS::Entity m_entity;
+    //ECS::Entity m_entity;
 };
 #endif

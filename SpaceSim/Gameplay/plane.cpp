@@ -183,7 +183,7 @@ void Plane::update( float elapsedTime, const Input& input )
     //	(lowerleft.x() , upperright.y(), lowerleft.z());
     //	glEnd();
     //}
-    if (m_initialisationDone)
+    if (m_initialisationDone && m_changed)
     {
         MessageSystem::RenderInformation renderInfo;
         MessageSystem::RenderInformation::RenderInfo data;
@@ -191,8 +191,11 @@ void Plane::update( float elapsedTime, const Input& input )
         data.m_gameobjectid = m_nameHash;
         data.m_world = m_world;
         data.m_name = m_name.c_str();
+        data.m_shouldRender = true;
         renderInfo.SetData(data);
         m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+
+        m_changed = false;
     }
 }
 
@@ -212,6 +215,7 @@ void Plane::handleMessage( const MessageSystem::Message& msg )
         //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
 
         m_initialisationDone = true;
+        m_changed = true;
     }
 }
 

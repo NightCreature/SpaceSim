@@ -1,0 +1,16 @@
+<xml>
+        <!--Single Front wall at orign so we have simple things-->
+    <Wall type="4">
+        <Material>
+            <Effect file_name="Shaders\Effects\debug_effect.xml" />
+            <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+            <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
+        </Material>
+
+        <Vector3 x="100" y="100" z="0"/>
+        <Vector3 x="100" y="-100" z="0"/>
+        <Vector3 x="-100" y="-100" z="0"/>
+        <Vector3 x="-100" y="100" z="0"/>
+    </Wall>
+  
+</xml>

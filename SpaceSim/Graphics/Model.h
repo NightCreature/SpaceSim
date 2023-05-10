@@ -53,6 +53,8 @@ public:
 
     void Update(const MessageSystem::RenderInformation::RenderInfo& context)
     {
+        m_shouldRender = context.m_shouldRender;
+
         if (!m_modelData.empty())
         {
             for (size_t counter = 0; counter < m_modelData.size(); ++counter)
@@ -129,12 +131,14 @@ public:
         }
     }
 
+    bool IsRendering() const { return m_shouldRender; }
 
 protected:
     std::vector<MeshGroup> m_modelData; //Why is meshgroup a pointer here and not just owned?
     Bbox m_originalBBox;
     Bbox m_boundingBox;
     uint64 m_sortKey = 0;
+    bool m_shouldRender = false;
 };
 
 struct CreatedModel

@@ -56,7 +56,7 @@ void Player::initialize(const CameraManager& cameraManager)
         deserialise(node);
     }
 
-    if (!m_entity.IsValid())
+    //if (!m_entity.IsValid())
     {
         //LoadPlayerEne
     }

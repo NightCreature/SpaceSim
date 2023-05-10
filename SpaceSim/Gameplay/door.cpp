@@ -96,9 +96,9 @@ void Door::update( float elapsedTime, const Input& input )
     }
     else
     {
-        //if (m_move > 0.0f)
-        //    m_move -= 10.0f*elapsedTime;
-        //translate(m_world, 0.0f, 0.0f, m_move);
+        if (m_move > 0.0f)
+            m_move -= 10.0f*elapsedTime;
+        translate(m_world, 0.0f, 0.0f, m_move);
     }
     //Super::update(renderInstances, elapsedTime, input);
 #ifdef _DEBUG

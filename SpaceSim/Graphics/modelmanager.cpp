@@ -197,9 +197,12 @@ const std::vector<RenderInterface*> ModelManager::GetRenderables(const Frustum& 
 
     for (auto& modelHandle : m_models)
     {
-        //if (viewFrustum.IsInside(modelHandle.m_model.boundingBox))
+        if (modelHandle.m_model.model->IsRendering())
         {
-            retVal.push_back(modelHandle.m_model.model);
+            //if (viewFrustum.IsInside(modelHandle.m_model.boundingBox))
+            {
+                retVal.push_back(modelHandle.m_model.model);
+            }
         }
     }
 
