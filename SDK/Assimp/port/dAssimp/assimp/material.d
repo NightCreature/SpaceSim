@@ -3,7 +3,7 @@
 Open Asset Import Library (ASSIMP)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2009, ASSIMP Development Team
+Copyright (c) 2006-2020, ASSIMP Development Team
 
 All rights reserved.
 
@@ -110,7 +110,7 @@ extern ( C ) {
     * Defines how UV coordinates outside the <code>[0..1]</code> range are
     * handled.
     *
-    * Commonly refered to as 'wrapping mode'.
+    * Commonly referred to as 'wrapping mode'.
     */
    enum aiTextureMapMode : uint {
       /**
