@@ -130,7 +130,7 @@ bool Application::initialise()
 
     //TODO This has to go
     Player* player = new Player(m_gameResource);
-    //player->initialize(m_cameraSystem);
+    player->initialize();
     m_gameObjectManager.addGameObject(player);
 
 

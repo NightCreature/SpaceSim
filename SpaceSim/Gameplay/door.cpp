@@ -84,37 +84,43 @@ void Door::deserialise( const tinyxml2::XMLElement* element)
 ///-------------------------------------------------------------------------
 void Door::update( float elapsedTime, const Input& input )
 {
-    //move
-    if (!m_active)
+    if (m_initialisationDone)
     {
-        if (m_move < 50.0f)
-            m_move += 10.0f*elapsedTime;
-
+        //move
         Matrix44 transform;
-        translate(transform, 0.0f, 0.0f, m_move);
+        if (!m_active)
+        {
+            if (m_move < 50.0f)
+                m_move += 10.0f * elapsedTime;
+
+            translate(transform, 0.0f, 0.0f, m_move);
+            
+        }
+        else
+        {
+            if (m_move > 0.0f)
+                m_move -= 10.0f * elapsedTime;
+            translate(transform, 0.0f, 0.0f, m_move);
+        }
+
         m_world = m_world * transform;
-    }
-    else
-    {
-        if (m_move > 0.0f)
-            m_move -= 10.0f*elapsedTime;
-        translate(m_world, 0.0f, 0.0f, m_move);
-    }
-    //Super::update(renderInstances, elapsedTime, input);
+        //Super::update(renderInstances, elapsedTime, input);
 #ifdef _DEBUG
     //renderInstances.back()->m_name = L"Door";
 #endif
 
-    UNUSEDPARAM(input);
+        UNUSEDPARAM(input);
 
-    MessageSystem::RenderInformation renderInfo;
-    MessageSystem::RenderInformation::RenderInfo data;
-    data.m_renderObjectid = m_renderHandle;
-    data.m_gameobjectid = m_nameHash;
-    data.m_world = m_world;
-    data.m_name = m_name.c_str();
-    renderInfo.SetData(data);
-    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+        MessageSystem::RenderInformation renderInfo;
+        MessageSystem::RenderInformation::RenderInfo data;
+        data.m_renderObjectid = m_renderHandle;
+        data.m_gameobjectid = m_nameHash;
+        data.m_world = m_world;
+        data.m_name = m_name.c_str();
+        data.m_shouldRender = true;
+        renderInfo.SetData(data);
+        m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+    }
 }
 
 ///-------------------------------------------------------------------------

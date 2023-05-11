@@ -102,6 +102,14 @@ public:
         }
     }
 
+    void CreateNrMeshGroups(size_t nrMeshGroups)
+    {
+        for (size_t counter = 0; counter < nrMeshGroups; ++counter)
+        {
+            m_modelData.push_back(MeshGroup(Material()));
+        }
+    }
+
     MeshGroup& CreateMeshGroup()
     {
         m_modelData.emplace_back(MeshGroup({}));

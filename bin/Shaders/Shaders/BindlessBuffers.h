@@ -41,6 +41,8 @@ struct MeshResourceIndices
 
 	uint ShadowProjection;
 
+	uint emmisiveMap;
+
 	//Light info
 	uint LightBufferIndex;
 	uint NumberOfLights; //This is now in the light data buffer

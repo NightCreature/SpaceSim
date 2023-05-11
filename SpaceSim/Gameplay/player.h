@@ -31,7 +31,7 @@ public:
     ~Player();
 
     void deserialise( const tinyxml2::XMLElement* node );
-    void initialize(const CameraManager& cameraManager);
+    void initialize();
     void reset();
     void cleanup();
 

@@ -309,8 +309,9 @@ void GunTurret::deserialise( const tinyxml2::XMLElement* element)
         }
     }
 
-    m_world = /*rotation */ scaleTransform * translation;
-    //m_world.identity();
+    m_world = rotation * scaleTransform * translation;
+    m_world.identity();
+    m_world = scaleTransform;
 }
 
 ///-------------------------------------------------------------------------
@@ -318,102 +319,103 @@ void GunTurret::deserialise( const tinyxml2::XMLElement* element)
 ///-------------------------------------------------------------------------
 void GunTurret::update( float elapsedTime, const Input& input )
 {
-    //From draw
-    if (m_active)
+    if (m_initialisationDone)
     {
-        //glEnable(GL_LIGHTING);
-        //glFrontFace(GL_CCW);
-        //glEnable(GL_CULL_FACE);
-        //glPushMatrix();
-        //glTranslatef(m_position.x(), m_position.y(), m_position.z());
-        ////add own rotaion here
-        //if (-Vector3::xAxis() == m_direction)
-        //{
-        //	glRotatef(180, 0.0f, 1.0f, 0.0f);
-        //}
-        //else if (Vector3::yAxis() == m_direction)
-        //{
-        //	glRotatef(90, 0.0f, 0.0f, 1.0f);
-        //}
-        //else if (-Vector3::yAxis() == m_direction)
-        //{
-        //	glRotatef(-90, 0.0f, 0.0f, 1.0f);
-        //}
-        //else if (Vector3::zAxis() == m_direction)
-        //{
-        //	glRotatef(-90, 0.0f, 1.0f, 0.0f);
-        //}
-        //else if (-Vector3::zAxis() == m_direction)
-        //{
-        //	glRotatef(90, 0.0f, 1.0f, 0.0f);
-        //}
-
-        //glRotatef(-90, 1.0f, 0.0f, 0.0f);
-        //ModelManager& mm = ModelManager::getInstance();
-        //Model* model = mm.getModel("..\\Models\\gun.3DS");//memory leaks
-        //if (0 == model)
-        //{
-        //	cerr << "Model ..\\Models\\gun.3DS wasn't loaded" << endl;
-        //	return;
-        //}
-        //model->DrawGL(DSMaterial);
-        //glPopMatrix();
-        //model = 0;
-
-        //m_lasersit = m_lasers.begin();
-        //while (m_lasersit != m_lasers.end())
-        //{
-        //	//cout << "Number of lasers: " << m_lasers.size();
-        //	Laser* l = *m_lasersit;
-        //	l->draw();
-        //	m_lasersit++;
-        //}
-        //m_scorchit = m_scorchmarks.begin();
-        //Material mat(Color::white(), Color::white(), Color::white(), 0);
-        //mat.activate();
-        //while (m_scorchit != m_scorchmarks.end())
-        //{
-        //	//cout << "Number of lasers: " << m_lasers.size();
-        //	ScorchMark* sm = *m_scorchit;
-        //	sm->draw();
-        //	m_scorchit++;
-        //}
-        //glCullFace(GL_CW);
-        //glDisable(GL_LIGHTING);
-        //
-        //updateLasers( elapsedTime );
-
-        if (m_lasergentime > 1.5f)
+        //From draw
+        if (m_active)
         {
-            m_lasergentime = 0;
-            //Direction of the laser is wrong and the time seems pretty broken as well
-            //fireLaser();
+            //Matrix44 matrix;
+            //translate(matrix, m_position);
+            ////glEnable(GL_LIGHTING);
+            ////glFrontFace(GL_CCW);
+            ////glEnable(GL_CULL_FACE);
+            ////glPushMatrix();
+            ////glTranslatef(m_position.x(), m_position.y(), m_position.z());
+            //////add own rotaion here
+            //Matrix44 rotation;
+            //if (-Vector3::xAxis() == m_direction)
+            //{
+            //    rotate(rotation, Vector3(0.0f, 1.0f, 0.0f), 180);
+            //}
+            //else if (Vector3::yAxis() == m_direction)
+            //{
+            //    rotate(rotation, Vector3(0.0f, 0.0f, 1.0f), 90);
+            //}
+            //else if (-Vector3::yAxis() == m_direction)
+            //{
+            //    rotate(rotation, Vector3(0.0f, 0.0f, 1.0f), -90);
+            //}
+            //else if (Vector3::zAxis() == m_direction)
+            //{
+            //    rotate(rotation, Vector3(0.0f, 1.0f, 0.0f), -90);
+            //}
+            //else if (-Vector3::zAxis() == m_direction)
+            //{
+            //    rotate(rotation, Vector3(0.0f, 1.0f, 0.0f), 90);
+            //}
+
+            ////glRotatef(-90, 1.0f, 0.0f, 0.0f);
+            //Matrix44 rotation2;
+            //rotate(rotation2, Vector3(1.f, 0.f, 0.f), -90);
+            //m_world = matrix * rotation * rotation2;
+
+
+            //m_lasersit = m_lasers.begin();
+            //while (m_lasersit != m_lasers.end())
+            //{
+            //	//cout << "Number of lasers: " << m_lasers.size();
+            //	Laser* l = *m_lasersit;
+            //	l->draw();
+            //	m_lasersit++;
+            //}
+            //m_scorchit = m_scorchmarks.begin();
+            //Material mat(Color::white(), Color::white(), Color::white(), 0);
+            //mat.activate();
+            //while (m_scorchit != m_scorchmarks.end())
+            //{
+            //	//cout << "Number of lasers: " << m_lasers.size();
+            //	ScorchMark* sm = *m_scorchit;
+            //	sm->draw();
+            //	m_scorchit++;
+            //}
+            //glCullFace(GL_CW);
+            //glDisable(GL_LIGHTING);
+            //
+            //updateLasers( elapsedTime );
+
+            if (m_lasergentime > 1.5f)
+            {
+                m_lasergentime = 0;
+                //Direction of the laser is wrong and the time seems pretty broken as well
+                //fireLaser();
+            }
+            m_lasergentime += elapsedTime;
+
         }
-        m_lasergentime += elapsedTime;
+        //From drawminimap
+        //glPointSize(4.0f);
+        //glColor4fv(Color::red().rgba());
+        //glBegin(GL_POintS);
+        //(m_position.x(), m_position.y(), m_position.z());
+        //glEnd();
 
+        Super::update(elapsedTime, input);
+
+        MessageSystem::RenderInformation renderInfo;
+        MessageSystem::RenderInformation::RenderInfo data;
+        data.m_renderObjectid = m_renderHandle;
+        data.m_gameobjectid = m_nameHash;
+        data.m_world = m_world;
+        data.m_name = m_name.c_str();
+        data.m_shouldRender = m_active;
+        renderInfo.SetData(data);
+        m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+
+        //for (std::vector<Laser*>::iterator lit = m_lasers.end(); lit != m_lasers.end(); ++lit)
+        //{
+        //    (*lit)->update(elapsedTime);
+        //}
     }
-    //From drawminimap
-    //glPointSize(4.0f);
-    //glColor4fv(Color::red().rgba());
-    //glBegin(GL_POintS);
-    //(m_position.x(), m_position.y(), m_position.z());
-    //glEnd();
-
-    Super::update(elapsedTime, input);
-
-    MessageSystem::RenderInformation renderInfo;
-    MessageSystem::RenderInformation::RenderInfo data;
-    data.m_renderObjectid = m_renderHandle;
-    data.m_gameobjectid = m_nameHash;
-    data.m_world = m_world;
-    data.m_name = m_name.c_str();
-    renderInfo.SetData(data);
-    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
-
-    //for (std::vector<Laser*>::iterator lit = m_lasers.end(); lit != m_lasers.end(); ++lit)
-    //{
-    //    (*lit)->update(elapsedTime);
-    //}
 }
 
 ///-------------------------------------------------------------------------
@@ -432,5 +434,6 @@ void GunTurret::handleMessage( const MessageSystem::Message& msg )
         //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
 
         m_initialisationDone = true;
+        m_active = true;
     }
 }

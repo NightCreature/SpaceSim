@@ -50,9 +50,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     //    MSG_TRACE_CHANNEL("COM ERROR", "Failed to make COM act in a multithreaded fashion");
     //}
 
-    OPTICK_START_CAPTURE();
+    //OPTICK_START_CAPTURE();
 
     Application application = Application();
+    auto applicationPath = application.GetPaths().getPath();
     if( application.initialise() ) //Need to take the path manager from shader engine
     {
         size_t hash = hashString("default");
@@ -71,7 +72,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 
 
     //OPTICK_STOP_CAPTURE();
-    //OPTICK_SAVE_CAPTURE("E:\\SDK\\Demo\\SpaceSim\\bin\\Profile");
+    //applicationPath = applicationPath / "Profile";
+    //OPTICK_SAVE_CAPTURE(applicationPath.string().c_str());
+    //OPTICK_SAVE_CAPTURE("D:\\SDK\\Demo\\SpaceSim\\bin\\Profile");
+    //OPTICK_SAVE_CAPTURE();
 
     return 0;
 }

@@ -109,6 +109,7 @@ void ForceField::update( float elapsedTime, const Input& input )
         data.m_gameobjectid = m_nameHash;
         data.m_world = m_world;
         data.m_name = m_name.c_str();
+        data.m_shouldRender = true;
         renderInfo.SetData(data);
         m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
     }
