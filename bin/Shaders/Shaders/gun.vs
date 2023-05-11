@@ -12,6 +12,7 @@ struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
     float3 Nor : NORMAL0;
+    float2 Tex : TEXCOORD0;
     float3 WorldPos : TEXCOORD1;
 };
 
@@ -31,5 +32,6 @@ PS_INPUT vs_main( uint id:SV_VERTEXID )
     output.Pos = mul( output.Pos, perScene.Projection );
 
     output.Nor = GetInstanceFromBufferT<float3>(resourceIndices.normalBufferIndex, id);
+    output.Tex = GetInstanceFromBufferT<float2>(resourceIndices.textureBufferIndex, id);
     return output;
 }
