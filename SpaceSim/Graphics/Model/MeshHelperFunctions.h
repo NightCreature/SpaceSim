@@ -34,6 +34,9 @@ inline void AssignTextureIndices(const RenderResource& renderResource, const std
             case Material::TextureSlotMapping::ShadowMap:
                 resourceIndices.normalMapIndex = static_cast<uint>(heapIndex);
                 break;
+            case Material::TextureSlotMapping::Emmisive0:
+                resourceIndices.emmisiveMap = static_cast<uint>(heapIndex);
+                break;
             default:
                 MSG_TRACE_CHANNEL(__FUNCTION__, "Didn't handle texture slot: %d", textureSlotMapping.m_textureSlot);
                 break;

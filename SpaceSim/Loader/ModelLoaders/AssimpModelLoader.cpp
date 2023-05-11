@@ -13,6 +13,8 @@
 
 #include <thread>
 #include "Graphics/Model/MeshHelperFunctions.h"
+#include <string>
+#include <Math/Assimp/AssimpMathHelpers.h>
 
 namespace AssimpModelLoader
 {
@@ -35,11 +37,11 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         // And have it read the given file with some example postprocessing  
         // Usually - if speed is not the most important aspect for you - you'll   
         // propably to request more postprocessing than we do in this example.  aiProcessPreset_TargetRealtime_Quality
-        const aiScene* scene = importer.ReadFile(fileName, aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_FlipWindingOrder | aiProcess_FlipUVs); //Optimize the mesh and scenegraph to reduce drawcalls
+        const aiScene* scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_OptimizeMeshes| aiProcess_OptimizeGraph | aiProcess_FlipWindingOrder | aiProcess_FlipUVs); //Optimize the mesh and scenegraph to reduce drawcalls
         if (!scene)
         {
             MSG_TRACE_CHANNEL("ASSIMPMODELLOADER", "failed to open the model file ( %s ) importer error: %s", fileName.c_str(), importer.GetErrorString())
-                return CreatedModel();
+            return CreatedModel();
         }  // Now we can access the file's contents.
 
         MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to load model %s", fileName.c_str());
@@ -50,9 +52,12 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
 
         unsigned int highestIndex = 0;
         //Extract vertices from the mesh here and store in our own vertex buffer
+
+        model.model->CreateNrMeshGroups(scene->mNumMeshes);
+        auto& meshGroups = model.model->getMeshData();
         for (size_t meshCounter = 0; meshCounter < scene->mNumMeshes; ++meshCounter)
         {
-            MeshGroup& group = model.model->CreateMeshGroup();
+            MeshGroup& group = meshGroups[meshCounter];
 
             aiMesh* subMesh = scene->mMeshes[meshCounter];
 
@@ -73,13 +78,31 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
 
             VertexDataStreams dataStream = CreateDataStreams(descriptor);
 
+            Matrix44 matrix;
+            matrix.identity();
+            //Have to check if a node in the scene is containing a transform that should be applied to this mesh data
+            //for (size_t counter = 0; counter < scene->mRootNode->mNumChildren; ++counter)
+            //{
+            //    aiNode* node = scene->mRootNode->mChildren[counter];
+            //    if (node != nullptr)
+            //    {
+            //        if (node->mName == subMesh->mName)
+            //        {
+            //            //Found a node
+            //            matrix = AssimpHelpers::ToMatrix(node->mTransformation);
+            //        }
+            //    }
+            //}
+
             size_t dataStreamIndex = 0;
             for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
             {
                 std::vector<Vector3>& positionStream = std::get<2>(dataStream.m_streams[VertexStreamType::Position]);
                 ++dataStreamIndex;
                 //Need to create a descriptor here and fetch and set the data streams
-                positionStream.push_back(Vector3(subMesh->mVertices[vertCounter].x, subMesh->mVertices[vertCounter].y, subMesh->mVertices[vertCounter].z));
+                Vector4 position = AssimpHelpers::ToVector(subMesh->mVertices[vertCounter]);
+                position = position * matrix;
+                positionStream.push_back(Vector3(position.x(), position.y(), position.z()));
 
                 if (subMesh->HasNormals())
                 {
@@ -148,22 +171,24 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                 }
             }
 
+
+
             MeshResourceIndices& resourceIndices = group.GetResourceInices();
             resourceIndices = group.GetVB().CreateBuffer(renderResource.getDeviceManager(), commandList, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap(), dataStream);
 
             
             //Need to keep track of highest index and add it to the next batch and so one sadly
-            unsigned int baseIndexOffset = highestIndex;
+            unsigned int baseIndexOffset = 0;
             std::vector<uint32> indexBuffer;
             for (size_t indexCounter = 0; indexCounter < subMesh->mNumFaces; ++indexCounter)
             {
                 for (size_t counterIndex = 0; counterIndex < subMesh->mFaces[indexCounter].mNumIndices; ++counterIndex)
                 {
                     indexBuffer.push_back(subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset);
-                    if (subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset > highestIndex)
-                    {
-                        highestIndex = subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset;
-                    }
+                    //if (subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset > highestIndex)
+                    //{
+                    //    highestIndex = subMesh->mFaces[indexCounter].mIndices[counterIndex] + baseIndexOffset;
+                    //}
                 }
             }
             group.GetIB().Create(renderResource.getDeviceManager(), commandList, static_cast<unsigned int>(indexBuffer.size()) * sizeof(unsigned int), static_cast< void*>(indexBuffer.data()));
