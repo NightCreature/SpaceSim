@@ -79,7 +79,7 @@ std::string trim(const std::string_view& input)
     //Walk the string from both sides
     size_t tempLead = trailingIndex;
     size_t tempTrail = leadingIndex;
-    while (trailingIndex != leadingIndex && (leadingIndex != tempLead && trailingIndex != tempTrail))
+    while (trailingIndex != leadingIndex && (leadingIndex != tempLead || trailingIndex != tempTrail))
     {
         bool foundDelimiter = false;
         tempTrail = trailingIndex;
