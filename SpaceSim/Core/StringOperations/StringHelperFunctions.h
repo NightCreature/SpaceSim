@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include <source_location>
 #include <string>
 #include <sstream>
 
@@ -24,9 +25,11 @@ enum class TraceSeverity
 };
 
 //This is first so we can use the macros in debugging the functions below
-void debugOutput(TraceSeverity severity, const std::string& prefix, const char* file, int line, const char * format, ...);
+//void debugOutput(TraceSeverity severity, const std::string& prefix, const char* file, int line, const char* format, ...);
+void debugOutput(TraceSeverity severity, const std::string& prefix, const std::source_location& location, const char* format, ...);
 
-#define MSG_TRACE_WITH_FILE_LINENUMBER(severity, channel, msg, ...) debugOutput(severity, channel, __FILE__, __LINE__, msg, __VA_ARGS__);
+//#define MSG_TRACE_WITH_FILE_LINENUMBER(severity, channel, msg, ...) debugOutput(severity, channel, __FILE__, __LINE__, msg, __VA_ARGS__);
+#define MSG_TRACE_WITH_FILE_LINENUMBER(severity, channel, msg, ...) debugOutput(severity, channel, std::source_location::current(), msg, __VA_ARGS__);
 
 
 //#ifndef _DEBUG
@@ -188,16 +191,18 @@ inline float strTofloat(const std::string& str, bool hex = false)
     return (float)strToDouble(str, hex);
 }
 
-inline std::string toLowerCase(const std::string& str)
+inline std::string toLowerCase(const std::string_view& str)
 {
-    std::string result = str;
+    std::string result;
+    result.resize(str.length());
     std::transform(str.begin(), str.end(), result.begin(), [](char c) { return static_cast<char>(std::tolower(c)); });
     return result;
 }
 
-inline std::string toUpperCase(const std::string& str)
+inline std::string toUpperCase(const std::string_view& str)
 {
-    std::string result = str;
+    std::string result;
+    result.resize(str.length());
     std::transform(str.begin(), str.end(), result.begin(), [](char c) { return static_cast<char>(std::toupper(c)); });
     return result;
 }
@@ -285,3 +290,4 @@ std::string makeAbsolutePath(const std::string& filename);
 void convertToCString(const std::wstring& str, std::string& out);
 
 std::vector<std::string> tokeniseString(const std::string& input, const char delimeter);
+std::string trim(const std::string_view& input);
