@@ -1,0 +1,5 @@
+<flow>
+    <node id="1" state="title_screen">
+        <transition id="" target=""/>
+    </node>
+</flow>

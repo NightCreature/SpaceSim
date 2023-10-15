@@ -1,0 +1,21 @@
+Just so you know but that system shipped multiple tripple A titles so it wasn't used on simple games, all these games have full 3D UI. You are only looking at a single thing here and you wouldn't test how a compositions works but how the behaviour works if you would write unit tests it actually makes it simpler to write tests. 
+
+Your ui is not retained either 
+Complexity is not something you want in your UI systems, and trust me its far easier to build complex things from simple building blocks. 
+
+Most games actually don't have complex UI widgets at all, and you can get away with the most basic of them all the table to organise stuff along. But there is another thing you forgot about here 
+
+So the UI shown in that video is actually created with the system I described, I wouldn't call that a simple gameSo the system I described has shipped tripple A games, with none trivial UIs all in 3D. Pure Game UI and application UI have completely different requirements from, and on top of that for most games UI have far less complex widget needs. In general you can get a way with a Button, a Textfield, and Image display. I am not saying its not 
+
+Most games do not need complex widgets, and the usually really don't need the complexity that a normal application UI needs. There is nothing stopping you from not having to call update on all the widgets, you can do this with delegates too if you wanted too. You need to do a check at some point anyway to see if you need to update the value of a widget, whether this is the full fat widget or the behaviours doesn't add that much overhead. 
+
+I think you missed what retained mode means btw, retained mode means you are not rebuilding your vertex buffers every frame.
+
+template<class T>
+class HasDataChanged
+
+Aressera said:
+
+I'm not convinced the approach suggested by NightCreature83 is the right one for complex GUI systems. Maybe it's OK for a simple game UI. The benefit of separating out pieces of widgets into behavior components doesn't seem to outweigh the additional complexity this adds. It seems like you would get an exponential explosion of possible combinations of components that would make it hard to sufficiently test all code paths. What happens when you create a widget from components that don't work well together? On the other hand, a monolithic widget can result in clean readable code that is easy to reason about. If you use delegates like I talked about in my first reply, this can also be very extensible with minimal boilerplate.
+
+In general less complex code is easier to test, and splitting concerns out from each other usually means it gets less complex in the code. There is also a very big difference between the requirements of game UI versus the requirements of a application UI. The system I described is shipping triple A titles, I mention this just to show you that that system does scale.  And it still allows you to drive things like you do when you want to. There have been screens in that system that I had to create that did override the complete system behaviour in its own screen state and implemented a custom interatoin because there was no other way.The idea behind splitting the rendering off from the behaviours is that you can freely change the way something looks without ever having to affect the logical side of the UI, so having navigation flow completely divorced from how something looks is a good idea. For example your drag an drop could be really easily implemented with a mouse collision check on the render objects that send triggers back to the logical side.
