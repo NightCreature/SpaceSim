@@ -51,6 +51,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
         RenderResource& renderResource = renderResourceHelper.getWriteableResource();
 
         unsigned int highestIndex = 0;
+        UNUSEDPARAM(highestIndex);
         //Extract vertices from the mesh here and store in our own vertex buffer
 
         model.model->CreateNrMeshGroups(scene->mNumMeshes);
@@ -94,11 +95,11 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
             //    }
             //}
 
-            size_t dataStreamIndex = 0;
+            //size_t dataStreamIndex = 0;
             for (size_t vertCounter = 0; vertCounter < subMesh->mNumVertices; ++vertCounter)
             {
                 std::vector<Vector3>& positionStream = std::get<2>(dataStream.m_streams[VertexStreamType::Position]);
-                ++dataStreamIndex;
+                //++dataStreamIndex;
                 //Need to create a descriptor here and fetch and set the data streams
                 Vector4 position = AssimpHelpers::ToVector(subMesh->mVertices[vertCounter]);
                 position = position * matrix;
@@ -107,7 +108,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                 if (subMesh->HasNormals())
                 {
                     std::vector<Vector3>& normalStream = std::get<2>(dataStream.m_streams[VertexStreamType::Normal]);
-                    ++dataStreamIndex;
+                    //++dataStreamIndex;
                     normalStream.push_back(Vector3(-subMesh->mNormals[vertCounter].x, -subMesh->mNormals[vertCounter].y, -subMesh->mNormals[vertCounter].z));
                     //MSG_TRACE_CHANNEL("NORMAL DEBUG", "Normal: %f, %f, %f", subMesh->mNormals[vertCounter].x, subMesh->mNormals[vertCounter].y, subMesh->mNormals[vertCounter].z);
                 }
@@ -115,7 +116,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                 if (subMesh->mTangents != nullptr)
                 {
                     std::vector<Vector3>& tangentStream = std::get<2>(dataStream.m_streams[VertexStreamType::Tangent]);
-                    ++dataStreamIndex;
+                    //++dataStreamIndex;
                     tangentStream.push_back(Vector3(-subMesh->mTangents[vertCounter].x, -subMesh->mTangents[vertCounter].y, -subMesh->mTangents[vertCounter].z));
                 }
                 
@@ -132,7 +133,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                 {
                     std::vector<Color>& colorStream = std::get<4>(dataStream.m_streams[VertexStreamType::Color]);
                     colorStream.push_back(Color(subMesh->mColors[0]->r, subMesh->mColors[0]->g, subMesh->mColors[0]->b, subMesh->mColors[0]->a));
-                    ++dataStreamIndex;
+                    //++dataStreamIndex;
                 }
 
                 size_t uvStreamStart = static_cast<std::underlying_type_t<VertexStreamType>>(VertexStreamType::UVStart);
@@ -167,7 +168,7 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                         }
                     }
 
-                    ++dataStreamIndex;
+                    //++dataStreamIndex;
                 }
             }
 
@@ -225,12 +226,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
             {
                 if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_AMBIENT, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
                 {
-                    LoadRequest loadRequest;
+                    LoadRequest loadRequest(std::string(path.C_Str()));
                     loadRequest.m_gameObjectId = 0;
                     loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
-                    memcpy(loadRequest.m_loadData, path.C_Str(), 256);
-                    resourceLoader.AddLoadRequest(loadRequest);
+                    resourceLoader.AddLoadRequest(std::move(loadRequest));
 
                     shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Ambient0 + counter)));
                 }
@@ -255,12 +254,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                         }
                     }
 
-                    LoadRequest loadRequest;
+                    LoadRequest loadRequest(std::string(path.C_Str()));
                     loadRequest.m_gameObjectId = 0;
                     loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
-                    memcpy(loadRequest.m_loadData, path.C_Str(), 256);
-                    resourceLoader.AddLoadRequest(loadRequest);
+                    resourceLoader.AddLoadRequest(std::move(loadRequest));
 
                     shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Diffuse0 + counter)));
                 }
@@ -269,12 +266,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
             {
                 if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_EMISSIVE, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
                 {
-                    LoadRequest loadRequest;
+                    LoadRequest loadRequest(std::string(path.C_Str()));
                     loadRequest.m_gameObjectId = 0;
                     loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
-                    memcpy(loadRequest.m_loadData, path.C_Str(), 256);
-                    resourceLoader.AddLoadRequest(loadRequest);
+					resourceLoader.AddLoadRequest(std::move(loadRequest));
 
                     shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Emmisive0 + counter)));
                 }
@@ -283,12 +278,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
             {
                 if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_SPECULAR, static_cast<unsigned int>(counter), &path, &uvMapping, &uv_index))
                 {
-                    LoadRequest loadRequest;
+                    LoadRequest loadRequest(std::string(path.C_Str()));
                     loadRequest.m_gameObjectId = 0;
                     loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
-                    memcpy(loadRequest.m_loadData, path.C_Str(), 256);
-                    resourceLoader.AddLoadRequest(loadRequest);
+					resourceLoader.AddLoadRequest(std::move(loadRequest));
 
                     shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Specular0 + counter)));
                 }
@@ -296,12 +289,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
 
             if (aiReturn_SUCCESS == aimaterial->GetTexture(aiTextureType_NORMALS, 0, &path, &uvMapping, &uv_index))
             {
-                LoadRequest loadRequest;
+                LoadRequest loadRequest(std::string(path.C_Str()));
                 loadRequest.m_gameObjectId = 0;
                 loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                loadRequest.m_loadData = static_cast<void*>(new char[256]);
-                memcpy(loadRequest.m_loadData, path.C_Str(), 256);
-                resourceLoader.AddLoadRequest(loadRequest);
+				resourceLoader.AddLoadRequest(std::move(loadRequest));
 
                 shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Normals));
             }

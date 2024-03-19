@@ -48,3 +48,8 @@ private:
     D3D12_GPU_VIRTUAL_ADDRESS m_gpuAddress;
     bool m_isValid = false;
 };
+
+class RenderTarget12 : public Texture12
+{
+    bool Create(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, size_t width, size_t height, DXGI_FORMAT format);
+};

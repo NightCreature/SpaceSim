@@ -4,8 +4,11 @@
 #include "Core/Thread/Thread.h"
 #include "Gameplay/ECS/Systems/RenderableSystem.h"
 #include "Input/Input.h"
+#include "UI/UIManger.h"
 
 #include <vector>
+
+
 class EntityManager;
 class CameraManager;
 class SettingsManager;
@@ -58,6 +61,7 @@ public:
     MessageSystem::MessageObserver m_messageObservers;
 
     Input m_input;
+    UIManger m_uiManager;
 
     Resource* m_resource = nullptr;
 

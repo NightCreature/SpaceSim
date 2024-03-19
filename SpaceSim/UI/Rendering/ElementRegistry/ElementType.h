@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace FE
 {
 
@@ -45,6 +47,7 @@ public:
     const ElementTag& GetElementType() const override { return m_tag; }
     size_t GetSize() const override { return sizeof(Element); }
     CreateElementFP GetCreateFP() const override { return &Element::Create; }
+    std::unique_ptr <Element> GetCreateUP() const override { return std::make_unique<Element>(Element::Create()); }
 
     static DefaultElementType* m_instance;
 private:

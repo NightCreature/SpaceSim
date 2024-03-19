@@ -21,8 +21,8 @@ public:
     virtual ~ITimer() {}
 
     inline double getResolution() const { return m_resolution; }
-    const double getTime() const { return m_time; }
-    const float  getElapsedTime() const { return m_elapsedTime; }
+    double getTime() const { return m_time; }
+    float  getElapsedTime() const { return m_elapsedTime; }
     virtual void update() = 0;
 protected:
     double m_resolution;
@@ -52,5 +52,5 @@ private:
     LARGE_INTEGER m_now;
     LARGE_INTEGER m_timePerformance;
     LARGE_INTEGER m_previousTime;
-    LARGE_INTEGER m_elapsedTimeHighPrecision;
+    //LARGE_INTEGER m_elapsedTimeHighPrecision;
 };

@@ -1,9 +1,14 @@
 #include "Input/InputSystem.h"
-#include "Input/XController.h"
+
+#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Input/FE/NavigationActions.h"
 #include "Input/KeyboardController.h"
 #include "Input/MouseController.h"
-#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Input/XController.h"
+
+
 #include <Optick.h>
+
 
 InputSystem::AvailableActions InputSystem::m_availableActions;
 #ifdef DEBUG
@@ -115,6 +120,9 @@ void InputSystem::initialise( const std::string& inputMapFileName, HWND hwnd )
 #endif
         }
     }
+
+    //Create the static Navigation actions here, this might need to be a function in the end at the end of this list
+    NavigationActions actions;
 
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(inputMapFileName.c_str()) != tinyxml2::XML_NO_ERROR)

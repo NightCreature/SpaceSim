@@ -18,7 +18,7 @@ namespace FE
 {
 
 constexpr std::string_view rowDelimiter = "\n";
-constexpr std::string_view columnDelimiters[] = { "\t", " " };
+//constexpr std::string_view columnDelimiters[] = { "\t", " " };
 
 bool Navigation::Serialise(tinyxml2::XMLElement* element)
 {
@@ -45,8 +45,6 @@ bool Navigation::Serialise(tinyxml2::XMLElement* element)
                 navItem.m_position[1] = static_cast<int>(columnIndex);
                 navItem.m_id = HashString(cell);
 
-                MSG_TRACE("Adding Nav item: %s(%d) at pos: %d, %d", navItem.m_id.getString().data(), navItem.m_id.getHash(), rowIndex, columnIndex);
-
                 ++columnIndex;
             }
             ++rowIndex;
@@ -61,8 +59,8 @@ bool Navigation::HandleInput(const InputState& state)
     //Write item navigation here
     //HasChanged<int> x = m_activeItem[0];
     //HasChanged<int> y = m_activeItem[1];
-    int x = m_activeItem[0];
-    int y = m_activeItem[1];
+    size_t x = m_activeItem[0];
+    size_t y = m_activeItem[1];
     
     if (state.getActionValue(NavigationActions::feUp) > 0.0f)
     {
@@ -74,7 +72,7 @@ bool Navigation::HandleInput(const InputState& state)
         }
         else
         {
-            if (0 < x && x < m_navItems.size())
+            if (0 <= x && x < m_navItems.size() - 1)
             {
                 ++x;
             }
@@ -88,7 +86,7 @@ bool Navigation::HandleInput(const InputState& state)
         }
         else
         {
-            if (0 < x && x < m_navItems.size())
+            if (0 < x && x < m_navItems.size() - 1)
             {
                 --x;
             }
@@ -104,7 +102,7 @@ bool Navigation::HandleInput(const InputState& state)
         }
         else
         {
-            if (0 < y && y < m_navItems[x].size())
+            if (0 < y && y < m_navItems[x].size() - 1)
             {
                 --y;
             }
@@ -120,7 +118,7 @@ bool Navigation::HandleInput(const InputState& state)
         }
         else
         {
-            if (0 < y && y < m_navItems[x].size())
+            if (0 <= y && y < m_navItems[x].size() - 1)
             {
                 ++y;
             }
@@ -130,14 +128,20 @@ bool Navigation::HandleInput(const InputState& state)
     m_activeItem[0] = x;
     m_activeItem[1] = y;
 
-    return m_navItems[x][y].m_item->HandleInput(state);
+    bool retval = false;
+    if (m_navItems[x][y].m_item != nullptr)
+    {
+        m_navItems[x][y].m_item->HandleInput(state);
+    }
+
+    return retval;
 }
 
 void Navigation::PlaceItemsInNavigation(States::Screen* screen)
 {
-    for (auto row : m_navItems)
+    for (auto& row : m_navItems)
     {
-        for (auto cell : row)
+        for (auto& cell : row)
         {
             cell.m_item = screen->GetItemById(cell.m_id);
         }

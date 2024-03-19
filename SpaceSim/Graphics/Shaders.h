@@ -48,7 +48,7 @@ public:
     const std::string getFileName() const { return m_fileName; }
     ID3DBlob* getShaderBlob() const { return m_shaderBlob; }
     const void* GetShaderBufferPointer() const { return m_shader.m_shaderObject->GetBufferPointer(); }
-    const size_t GetShaderBufferLength() const { return m_shader.m_shaderObject->GetBufferSize(); }
+    size_t GetShaderBufferLength() const { return m_shader.m_shaderObject->GetBufferSize(); }
     const CreatedShaderObjects& GetCompiledShader() const { return m_shader; }
     void SetCompiledShader(const CreatedShaderObjects& shader) { m_shader = shader; }
 

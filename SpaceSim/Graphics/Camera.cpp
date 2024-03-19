@@ -8,18 +8,19 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <directxmath.h>
+#include <Core/Types/TypeHelpers.h>
 
 
-constexpr HashString moveForward("move_forwards");
-constexpr HashString moveBackWards("move_backwards");
-constexpr HashString moveLeft("move_left");
-constexpr HashString moveRight("move_right");
-constexpr HashString yawLeft("move_yaw_left");
-constexpr HashString yawRight("move_yaw_right");
-constexpr HashString pitchUp("move_pitch_up");
-constexpr HashString pitchDown("move_pitch_down");
-constexpr HashString rollLeft("move_roll_left");
-constexpr HashString rollRight("move_roll_right");
+constexpr size_t moveForward = "move_forwards"_hash;
+constexpr size_t moveBackWards = "move_backwards"_hash;
+constexpr size_t moveLeft = "move_left"_hash;
+constexpr size_t moveRight = "move_right"_hash;
+constexpr size_t yawLeft = "move_yaw_left"_hash;
+constexpr size_t yawRight = "move_yaw_right"_hash;
+constexpr size_t pitchUp = "move_pitch_up"_hash;
+constexpr size_t pitchDown = "move_pitch_down"_hash;
+constexpr size_t rollLeft = "move_roll_left"_hash;
+constexpr size_t rollRight = "move_roll_right"_hash;
 
 Camera::Camera() :
 m_roll(0.0f),
@@ -138,6 +139,8 @@ float Camera::restrictAngleTo360(float angle) const
 ///-----------------------------------------------------------------------------
 void Camera::update( float elapsedTime, double time, const Input& input )
 {
+    UNUSEDPARAM(time);
+
     const InputState* inputState = input.getInput(0);
     if (inputState)
     {
@@ -151,16 +154,16 @@ void Camera::update( float elapsedTime, double time, const Input& input )
         InputActions::ActionType pitchDownAction;
         InputActions::ActionType rollLeftAction;
         InputActions::ActionType rollRightAction;
-        InputSystem::getInputActionFromName(moveForward.getHash(), fowardAction);
-        InputSystem::getInputActionFromName(moveBackWards.getHash(), backwardAction);
-        InputSystem::getInputActionFromName(moveLeft.getHash(), moveLeftAction);
-        InputSystem::getInputActionFromName(moveRight.getHash(), moveRightAction);
-        InputSystem::getInputActionFromName(yawLeft.getHash(), yawLeftAction);
-        InputSystem::getInputActionFromName(yawRight.getHash(), yawRightAction);
-        InputSystem::getInputActionFromName(pitchUp.getHash(), pitchUpAction);
-        InputSystem::getInputActionFromName(pitchDown.getHash(), pitchDownAction);
-        InputSystem::getInputActionFromName(rollLeft.getHash(), rollLeftAction);
-        InputSystem::getInputActionFromName(rollRight.getHash(), rollRightAction);
+        InputSystem::getInputActionFromName(moveForward, fowardAction);
+        InputSystem::getInputActionFromName(moveBackWards, backwardAction);
+        InputSystem::getInputActionFromName(moveLeft, moveLeftAction);
+        InputSystem::getInputActionFromName(moveRight, moveRightAction);
+        InputSystem::getInputActionFromName(yawLeft, yawLeftAction);
+        InputSystem::getInputActionFromName(yawRight, yawRightAction);
+        InputSystem::getInputActionFromName(pitchUp, pitchUpAction);
+        InputSystem::getInputActionFromName(pitchDown, pitchDownAction);
+        InputSystem::getInputActionFromName(rollLeft, rollLeftAction);
+        InputSystem::getInputActionFromName(rollRight, rollRightAction);
 
         float moveAlongDirectionFactor = inputState->getActionValue(fowardAction) - inputState->getActionValue(backwardAction);
         moveAlongDirection(moveAlongDirectionFactor * m_movementSpeed * elapsedTime );//Move forwared, backward

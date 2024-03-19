@@ -27,6 +27,7 @@ public:
 
     void Update(float deltaTime, const InputState& input);
 
+    void PrintFlowVisualisation(const std::filesystem::path& fileName);
 private:
     struct FlowNode
     {

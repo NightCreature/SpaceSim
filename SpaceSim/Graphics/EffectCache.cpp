@@ -20,7 +20,7 @@ void EffectCache::Initialise(Resource* resource)
 }
 
 const Effect* EffectCache::createEffect(Resource* resource, const std::string& resourceFileName)
-{
+{  
     OPTICK_EVENT();
     std::string resourceName = getResourceNameFromFileName(resourceFileName);
     const Effect* returnValue = getEffect(resourceName);

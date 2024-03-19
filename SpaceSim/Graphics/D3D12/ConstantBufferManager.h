@@ -32,9 +32,14 @@ template<class T>
 size_t PerFrameDataStorage::CreateCBInterface(const T& data)
 {
     UNUSEDPARAM(data);
+    if (m_resource == nullptr)
+    {
+        return m_usedBuffers;
+    }
     m_constantBuffers[m_usedBuffers] = ConstantBuffer();
     RenderResource* renderResource = static_cast<RenderResource*>(m_resource);
     m_constantBuffers[m_usedBuffers].Create(renderResource->getDeviceManager(), renderResource->getDescriptorHeapManager().GetSRVCBVUAVHeap(), sizeof(T));
+
 
     return m_usedBuffers++;
 }

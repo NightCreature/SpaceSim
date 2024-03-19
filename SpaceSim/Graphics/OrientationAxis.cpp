@@ -20,12 +20,12 @@ std::vector<Vector3> m_vertices =
     {0.0f, 0.0f, -1000.0f},//, 0xFFFFFFFF
     {0.0f, 0.0f, 1000.0f },//, 0xFFFFFFFF
     //Add lines for plus one on each axis
-    {1.0f,  0.0f, 0.0f},//, 0xFFFFFFFF
-    {1.0f, 0.25f, 0.0f},//, 0xFFFFFFFF
-    {0.0f,  1.0f, 0.0f},//, 0xFFFFFFFF
-    {0.25f, 1.0f, 0.0f},//, 0xFFFFFFFF
-    {0.0f,  0.0f, 1.0f},//, 0xFFFFFFFF
-    {0.0f, 0.25f, 1.0f} //, 0xFFFFFFFF
+    {1.0f,  0.0f, 0.0f},
+    {1.0f, 0.25f, 0.0f},// defines line indicating positive X orientation
+    {0.0f,  1.0f, 0.0f},
+    {0.25f, 1.0f, 0.0f},// defines line indicating indicates positive Y orientation
+    {0.0f,  0.0f, 1.0f},
+    {0.0f, 0.25f, 1.0f} // defines line indicating indicates positive Z orientation
 };
 
 std::vector<Color> m_colors =

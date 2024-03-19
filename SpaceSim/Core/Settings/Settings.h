@@ -10,7 +10,10 @@
 #include "Core/Serialization/Archive.h"
 #include "Core/Serialization/ISerializable.h"
 
-class tinyxml2::XMLElement;
+namespace tinyxml2
+{
+class XMLElement;
+}
 
 //This might need to be a serialise based object
 class ISettingBase : public ISerializable

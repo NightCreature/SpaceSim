@@ -76,7 +76,7 @@ void InfinitySphere::update(float elapsedTime, const Input& input)
     if (m_initialisationDone)
     {
         //This wants the player position
-        const GameObject* playerObject = GameResourceHelper(m_resource).getWriteableResource().getGameObjectManager().getGameObject("player");
+        const GameObject* playerObject = GameResourceHelper(m_resource).getWriteableResource().getGameObjectManager().getGameObject("player"); //This is bad
         if (playerObject != nullptr)
         {
             const Player* player = static_cast<const Player*>(playerObject);

@@ -41,7 +41,7 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
 
 void MeshGroupCreator::normalizeNormals(std::vector<Vector3>& normals)
 {
-    for (int i = 0; i < normals.size(); i++)
+    for (size_t i = 0; i < normals.size(); i++)
     {
         normals[i].normalize();
     }

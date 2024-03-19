@@ -74,7 +74,7 @@ void MultithreadedCommandlistManager::ReturnCommandListForThreadIndex(size_t thr
 
         ID3D12CommandList* const d3dCommandList = resourceCommandList.m_list;
         resourceCommandQueue.m_queue->ExecuteCommandLists(1u, &(d3dCommandList));
-        UINT fence = resourceCommandQueue.m_fenceValue;
+        size_t fence = resourceCommandQueue.m_fenceValue;
         hr = resourceCommandQueue.m_queue->Signal(resourceCommandQueue.m_fence, fence);
         if (hr != S_OK)
         {
@@ -116,7 +116,7 @@ void MultithreadedCommandlistManager::Update()
 
     auto& helper = RenderResourceHelper(m_resource).getWriteableResource();
     auto& resourceCommandQueue = helper.getCommandQueueManager().GetCommandQueue(m_queueHandle);
-    uint fenceValue = resourceCommandQueue.m_fence->GetCompletedValue();
+    size_t fenceValue = resourceCommandQueue.m_fence->GetCompletedValue();
     //any of the command list status that are below the fence value are done and need reseting on the semaphore
     size_t index = 0;
     for (auto& commandListStatus : m_commandListStatus)

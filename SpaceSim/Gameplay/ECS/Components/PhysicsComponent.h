@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Macros/PlatformMacros.h"
 #include "Gameplay/ECS/Component.h"
 
 namespace physx
@@ -22,7 +23,9 @@ public:
     //Temporary interface probably need this in physics manager and not here
     void CreateRigidbody(bool dynamic);
 private:
+#ifndef IS_CLANG
     physx::PxActor* m_actor = nullptr;
+#endif
     size_t m_physicsObjectId = InvalidPhysicsId;
 };
 

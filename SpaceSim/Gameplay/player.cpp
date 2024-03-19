@@ -23,8 +23,8 @@
 #include <Core/MessageSystem/MessageQueue.h>
 #include <Core/MessageSystem/RenderMessages.h>
 
-const int playerlive = 5;
-const int playerffstrength = 10;
+//const int playerlive = 5;
+//const int playerffstrength = 10;
 const HashString fire("fire");
 
 void Player::initialize()

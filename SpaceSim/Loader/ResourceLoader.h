@@ -31,7 +31,7 @@ public:
     void update();
 
     virtual void dispatchMessage(const MessageSystem::Message & msg) override;
-    void AddLoadRequest(const LoadRequest& request);
+    void AddLoadRequest(LoadRequest&& request);
 
     void DispatchResourceCommandQueue();
 

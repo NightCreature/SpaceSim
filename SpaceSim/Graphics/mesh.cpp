@@ -39,7 +39,7 @@ CreatedModel CreateMesh(const CreationParams& params, const EffectCache& effectC
 
 void normalizeNormals(std::vector<Vector3>& normals)
 {
-    for (int i = 0; i < normals.size(); i++)
+    for (size_t i = 0; i < normals.size(); i++)
     {
         normals[i].normalize();
     }

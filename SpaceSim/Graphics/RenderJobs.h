@@ -1,4 +1,4 @@
-#pragma 
+#pragma once
 
 #include "Core/Thread/Job.h"
 #include "Core/Types/Types.h"

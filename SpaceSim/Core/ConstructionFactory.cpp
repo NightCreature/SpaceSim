@@ -50,5 +50,5 @@ void print()
         MSG_TRACE_CHANNEL("ConstructionFactory", "Index of the type (%s) in the pack is: %d",  str.str().c_str(), index);
     }
 
-    auto pair = MakePair<int>(nameof<int>);
+    //auto pair = MakePair<int>(nameof<int>);
 }

@@ -253,8 +253,8 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         }
     }
 
-    //Build root paramter index layout 
-    BuildRootParamaterLayout(loadedShaders);
+    //Build root paramter index layout no longer needed with heap indexing
+    //BuildRootParamaterLayout(loadedShaders);
 
 
     m_pso.SetVertexInformation(vertextDeclaration, D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED, primitiveTopology);

@@ -143,31 +143,25 @@ IDXGIAdapter* DeviceManager::EnumerateAdapters()
 {
     IDXGIAdapter* adapter = nullptr;
 
-    HRESULT hr = S_OK;
-    //for (size_t counter = 0; counter < 1; ++counter)
-    //{
-        adapter = nullptr;
-        //Ask for the high performance GPU, this should be the dedicated GPU in a laptop
-        hr = m_dxgiFactory->EnumAdapterByGpuPreference((UINT)0, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter));
-        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter number: %d", 0);
-        if (adapter != nullptr)
-        {
-            DXGI_ADAPTER_DESC adapterDesc;
-            adapter->GetDesc(&adapterDesc);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter vendor id: %x", adapterDesc.VendorId);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter device id: %x", adapterDesc.DeviceId);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter subsytem id: %x", adapterDesc.SubSysId);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter revision: %d", adapterDesc.Revision);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Dedicated VRAM: %llu MiB", adapterDesc.DedicatedVideoMemory / (1024 * 1024));
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Dedicated RAM: %llu MiB", adapterDesc.DedicatedSystemMemory / (1024 * 1024));
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Shared RAM: %llu MiB", adapterDesc.SharedSystemMemory / (1024 * 1024));
-            std::string str;
-            convertToCString(adapterDesc.Description, str);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "description: %s", str.c_str());
-
-            //Have to check if this is a dGPU
-        }
-    //}
+    adapter = nullptr;
+    //Ask for the high performance GPU, this should be the dedicated GPU in a laptop
+    m_dxgiFactory->EnumAdapterByGpuPreference((UINT)0, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter));
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter number: %d", 0);
+    if (adapter != nullptr)
+    {
+        DXGI_ADAPTER_DESC adapterDesc;
+        adapter->GetDesc(&adapterDesc);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter vendor id: %x", adapterDesc.VendorId);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter device id: %x", adapterDesc.DeviceId);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter subsytem id: %x", adapterDesc.SubSysId);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter revision: %d", adapterDesc.Revision);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Dedicated VRAM: %llu MiB", adapterDesc.DedicatedVideoMemory / (1024 * 1024));
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Dedicated RAM: %llu MiB", adapterDesc.DedicatedSystemMemory / (1024 * 1024));
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Shared RAM: %llu MiB", adapterDesc.SharedSystemMemory / (1024 * 1024));
+        std::string str;
+        convertToCString(adapterDesc.Description, str);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "description: %s", str.c_str());
+    }
 
     return adapter;
 }
@@ -381,17 +375,20 @@ bool DeviceManager::InitialiseDebugLayers()
 #if defined(_DEBUG)
     // Enable the D3D12 debug layer.
     HRESULT hr = D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugInterface));
-    if (hr != S_OK)
+    if (hr != S_OK || m_debugInterface == nullptr)
     {
         MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create the debug interface with error: 0x%x, %s", hr, getLastErrorMessage(hr));
         return false;
     }
 
-    ID3D12Debug* spDebugController0;
-    ID3D12Debug1* spDebugController1;
-    D3D12GetDebugInterface(IID_PPV_ARGS(&spDebugController0));
-    spDebugController0->QueryInterface(IID_PPV_ARGS(&spDebugController1));
-    spDebugController1->SetEnableGPUBasedValidation(true);
+    hr = m_debugInterface->QueryInterface(IID_PPV_ARGS(&m_debug1Interface));
+	if (hr != S_OK || m_debug1Interface == nullptr)
+	{
+		MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create the debug1 interface with error: 0x%x, %s", hr, getLastErrorMessage(hr));
+		return false;
+	}
+
+    m_debug1Interface->SetEnableGPUBasedValidation(true);
 
     m_debugInterface->EnableDebugLayer();
 #endif

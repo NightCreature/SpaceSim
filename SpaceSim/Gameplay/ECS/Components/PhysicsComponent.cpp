@@ -11,5 +11,6 @@ void ECS::PhysicsComponent::CreateRigidbody(bool dynamic)
 {
     //Physx uses inheritance to determine if something is static or movable with the PxRigidStatic and PxDynamicRigid classes.
     UNUSEDPARAM(dynamic);
+    m_physicsObjectId = 1;
     
 }

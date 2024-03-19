@@ -71,9 +71,9 @@ void ModelManager::OnMessage(const MessageSystem::Message& msg)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-size_t ModelManager::LoadModel( void* data, CommandList& commandList)
+size_t ModelManager::LoadModel( const void* data, CommandList& commandList)
 {
-    auto modelData = static_cast<MessageSystem::CreateRenderResource<LoadModelResource>::ResourceData<LoadModelResource>*>(data);
+    const auto* modelData = static_cast<const MessageSystem::CreateRenderResource<LoadModelResource>::ResourceData<LoadModelResource>*>(data);
 
     ModelLoader::LoadData loadData;
     loadData.m_fileName = modelData->m_fixedData.m_fileName;
@@ -119,9 +119,9 @@ size_t ModelManager::LoadModel( void* data, CommandList& commandList)
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-size_t ModelManager::AddFace(void* data, CommandList& commandList, Job* currentJob)
+size_t ModelManager::AddFace(const void* data, CommandList& commandList, Job* currentJob)
 {
-    auto* creationParams = static_cast<MessageSystem::CreateRenderResource<Face::CreationParams>::ResourceData<Face::CreationParams>*>(data);
+    const auto* creationParams = static_cast<const MessageSystem::CreateRenderResource<Face::CreationParams>::ResourceData<Face::CreationParams>*>(data);
     size_t renderResourceId = HASH_BINARY(creationParams);
     if (!HasRenderResource(renderResourceId))
     {
@@ -192,6 +192,8 @@ const CreatedModel* ModelManager::GetRenderResource(size_t renderResourceId) con
 const std::vector<RenderInterface*> ModelManager::GetRenderables(const Frustum& viewFrustum) const
 {
     OPTICK_EVENT();
+    
+    UNUSEDPARAM(viewFrustum);
 
     std::vector<RenderInterface*> retVal;
 
@@ -232,6 +234,8 @@ bool ModelManager::InternalHasRenderResource(size_t resourceId) const
 ///-----------------------------------------------------------------------------
 void ModelManager::UpdateDebugModels(size_t objectId, Matrix44 m_world) const
 {
+    UNUSEDPARAM(m_world);
+
     if (m_createDebugBoundingBoxes)
     {
         auto it = m_debugBoundingBoxes.find(objectId);

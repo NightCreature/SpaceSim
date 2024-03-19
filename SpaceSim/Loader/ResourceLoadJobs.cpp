@@ -64,8 +64,8 @@ bool FaceJob::Execute(ThreadContext* context)
     bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
     if (retVal)
     {
-        m_resourceHandle = renderResource.getModelManager().AddFace(m_loadData, commandList, this);
-        m_loader->AddedReturnMessageDataForThreadIndex(context->m_threadIndex, m_gameObjectId, m_resourceHandle);
+        m_resourceHandle = renderResource.getModelManager().AddFace(m_request.m_loadData.GetData<void>(), commandList, this);
+        m_loader->AddedReturnMessageDataForThreadIndex(context->m_threadIndex, m_request.m_gameObjectId, m_resourceHandle);
     }
 
     return retVal;
@@ -78,8 +78,6 @@ bool FaceJob::Execute(ThreadContext* context)
 void FaceJob::Finish(ThreadContext* context)
 {
     ResourceLoadJob::Finish(context);
-    //Since we handled the loading of our data get rid of the jobs data
-    delete m_loadData;
 }
 
 ///-----------------------------------------------------------------------------
@@ -90,9 +88,6 @@ bool LoadTextureJob::Execute(ThreadContext* context)
 {
     OPTICK_EVENT();
 
-    if (m_fileName.empty())
-        return true; //do nothing
-
     CommandList commandList;
     bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
     if (retVal)
@@ -100,15 +95,16 @@ bool LoadTextureJob::Execute(ThreadContext* context)
         RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
 
         //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
-        std::string textureName = getTextureNameFromFileName(m_fileName);
+        const auto* fileName = m_request.m_loadData.GetData<std::string>();
+        std::string textureName = getTextureNameFromFileName(*fileName);
 
         TextureManager& texManager = renderResource.getTextureManager();
-        auto& textureInformation = texManager.AddOrCreateTexture(textureName);
+        auto textureInformation = texManager.AddOrCreateTexture(textureName);
         if (textureInformation.m_heapIndex == DescriptorHeap::invalidDescriptorIndex && textureInformation.m_loadRequested == false)
         {
             Texture12 texture;
             size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
-            if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, m_fileName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
+            if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, *fileName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
             {
                 MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", textureName.c_str(), context->m_threadIndex);
                 return true;
@@ -135,11 +131,54 @@ bool LoadModelJob::Execute(ThreadContext* context)
     {
         RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
 
-        auto resourceHandle = renderResource.getModelManager().LoadModel(m_loadData, commandList);//needs to be thread safe, and should be a job
-        m_loader->AddedReturnMessageDataForThreadIndex(context->m_threadIndex, m_gameObjectId, resourceHandle);
-
-        delete m_loadData;
+        auto resourceHandle = renderResource.getModelManager().LoadModel(m_request.m_loadData.GetData<void>(), commandList);//needs to be thread safe, and should be a job
+        m_loader->AddedReturnMessageDataForThreadIndex(context->m_threadIndex, m_request.m_gameObjectId, resourceHandle);
     }
 
     return retVal;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+bool LoadTextureListJob::Execute(ThreadContext* context)
+{
+	OPTICK_EVENT();
+
+    const auto* textureList = m_request.m_loadData.GetData<std::vector<std::filesystem::path>>();
+    if (textureList != nullptr && textureList->empty())
+    {
+        return true; //do nothing
+    }
+
+	CommandList commandList;
+	bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+	if (retVal)
+	{
+        for (const auto& filePath : *textureList)
+        {
+            RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
+
+            //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
+            std::string textureName = getTextureNameFromFileName(filePath.string());
+
+            TextureManager& texManager = renderResource.getTextureManager();
+            auto textureInformation = texManager.AddOrCreateTexture(textureName);
+            if (textureInformation.m_heapIndex == DescriptorHeap::invalidDescriptorIndex && textureInformation.m_loadRequested == false)
+            {
+                Texture12 texture;
+                size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
+                if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, filePath.string(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
+                {
+                    MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", textureName.c_str(), context->m_threadIndex);
+                    return true;
+                }
+
+                texManager.addTexture(textureName, texture, descriptorIndex);
+            }
+        }
+	}
+
+	return retVal;
 }

@@ -6,7 +6,9 @@
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
 #include <sstream>
 
+#ifdef DEBUG
 static size_t clCounter = 0;
+#endif
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
@@ -61,6 +63,8 @@ void CommandQueue::SetName(const std::string_view& commandQueueName)
     convertToWideString(std::string(commandQueueName), temp);
     m_name += temp;
     //m_queue->SetName(m_name.c_str());
+#else
+    UNUSEDPARAM(commandQueueName);
 #endif
 }
 

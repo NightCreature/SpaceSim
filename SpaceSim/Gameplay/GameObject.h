@@ -88,7 +88,7 @@ public:
 
     //void setMaterial(const Material& mat) { m_drawableObject ? m_drawableObject->getRenderInstance()->getShaderInstance().setMaterial(getResource().getDeviceManager(), mat) : MSG_TRACE_CHANNEL("MODEL", "Trying to set the material on shape without a drawable object" ) assert(m_drawableObject); }
     //const Material* getMaterial() const { return m_drawableObject ? &m_drawableObject->getRenderInstance()->getShaderInstance().getMaterial() : 0; }
-    const Bbox& getBbox() const {return Bbox();}
+    const Bbox getBbox() const {return Bbox();}
     Matrix44 getWorld() {return m_world;}
     void setWorld(const Matrix44& m) {m_worldhaschanged = true; m_world = m;}
 

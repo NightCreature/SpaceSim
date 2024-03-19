@@ -17,6 +17,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Gameplay/ECS/SystemsManager.h"
 
+
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
@@ -36,6 +37,7 @@ void UpdateThread::Initialise(Resource* resource)
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedRenderResourceMessage), fastdelegate::MakeDelegate(m_gameObjectManager, &GameObjectManager::handleMessage));
     //m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedRenderResourceMessage), fastdelegate::MakeDelegate(&m_renderableSystem, &ECS::RenderableSystem::HandleMessage));
 
+    m_uiManager.Initialise(m_resource);
     
     m_done = true;
 }
@@ -57,6 +59,7 @@ int UpdateThread::WorkerFunction()
             m_messageObservers.DispatchMessages(*(m_resource->m_messageQueues->getUpdateMessageQueue())); //Dispatch the messages
             m_resource->m_messageQueues->getUpdateMessageQueue()->reset();//m_messageQueue->reset(); //Reset the queue so we can track new message in it
 
+            LeaveCriticalSection(&m_criticalSection);
 
             m_gameObjectManager->update( m_elapsedTime, m_input);
             
@@ -71,8 +74,14 @@ int UpdateThread::WorkerFunction()
             entitySystemsManager.Update(); //This one is system that dont have a link with the physics, this could be farmed off to a job
             m_laserManager->update( m_elapsedTime, Matrix44(), Matrix44()); //TODO FIX LASERS
 
+            const InputState* inputState = m_input.getInput(0);
+            if (inputState != nullptr)
+            {
+                m_uiManager.Update(m_elapsedTime, *inputState);
+            }
+
             m_done = true;
-            LeaveCriticalSection(&m_criticalSection);
+            
         }
         else
         {

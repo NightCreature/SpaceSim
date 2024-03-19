@@ -204,13 +204,12 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
                 {
                     pageInfo.m_fileName = attribute->Value();
 
-                    LoadRequest loadRequest;
+                    std::filesystem::path path = currentPath / pageInfo.m_fileName;
+                    LoadRequest loadRequest(path.string());
                     loadRequest.m_gameObjectId = 0;
                     loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
-                    std::filesystem::path path = currentPath / pageInfo.m_fileName;
-                    memcpy(loadRequest.m_loadData, path.string().c_str(), 256);
-                    gameResource.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
+                    
+                    gameResource.getWriteableResource().getResourceLoader().AddLoadRequest(std::move(loadRequest));
                 }
             }
             m_pagesInformation.m_pages.push_back(pageInfo);

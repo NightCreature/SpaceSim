@@ -174,7 +174,7 @@ Matrix44 Matrix44::cofactor()
             else
                 cofactormatrix.m_m[i][j] = -m.determinant();
         }
-        return cofactormatrix;
+    return cofactormatrix;
 }
 
 Vector4 Matrix44::getTransform()

@@ -21,12 +21,12 @@ public:
     void cleanup();
 
     //These should be renamed to shader create functions and return handles
-    const size_t getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const size_t getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const size_t getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const size_t getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const size_t getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
-    const size_t getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    size_t getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    size_t getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    size_t getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    size_t getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    size_t getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
+    size_t getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager);
 
     //This should be taking a shader handle and returning an actual shader object, and only accessed from the renderer.
     const Shader* getVertexShader(size_t resourceName) const;
@@ -43,7 +43,7 @@ public:
 #endif
 private:
     using ShaderMap = std::map<size_t, Shader>;
-    const size_t GetShader(ShaderType type, const tinyxml2::XMLElement* element, ShaderMap& shaderMap);
+    size_t GetShader(ShaderType type, const tinyxml2::XMLElement* element, ShaderMap& shaderMap);
     bool GetPreCompiledOrCreateShader(Shader& shader);
 
     using ShaderHandle = std::pair<size_t, Shader>;

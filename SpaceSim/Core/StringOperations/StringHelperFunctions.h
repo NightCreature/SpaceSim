@@ -74,7 +74,13 @@ constexpr char toUpperConstExpr(const char c)
 ///-----------------------------------------------------------------------------
 inline constexpr size_t hashString(const char* sourceStr, size_t size)
 {
+    if (sourceStr == nullptr)
+    {
+        return c_fnvHashOffset;
+    }
+
     size_t returnHash = c_fnvHashOffset;
+    
     for (size_t counter = 0; counter < size; ++counter)
     {
         returnHash = returnHash ^ toLowerConstExpr(sourceStr[counter]);
@@ -247,7 +253,6 @@ inline std::string getResourceNameFromFileName(const std::string& fileName)
 ///-------------------------------------------------------------------------
 inline std::string extractExtensionFromFileName( const std::string &fileName )
 {
-    std::string::const_reverse_iterator it = fileName.rbegin();
     size_t counter = fileName.size();
     for (; counter > 0; --counter)
     {
@@ -265,7 +270,6 @@ inline std::string extractExtensionFromFileName( const std::string &fileName )
 ///-------------------------------------------------------------------------
 inline std::string extractPathFromFileName( const std::string &fileName )
 {
-    std::string::const_reverse_iterator it = fileName.rbegin();
     size_t counter = fileName.size();
     for (; counter > 0; --counter)
     {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/StringOperations/HashString.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
 #include <string>
@@ -7,6 +8,7 @@
 #ifdef _DEBUG
 #include "SourceInformation/SourceInfo.h"
 #endif
+
 
 #define MESSAGE_ID(message_name) hashString(#message_name)
 
@@ -27,6 +29,18 @@ class MessageData
 public:
     MessageData() {}
     virtual ~MessageData() {}
+};
+
+class HashStringData : public MessageData
+{
+public:
+    HashStringData() {}
+    HashStringData(const HashString& data) : m_data(data) {}
+
+    const HashString& GetData() const { return m_data; }
+    void SetData(const HashString& data) { m_data = data; }
+private:
+    HashString m_data;
 };
 
 class Message

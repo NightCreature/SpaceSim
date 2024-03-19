@@ -76,7 +76,7 @@ public:
         }
     }
 
-    void UpdateCbs() {}
+    void UpdateCbs() override {}
 
     //Deprecated bad code
     void addMeshGroup(const MeshGroup& meshGroup) { m_modelData.push_back(meshGroup); }

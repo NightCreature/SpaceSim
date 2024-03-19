@@ -32,6 +32,7 @@ const size_t numberOfTexcoords = 1;
 CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* currentJob, CommandList& commandList)
 { 
     OPTICK_EVENT();
+    UNUSEDPARAM(currentJob);
 
     RenderResourceHelper renderResourceHelper(resource);
     const RenderResource& renderResource = renderResourceHelper.getResource();
@@ -51,7 +52,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
 
 
 
-    size_t bufferSize = 0;
+
     size_t rows = params.nrVerticesInX;
     size_t columns = params.nrVerticesInY;
     //if ((params.height / corridorheight) > 1 && params.tesselate)
@@ -64,10 +65,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
     //}
     size_t numberOfVerts = rows * columns;
     m_totalNumberOfVerts += numberOfVerts;
-    bufferSize += sizeof(float) * 3 * numberOfVerts;
-    bufferSize += sizeof(float) * 3 * numberOfVerts; //Normal
-    bufferSize += sizeof(float) * 3 * numberOfVerts; //Tangent
-    bufferSize += sizeof(float) * 2 * numberOfTexcoords * numberOfVerts;
+
     VertexDataStreams dataStreams = createVertexData(params, face.boundingBox, corridorheight, corridorwidth, rows, columns);
 
     MeshResourceIndices& resourceIndices = group.GetResourceInices();
@@ -133,10 +131,10 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
 
                     TextureManager& texManager = renderResource.getTextureManager();
 
-                    auto& info = texManager.AddOrCreateTexture(textureName);
+                    auto info = texManager.AddOrCreateTexture(textureName);
                     if (info.m_heapIndex == DescriptorHeap::invalidDescriptorIndex && info.m_loadRequested == false && !info.m_texture.IsValid())
                     {
-                        info.m_loadRequested == true;
+                        info.m_loadRequested = true;
                         Texture12 texture;
                         size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
                         if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, inputTextureName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
@@ -175,7 +173,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-VertexDataStreams Face::createVertexData(const CreationParams& params, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns)
+VertexDataStreams createVertexData(const CreationParams& params, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns)
 {
     OPTICK_EVENT();
 
@@ -184,7 +182,7 @@ VertexDataStreams Face::createVertexData(const CreationParams& params, Bbox& bou
     vertexDesc.normal = true;
     vertexDesc.tangent = true;
     std::vector<unsigned int> texCoordDimensions;
-    for (int texCoordCounter = 0; texCoordCounter < numberOfTexcoords; ++texCoordCounter)
+    for (size_t texCoordCounter = 0; texCoordCounter < numberOfTexcoords; ++texCoordCounter)
     {
         texCoordDimensions.push_back(2);
     }
@@ -243,9 +241,9 @@ VertexDataStreams Face::createVertexData(const CreationParams& params, Bbox& bou
     std::vector<Vector3>& tangents = std::get<2>(dataStreams.m_streams[VertexStreamType::Tangent]);
     size_t uvStart = static_cast<std::underlying_type_t<VertexStreamType>>(VertexStreamType::UVStart);
     Vector2 texcoord;
-    for (int i = 0; i < rows; i++)
+    for (size_t i = 0; i < rows; i++)
     {
-        for (int j = 0; j < columns; j++)
+        for (size_t j = 0; j < columns; j++)
         {
             if (params.fillx)
                 v = Vector3(params.fillvalue, i * heightpart, j * widthpart);
@@ -266,7 +264,7 @@ VertexDataStreams Face::createVertexData(const CreationParams& params, Bbox& bou
             if ((params.height / corridorHeight) > 1 && params.tesselate)
                 vPart = vPart * (params.height / corridorHeight);
             texcoord = Vector2(j * uPart, i * vPart);
-            for (int k = 0; k < numberOfTexcoords; k++)
+            for (size_t k = 0; k < numberOfTexcoords; k++)
             {
                 std::vector<Vector2>& uvStream = std::get<1>(dataStreams.m_streams[static_cast<VertexStreamType>(uvStart + k)]);
                 uvStream.push_back(Vector2(1.0f - texcoord.x(), 1.0f - texcoord.y()));
@@ -280,7 +278,7 @@ VertexDataStreams Face::createVertexData(const CreationParams& params, Bbox& bou
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void Face::createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns)
+void createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns)
 {
     OPTICK_EVENT();
     unsigned int nrcolumns = static_cast<unsigned int>(columns);

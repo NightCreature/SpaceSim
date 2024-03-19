@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <string>
 
 namespace InputActions

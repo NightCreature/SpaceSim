@@ -1,3 +1,4 @@
+
 #include "Graphics/RenderSystem.h"
 
 //#include "Application/BaseApplication.h"
@@ -21,6 +22,7 @@
 #include <Optick.h>
 #include "modelmanager.h"
 #include "DebugHelperFunctions.h"
+#include "UI/Messages.h"
 
 Matrix44 RenderSystem::m_view;
 Matrix44 RenderSystem::m_inverseView;
@@ -277,6 +279,7 @@ void RenderSystem::initialise(Resource* resource)
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(&m_modelManger, &ModelManager::OnMessage));
+    m_feElementManager.RegisterElementDispatchFuncions(m_messageObservers);
 
     m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 1500.001f, 0.001f);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
@@ -626,7 +629,7 @@ void RenderSystem::beginDraw()
     deviceContext->End(m_shadoBeginDrawQuery);
 #endif
     //Do shadowmap update here too to begin with
-    ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+    //ID3D11ShaderResourceView* srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
     //deviceContext->PSSetShaderResources(0, 40, srv);
     //PIXBeginEvent(0, "Shadow Map");
     //m_shadowMapRenderer->renderShadowMap(m_renderResource, m_renderInstances, m_deviceManager, lm.getLight("light_1"));

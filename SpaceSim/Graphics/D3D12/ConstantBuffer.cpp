@@ -1,6 +1,8 @@
 #include "Graphics/D3D12/ConstantBuffer.h"
 
+#ifdef _DEBUG
 static size_t numberOfConstantBuffers = 0;
+#endif
 
 ///-----------------------------------------------------------------------------
 ///! @brief   

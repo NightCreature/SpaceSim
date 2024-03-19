@@ -9,7 +9,9 @@
 #include "Graphics/D3D12/CommandQueue.h"
 #include "Graphics/D3D12/D3D12X.h"
 
+#ifdef _DEBUG
 static size_t ibCounter = 0;
+#endif // DEBUG
 
 //void IndexBuffer::createBuffer( const DeviceManager& deviceManager, unsigned int bufferSize, void* data, bool dynamic )
 //{

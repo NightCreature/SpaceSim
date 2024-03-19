@@ -17,7 +17,7 @@ public:
         m_inputState.push_back(action);
     }
 
-    const float getActionValue(const InputActions::ActionType& action) const
+    float getActionValue(const InputActions::ActionType& action) const
     {
         InputStateMap::const_iterator it = std::find_if(m_inputState.cbegin(), m_inputState.cend(), [&action](const StandardInputAction& standardInput)
         {

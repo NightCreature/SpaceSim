@@ -8,7 +8,7 @@ namespace States
 
 using StateTag = size_t;
 class State;
-typedef State* (*CreateStateFP)();
+typedef State* (*CreateStateFP)(Resource* resource);
 
 inline StateTag CreateUniqueTag()
 {

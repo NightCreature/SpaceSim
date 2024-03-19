@@ -71,8 +71,7 @@ std::vector<std::string> tokeniseString(const std::string& input, const char del
 ///-----------------------------------------------------------------------------
 std::string trim(const std::string_view& input)
 {
-    constexpr char whiteSpaceDelimiters[] = { '\r\n', '\n', '\r', '\t',' ' };
-    bool needsReverseSearch = false;
+    constexpr char whiteSpaceDelimiters[] = { '\r', '\n', '\t',' ' };
     size_t leadingIndex = 0;
     size_t trailingIndex = input.length() - 1;
 
@@ -81,7 +80,6 @@ std::string trim(const std::string_view& input)
     size_t tempTrail = leadingIndex;
     while (trailingIndex != leadingIndex && (leadingIndex != tempLead || trailingIndex != tempTrail))
     {
-        bool foundDelimiter = false;
         tempTrail = trailingIndex;
         tempLead = leadingIndex;
 

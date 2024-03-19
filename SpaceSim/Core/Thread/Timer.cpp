@@ -7,7 +7,9 @@
 ///-----------------------------------------------------------------------------
 PerformanceTimer::PerformanceTimer()
 {
-    LARGE_INTEGER frequency = {0};
+    LARGE_INTEGER frequency;
+    frequency.HighPart = 0;
+    frequency.LowPart = 0;
     QueryPerformanceCounter(&m_now);
     if (QueryPerformanceFrequency(&frequency))
     {

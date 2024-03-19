@@ -35,8 +35,8 @@ public:
 
     void OnMessage(const MessageSystem::Message& msg);
 
-    size_t LoadModel(void* data, CommandList& commandList);
-    size_t AddFace(void* data, CommandList& commandList, Job* currentJob);
+    size_t LoadModel(const void* data, CommandList& commandList);
+    size_t AddFace(const void* data, CommandList& commandList, Job* currentJob);
 
     bool HasRenderResource(size_t resource_id) const;
     void RegisterCreatedModel(CreatedModel model, size_t renderResourceId);

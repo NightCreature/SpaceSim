@@ -4,6 +4,8 @@
 
 #include "StateType.h"
 
+class Resource;
+
 namespace FE
 {
 
@@ -59,10 +61,10 @@ inline const StateType* GetStateTypeForState(const HashString& StateName)
     return registery.m_StateTypes[StateName];
 }
 
-inline State* CreateState(const HashString& StateName)
+inline State* CreateState(const HashString& StateName, Resource* resource)
 {
     auto& registery = GetStateRegistry();
-    return registery.m_idToCreationFp[StateName]();
+    return registery.m_idToCreationFp[StateName](resource);
 }
 
 }

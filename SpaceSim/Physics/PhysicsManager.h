@@ -1,7 +1,11 @@
 #pragma once
 
+#include "Core/Macros/PlatformMacros.h"
+
+#ifndef IS_CLANG //Physx On windows has no Clang compile at the moment
 #include "PxConfig.h"
 #include "PxPhysicsAPI.h"
+#endif
 
 #include <crtdbg.h>
 #include <vector>
@@ -13,6 +17,7 @@ namespace Physics
 class PhysicsObject;
 class PhysicsProperties;
 
+#ifndef IS_CLANG
 class PhysXErrorLogCallback : public physx::PxErrorCallback
 {
 
@@ -37,6 +42,7 @@ public:
         _aligned_free(ptr);
     }
 };
+#endif
 
 class PhysicsManager
 {
@@ -53,12 +59,14 @@ public:
 private:
     Resource* m_resource = nullptr;
 
+#ifndef IS_CLANG
     physx::PxFoundation* m_foundation = nullptr;
     physx::PxPhysics* m_physics = nullptr;
     physx::PxPvd* m_pvd = nullptr;
 #ifndef IS_RELEASE
     physx::PxPvdTransport* m_transport = nullptr;
 #endif
+#endif //IS_CLANG
 
     std::vector<PhysicsObject*> m_worldObjects;//should probably not be a pointer but for now this is ok
     static size_t m_currentFreeId;

@@ -63,7 +63,7 @@ public:
 
     bool Execute(ThreadContext* context) override
     {
-        return m_function. template operator()(context);
+        return m_function.operator()(context);
     }
 
     void Finish(ThreadContext* context) { UNUSEDPARAM(context); }

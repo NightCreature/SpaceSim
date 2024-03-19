@@ -58,6 +58,8 @@ std::string getShaderPrefix(ShaderType type)
         return "cs";
     }
     break;
+    default:
+    break;
     }
 
     return "";

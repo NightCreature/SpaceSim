@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/StringOperations/HashString.h"
-#include "BehaviourType.h"
+#include "UI/Core/Behaviours/Registry/BehaviourType.h"
 
 #include <unordered_map>
 
@@ -17,15 +17,25 @@ struct BehaviourRegistry
     using IdToBehaviourTag = std::unordered_map<HashString, BehaviourTag>;
     using IdToCreationFp = std::unordered_map<HashString, CreateBehaviourFP>;
 
+    //using TypeIds = std::vector<HashString>;
+    //using BehaviourTags = std::vector<BehaviourTag>;
+    //using CreationFps = std::vector<CreateBehaviourFP>;
+
+    //TypeIds m_typeIds;
+    //BehaviourTags m_tags;
+    //CreationFps m_creationFps;
+
     TypesById m_BehaviourTypes;
     IdToBehaviourTag m_idToTag;
     IdToCreationFp m_idToCreationFp;
+
+    size_t currentNewIndex = 0;
 };
 
 inline static BehaviourRegistry theBehaviourRegister;
 inline BehaviourRegistry& GetBehaviourRegistry() { return theBehaviourRegister; }
 
-inline void RegisterBehaviourType(const BehaviourType* type)
+inline void RegisterBehaviourType(BehaviourType* type)
 {
     if (type != nullptr)
     {

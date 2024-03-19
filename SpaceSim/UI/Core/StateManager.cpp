@@ -63,7 +63,7 @@ bool StateManager::Serialise(const std::filesystem::path& filePath)
         }
         if (createStateFp != nullptr)
         {
-            States::State* state = createStateFp();
+            States::State* state = createStateFp(m_resource);
             if (state)
             {
                 if (state->Serialise(stateElement))

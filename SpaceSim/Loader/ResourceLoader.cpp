@@ -27,7 +27,7 @@ void ResourceLoader::initialise(Resource* resource)
     m_commandListManager.Initialise(resource, "ResourceCommandLists");
     m_commandListManager.SetCallbackOnCommandlistFinished([=](size_t index) 
         {    
-            std::scoped_lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             for (auto pair : m_returnMessageDataPerThread[index])
             {
                 SendReturnMsg(pair.first, pair.second);
@@ -72,17 +72,15 @@ void ResourceLoader::dispatchMessage(const MessageSystem::Message & msg)
     const MessageSystem::LoadResourceRequest& crrmsg = static_cast<const MessageSystem::LoadResourceRequest&>(msg);
 
     //Figure out what kind of load request and schedule it to be loader
-    LoadRequest request;
+    LoadRequest request(reinterpret_cast<byte*>(crrmsg.GetImplementationData()), crrmsg.GetImplementationDataSize());
     request.m_resourceType = crrmsg.GetResourceType(); //should probably store load requests by type
     request.m_gameObjectId = crrmsg.GetGameObjectId();
-    request.m_loadData = static_cast<void*>(new char[crrmsg.GetImplementationDataSize()]);
-    memcpy(request.m_loadData, crrmsg.GetImplementationData(), crrmsg.GetImplementationDataSize());
 
 #ifdef _DEBUG
-    request.m_sourceInfo = SourceInfo(msg.m_sourceInfo.getSourceFileName().c_str(), msg.m_sourceInfo.getSourceFileLineNumber());
+    //request.m_sourceInfo = SourceInfo(msg.m_sourceInfo.getSourceFileName().c_str(), msg.m_sourceInfo.getSourceFileLineNumber());
 #endif
 
-    AddLoadRequest(request);
+    AddLoadRequest(std::move(request));
 }
 
 ///-----------------------------------------------------------------------------
@@ -110,7 +108,7 @@ void ResourceLoader::ReturnCommandListForThreadIndex(size_t threadIndex)
 ///-----------------------------------------------------------------------------
 void ResourceLoader::AddedReturnMessageDataForThreadIndex(size_t threadIndex, size_t gameObjectId, size_t resourceHandle)
 {
-    std::scoped_lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     m_returnMessageDataPerThread[threadIndex].push_back(std::make_pair(gameObjectId, resourceHandle));
 }
 
@@ -120,7 +118,7 @@ void ResourceLoader::AddedReturnMessageDataForThreadIndex(size_t threadIndex, si
 ///-----------------------------------------------------------------------------
 void ResourceLoader::CallbackCommandListFinished(size_t threadIndex)
 {
-    std::scoped_lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     for (auto pair : m_returnMessageDataPerThread[threadIndex])
     {
         SendReturnMsg(pair.first, pair.second);
@@ -150,23 +148,27 @@ void ResourceLoader::SendReturnMsg(size_t gameObjectId, size_t resourceHandle)
 ///! @brief   Create different load jobs per type
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ResourceLoader::AddLoadRequest(const LoadRequest& request)
+void ResourceLoader::AddLoadRequest(LoadRequest&& request)
 {
     // These jobs will have to wait until the commandlist they have put there commands in is done on the GPU before sending messages back to the update side
     ResourceLoadJob* job = nullptr;
     switch (request.m_resourceType)
     {
     case "Face::CreationParams"_hash:
-        job = new FaceJob(request.m_gameObjectId, request.m_loadData, this);
+        job = new FaceJob(std::move(request), this);
         break;
     case "LOAD_TEXTURE"_hash:
     {
-        job = new LoadTextureJob((char*)(request.m_loadData), this);
-        delete request.m_loadData;
+        job = new LoadTextureJob(std::move(request), this);
     }
     break;
     case "LoadModelResource"_hash:
-        job = new LoadModelJob(request.m_gameObjectId, request.m_loadData, this);
+        job = new LoadModelJob(std::move(request), this);
+        break;
+    case "LoadTextureListRequest"_hash:
+    {
+        job = new LoadTextureListJob(std::move(request), this);
+    }
         break;
     default:
         break;

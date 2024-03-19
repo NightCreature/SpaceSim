@@ -1,4 +1,4 @@
-#include "profiler.h"
+#include "Profiler.h"
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 

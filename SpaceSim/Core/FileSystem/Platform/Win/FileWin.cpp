@@ -141,14 +141,12 @@ void VFS::File::Write(const byte* data, size_t offset, size_t length)
     {
         void* dataPtr = static_cast<void*>(const_cast<byte*>(data));
         size_t amountToWrite = length;
-        size_t counter = 0;
         DWORD numberOfBytesWritten = 0;
         while (length >= std::numeric_limits<unsigned long>::max())
         {
             //size_t fileOffset = offset + std::numeric_limits<unsigned long>::max() * counter;
             platformData->m_overlapped.Offset = static_cast<unsigned long>(offset);
             platformData->m_overlapped.OffsetHigh = static_cast<unsigned long>(offset >> 32);
-            ++counter;
 
             numberOfBytesWritten = 0;
             if (!WriteFile(platformData->m_fileHandle, static_cast<void*>(dataPtr), std::numeric_limits<unsigned long>::max(), &numberOfBytesWritten, &(platformData->m_overlapped)))
@@ -221,7 +219,7 @@ byte* VFS::File::Read(byte*& data, size_t amount)
         return nullptr; //nothing to read or nowhere to move the data to
     }
 
-    LARGE_INTEGER  fileSize = { 0 };
+    LARGE_INTEGER  fileSize = { };
     if (!GetFileSizeEx(platformData->m_fileHandle, &fileSize))
     {
         MSG_TRACE_CHANNEL("FILESYSTEM", "Couldn't get file size for file: %s for reason: %s", m_name.string().c_str(), getLastErrorMessage(GetLastError()));

@@ -96,6 +96,7 @@ private:
 
 //#ifdef _DEBUG
     ID3D12Debug* m_debugInterface = nullptr;
+    ID3D12Debug1* m_debug1Interface = nullptr;
 //#endif
 
     size_t m_swapChainCommandQueueIndex = 0;

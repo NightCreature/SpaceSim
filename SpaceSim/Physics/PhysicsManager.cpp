@@ -14,8 +14,10 @@ namespace Physics
 {
 
 //Probably want to override these specially the error callback
+#ifndef IS_CLANG
 static PhysXAllocatorCallback physxAllocatorCallback;
 static PhysXErrorLogCallback physxErrorCallback;
+#endif
 
 size_t PhysicsManager::m_currentFreeId = 0;
 
@@ -28,6 +30,7 @@ void PhysicsManager::Initialise(Resource* resource)
     m_resource = resource;
     //Init PhysX here
 
+#ifndef IS_CLANG
     m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, physxAllocatorCallback, physxErrorCallback);
     if (!m_foundation)
     {
@@ -53,6 +56,8 @@ void PhysicsManager::Initialise(Resource* resource)
     {
         MSG_TRACE_CHANNEL("PhysicsManager", "Failed to create PhysX physics object");
     }
+
+#endif //IS_CLANG
 }
 
 ///-----------------------------------------------------------------------------
@@ -61,6 +66,7 @@ void PhysicsManager::Initialise(Resource* resource)
 ///-----------------------------------------------------------------------------
 void PhysicsManager::Cleanup()
 {
+#ifndef IS_CLANG
     m_physics->release();
 #ifndef IS_RELEASE
     m_pvd->disconnect();
@@ -70,6 +76,7 @@ void PhysicsManager::Cleanup()
     m_pvd->release();
 #endif
     m_foundation->release();
+#endif //IS_CLANG
 }
 
 ///-----------------------------------------------------------------------------
@@ -105,13 +112,14 @@ void PhysicsManager::CreateAndAddNewObject(size_t& id, const PhysicsProperties& 
 //}
 
 }
-
+#ifndef IS_CLANG
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
 void PhysXErrorLogCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file, int line)
 {
+
     static std::map<physx::PxErrorCode::Enum, TraceSeverity> physxToTraceSeverity =
     {
         { physx::PxErrorCode::eNO_ERROR, TraceSeverity::ELOG },
@@ -124,8 +132,12 @@ void PhysXErrorLogCallback::reportError(physx::PxErrorCode::Enum code, const cha
         { physx::PxErrorCode::eABORT, TraceSeverity::EWARN }
     };
 
-
-    debugOutput(physxToTraceSeverity[code], "PhysX", file, line, "%s", message);
+    UNUSEDPARAM(file);
+    UNUSEDPARAM(line);
+    UNUSEDPARAM(message);
+    UNUSEDPARAM(code);
+    //debugOutput(physxToTraceSeverity[code], "PhysX", file, line, "%s", message);
 }
+#endif //IS_CLANG
 
 }

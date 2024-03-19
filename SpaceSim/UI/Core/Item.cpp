@@ -28,7 +28,6 @@ bool Item::Serialise(const tinyxml2::XMLElement* element)
     }
 
     //Deserialise the behaviours here
-    auto& behaviourRegistry = Behaviours::GetBehaviourRegistry();
     for (const tinyxml2::XMLElement* behaviourElement = element->FirstChildElement(); behaviourElement != nullptr; behaviourElement = behaviourElement->NextSiblingElement())
     {
         Behaviours::CreateBehaviourFP createFunction = Behaviours::GetBehaviourCreate(behaviourElement->Value());
@@ -71,13 +70,13 @@ bool Item::HandleInput(const InputState& state)
 
 const FE::Transition* Item::GetTransitionLink()
 {
-    Transition* transition = nullptr;
+    const Transition* transition = nullptr;
     for (auto* behaviour : m_behaviours)
     {
         const auto* link = behaviour->GetTransitionLink();
         if (link != nullptr)
         {
-            transition; //We could get more than one sadly
+            transition = link; //We could get more than one sadly
         }
     }
 

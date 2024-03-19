@@ -31,7 +31,7 @@ public:
     Material::TextureSlotMapping deserialise( DeviceManager& deviceManager, const tinyxml2::XMLElement* node );
 	void setMipMapSettings(const bool canautomipmap, const bool generatemipmaps);
 
-	TextureInfo& AddOrCreateTexture(std::string textureName);
+	TextureInfo AddOrCreateTexture(std::string textureName);
 	bool find(const std::string& filename) const;
 	void addLoad(DeviceManager& deviceManager, const std::string& filename);
 	const TextureInfo* getTexture(const std::string& filename) const;

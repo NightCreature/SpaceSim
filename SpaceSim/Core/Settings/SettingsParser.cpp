@@ -72,7 +72,7 @@ tinyxml2::XMLNode* SettingsParser::skipComments( tinyxml2::XMLNode* node )
 void SettingsParser::readStringValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
-    for (children; children; children = children->NextSiblingElement())
+    for (; children != nullptr; children = children->NextSiblingElement())
     {
         std::string settingName = std::string(children->Value());
         std::string text = children->GetText();
@@ -88,7 +88,7 @@ void SettingsParser::readStringValues( tinyxml2::XMLElement* element )
 void SettingsParser::readBooleanValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
-    for (children; children; children = children->NextSiblingElement())
+    for (; children; children = children->NextSiblingElement())
     {
         std::string settingName = std::string(children->Value());
         std::string textValue = children->GetText();
@@ -109,7 +109,7 @@ void SettingsParser::readBooleanValues( tinyxml2::XMLElement* element )
 void SettingsParser::readintegerValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
-    for (children; children; children = children->NextSiblingElement())
+    for (; children; children = children->NextSiblingElement())
     {
         std::string settingName = std::string(children->Value());
         std::string textValue = children->GetText();
@@ -126,7 +126,7 @@ void SettingsParser::readintegerValues( tinyxml2::XMLElement* element )
 void SettingsParser::readUnsignedintegerValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
-    for (children; children; children = children->NextSiblingElement())
+    for (; children; children = children->NextSiblingElement())
     {
         std::string settingName = std::string(children->Value());
         std::string textValue = children->GetText();
@@ -143,7 +143,7 @@ void SettingsParser::readUnsignedintegerValues( tinyxml2::XMLElement* element )
 void SettingsParser::readfloatValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
-    for (children; children; children = children->NextSiblingElement())
+    for (; children; children = children->NextSiblingElement())
     {
         std::string settingName = std::string(children->Value());
         std::string textValue = children->GetText();
@@ -160,7 +160,7 @@ void SettingsParser::readfloatValues( tinyxml2::XMLElement* element )
 void SettingsParser::readDoubleValues( tinyxml2::XMLElement* element )
 {
     tinyxml2::XMLElement* children = element->FirstChildElement();
-    for (children; children; children = children->NextSiblingElement())
+    for (; children; children = children->NextSiblingElement())
     {
         std::string settingName = std::string(children->Value());
         std::string textValue = children->GetText();
@@ -177,7 +177,7 @@ void SettingsParser::readDoubleValues( tinyxml2::XMLElement* element )
 tinyxml2::XMLElement* SettingsParser::readDataSections( tinyxml2::XMLElement* element, tinyxml2::XMLNode* node )
 {
     element = node->ToElement();
-    for( element; element; element = element->NextSiblingElement())
+    for( ; element; element = element->NextSiblingElement())
     {
         if (strICmp(element->Value(), "string"))
         {

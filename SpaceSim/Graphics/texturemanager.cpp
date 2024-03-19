@@ -9,6 +9,7 @@
 #include "assert.h"
 #include "Loader/ResourceLoader.h"
 #include "Loader/ResourceLoadJobs.h"
+#include <memory>
 
 TextureManager::~TextureManager()
 {
@@ -99,8 +100,8 @@ long TextureManager::getTexMemUsed() const
 ///-----------------------------------------------------------------------------
 void TextureManager::cleanup()
 {
-    static int numberOfTimesCalled = 0;
-    ++numberOfTimesCalled;
+    //static int numberOfTimesCalled = 0;
+    //++numberOfTimesCalled;
     TextureMap::iterator tmit = m_textures.begin();
     while (tmit != m_textures.end())
     { 
@@ -184,17 +185,14 @@ bool TextureManager::createSamplerStates(const DeviceManager& deviceManager)
 ///-------------------------------------------------------------------------
 Material::TextureSlotMapping TextureManager::deserialise( DeviceManager& deviceManager, const tinyxml2::XMLElement* node )
 {
-    (void*)node;
-    (void*)&deviceManager;
-    const char* fileName = node->Attribute("file_name");
-    if (fileName)
+    UNUSEDPARAM(deviceManager);
+    std::string fileName = node->Attribute("file_name");
+    if (!fileName.empty())
     {
-        LoadRequest loadRequest;
+        LoadRequest loadRequest( fileName );
         loadRequest.m_gameObjectId = 0;
         loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-        loadRequest.m_loadData = static_cast<void*>(new char[256]);
-        memcpy(loadRequest.m_loadData, fileName, 256);
-        RenderResourceHelper(m_resource).getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
+        RenderResourceHelper(m_resource).getWriteableResource().getResourceLoader().AddLoadRequest(std::move(loadRequest));
 
         Material::TextureSlotMapping::TextureSlot textureSlot = Material::TextureSlotMapping::Diffuse0;
         const tinyxml2::XMLAttribute* attribute = node->FindAttribute("texture_slot");
@@ -226,11 +224,9 @@ void TextureManager::addTexture( const std::string& textureName, const Texture12
     info->m_loadRequested = false;
 }
 
-TextureInfo& TextureManager::AddOrCreateTexture(std::string textureName)
+TextureInfo TextureManager::AddOrCreateTexture(std::string textureName)
 {
     OPTICK_EVENT();
-
-    //MSG_TRACE_CHANNEL("TextureManager","Adding texture: %s", textureName.c_str());
 
     std::scoped_lock<std::mutex> lock(m_mutex);
     auto textureNameHash = hashString(textureName);

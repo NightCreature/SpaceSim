@@ -60,7 +60,7 @@ public:
 	///Defines the width(x), height(y) and length(z) of the bbox
 	const Vector3 size() const {return m_max - m_min;}
 	///Defines the radius vector of the bbox
-	const float radius() const {return size().length() * 0.5f;}
+	float radius() const {return size().length() * 0.5f;}
 
 	const Vector3 getMin() const {return m_min;}
 	const Vector3 getMax() const {return m_max;}

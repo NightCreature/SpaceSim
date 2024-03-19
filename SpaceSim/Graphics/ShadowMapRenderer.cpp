@@ -31,15 +31,15 @@
 #include "ScreenGrab.h"
 #endif
 
-static const size_t shadowMapTechniqueHash = "shadow_map"_hash;
+//static const size_t shadowMapTechniqueHash = "shadow_map"_hash;
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
 ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendState* alphaBlendState, ID3D11BlendState* blendState, unsigned int shadowMapWidhtHeight /*= 1024*/) :
-    m_blendState(blendState),
-    m_alphaBlendState(alphaBlendState)
+    m_alphaBlendState(alphaBlendState),
+    m_blendState(blendState)
  {
      m_shadowMapWidthHeight = shadowMapWidhtHeight;
      m_shadowMapWidthHeight = 2048;

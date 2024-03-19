@@ -12,8 +12,8 @@
 
 Material::Material() :
 m_materialCB(),
-m_alphaBlend(false),
-m_techniqueHash(hashString("default"))
+m_techniqueHash(hashString("default")),
+m_alphaBlend(false)
 {
 }
 

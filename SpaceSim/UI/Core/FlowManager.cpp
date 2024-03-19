@@ -1,22 +1,26 @@
 #include "FlowManager.h"
 
 #include "Input/InputState.h"
+#include "Input/InputSystem.h"
 #include "UI/Core/States/State.h"
 #include "UI/Transistion.h"
 #include "UI/Core/StateManager.h"
 #include "Core/Resource/GameResource.h"
+#include <fstream>
+
 
 namespace FE
 {
 
 constexpr std::string_view flowTag = "flow";
-constexpr std::string_view nodeTag = "node";
+//constexpr std::string_view nodeTag = "node";
 constexpr std::string_view idTag = "id";
 constexpr std::string_view stateTag = "state";
 constexpr std::string_view transitionTag = "transition";
 constexpr std::string_view targetTag = "target";
 constexpr std::string_view ChannelName = "FlowManager";
-constexpr HashString InvalidId;
+constexpr size_t InvalidId = static_cast<size_t>(-1);
+constexpr HashString InvalidHashId;
 
 void FlowManager::Initialise(Resource* resource, StateManager* stateManager)
 {
@@ -75,7 +79,7 @@ bool FlowManager::Serialise(const std::filesystem::path& filePath)
         //Read transition children
         for (tinyxml2::XMLElement* transitionElement = nodeElement->FirstChildElement(); transitionElement != nullptr; transitionElement = transitionElement->NextSiblingElement())
         {
-            if (transitionElement->Name() == transitionTag.data())
+            if (transitionElement->Name() == transitionTag)
             {
                 HashString transitionId;
                 const char* idAttributeValue = transitionElement->Attribute(idTag.data());
@@ -121,6 +125,44 @@ void FlowManager::Update(float deltaTime, const InputState& input)
         //Ask the active state if it does a transition and find the next state to activate, this might be a fly through state so we run through a bunch of them potentially
         FindNextUpdatingState(*m_activeState);
     }
+
+    InputActions::ActionType printFlow;
+    InputSystem::getInputActionFromName("printflow"_hash, printFlow);
+    if (input.getActionValue(printFlow))
+    {
+        PrintFlowVisualisation("flow.dot");
+    }
+}
+
+//Best to call this in debug other wise the names might be empty
+void FlowManager::PrintFlowVisualisation(const std::filesystem::path& fileName)
+{
+    std::filesystem::path fileNameToUse = fileName;
+    if (!fileName.is_absolute())
+    {
+        fileNameToUse = m_resource->m_paths->getTempPath() / fileName;
+    }
+
+    MSG_TRACE_CHANNEL(ChannelName.data(), "Print flow map to file: %s", fileNameToUse.string().c_str());
+
+    std::ofstream str(fileNameToUse.string().c_str(), std::ios::out | std::ios::trunc);
+    
+    str << "digraph\n {\n";
+
+    //Creates a dot file we can then pull through graph vizz to get a visual graph
+    for (const auto& hashNodePair : m_flowMap)
+    {
+        str << hashNodePair.first.getString() << "\n";
+        for (const auto& transitionPair : hashNodePair.second.m_transitions)
+        {
+            const HashString& transitionName = transitionPair.first;
+            const HashString& transitionTarget = transitionPair.second;
+            str << hashNodePair.first.getString() << "->" << transitionTarget.getString() << "[label = " << transitionName.getString() << "]; \n";
+        }
+    }
+    str << "}\n";
+
+    str.close();
 }
 
 void FlowManager::FindNextUpdatingState(const FlowNode& state)
@@ -179,7 +221,7 @@ const HashString& FlowManager::FlowNode::GetTransitionForId(const HashString& id
         return iterator->second;
     }
 
-    return InvalidId;
+    return InvalidHashId;
 }
 
 }

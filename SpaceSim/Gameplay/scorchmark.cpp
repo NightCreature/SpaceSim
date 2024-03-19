@@ -73,8 +73,8 @@ void ScorchMark::deserialise( const tinyxml2::XMLElement* node )
     //{
     //    tm.addLoad(textureString->getData());
     //}
-
-    (void*)node; //Should implement this function
+    UNUSEDPARAM(node);
+    //(void*)node; //Should implement this function
 }
 
 ///-------------------------------------------------------------------------

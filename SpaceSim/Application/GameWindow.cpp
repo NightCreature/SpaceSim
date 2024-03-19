@@ -107,7 +107,7 @@ void GameWindow::update( float elapsedTime, double time )
 {
     calculateFPS(elapsedTime);
     
-    time = 0.0;
+    UNUSEDPARAM(time);
 }
 
 ///-----------------------------------------------------------------------------
@@ -165,7 +165,7 @@ void GameWindow::messageHandler( HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         PostQuitMessage(0);
     }
 
-    lParam = 0;
+    UNUSEDPARAM(lParam);
     UNUSEDPARAM(hwnd);
     UNUSEDPARAM(wParam);
 }

@@ -192,15 +192,15 @@ bool TextBlockInfo::ProcessText(Resource* resource)
     float maxWidth = m_textBlockSize.w() - m_textBlockSize.y();
     float lineWidth = 0.f;
 	float sizeScale = m_size / (float)m_font->getFontInfo().m_fontSize;
-    char* lastChar = nullptr;
-    int lineNumber = 1;
-    int wordNumber = 1;
+    //char* lastChar = nullptr;
+    size_t lineNumber = 1;
+    size_t wordNumber = 1;
     float wordWidth = 0.f;
     bool firstCharOfLine = true;
     
     const CommonFontInfo& commonFontInfo = m_font->getCommonFontInfo();
 
-    for (int i = 0; i < m_text.size(); i++)
+    for (size_t i = 0; i < m_text.size(); i++)
     {
         const Glyph& glyph = m_font->getGlyph(m_text[i]);
         float xOffset = glyph.m_xOffset * sizeScale;
@@ -241,9 +241,9 @@ bool TextBlockInfo::ProcessText(Resource* resource)
             {
                 // Next character extends past text box width
                 // We have to move the last word down one line
-                char* newLineLastChar = nullptr;
+                //char* newLineLastChar = nullptr;
                 lineWidth = 0.f;
-                for (int j = 0; j < m_glyphQuads.size(); j++)
+                for (size_t j = 0; j < m_glyphQuads.size(); j++)
                 {
                     const Glyph& glyphToReset = m_font->getGlyph(static_cast<short>(m_glyphQuads[j].m_character));
                     if (m_alignment == Align::left)
@@ -319,14 +319,14 @@ bool TextBlockInfo::ProcessText(Resource* resource)
                             }
                         }
                     }
-                    newLineLastChar = &(m_glyphQuads[j].m_character);
+                    //newLineLastChar = &(m_glyphQuads[j].m_character);
                 }
 
                 // Make post-newline justifications
                 if (m_alignment == Align::center || m_alignment == Align::right)
                 {
                     // Justify the new line
-                    for (int k = 0; k < m_glyphQuads.size(); k++)
+                    for (size_t k = 0; k < m_glyphQuads.size(); k++)
                     {
                         if (m_glyphQuads[k].m_lineNumber == lineNumber + 1)
                         {
@@ -336,7 +336,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
                     x -= offset;
 
                     // Rejustify the line it was moved from
-                    for (int k = 0; k < m_glyphQuads.size(); k++)
+                    for (size_t k = 0; k < m_glyphQuads.size(); k++)
                     {
                         if (m_glyphQuads[k].m_lineNumber == lineNumber)
                         {
@@ -457,7 +457,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 
         x += xAdvance;
         lineWidth += xAdvance;
-        lastChar = &(m_text[i]);
+        //lastChar = &(m_text[i]);
 
         // Rejustify m_text
         if (m_alignment == Align::center)
@@ -469,7 +469,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
             {
                 offset += kernAmount * 0.5f;
             }
-            for (int j = 0; j < m_glyphQuads.size(); j++)
+            for (size_t j = 0; j < m_glyphQuads.size(); j++)
             {
                 if (m_glyphQuads[j].m_lineNumber == lineNumber)
                 {
@@ -487,7 +487,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
             {
                 offset += kernAmount;
             }
-            for (int j = 0; j < m_glyphQuads.size(); j++)
+            for (size_t j = 0; j < m_glyphQuads.size(); j++)
             {
                 if (m_glyphQuads[j].m_lineNumber == lineNumber)
                 {

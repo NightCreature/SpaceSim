@@ -15,7 +15,7 @@ void NodeGraph::PinDefinition::Deserialise(const tinyxml2::XMLElement& pinDefini
         case "type"_hash:
         {
             auto typeValue = attribute->IntValue();
-            if (0 < typeValue && typeValue < static_cast<unsigned int>(Type::Count))
+            if (0 < typeValue && typeValue < static_cast<int>(Type::Count))
             {
                 m_type = static_cast<Type>(typeValue);
             }

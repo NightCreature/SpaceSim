@@ -29,7 +29,11 @@ public:
     virtual size_t GetSize() const = 0;
 
     virtual CreateBehaviourFP GetCreateFP() const = 0;
+
+    static size_t GetStaticTypeIndex() { return m_staticTypeIndex; }
+    static size_t SetStaticTypeIndex(size_t staticTypeIndex) { m_staticTypeIndex = staticTypeIndex; }
 protected:
+    static size_t m_staticTypeIndex;
 };
 
 template<class Behaviour>

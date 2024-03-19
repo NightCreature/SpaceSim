@@ -14,7 +14,9 @@
 #include "Graphics/D3D12/CommandQueue.h"
 #include "Core/Types/Types.h"
 
+#ifdef _DEBUG
 static size_t vbCounter = 0;
+#endif
 
 ///-----------------------------------------------------------------------------
 ///! @brief   

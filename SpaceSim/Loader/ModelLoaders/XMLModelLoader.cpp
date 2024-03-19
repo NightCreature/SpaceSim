@@ -57,7 +57,7 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
         }
         else if (std::string_view(attribute->Name()) == "nrTextureCoords")
         {
-            for (size_t index = 0; index < attribute->IntValue(); ++index)
+            for (size_t index = 0; index < static_cast<size_t>(attribute->IntValue()); ++index)
             {
                 descriptor.textureCoordinateDimensions.push_back(2);
             }

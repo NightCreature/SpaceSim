@@ -36,6 +36,7 @@
 #include "D3D12/CommandQueue.h"
 #include "Graphics/RenderInterface.h"
 #include "Graphics/D3D12/ConstantBufferManager.h"
+#include "UI/Rendering/ElementManager.h"
 
 class RenderInstance;
 namespace MessageSystem
@@ -119,6 +120,7 @@ private:
     ResourceLoader m_resourceLoader;
     JobQueue m_jobQueue;
     PerFrameDataStorage m_perFrameDataStorage;
+    FE::Rendering::ElementManager m_feElementManager;
     std::string m_appName;
     std::string m_windowName;
 

@@ -3,6 +3,7 @@
 #include "Core/tinyxml2.h"
 
 #include <string>
+#include "Core/Types/TypeHelpers.h"
 
 namespace FE
 {
@@ -25,10 +26,13 @@ void StaticText::Serialise(const tinyxml2::XMLElement* element)
 
 void StaticText::Update(float deltaT, const InputState& input)
 {
+    UNUSEDPARAM(deltaT);
+    UNUSEDPARAM(input);
 }
 
 bool StaticText::HandleInput(const InputState& state)
 {
+    UNUSEDPARAM(state);
     return false;
 }
 

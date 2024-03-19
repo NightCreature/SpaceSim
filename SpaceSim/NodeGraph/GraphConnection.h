@@ -10,6 +10,7 @@ class PinBase;
 class GraphDataChannel
 {
 public:
+    GraphDataChannel() = default;
 
     template<class T>
     void SetValue(const T& value)
@@ -29,7 +30,7 @@ private:
 class GraphConnection
 {
 public:
-    GraphConnection(const PinBase* lhs, const PinBase* rhs) : m_lhs(lhs), m_rhs(rhs) {}
+    GraphConnection(const PinBase* lhs, const PinBase* rhs) : m_lhs(lhs), m_rhs(rhs), m_data({}) {}
     ~GraphConnection() = default;
 
     template<class T>

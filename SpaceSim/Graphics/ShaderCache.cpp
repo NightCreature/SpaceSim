@@ -77,7 +77,7 @@ void ShaderCache::cleanup()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eVertexShader, element, m_vertexShaders);
@@ -86,7 +86,7 @@ const size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, c
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eHullShader, element, m_hullShaders);
@@ -95,7 +95,7 @@ const size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, con
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eDomainShader, element, m_domainShaders);
@@ -104,7 +104,7 @@ const size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, c
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eGeometryShader, element, m_geometryShaders);
@@ -113,7 +113,7 @@ const size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element,
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::ePixelShader, element, m_pixelShaders);
@@ -122,7 +122,7 @@ const size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, co
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const size_t  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
+size_t  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
 {
     UNUSEDPARAM(deviceManager);
     return GetShader(ShaderType::eComputeShader, element, m_computeShaders);
@@ -257,7 +257,7 @@ void ShaderCache::DumpLoadedShaderNames()
 }
 #endif
 
-const size_t ShaderCache::GetShader(ShaderType type, const tinyxml2::XMLElement* element, ShaderMap& shaderMap)
+size_t ShaderCache::GetShader(ShaderType type, const tinyxml2::XMLElement* element, ShaderMap& shaderMap)
 {
     Shader shader;
     shader.deserialise(element, type);

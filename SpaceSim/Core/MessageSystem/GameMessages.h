@@ -4,6 +4,7 @@
 #include "Core/MessageSystem/Messages.h"
 
 #include "Math/matrix44.h"
+#include <source_location>
 
 namespace MessageSystem
 {
@@ -91,7 +92,7 @@ public:
 
 #ifdef _DEBUG
 #define DECLAREANDCREATERESOURCEMESSAGE(name, type) auto name = CREATERENDERRESOURCEMESSAGE(type); \
-name.m_sourceInfo = SourceInfo(__FILE__, __LINE__);
+name.m_sourceInfo = SourceInfo();
 #else
 #define DECLAREANDCREATERESOURCEMESSAGE(name, type) auto name = CREATERENDERRESOURCEMESSAGE(type);
 #endif

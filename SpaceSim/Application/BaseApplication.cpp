@@ -54,8 +54,8 @@ constexpr size_t numOfJobsToSpawn = 16;
 Application::Application():
 m_jobSystem(numOfJobsToSpawn), //Spawn the job queue with 8 threads
 m_gameResource(nullptr),
-m_previousRenderInstanceListSize(1),
-m_fileSystem(m_paths)
+m_fileSystem(m_paths),
+m_previousRenderInstanceListSize(1)
 {
     m_controllerConnected = false;
     m_useController = false;
@@ -89,18 +89,18 @@ bool Application::initialise()
     bool returnValue = true;
 
 
-    int windowWidth = 1280;
-    int windowHeight = 720;
-    const ISetting<int>* widthSetting = m_settingsManager.getSetting<int>("WindowWidth");
-    if (widthSetting)
-    {
-        windowWidth = widthSetting->getData();     
-    }
-    const ISetting<int>* heightSetting = m_settingsManager.getSetting<int>("WindowHeight");
-    if (heightSetting)
-    {
-        windowHeight = heightSetting->getData();     
-    }
+    //int windowWidth = 1280;
+    //int windowHeight = 720;
+    //const ISetting<int>* widthSetting = m_settingsManager.getSetting<int>("WindowWidth");
+    //if (widthSetting)
+    //{
+    //    windowWidth = widthSetting->getData();     
+    //}
+    //const ISetting<int>* heightSetting = m_settingsManager.getSetting<int>("WindowHeight");
+    //if (heightSetting)
+    //{
+    //    windowHeight = heightSetting->getData();     
+    //}
 
     SettingsParser settings(&m_settingsManager);
     auto settingsPath = m_paths.getSettingsPath() / "settings.cfg";

@@ -42,7 +42,7 @@ public:
     void read(std::istream& in);
     void write(std::ostream& out) const;
 
-    const float getEqualPrecision() const { return EQUALPRECISION3;}
+    float getEqualPrecision() const { return EQUALPRECISION3;}
     
     static Vector3 zero() {return Vector3(0.0f, 0.0f, 0.0f);}
     static Vector3 xAxis() {return Vector3(1.0f, 0.0f, 0.0f);}

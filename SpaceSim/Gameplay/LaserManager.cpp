@@ -6,7 +6,7 @@
 
 #include "Core/Profiler/ProfilerMacros.h"
 
-const size_t maxNumberRenderInstances = 1024;
+//const size_t maxNumberRenderInstances = 1024;
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -55,6 +55,10 @@ void LaserManager::initialise(Resource* resource)
 ///-------------------------------------------------------------------------
 void LaserManager::addInstance( const Vector3& position, const Vector3& direction, const ShaderInstance& shaderInstance, bool player_laser /*= false*/)
 {
+    UNUSEDPARAM(position);
+    UNUSEDPARAM(direction);
+    UNUSEDPARAM(shaderInstance);
+    UNUSEDPARAM(player_laser);
     //probably need to rotate the laser to the requested direction currently its standing straight up from 0,0,0 along the y-axis
     //if (player_laser)
     //{
@@ -87,6 +91,9 @@ void LaserManager::addInstance( const Vector3& position, const Vector3& directio
 ///-------------------------------------------------------------------------
 void LaserManager::update(float time, const Matrix44& view, const Matrix44& projection)
 {
+    UNUSEDPARAM(time);
+    UNUSEDPARAM(view);
+    UNUSEDPARAM(projection);
 //    PROFILE_EVENT("LaserManager::update", PaleGreen)
 //
 //    //for (RenderInstanceQueue::iterator it = m_renderInstances.begin(); it != m_renderInstances.end(); ++it)
