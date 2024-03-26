@@ -16,6 +16,8 @@ namespace Rendering
 class Element
 {
 public:
+    virtual ~Element() {}
+
     virtual void Deserialise(tinyxml2::XMLElement& element) = 0;
     virtual void Update() = 0;
     virtual void PopulateCommandList(Resource* resource, CommandList& list) = 0;

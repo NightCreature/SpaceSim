@@ -23,9 +23,8 @@
 void ResourceLoader::initialise(Resource* resource)
 {
     m_resource = resource;
-
     m_commandListManager.Initialise(resource, "ResourceCommandLists");
-    m_commandListManager.SetCallbackOnCommandlistFinished([=](size_t index) 
+    m_commandListManager.SetCallbackOnCommandlistFinished([this](size_t index) 
         {    
             std::scoped_lock lock(m_mutex);
             for (auto pair : m_returnMessageDataPerThread[index])

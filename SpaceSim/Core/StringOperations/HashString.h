@@ -29,7 +29,7 @@ public:
 #ifdef _DEBUG
         return m_string;
 #else
-        return ""; //should print the 0xm_hash but its a string view sadly
+        return emptyString; //should print the 0xm_hash but its a string view sadly
 #endif
     }
 
@@ -43,6 +43,8 @@ private:
     std::string m_string;
 #endif
     size_t m_hash = static_cast<size_t>(-1);
+
+    static constexpr std::string_view emptyString = "";
 };
 
 // Specialization so we can use this type as a hash key in unordered map

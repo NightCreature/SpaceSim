@@ -125,8 +125,8 @@ bool Navigation::HandleInput(const InputState& state)
         }
     }
 
-    m_activeItem[0] = x;
-    m_activeItem[1] = y;
+    m_activeItem[0] = static_cast<int>(x);
+    m_activeItem[1] = static_cast<int>(y);
 
     bool retval = false;
     if (m_navItems[x][y].m_item != nullptr)

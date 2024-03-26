@@ -113,7 +113,7 @@ bool Application::initialise()
 
     //Settings are loaded now stream them back out to an archive file to see if we can read that back in
     m_settingsManager.SaveSettings(m_paths.getSettingsPath() / "settings.archive");
-    //m_settingsManager.LoadSettings(m_paths.getSettingsPath() / "settings.archive");
+//    m_settingsManager.LoadSettings(m_paths.getSettingsPath() / "settings.archive");
 
     //m_uiManager.initialise();
     m_renderSystem.initialise(m_gameResource);

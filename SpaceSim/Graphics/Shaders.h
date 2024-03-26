@@ -40,7 +40,7 @@ class Shader
 {
 public:
     Shader() = default;
-    void cleanup() { if (m_shaderBlob != nullptr) { m_shaderBlob->Release(); } }
+    void cleanup() { if (m_shaderBlob != nullptr) { m_shaderBlob->Release(); m_shaderBlob = nullptr; } }
 
     void deserialise(const tinyxml2::XMLElement* element, ShaderType defaultType);
 

@@ -20,7 +20,11 @@ constexpr std::string_view transitionTag = "transition";
 constexpr std::string_view targetTag = "target";
 constexpr std::string_view ChannelName = "FlowManager";
 constexpr size_t InvalidId = static_cast<size_t>(-1);
+#ifdef _DEBUG
+const HashString InvalidHashId;
+#else
 constexpr HashString InvalidHashId;
+#endif
 
 void FlowManager::Initialise(Resource* resource, StateManager* stateManager)
 {
