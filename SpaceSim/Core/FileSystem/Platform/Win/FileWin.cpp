@@ -175,7 +175,7 @@ void VFS::File::Write(const byte* data, size_t offset, size_t length)
 ///! @brief This reads the full file buffer, this function allocates a buffer on the provided pointer
 ///! @remark if this function fails it returns a nullptr, otherwise it returns the pointer to the copied data, the data input is the buffer the data will be written to
 ///-----------------------------------------------------------------------------
-byte* VFS::File::Read(byte*& data)
+byte* VFS::File::Read(byte*& data) const
 {
     PlatformSpecficFileDataWin* platformData = static_cast<PlatformSpecficFileDataWin*>(m_platformSpecificData);
     if (m_platformSpecificData == nullptr || platformData->m_fileHandle == INVALID_HANDLE_VALUE)
@@ -211,7 +211,7 @@ byte* VFS::File::Read(byte*& data)
 ///! @brief reads a certain amount from the current file position or until EOF, this function allocates a buffer on the provided pointer
 ///! @remark if this function fails it returns a nullptr, otherwise it returns the pointer to the copied data, the data input is the buffer the data will be written to
 ///-----------------------------------------------------------------------------
-byte* VFS::File::Read(byte*& data, size_t amount)
+byte* VFS::File::Read(byte*& data, size_t amount) const 
 {
     PlatformSpecficFileDataWin* platformData = static_cast<PlatformSpecficFileDataWin*>(m_platformSpecificData);
     if (amount <= 0 || platformData == nullptr || platformData->m_fileHandle == INVALID_HANDLE_VALUE)

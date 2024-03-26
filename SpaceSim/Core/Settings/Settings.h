@@ -34,18 +34,18 @@ public:
     const size_t getHashValue() const { return m_settingNameHash; }
     const SettingType getSettingType() const { return m_type; }
 
-    void Serialize(Archive& archive) override
+    void Serialize(Archive& archive, std::true_type) override
     {
         MSG_TRACE_CHANNEL("SETTING", "Reading From archive");
-        archive.Read(m_settingName);
+        archive.ReadContainer(m_settingName);
         archive.Read(m_settingNameHash);
         archive.Read(m_type);
     }
 
-    void Serialize(Archive& archive) const override
+    void Serialize(Archive& archive, std::false_type) const override
     {
         MSG_TRACE_CHANNEL("SETTING", "Writing to archive");
-        archive.Write(m_settingName);
+        archive.WriteContainer(m_settingName);
         archive.Write(m_settingNameHash);
         archive.Write(m_type);
     }
@@ -96,9 +96,9 @@ public:
     ///! @brief   
     ///! @remark
     ///-----------------------------------------------------------------------------
-    void Serialize(Archive& archive) override
+    void Serialize(Archive& archive, std::true_type) override
     {
-        ISettingBase::Serialize(archive);
+        ISettingBase::Serialize(archive, std::true_type());
     }
 
 
@@ -106,9 +106,9 @@ public:
     ///! @brief   
     ///! @remark
     ///-----------------------------------------------------------------------------
-    void Serialize(Archive& archive) const override
+    void Serialize(Archive& archive, std::false_type) const override
     {
-        ISettingBase::Serialize(archive);
+        ISettingBase::Serialize(archive, std::false_type());
 
         archive.Write(m_data);
     }
@@ -128,8 +128,8 @@ public:
     //Implement this function in non primitive type settings to initialise them
     virtual void deserialise( const tinyxml2::XMLElement* element);
 
-    void Serialize(Archive& archive) override { ISettingBase::Serialize(archive); }
-    void Serialize(Archive& archive) const override { ISettingBase::Serialize(archive); }
+    void Serialize(Archive& archive, std::true_type) override { ISettingBase::Serialize(archive, std::true_type()); }
+    void Serialize(Archive& archive, std::false_type) const override { ISettingBase::Serialize(archive, std::false_type()); }
 
     REGISTER_SERIALIZATION_OBJECT(DeserialisableSetting);
 protected:
@@ -158,10 +158,10 @@ public:
     RendererType getRenderType() const { return m_rendererType; }
     const bool getUseCG() const { return m_useCG; }
 
-    void Serialize(Archive& archive) override { DeserialisableSetting::Serialize(archive); }
-    void Serialize(Archive& archive) const override
+    void Serialize(Archive& archive, std::true_type) override { DeserialisableSetting::Serialize(archive, std::true_type()); }
+    void Serialize(Archive& archive, std::false_type) const override
     {
-        DeserialisableSetting::Serialize(archive);
+        DeserialisableSetting::Serialize(archive, std::false_type());
 
         archive.Write(m_resolutionWidth);
         archive.Write(m_resolutionHeight);
@@ -203,10 +203,10 @@ public:
     const Vector4& getVector() const { return m_vector; }
     int getNumberOfElements() const { return m_numberElements; }
 
-    void Serialize(Archive& archive) override { DeserialisableSetting::Serialize(archive); }
-    void Serialize(Archive& archive) const override 
+    void Serialize(Archive& archive, std::true_type) override { DeserialisableSetting::Serialize(archive, std::true_type()); }
+    void Serialize(Archive& archive, std::false_type) const override
     {
-        DeserialisableSetting::Serialize(archive); 
+        DeserialisableSetting::Serialize(archive, std::false_type());
 
         archive.Write(m_vector);
         archive.Write(m_numberElements);

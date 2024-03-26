@@ -20,9 +20,9 @@ public:
 
     void Write(const byte* data, size_t length);
     void Write(const byte* data, size_t offset, size_t length);
-    byte* Read(byte*& data);
-    byte* Read(byte*& data, size_t amount);
-    byte* Read(byte*& data, size_t offset, size_t amount);
+    byte* Read(byte*& data) const;
+    byte* Read(byte*& data, size_t amount) const;
+    byte* Read(byte*& data, size_t offset, size_t amount) const;
 
     bool IsValid() const { return m_platformSpecificData != nullptr; }
 

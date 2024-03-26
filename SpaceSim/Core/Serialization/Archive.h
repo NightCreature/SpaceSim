@@ -6,6 +6,7 @@
 
 #include <array>
 #include <filesystem>
+#include <typeinfo>
 #include <type_traits>
 
 namespace Details
@@ -67,20 +68,21 @@ concept container = requires(T a, const T b)
     { a.empty() } -> std::convertible_to<bool>;
 };
 
+//Check if T has a serialise function that takes an Archive, const ref or normal ref
+template<class T, class Archive>
+constexpr bool HasSerialiseFunc = requires (T value, Archive & archive, std::bool_constant<true> writeOrRead) { value.Serialize(archive, writeOrRead); };
+template<class T, class Archive>
+constexpr bool HasSerialiseFuncConst = requires (T value, const Archive & archive, std::bool_constant<true> writeOrRead) { value.Serialize(archive, writeOrRead); };
 
 template<class T, class Archive>
-concept IsSerialisable = requires (T x) { x.Serialize(std::declval<Archive>); };
-
-//Insidious but this doesnt check if the derived type has this function only if T does.
+constexpr bool HasSerialiseFuncPtr = requires (T value, Archive & archive, std::bool_constant<true> writeOrRead) { value->Serialize(archive, writeOrRead); };
 template<class T, class Archive>
-constexpr bool HasSerialiazeFuncPtr = requires (T * x, Archive archive) { IsSerialisable<T, Archive>; };
+constexpr bool HasSerialiseFuncPtrConst = requires (T value, const Archive & archive, std::bool_constant<true> writeOrRead) { value->Serialize(archive, writeOrRead); };
 
+//Regardless of if T is a pointer or value, check if it has a serialise function
 template<class T, class Archive>
-constexpr bool HasSerialiazeFunc = requires (T x, Archive archive) { x.Serialize(archive); };
-
+concept IsSerialisable = HasSerialiseFunc<T, Archive> || HasSerialiseFuncConst<T, Archive> || HasSerialiseFuncPtr<T, Archive> || HasSerialiseFuncPtrConst<T, Archive>;
 }
-
-
 
 class Archive
 {
@@ -95,214 +97,165 @@ public:
         return m_file.IsValid();
     }
 
-    template<class T> 
-    void Read(T& value)
-    {
-        if constexpr (std::is_pointer_v<T> && Details::HasSerialiazeFuncPtr<T, Archive>)
-        {
-            SerializationTag tag;
-            ReadValue(tag);
-
-            auto* type = GetSerializationTypeByTag(tag);
-            value = static_cast<T>(type->GetCreateFP()());
-
-            value->Serialize(*this);
-        }
-        else if constexpr (Details::HasSerialiazeFunc<T, Archive>)
-        {
-            SerializationTag tag;
-            ReadValue(tag);
-
-            auto* type = GetSerializationTypeByTag(tag);
-            auto* temp = static_cast<T>(type->GetCreateFP()()); //This is not awesome but should work
-
-            value = *temp; //copy data
-            delete temp;
-
-            value.Serialize(*this);
-        }
-        else
-        {
-            ReadValue(value);
-        }
-    }
-
-    template <class T, size_t N>
-    void Read(T(&value)[N])
-    {
-        size_t count = 0;
-        m_file.Read(reinterpret_cast<const byte*>(&count), sizeof(size_t));
-        assert(count == N);
-        m_file.Write(reinterpret_cast<const byte*>(value), sizeof(T) * N);
-    }
-
-    template<Details::container Container>
-    void Read(Container& container)
-    {
-        byte* data = nullptr;
-        m_file.Read(data, sizeof(Container::size_type));
-        typename Container::size_type bounds = *reinterpret_cast<Container::size_type*>(data);
-        for (typename Container::size_type index = 0; index < bounds; ++index)
-        {
-            typename Container::value_type item{};
-            Read(item);
-            container.insert(end(container), item);
-            MSG_TRACE_CHANNEL("Archive", "Reading index: %d and bounds: %d", index, bounds);
-        }
-    }
-
-    //template<class T>
-    //void Write(const T value)
-    //{
-    //    if constexpr (std::is_pointer_v<T> && Details::HasSerialiazeFuncPtr<T, Archive>)
-    //    {
-    //        value->Serialize(*this);
-    //    }
-    //    if constexpr (Details::HasSerialiazeFunc<T, Archive>)
-    //    {
-    //        value.Serialize(*this);
-    //    }
-    //    else
-    //    {
-    //        m_file.Write(reinterpret_cast<const byte*>(&value), sizeof(T));
-    //    }
-    //}
-
-    template<class T>
-    void Write(T& value)
-    {
-        if constexpr (std::is_pointer_v<T> && Details::HasSerialiazeFuncPtr<T, Archive>)
-        {
-            m_file.Write(reinterpret_cast<const byte*>(&(value->GetTag())), sizeof(value->GetTag()));
-            value->Serialize(*this);
-        }
-        if constexpr (Details::HasSerialiazeFunc<T, Archive>)
-        {
-            m_file.Write(reinterpret_cast<const byte*>(&(value.GetTag())), sizeof(value.GetTag()));
-            value.Serialize(*this);
-        }
-        else
-        {
-            m_file.Write(reinterpret_cast<const byte*>(&value), sizeof(T));
-        }
-    }
-
-    template<class T>
-    void WriteValue(T value)
-    {
-        if constexpr (std::is_pointer_v<T> && Details::HasSerialiazeFuncPtr<T, Archive>)
-        {
-            m_file.Write(reinterpret_cast<const byte*>(&(value->GetTag())), sizeof(value->GetTag()));
-            value->Serialize(*this);
-        }
-        if constexpr (Details::HasSerialiazeFunc<T, Archive>)
-        {
-            m_file.Write(reinterpret_cast<const byte*>(&(value.GetTag())), sizeof(value.GetTag()));
-            value.Serialize(*this);
-        }
-        else
-        {
-            m_file.Write(reinterpret_cast<const byte*>(&value), sizeof(T));
-        }
-    }
-
-
-    //template<class T>
-    //void Write(const T* value)
-    //{
-    //    if constexpr (Details::HasSerialiazeFuncPtr<T, Archive>)
-    //    {
-    //        value->Serialize(*this);
-    //    }
-    //    else
-    //    {
-    //        m_file.Write(reinterpret_cast<const byte*>(&*value), sizeof(T));
-    //    }
-    //}
-
-    template <class T, size_t N>
-    void Write(const T (&value)[N])
-    {
-        constexpr size_t count = N;
-        m_file.Write(reinterpret_cast<const byte*>(&count), sizeof(size_t));
-        m_file.Write(reinterpret_cast<const byte*>(value), sizeof(T) * N);
-    }
-
-    template<>
-    void Write(const std::string& container)
-    {
-        typename std::string::size_type elementCount = container.size();
-        m_file.Write(reinterpret_cast<const byte*>(&elementCount), sizeof(std::string::size_type));
-        for (typename std::string::const_iterator it = container.cbegin(); it != container.cend(); ++it)
-        {
-            Write(*it);
-        }
-    }
-
-    template<Details::container Container>
-    void Write(Container& container)
-    {
-        typename Container::size_type elementCount = container.size();
-        m_file.Write(reinterpret_cast<const byte*>(&elementCount), sizeof(Container::size_type));
-        for (typename Container::const_iterator it = container.cbegin(); it != container.cend(); ++it)
-        {
-            if constexpr(std::is_pointer_v<typename Container::value_type>)
-            {
-                const auto* value = *it;
-                Write(value); //The iterator has a value type here
-            }
-            else
-            {
-                Write(*it);
-            }
-        }
-    }
-
-private:
     template <class T>
-    void ReadValue(T& value)
+    void Write(const T& value)
     {
-        if constexpr (Details::HasSerialiazeFunc<T, Archive>)
+        //First always write the type into the archive, so we can fetch this on read an know what to do
+        size_t tag = GetOrCreateTag(value);
+        m_file.Write(reinterpret_cast<byte*>(&tag), sizeof(size_t));
+
+        if constexpr (Details::IsSerialisable<T, Archive>)
         {
-            value.Serialize(*this);
+            WriteSerialiseObject(value);
         }
         else
         {
-            byte* data = nullptr;
-            m_file.Read(data, sizeof(T));
-            value = *(reinterpret_cast<T*>(data));
+            WriteObject(value);
         }
     }
-
 
     template<class T>
-    void ReadPtr(T* value)
-    {
-        if constexpr (Details::HasSerialiazeFuncPtr<T, Archive>)
-        {
-            value->Serialize(*this);
-        }
-        else
-        {
-            byte* data = nullptr;
-            m_file.Read(data, sizeof(T));
-            //Not sure this should allocate the pointer or not probably not
-            memcpy(static_cast<void*>(value), static_cast<void*>(data), sizeof(T));
-        }
-    }
-
-    template <class T, size_t N>
-    void ReadArray(T(&value)[N])
+    void Read(T& value) const
     {
         byte* data = nullptr;
         m_file.Read(data, sizeof(size_t));
-        size_t arraySize = static_cast<size_t>(*data);
+        size_t tag = static_cast<size_t>(*data);
 
-        assert(arraySize == N);
+        //From the tag we have to figure out what type we need to create
+        if constexpr (Details::IsSerialisable<T, Archive>)
+        {
+            ReadSerialiseObject(value, tag);
+        }
+        else
+        {
+            ReadObject(value, tag);
+        }
+    }
+
+    template<class Container>
+    void WriteContainer(const Container& container)
+    {
+        size_t tag = GetOrCreateTag(container);
+        m_file.Write(reinterpret_cast<byte*>(&tag), sizeof(size_t));
+
+        size_t sizeContainer = container.size();
+        m_file.Write(reinterpret_cast<byte*>(&sizeContainer), sizeof(size_t));
+
+        for (auto iter = cbegin(container); iter != cend(container); ++iter)
+        {
+            Write(*iter);
+        }
+    }
+
+    template<class Container>
+    void ReadContainer(Container& container) const
+    {
+        byte* data = nullptr;
+        m_file.Read(data, sizeof(size_t));
+        size_t tag = static_cast<size_t>(*data);
 
         data = nullptr;
-        m_file.Read(value, sizeof(T) * N);
+        m_file.Read(data, sizeof(size_t));
+        size_t sizeContainer = static_cast<size_t>(*data);
+
+        for (auto iter = cbegin(container); iter != cend(container); ++iter)
+        {
+            Container::value_type value;
+            Read(value);
+            container.insert(end(container), value);
+        }
+    }
+private:
+    template<class T>
+    void WriteSerialiseObject(const T& value)
+    {
+        //Need to see if we have a pointer or not
+        if constexpr (std::is_pointer_v<T>)
+        {
+            value->Serialize(*this, std::false_type());
+        }
+        else
+        {
+            value.Serialize(*this, std::false_type());
+        }
+    }
+
+    template<class T>
+    void WriteObject(const T& value)
+    {
+        if constexpr (std::is_fundamental_v<T>) //This cannot be a pointer or reference
+        {
+            m_file.Write(reinterpret_cast<const byte*>(&value), sizeof(T));
+        }
+        else if constexpr (std::is_pointer_v<T>)
+        {
+            m_file.Write(reinterpret_cast<const byte*>(&(*value)), sizeof(std::remove_pointer_t<T>));
+        }
+        else
+        {
+
+        }
+    }
+
+    template<class T>
+    void ReadSerialiseObject(T& value, size_t tag) const
+    {
+        const SerializationType* serializationType = GetSerializationTypeByTag(tag);
+        value = serializationType->template GetCreateFP<T>()(); //create an object here 
+
+        //Need to see if we have a pointer or not
+        if constexpr (std::is_pointer_v<T>)
+        {
+            value->Serialize(*this, std::true_type());
+        }
+        else
+        {
+            value.Serialize(*this, std::true_type());
+        }
+    }
+
+    //Difficult option here
+    template<class T>
+    void ReadObject(T& value, size_t tag) const
+    {
+        const DefaultSerializationType<SerialisationTypeWrapper<T>>* serializationType = static_cast<const DefaultSerializationType<SerialisationTypeWrapper<T>>*>(GetSerializationTypeByTag(tag));
+        value = serializationType->template GetCreateFP<T>()();
+        //value = (); //create an object here
+
+        if constexpr (std::is_fundamental_v<T>) //This cannot be a pointer or reference, also this doesnt need a type check
+        {
+            byte* data = nullptr;
+            m_file.Read(data, sizeof(T));
+            value = static_cast<T>(*data);
+        }
+        else if constexpr (std::is_pointer_v<T>)
+        {
+            byte* data = nullptr;
+            m_file.Read(data, sizeof(std::remove_pointer_t<T>));
+            value = reinterpret_cast<T*>(data); //This does not call a constructor
+        }
+        else
+        {
+
+        }
+    }
+
+    template<class T>
+    size_t GetOrCreateTag(const T& value) const
+    {
+        auto typeName = typeid(T).name();
+        
+        const auto* serialisationTag = GetSerializationTagByNamePtr(typeName);
+        if (serialisationTag != nullptr)
+        {
+            return *serialisationTag;
+        }
+
+        //create a unique tag here and store it
+        //Need a new function here because the default type will not have certain things
+        return RegisterNonSerialisationType<T>(typeName); //Caveat this only works if this is done in the same order as we read the data, might need to save this off problem for later
     }
 
     VFS::File m_file;
 };
+

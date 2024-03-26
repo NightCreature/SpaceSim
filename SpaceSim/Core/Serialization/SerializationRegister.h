@@ -1,29 +1,20 @@
 #pragma once
 
+#include "SerialisationType.h"
+#include "SeriaisationTypeWrapper.h"
+#include "DefaultSerialisationWrapper.h"
+
 #include <typeinfo>
 #include <unordered_map>
+#include <type_traits>
+
 
 class ISerializable;
 
 using SerializationTag = size_t;
-class SerializationType
-{
-public:
-    SerializationType() {}
-    virtual ~SerializationType() {}
-
-    virtual const char* GetId() const = 0;
-    virtual const SerializationTag& GetTag() const = 0;
-    virtual size_t GetSize() const = 0;
-
-    typedef ISerializable* (*Create)();
-    virtual Create GetCreateFP() const = 0;
-protected:
-};
 
 namespace SerializationDetails
 {
-    
     inline SerializationTag CreateUniqueTag()
     {
         static SerializationTag uniqueTag = SerializationTag(0);
@@ -31,30 +22,6 @@ namespace SerializationDetails
         uniqueTag++;
         return retVal;
     }
-
-    template<class T>
-    class DefaultSerializationType : public SerializationType
-    {
-    public:
-        DefaultSerializationType(const char* id, const SerializationTag& tag) : m_id(id), m_tag(tag)
-        {
-            m_instance = this;
-        }
-
-        const char* GetId() const override { return m_id; }
-        const SerializationTag& GetTag() const override { return m_tag; }
-        size_t GetSize() const override { return sizeof(T); }
-        Create GetCreateFP() const override { return &T::Create; }
-
-        static DefaultSerializationType* m_instance;
-    private:
-        const char* m_id;
-        SerializationTag m_tag;
-    };
-
-    template<class T>
-    DefaultSerializationType<T>* DefaultSerializationType<T>::m_instance;
-
 }
 
 struct SerialisableRegistry
@@ -77,7 +44,18 @@ inline void RegisterSerializableType(const SerializationType* type)
 template<class SerializationClass>
 SerializationTag RegisterSerializationType(const char* name, SerializationTag tag = SerializationDetails::CreateUniqueTag())
 {
-    static SerializationDetails::DefaultSerializationType<SerializationClass> serialisationType(name, tag);
+    static DefaultSerializationType<SerializationClass> serialisationType(name, tag);
+
+    RegisterSerializableType(&serialisationType);
+
+    return tag;
+}
+
+//This just inserts a name and a tag for a type, there is no special stuff here because we cant get that
+template<class SerializationType>
+SerializationTag RegisterNonSerialisationType(const char* name, SerializationTag tag = SerializationDetails::CreateUniqueTag())
+{
+    static DefaultSerializationType<SerialisationTypeWrapper<SerializationType>> serialisationType(name, tag);
 
     RegisterSerializableType(&serialisationType);
 
@@ -102,18 +80,16 @@ inline const SerializationType* GetSerializationTypeByTag(const SerializationTag
     return registery.m_typesByTag[tag];
 }
 
-//
-//inline const ComponentType* GetComponentTypeForComponent(const char* componentName)
-//{
-//    auto& registery = GetComponentRegistry();
-//    return registery.m_componentTypes[componentName];
-//}
-//
-//inline Component* CreateComponent(const char* componentName)
-//{
-//    auto& registery = GetComponentRegistry();
-//    return registery.m_idToCreationFp[componentName]();
-//}
+inline const SerializationTag* GetSerializationTagByNamePtr(const std::string_view& name)
+{
+    auto& registery = GetSerialisableRegister();
+    if (registery.m_tagsById.contains(name.data()))
+    {
+        return &(registery.m_tagsById[name.data()]);
+    }
+
+    return nullptr;
+}
 
 #define REGISTER_SERIALIZATION_OBJECT(CLASS)\
 static ISerializable* Create() { return new CLASS(); }\

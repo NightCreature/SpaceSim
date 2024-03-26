@@ -30,7 +30,7 @@ void SettingsManager::SaveSettings(const std::filesystem::path& settingsFilePath
     Archive settingsArchive;
     settingsArchive.Open(settingsFilePath);
 
-    settingsArchive.Write(m_settings);
+    settingsArchive.WriteContainer(m_settings);
 
     settingsArchive.Close();
 }
