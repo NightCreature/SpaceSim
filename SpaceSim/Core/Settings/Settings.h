@@ -58,6 +58,7 @@ protected:
 private:
 };
 
+//Has to be rewritten to use the new serialisation system
 template <class T>
 class ISetting : public ISettingBase
 {
@@ -103,14 +104,22 @@ public:
 
 
     ///-----------------------------------------------------------------------------
-    ///! @brief   
+    ///! @brief  
     ///! @remark
     ///-----------------------------------------------------------------------------
     void Serialize(Archive& archive, std::false_type) const override
     {
         ISettingBase::Serialize(archive, std::false_type());
-
-        archive.Write(m_data);
+        switch (m_type)
+        {
+            case ISettingBase::SettingType::eString:
+            {
+                archive.WriteContainer(m_data);
+            } break;
+            default:
+            {
+                archive.Write(m_data);
+            } break;
     }
 
     REGISTER_SERIALIZATION_TEMPLATE(ISetting<T>);
