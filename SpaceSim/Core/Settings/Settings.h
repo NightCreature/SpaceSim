@@ -32,7 +32,7 @@ public:
 
     const std::string& getSettingName() const { return m_settingName; }
     const size_t getHashValue() const { return m_settingNameHash; }
-    const SettingType getSettingType() const { return m_type; }
+    virtual const SettingType getSettingType() const { return m_type; }
 
     void Serialize(Archive& archive, std::true_type) override
     {
@@ -67,19 +67,19 @@ public:
 
     ISetting(const std::string& name, const T& data) : ISettingBase(name), m_data(data) 
     {
-        if (typeid(T) == typeid(int))
+        if constexpr (std::is_same_v<int, T>)
         {
             m_type = ISettingBase::SettingType::eint;
         }
-        else if (typeid(T) == typeid(float))
+        else if constexpr (std::is_same_v<float, T> || std::is_same_v<double, T>)
         {
             m_type = ISettingBase::SettingType::efloat;
         }
-        else if (typeid(T) == typeid(bool))
+        else if constexpr (std::is_same_v<bool, T>)
         {
             m_type = ISettingBase::SettingType::eBool;
         }
-        else if (typeid(T) == typeid(std::string))
+        else if constexpr (std::is_same_v<std::string, T>)
         {
             m_type = ISettingBase::SettingType::eString;
         }
@@ -110,19 +110,45 @@ public:
     void Serialize(Archive& archive, std::false_type) const override
     {
         ISettingBase::Serialize(archive, std::false_type());
-        switch (m_type)
+        if constexpr (std::is_same_v<int, T> || std::is_same_v<float, T> || std::is_same_v<double, T> || std::is_same_v<bool, T>)
         {
-            case ISettingBase::SettingType::eString:
-            {
-                archive.WriteContainer(m_data);
-            } break;
-            default:
-            {
-                archive.Write(m_data);
-            } break;
+            archive.Write(m_data);
+        }
+        else if constexpr (std::is_same_v<std::string, T>)
+        {
+            archive.WriteContainer(m_data);
+        }
+        else
+        {
+            archive.Write(m_data);
+        }
     }
 
-    REGISTER_SERIALIZATION_TEMPLATE(ISetting<T>);
+    const SettingType getSettingType() const override
+    {
+        if constexpr (std::is_same_v<int, T>)
+        {
+            return ISettingBase::SettingType::eint;
+        }
+        else if constexpr (std::is_same_v<float, T> || std::is_same_v<double, T>)
+        {
+            return ISettingBase::SettingType::efloat;
+        }
+        else if constexpr (std::is_same_v<bool, T>)
+        {
+            return ISettingBase::SettingType::eBool;
+        }
+        else if constexpr (std::is_same_v<std::string, T>)
+        {
+            return ISettingBase::SettingType::eString;
+        }
+        else
+        {
+            return ISettingBase::SettingType::eUserType;
+        }
+    }
+
+    REGISTER_SERIALIZATION_TEMPLATE(ISetting<T>); 
 protected:
     T     m_data;
 private:

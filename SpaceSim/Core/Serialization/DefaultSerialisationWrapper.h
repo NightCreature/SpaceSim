@@ -21,21 +21,6 @@ public:
     const SerializationTag& GetTag() const override { return m_tag; }
     size_t GetSize() const override { return sizeof(T); }
 
-
-
-    template<class U>
-    auto GetCreateFP() const
-    {
-        if constexpr (SerialisationDetails::HasCreate<U>)
-        {
-            return &U::Create;
-        }
-        else
-        {
-            return &SerialisationTypeWrapper<U>::Create;
-        }
-    }
-
     static DefaultSerializationType* m_instance;
 private:
     const char* m_id;
@@ -44,3 +29,16 @@ private:
 
 template<class T>
 DefaultSerializationType<T>* DefaultSerializationType<T>::m_instance;
+
+template<class T>
+static auto GetCreateFPForSerialisationType()
+{
+    if constexpr (SerialisationDetails::HasCreate<T>)
+    {
+        return &T::Create;
+    }
+    else
+    {
+        return &SerialisationTypeWrapper<T>::Create;
+    }
+}

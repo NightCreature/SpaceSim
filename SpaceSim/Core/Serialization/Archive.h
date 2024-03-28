@@ -100,10 +100,6 @@ public:
     template <class T>
     void Write(const T& value)
     {
-        //First always write the type into the archive, so we can fetch this on read an know what to do
-        size_t tag = GetOrCreateTag(value);
-        m_file.Write(reinterpret_cast<byte*>(&tag), sizeof(size_t));
-
         if constexpr (Details::IsSerialisable<T, Archive>)
         {
             WriteSerialiseObject(value);
@@ -114,30 +110,23 @@ public:
         }
     }
 
+    //Takes value will not be preserved, carefull with pointer types
     template<class T>
     void Read(T& value) const
     {
-        byte* data = nullptr;
-        m_file.Read(data, sizeof(size_t));
-        size_t tag = static_cast<size_t>(*data);
-
-        //From the tag we have to figure out what type we need to create
         if constexpr (Details::IsSerialisable<T, Archive>)
         {
-            ReadSerialiseObject(value, tag);
+            ReadSerialiseObject(value);
         }
         else
         {
-            ReadObject(value, tag);
+            ReadObject(value);
         }
     }
 
     template<class Container>
     void WriteContainer(const Container& container)
     {
-        size_t tag = GetOrCreateTag(container);
-        m_file.Write(reinterpret_cast<byte*>(&tag), sizeof(size_t));
-
         size_t sizeContainer = container.size();
         m_file.Write(reinterpret_cast<byte*>(&sizeContainer), sizeof(size_t));
 
@@ -147,20 +136,20 @@ public:
         }
     }
 
+    //This takes over the passed in container
     template<class Container>
     void ReadContainer(Container& container) const
     {
+        container.clear();
+
         byte* data = nullptr;
         m_file.Read(data, sizeof(size_t));
-        size_t tag = static_cast<size_t>(*data);
-
-        data = nullptr;
-        m_file.Read(data, sizeof(size_t));
         size_t sizeContainer = static_cast<size_t>(*data);
+        delete data;
 
-        for (auto iter = cbegin(container); iter != cend(container); ++iter)
+        for (size_t counter = 0; counter < sizeContainer; ++counter)
         {
-            Container::value_type value;
+            typename Container::value_type value;
             Read(value);
             container.insert(end(container), value);
         }
@@ -169,7 +158,6 @@ private:
     template<class T>
     void WriteSerialiseObject(const T& value)
     {
-        //Need to see if we have a pointer or not
         if constexpr (std::is_pointer_v<T>)
         {
             value->Serialize(*this, std::false_type());
@@ -193,15 +181,14 @@ private:
         }
         else
         {
-
+            MSG_WARN_CHANNEL("Archive", "Cannot Write object of type: %s to the archive", typeid(T).name());
         }
     }
 
     template<class T>
-    void ReadSerialiseObject(T& value, size_t tag) const
+    void ReadSerialiseObject(T& value) const
     {
-        const SerializationType* serializationType = GetSerializationTypeByTag(tag);
-        value = serializationType->template GetCreateFP<T>()(); //create an object here 
+        value = GetCreateFPForSerialisationType<T>()();
 
         //Need to see if we have a pointer or not
         if constexpr (std::is_pointer_v<T>)
@@ -216,44 +203,28 @@ private:
 
     //Difficult option here
     template<class T>
-    void ReadObject(T& value, size_t tag) const
+    void ReadObject(T& value) const
     {
-        const DefaultSerializationType<SerialisationTypeWrapper<T>>* serializationType = static_cast<const DefaultSerializationType<SerialisationTypeWrapper<T>>*>(GetSerializationTypeByTag(tag));
-        value = serializationType->template GetCreateFP<T>()();
-        //value = (); //create an object here
+        value = GetCreateFPForSerialisationType<T>()();
 
         if constexpr (std::is_fundamental_v<T>) //This cannot be a pointer or reference, also this doesnt need a type check
         {
             byte* data = nullptr;
             m_file.Read(data, sizeof(T));
-            value = static_cast<T>(*data);
+            value = *(reinterpret_cast<T*>(data));
+            delete data;
         }
         else if constexpr (std::is_pointer_v<T>)
         {
             byte* data = nullptr;
             m_file.Read(data, sizeof(std::remove_pointer_t<T>));
             value = reinterpret_cast<T*>(data); //This does not call a constructor
+            delete data; //Carefull this might leak something or break needs more testing
         }
         else
         {
-
+            MSG_WARN_CHANNEL("Archive", "Cannot Read object of type: %s to the archive", typeid(T).name());
         }
-    }
-
-    template<class T>
-    size_t GetOrCreateTag(const T& value) const
-    {
-        auto typeName = typeid(T).name();
-        
-        const auto* serialisationTag = GetSerializationTagByNamePtr(typeName);
-        if (serialisationTag != nullptr)
-        {
-            return *serialisationTag;
-        }
-
-        //create a unique tag here and store it
-        //Need a new function here because the default type will not have certain things
-        return RegisterNonSerialisationType<T>(typeName); //Caveat this only works if this is done in the same order as we read the data, might need to save this off problem for later
     }
 
     VFS::File m_file;

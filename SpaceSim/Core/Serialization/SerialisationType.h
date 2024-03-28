@@ -1,5 +1,7 @@
 #pragma once
 
+//Might not be needed anymore
+
 using SerializationTag = size_t;
 
 class SerializationType
