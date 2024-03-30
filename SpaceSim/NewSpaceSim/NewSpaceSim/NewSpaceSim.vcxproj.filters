@@ -773,9 +773,6 @@
     <ClCompile Include="..\..\Application\GameWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Application\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Core\Paths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

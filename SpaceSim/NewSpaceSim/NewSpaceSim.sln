@@ -5,6 +5,10 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NewSpaceSim", "NewSpaceSim\NewSpaceSim.vcxproj", "{61BFD15B-55F2-4621-B9DF-5CC9D2BAA035}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpaceSimTests", "SpaceSimTests\SpaceSimTests.vcxproj", "{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpaceSimExecutables", "SpaceSimExecutables\SpaceSimExecutables.vcxproj", "{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -45,6 +49,54 @@ Global
 		{61BFD15B-55F2-4621-B9DF-5CC9D2BAA035}.ReleaseClang|x64.Build.0 = ReleaseClang|x64
 		{61BFD15B-55F2-4621-B9DF-5CC9D2BAA035}.ReleaseClang|x86.ActiveCfg = ReleaseClang|Win32
 		{61BFD15B-55F2-4621-B9DF-5CC9D2BAA035}.ReleaseClang|x86.Build.0 = ReleaseClang|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Debug|x64.ActiveCfg = Debug|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Debug|x64.Build.0 = Debug|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Debug|x86.ActiveCfg = Debug|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Debug|x86.Build.0 = Debug|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.DebugClang|x64.ActiveCfg = Debug|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.DebugClang|x64.Build.0 = Debug|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.DebugClang|x86.ActiveCfg = Debug|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.DebugClang|x86.Build.0 = Debug|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Profiling|x64.ActiveCfg = Debug|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Profiling|x64.Build.0 = Debug|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Profiling|x86.ActiveCfg = Debug|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Profiling|x86.Build.0 = Debug|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.ProfilingClang|x64.ActiveCfg = Debug|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.ProfilingClang|x64.Build.0 = Debug|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.ProfilingClang|x86.ActiveCfg = Debug|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.ProfilingClang|x86.Build.0 = Debug|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Release|x64.ActiveCfg = Release|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Release|x64.Build.0 = Release|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Release|x86.ActiveCfg = Release|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.Release|x86.Build.0 = Release|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.ReleaseClang|x64.ActiveCfg = Release|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.ReleaseClang|x64.Build.0 = Release|x64
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.ReleaseClang|x86.ActiveCfg = Release|Win32
+		{9E03CD2A-73FF-40B7-B995-7239E7F05A5D}.ReleaseClang|x86.Build.0 = Release|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Debug|x64.ActiveCfg = Debug|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Debug|x64.Build.0 = Debug|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Debug|x86.ActiveCfg = Debug|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Debug|x86.Build.0 = Debug|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.DebugClang|x64.ActiveCfg = DebugClang|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.DebugClang|x64.Build.0 = DebugClang|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.DebugClang|x86.ActiveCfg = DebugClang|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.DebugClang|x86.Build.0 = DebugClang|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Profiling|x64.ActiveCfg = Profiling|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Profiling|x64.Build.0 = Profiling|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Profiling|x86.ActiveCfg = Profiling|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Profiling|x86.Build.0 = Profiling|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.ProfilingClang|x64.ActiveCfg = ProfilingClang|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.ProfilingClang|x64.Build.0 = ProfilingClang|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.ProfilingClang|x86.ActiveCfg = ProfilingClang|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.ProfilingClang|x86.Build.0 = ProfilingClang|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Release|x64.ActiveCfg = Release|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Release|x64.Build.0 = Release|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Release|x86.ActiveCfg = Release|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.Release|x86.Build.0 = Release|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.ReleaseClang|x64.ActiveCfg = ReleaseClang|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.ReleaseClang|x64.Build.0 = ReleaseClang|x64
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.ReleaseClang|x86.ActiveCfg = ReleaseClang|Win32
+		{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}.ReleaseClang|x86.Build.0 = ReleaseClang|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

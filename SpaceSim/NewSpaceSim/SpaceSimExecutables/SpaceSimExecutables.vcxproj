@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugClang|Win32">
       <Configuration>DebugClang</Configuration>
@@ -51,7 +51,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{61BFD15B-55F2-4621-B9DF-5CC9D2BAA035}</ProjectGuid>
+    <ProjectGuid>{4C5029A6-C126-4AFB-9EF2-6C2D5B35E133}</ProjectGuid>
     <RootNamespace>NewSpaceSim</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -97,40 +97,40 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseClang|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>ClangCL</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ProfilingClang|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -186,9 +186,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\optick\include;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDIr)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;E:\SDK\optick-master\src;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\..\bin;$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
-    <TargetName>SpaceSim_x64d</TargetName>
+    <TargetName>SpaceSim_x64d_game</TargetName>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -442,442 +442,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\bin\Shaders\Shaders\BindlessBuffers.h" />
-    <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegate.h" />
-    <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegateBind.h" />
-    <ClInclude Include="..\..\Application\applicationsetting.h" />
-    <ClInclude Include="..\..\Application\BaseApplication.h" />
-    <ClInclude Include="..\..\Application\displaywindow.h" />
-    <ClInclude Include="..\..\Application\GameWindow.h" />
-    <ClInclude Include="..\..\Application\UpdateThread.h" />
-    <ClInclude Include="..\..\Core\ConstructionFactory.h" />
-    <ClInclude Include="..\..\Core\FileSystem\File.h" />
-    <ClInclude Include="..\..\Core\FileSystem\FileSystem.h" />
-    <ClInclude Include="..\..\Core\FileSystem\Flags.h" />
-    <ClInclude Include="..\..\Core\FileSystem\MountPoint.h" />
-    <ClInclude Include="..\..\Core\FileSystem\Platform\Win\MountPointWin.h" />
-    <ClInclude Include="..\..\Core\Hashing\FNVHash.h" />
-    <ClInclude Include="..\..\Core\Hashing\SipHash.h" />
-    <ClInclude Include="..\..\Core\ICommand.h" />
-    <ClInclude Include="..\..\Core\Macros\PlatformMacros.h" />
-    <ClInclude Include="..\..\Core\MessageSystem\GameMessages.h" />
-    <ClInclude Include="..\..\Core\MessageSystem\MessageObserver.h" />
-    <ClInclude Include="..\..\Core\MessageSystem\MessageQueue.h" />
-    <ClInclude Include="..\..\Core\MessageSystem\Messages.h" />
-    <ClInclude Include="..\..\Core\MessageSystem\RenderMessages.h" />
-    <ClInclude Include="..\..\Core\Paths.h" />
-    <ClInclude Include="..\..\Core\Profiler\Event.h" />
-    <ClInclude Include="..\..\Core\Profiler\EventDescriptor.h" />
-    <ClInclude Include="..\..\Core\Profiler\GPUProfiler.h" />
-    <ClInclude Include="..\..\Core\Profiler\PerformanceProfiler.h" />
-    <ClInclude Include="..\..\Core\Profiler\Profiler.h" />
-    <ClInclude Include="..\..\Core\Profiler\ProfilerMacros.h" />
-    <ClInclude Include="..\..\Core\Resource\GameResource.h" />
-    <ClInclude Include="..\..\Core\Resource\GameResources.h" />
-    <ClInclude Include="..\..\Core\Resource\RenderResource.h" />
-    <ClInclude Include="..\..\Core\Resource\RenderResources.h" />
-    <ClInclude Include="..\..\Core\Resource\resource.h" />
-    <ClInclude Include="..\..\Core\Resource\Resourceable.h" />
-    <ClInclude Include="..\..\Core\Serialization\Archive.h" />
-    <ClInclude Include="..\..\Core\Serialization\ISerializable.h" />
-    <ClInclude Include="..\..\Core\Serialization\SerializationRegister.h" />
-    <ClInclude Include="..\..\Core\Settings\Settings.h" />
-    <ClInclude Include="..\..\Core\Settings\SettingsManager.h" />
-    <ClInclude Include="..\..\Core\Settings\SettingsParser.h" />
-    <ClInclude Include="..\..\Core\StringOperations\HashString.h" />
-    <ClInclude Include="..\..\Core\StringOperations\StringHelperFunctions.h" />
-    <ClInclude Include="..\..\Core\StringOperations\StringTemplate.h" />
-    <ClInclude Include="..\..\Core\Thread\Job.h" />
-    <ClInclude Include="..\..\Core\Thread\JobSystem.h" />
-    <ClInclude Include="..\..\Core\Thread\Thread.h" />
-    <ClInclude Include="..\..\Core\Thread\Timer.h" />
-    <ClInclude Include="..\..\Core\Thread\WorkerThread.h" />
-    <ClInclude Include="..\..\Core\tinyxml2.h" />
-    <ClInclude Include="..\..\Core\Types\FunctionWrapper.h" />
-    <ClInclude Include="..\..\Core\Types\TemplateTypeMagic.h" />
-    <ClInclude Include="..\..\Core\Types\TypeErasedStorage.h" />
-    <ClInclude Include="..\..\Core\Types\TypeHelpers.h" />
-    <ClInclude Include="..\..\Core\Types\Types.h" />
-    <ClInclude Include="..\..\Gameplay\bbox.h" />
-    <ClInclude Include="..\..\Gameplay\box.h" />
-    <ClInclude Include="..\..\Gameplay\core.h" />
-    <ClInclude Include="..\..\Gameplay\door.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Component.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Components\Components.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Components\ComponentType.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Components\ComponentTypeRegistry.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Components\MaterialComponent.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Components\PhysicsComponent.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Components\TransformComponent.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\DataStore.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\DataTag.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Entity.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\EntityTagManager.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Processor.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\System.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\SystemsManager.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Systems\HandleMessageSystem.h" />
-    <ClInclude Include="..\..\Gameplay\ECS\Systems\RenderableSystem.h" />
-    <ClInclude Include="..\..\Gameplay\EntityManager.h" />
-    <ClInclude Include="..\..\Gameplay\face.h" />
-    <ClInclude Include="..\..\Gameplay\forcefield.h" />
-    <ClInclude Include="..\..\Gameplay\GameObject.h" />
-    <ClInclude Include="..\..\Gameplay\GameObjectManager.h" />
-    <ClInclude Include="..\..\Gameplay\gunturret.h" />
-    <ClInclude Include="..\..\Gameplay\InfinitySphere.h" />
-    <ClInclude Include="..\..\Gameplay\laser.h" />
-    <ClInclude Include="..\..\Gameplay\LaserManager.h" />
-    <ClInclude Include="..\..\Gameplay\particle.h" />
-    <ClInclude Include="..\..\Gameplay\particleemitter.h" />
-    <ClInclude Include="..\..\Gameplay\particlesystemmanager.h" />
-    <ClInclude Include="..\..\Gameplay\plane.h" />
-    <ClInclude Include="..\..\Gameplay\player.h" />
-    <ClInclude Include="..\..\Gameplay\RKIntegrator.h" />
-    <ClInclude Include="..\..\Gameplay\rotatingblades.h" />
-    <ClInclude Include="..\..\Gameplay\scorchmark.h" />
-    <ClInclude Include="..\..\Gameplay\square.h" />
-    <ClInclude Include="..\..\Gameplay\switch.h" />
-    <ClInclude Include="..\..\Generators\astar.h" />
-    <ClInclude Include="..\..\Generators\MapGenerator.h" />
-    <ClInclude Include="..\..\Graphics\AssetLoaders\TexturePackLoader.h" />
-    <ClInclude Include="..\..\Graphics\Camera.h" />
-    <ClInclude Include="..\..\Graphics\CameraManager.h" />
-    <ClInclude Include="..\..\Graphics\color.h" />
-    <ClInclude Include="..\..\Graphics\CubeMapRenderer.h" />
-    <ClInclude Include="..\..\Graphics\D3D11\Profiler\D3D11GPUProfiler.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\MultithreadedCommandlistManager.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\StructuredBuffer.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\CommandQueue.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\ConstantBuffer.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\DescriptorHeapManager.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\DeviceManagerD3D12.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\PipelineObject.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\ShaderCompiler.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\ShaderParameter.h" />
-    <ClInclude Include="..\..\Graphics\D3D12\ShaderParamMatcher.h" />
-    <ClInclude Include="..\..\Graphics\D3DDebugHelperFunctions.h" />
-    <ClInclude Include="..\..\Graphics\DebugBox.h" />
-    <ClInclude Include="..\..\Graphics\DebugHelperFunctions.h" />
-    <ClInclude Include="..\..\Graphics\DeviceManager.h" />
-    <ClInclude Include="..\..\Graphics\Effect.h" />
-    <ClInclude Include="..\..\Graphics\EffectCache.h" />
-    <ClInclude Include="..\..\Graphics\Frustum.h" />
-    <ClInclude Include="..\..\Graphics\GeometryCache.h" />
-    <ClInclude Include="..\..\Graphics\GeometryInstance.h" />
-    <ClInclude Include="..\..\Graphics\IndexBuffer.h" />
-    <ClInclude Include="..\..\Graphics\interpolatecurveRGBA.h" />
-    <ClInclude Include="..\..\Graphics\light.h" />
-    <ClInclude Include="..\..\Graphics\LightManager.h" />
-    <ClInclude Include="..\..\Graphics\material.h" />
-    <ClInclude Include="..\..\Graphics\mesh.h" />
-    <ClInclude Include="..\..\Graphics\MeshComponentData.h" />
-    <ClInclude Include="..\..\Graphics\MeshGroup.h" />
-    <ClInclude Include="..\..\Graphics\MeshGroupCreator.h" />
-    <ClInclude Include="..\..\Graphics\Model.h" />
-    <ClInclude Include="..\..\Graphics\modelmanager.h" />
-    <ClInclude Include="..\..\Graphics\Model\MeshHelperFunctions.h" />
-    <ClInclude Include="..\..\Graphics\OrientationAxis.h" />
-    <ClInclude Include="..\..\Graphics\Renderable.h" />
-    <ClInclude Include="..\..\Graphics\RenderGraph\DependencyTree.h" />
-    <ClInclude Include="..\..\Graphics\RenderGraph\Pass.h" />
-    <ClInclude Include="..\..\Graphics\RenderGraph\RenderGraph.h" />
-    <ClInclude Include="..\..\Graphics\RenderGraph\ResourceDescriptor.h" />
-    <ClInclude Include="..\..\Graphics\RenderInstance.h" />
-    <ClInclude Include="..\..\Graphics\RenderInterface.h" />
-    <ClInclude Include="..\..\Graphics\RenderJobs.h" />
-    <ClInclude Include="..\..\Graphics\RenderSystem.h" />
-    <ClInclude Include="..\..\Graphics\ShaderCache.h" />
-    <ClInclude Include="..\..\Graphics\ShaderDataStructures.h" />
-    <ClInclude Include="..\..\Graphics\ShaderInstance.h" />
-    <ClInclude Include="..\..\Graphics\shadermanager.h" />
-    <ClInclude Include="..\..\Graphics\ShaderPack.h" />
-    <ClInclude Include="..\..\Graphics\Shaders.h" />
-    <ClInclude Include="..\..\Graphics\ShadowMapRenderer.h" />
-    <ClInclude Include="..\..\Graphics\Shapes\DebugBox.h" />
-    <ClInclude Include="..\..\Graphics\texture.h" />
-    <ClInclude Include="..\..\Graphics\texture12.h" />
-    <ClInclude Include="..\..\Graphics\texturemanager.h" />
-    <ClInclude Include="..\..\Graphics\VertexBuffer.h" />
-    <ClInclude Include="..\..\Input\controller.h" />
-    <ClInclude Include="..\..\Input\ControllerDefines.h" />
-    <ClInclude Include="..\..\Input\FE\NavigationActions.h" />
-    <ClInclude Include="..\..\Input\IController.h" />
-    <ClInclude Include="..\..\Input\Input.h" />
-    <ClInclude Include="..\..\Input\InputAction.h" />
-    <ClInclude Include="..\..\Input\InputState.h" />
-    <ClInclude Include="..\..\Input\InputSystem.h" />
-    <ClInclude Include="..\..\Input\keyboard.h" />
-    <ClInclude Include="..\..\Input\KeyboardController.h" />
-    <ClInclude Include="..\..\Input\MouseControlDefines.h" />
-    <ClInclude Include="..\..\Input\MouseController.h" />
-    <ClInclude Include="..\..\Input\playbackcontroller.h" />
-    <ClInclude Include="..\..\Input\XController.h" />
-    <ClInclude Include="..\..\Input\XControllerDefines.h" />
-    <ClInclude Include="..\..\Loader\MapLoader.h" />
-    <ClInclude Include="..\..\Loader\ModelLoaders\AssimpModelLoader.h" />
-    <ClInclude Include="..\..\Loader\ModelLoaders\MmlLoader.h" />
-    <ClInclude Include="..\..\Loader\ModelLoaders\ModelLoader.h" />
-    <ClInclude Include="..\..\Loader\ModelLoaders\XMLModelLoader.h" />
-    <ClInclude Include="..\..\Loader\ResourceLoader.h" />
-    <ClInclude Include="..\..\Loader\ResourceLoadJobs.h" />
-    <ClInclude Include="..\..\Loader\ResourceLoadRequests.h" />
-    <ClInclude Include="..\..\Loader\WICTTextureLoader.h" />
-    <ClInclude Include="..\..\Logging\FileLogger.h" />
-    <ClInclude Include="..\..\Logging\Logger.h" />
-    <ClInclude Include="..\..\Math\Assimp\AssimpMathHelpers.h" />
-    <ClInclude Include="..\..\Math\MathUtilityFunctions.h" />
-    <ClInclude Include="..\..\Math\matrix33.h" />
-    <ClInclude Include="..\..\Math\matrix44.h" />
-    <ClInclude Include="..\..\Math\matrixmath.h" />
-    <ClInclude Include="..\..\Math\vector2.h" />
-    <ClInclude Include="..\..\Math\vector3.h" />
-    <ClInclude Include="..\..\Math\vector4.h" />
-    <ClInclude Include="..\..\Math\VectorBySize.h" />
-    <ClInclude Include="..\..\Math\VectorTypes.h" />
-    <ClInclude Include="..\..\Memory\AlignMacros.h" />
-    <ClInclude Include="..\..\Memory\Allocator.h" />
-    <ClInclude Include="..\..\Memory\HeapAllocator.h" />
-    <ClInclude Include="..\..\Memory\LinearAllocator.h" />
-    <ClInclude Include="..\..\Memory\MemoryArena.h" />
-    <ClInclude Include="..\..\Memory\PointerArithmetic.h" />
-    <ClInclude Include="..\..\Memory\SlotAllocator.h" />
-    <ClInclude Include="..\..\NodeGraph\Graph.h" />
-    <ClInclude Include="..\..\NodeGraph\GraphConnection.h" />
-    <ClInclude Include="..\..\NodeGraph\GraphConnectionDefinition.h" />
-    <ClInclude Include="..\..\NodeGraph\GraphDefinitionReader.h" />
-    <ClInclude Include="..\..\NodeGraph\GraphNode.h" />
-    <ClInclude Include="..\..\NodeGraph\GraphNodeDefinition.h" />
-    <ClInclude Include="..\..\NodeGraph\GraphNodePin.h" />
-    <ClInclude Include="..\..\NodeGraph\NodeFactory.h" />
-    <ClInclude Include="..\..\NodeGraph\Nodes\AddNode.h" />
-    <ClInclude Include="..\..\Physics\PhysicsManager.h" />
-    <ClInclude Include="..\..\Physics\PhysicsProperties.h" />
-    <ClInclude Include="..\..\Physics\spatialhashmap.h" />
-    <ClInclude Include="..\..\SourceInformation\SourceInfo.h" />
-    <ClInclude Include="..\..\UI\BitmapFont.h" />
-    <ClInclude Include="..\..\UI\Core\Behaviours\Behaviour.h" />
-    <ClInclude Include="..\..\UI\Core\Behaviours\behaviours.h" />
-    <ClInclude Include="..\..\UI\Core\Behaviours\Registry\BehaviourRegistry.h" />
-    <ClInclude Include="..\..\UI\Core\Behaviours\Registry\BehaviourType.h" />
-    <ClInclude Include="..\..\UI\Core\Behaviours\SelectObject.h" />
-    <ClInclude Include="..\..\UI\Core\Behaviours\StaticText.h" />
-    <ClInclude Include="..\..\UI\Core\FlowManager.h" />
-    <ClInclude Include="..\..\UI\Core\Item.h" />
-    <ClInclude Include="..\..\UI\Core\Localisation\LocalisationId.h" />
-    <ClInclude Include="..\..\UI\Core\Navigation.h" />
-    <ClInclude Include="..\..\UI\Core\StateManager.h" />
-    <ClInclude Include="..\..\UI\Core\States\Registry\StateRegistry.h" />
-    <ClInclude Include="..\..\UI\Core\States\Registry\StateType.h" />
-    <ClInclude Include="..\..\UI\Core\States\Screen.h" />
-    <ClInclude Include="..\..\UI\Core\States\State.h" />
-    <ClInclude Include="..\..\UI\Core\States\States.h" />
-    <ClInclude Include="..\..\UI\main.h" />
-    <ClInclude Include="..\..\UI\Messages.h" />
-    <ClInclude Include="..\..\UI\Rendering\Element.h" />
-    <ClInclude Include="..\..\UI\Rendering\ElementManager.h" />
-    <ClInclude Include="..\..\UI\Rendering\ElementRegistry\ElementRegistry.h" />
-    <ClInclude Include="..\..\UI\Rendering\ElementRegistry\ElementType.h" />
-    <ClInclude Include="..\..\UI\Rendering\Elements.h" />
-    <ClInclude Include="..\..\UI\Rendering\Elements\SelectElement.h" />
-    <ClInclude Include="..\..\UI\TextBlock.h" />
-    <ClInclude Include="..\..\UI\TextSystem.h" />
-    <ClInclude Include="..\..\UI\Transistion.h" />
-    <ClInclude Include="..\..\UI\UIManger.h" />
-    <ClInclude Include="..\..\UI\Utils\DirtyValue.h" />
-    <ClInclude Include="..\..\UI\ViewManager.h" />
-    <ClInclude Include="..\..\UI\WebkitCommands.h" />
-    <ClInclude Include="..\..\UI\WebkitThread.h" />
-    <ClInclude Include="RenderInterface.h" />
-    <ClInclude Include="Task.h" />
+    <ClCompile Include="..\..\Application\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Application\BaseApplication.cpp" />
-    <ClCompile Include="..\..\Application\displaywindow.cpp" />
-    <ClCompile Include="..\..\Application\GameWindow.cpp" />
-    <ClCompile Include="..\..\Application\UpdateThread.cpp" />
-    <ClCompile Include="..\..\Core\ConstructionFactory.cpp" />
-    <ClCompile Include="..\..\Core\FileSystem\FileSystem.cpp" />
-    <ClCompile Include="..\..\Core\FileSystem\Platform\Win\FileWin.cpp" />
-    <ClCompile Include="..\..\Core\FileSystem\Platform\Win\MountPointWin.cpp" />
-    <ClCompile Include="..\..\Core\Hashing\FNVHash.cpp" />
-    <ClCompile Include="..\..\Core\Hashing\SipHash.cpp" />
-    <ClCompile Include="..\..\Core\MessageSystem\MessageObserver.cpp" />
-    <ClCompile Include="..\..\Core\Paths.cpp" />
-    <ClCompile Include="..\..\Core\Profiler\Event.cpp" />
-    <ClCompile Include="..\..\Core\Profiler\EventDescriptor.cpp" />
-    <ClCompile Include="..\..\Core\Profiler\Profiler.cpp" />
-    <ClCompile Include="..\..\Core\Resource\GameResource.cpp" />
-    <ClCompile Include="..\..\Core\Resource\Resourceable.cpp" />
-    <ClCompile Include="..\..\Core\Settings\Settings.cpp" />
-    <ClCompile Include="..\..\Core\Settings\SettingsManager.cpp" />
-    <ClCompile Include="..\..\Core\Settings\SettingsParser.cpp" />
-    <ClCompile Include="..\..\Core\StringOperations\StringHelperFunctions.cpp" />
-    <ClCompile Include="..\..\Core\StringOperations\StringTemplate.cpp" />
-    <ClCompile Include="..\..\Core\Thread\Job.cpp" />
-    <ClCompile Include="..\..\Core\Thread\JobSystem.cpp" />
-    <ClCompile Include="..\..\Core\Thread\Task.cpp" />
-    <ClCompile Include="..\..\Core\Thread\Thread.cpp" />
-    <ClCompile Include="..\..\Core\Thread\Timer.cpp" />
-    <ClCompile Include="..\..\Core\Thread\WorkerThread.cpp" />
-    <ClCompile Include="..\..\Core\tinyxml2.cpp" />
-    <ClCompile Include="..\..\Gameplay\bbox.cpp" />
-    <ClCompile Include="..\..\Gameplay\box.cpp" />
-    <ClCompile Include="..\..\Gameplay\core.cpp" />
-    <ClCompile Include="..\..\Gameplay\door.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\Component.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\Components\ComponentType.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\Components\ComponentTypeRegistry.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\Components\PhysicsComponent.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\DataStore.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\Entity.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\EntityTagManager.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\SystemsManager.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\Systems\HandleMessageSystem.cpp" />
-    <ClCompile Include="..\..\Gameplay\ECS\Systems\RenderableSystem.cpp" />
-    <ClCompile Include="..\..\Gameplay\EntityManager.cpp" />
-    <ClCompile Include="..\..\Gameplay\face.cpp" />
-    <ClCompile Include="..\..\Gameplay\forcefield.cpp" />
-    <ClCompile Include="..\..\Gameplay\GameObject.cpp" />
-    <ClCompile Include="..\..\Gameplay\GameObjectManager.cpp" />
-    <ClCompile Include="..\..\Gameplay\gunturret.cpp" />
-    <ClCompile Include="..\..\Gameplay\InfinitySphere.cpp" />
-    <ClCompile Include="..\..\Gameplay\laser.cpp" />
-    <ClCompile Include="..\..\Gameplay\LaserManager.cpp" />
-    <ClCompile Include="..\..\Gameplay\particle.cpp" />
-    <ClCompile Include="..\..\Gameplay\particleemitter.cpp" />
-    <ClCompile Include="..\..\Gameplay\particlesystemmanager.cpp" />
-    <ClCompile Include="..\..\Gameplay\plane.cpp" />
-    <ClCompile Include="..\..\Gameplay\player.cpp" />
-    <ClCompile Include="..\..\Gameplay\RKIntegrator.cpp" />
-    <ClCompile Include="..\..\Gameplay\rotatingblades.cpp" />
-    <ClCompile Include="..\..\Gameplay\scorchmark.cpp" />
-    <ClCompile Include="..\..\Gameplay\square.cpp" />
-    <ClCompile Include="..\..\Gameplay\switch.cpp" />
-    <ClCompile Include="..\..\Generators\astar.cpp" />
-    <ClInclude Include="..\..\Generators\MapGenerator.inl">
-      <FileType>Document</FileType>
-    </ClInclude>
-    <ClCompile Include="..\..\Generators\MapGenerator.cpp" />
-    <ClCompile Include="..\..\Graphics\AssetLoaders\TexturePackLoader.cpp" />
-    <ClCompile Include="..\..\Graphics\Camera.cpp" />
-    <ClCompile Include="..\..\Graphics\CameraManager.cpp" />
-    <ClCompile Include="..\..\Graphics\color.cpp" />
-    <ClCompile Include="..\..\Graphics\CubeMapRenderer.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D11\Profiler\D3D11GPUProfiler.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\MultithreadedCommandlistManager.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\StructuredBuffer.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\CommandQueue.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\ConstantBuffer.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\ConstantBufferManager.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\DescriptorHeapManager.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\DeviceManagerD3D12.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\PipelineObject.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\ShaderCompiler.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\ShaderParameter.cpp" />
-    <ClCompile Include="..\..\Graphics\D3D12\ShaderParamMatcher.cpp" />
-    <ClCompile Include="..\..\Graphics\DebugBox.cpp" />
-    <ClCompile Include="..\..\Graphics\DeviceManager.cpp" />
-    <ClCompile Include="..\..\Graphics\Effect.cpp" />
-    <ClCompile Include="..\..\Graphics\EffectCache.cpp" />
-    <ClCompile Include="..\..\Graphics\Frustum.cpp" />
-    <ClCompile Include="..\..\Graphics\GeometryCache.cpp" />
-    <ClCompile Include="..\..\Graphics\IndexBuffer.cpp" />
-    <ClCompile Include="..\..\Graphics\light.cpp" />
-    <ClCompile Include="..\..\Graphics\LightManager.cpp" />
-    <ClCompile Include="..\..\Graphics\material.cpp" />
-    <ClCompile Include="..\..\Graphics\mesh.cpp" />
-    <ClCompile Include="..\..\Graphics\MeshGroup.cpp" />
-    <ClCompile Include="..\..\Graphics\MeshGroupCreator.cpp" />
-    <ClCompile Include="..\..\Graphics\modelmanager.cpp" />
-    <ClCompile Include="..\..\Graphics\OrientationAxis.cpp" />
-    <ClCompile Include="..\..\Graphics\Renderable.cpp" />
-    <ClCompile Include="..\..\Graphics\RenderGraph\Pass.cpp" />
-    <ClCompile Include="..\..\Graphics\RenderGraph\RenderGraph.cpp" />
-    <ClCompile Include="..\..\Graphics\RenderInstance.cpp" />
-    <ClCompile Include="..\..\Graphics\RenderJobs.cpp" />
-    <ClCompile Include="..\..\Graphics\RenderSystem.cpp" />
-    <ClCompile Include="..\..\Graphics\ShaderCache.cpp" />
-    <ClCompile Include="..\..\Graphics\ShaderInstance.cpp" />
-    <ClCompile Include="..\..\Graphics\shadermanager.cpp" />
-    <ClCompile Include="..\..\Graphics\ShaderPack.cpp" />
-    <ClCompile Include="..\..\Graphics\Shaders.cpp" />
-    <ClCompile Include="..\..\Graphics\ShadowMapRenderer.cpp" />
-    <ClCompile Include="..\..\Graphics\texture.cpp" />
-    <ClCompile Include="..\..\Graphics\texture12.cpp" />
-    <ClCompile Include="..\..\Graphics\texturemanager.cpp" />
-    <ClCompile Include="..\..\Graphics\VertexBuffer.cpp" />
-    <ClCompile Include="..\..\Input\controller.cpp" />
-    <ClCompile Include="..\..\Input\FE\NavigationActions.cpp" />
-    <ClCompile Include="..\..\Input\IController.cpp" />
-    <ClCompile Include="..\..\Input\Input.cpp" />
-    <ClCompile Include="..\..\Input\InputState.cpp" />
-    <ClCompile Include="..\..\Input\InputSystem.cpp" />
-    <ClCompile Include="..\..\Input\keyboard.cpp" />
-    <ClCompile Include="..\..\Input\KeyboardController.cpp" />
-    <ClCompile Include="..\..\Input\MouseControlDefines.cpp" />
-    <ClCompile Include="..\..\Input\MouseController.cpp" />
-    <ClCompile Include="..\..\Input\playbackcontroller.cpp" />
-    <ClCompile Include="..\..\Input\XController.cpp" />
-    <ClCompile Include="..\..\Input\XControllerDefines.cpp" />
-    <ClCompile Include="..\..\Loader\MapLoader.cpp" />
-    <ClCompile Include="..\..\Loader\ModelLoaders\AssimpModelLoader.cpp" />
-    <ClCompile Include="..\..\Loader\ModelLoaders\MmlLoader.cpp" />
-    <ClCompile Include="..\..\Loader\ModelLoaders\ModelLoader.cpp" />
-    <ClCompile Include="..\..\Loader\ModelLoaders\XMLModelLoader.cpp" />
-    <ClCompile Include="..\..\Loader\ResourceLoader.cpp" />
-    <ClCompile Include="..\..\Loader\ResourceLoadJobs.cpp" />
-    <ClCompile Include="..\..\Loader\WICTTextureLoader.cpp" />
-    <ClCompile Include="..\..\Logging\FileLogger.cpp" />
-    <ClCompile Include="..\..\Logging\Logger.cpp" />
-    <ClCompile Include="..\..\Math\matrix33.cpp" />
-    <ClCompile Include="..\..\Math\matrix44.cpp" />
-    <ClCompile Include="..\..\Math\matrixmath.cpp" />
-    <ClCompile Include="..\..\Math\vector2.cpp" />
-    <ClCompile Include="..\..\Math\vector3.cpp" />
-    <ClCompile Include="..\..\Math\vector4.cpp" />
-    <ClCompile Include="..\..\Memory\Allocator.cpp" />
-    <ClCompile Include="..\..\NodeGraph\Graph.cpp" />
-    <ClCompile Include="..\..\NodeGraph\GraphConnection.cpp" />
-    <ClCompile Include="..\..\NodeGraph\GraphConnectionDefinition.cpp" />
-    <ClCompile Include="..\..\NodeGraph\GraphDefinitionReader.cpp" />
-    <ClCompile Include="..\..\NodeGraph\GraphNode.cpp" />
-    <ClCompile Include="..\..\NodeGraph\GraphNodeDefinition.cpp" />
-    <ClCompile Include="..\..\NodeGraph\GraphNodePin.cpp" />
-    <ClCompile Include="..\..\NodeGraph\NodeFactory.cpp" />
-    <ClCompile Include="..\..\NodeGraph\Nodes\AddNode.cpp" />
-    <ClCompile Include="..\..\Physics\PhysicsManager.cpp" />
-    <ClCompile Include="..\..\UI\BitmapFont.cpp" />
-    <ClCompile Include="..\..\UI\Core\Behaviours\SelectObject.cpp" />
-    <ClCompile Include="..\..\UI\Core\Behaviours\StaticText.cpp" />
-    <ClCompile Include="..\..\UI\Core\FlowManager.cpp" />
-    <ClCompile Include="..\..\UI\Core\Item.cpp" />
-    <ClCompile Include="..\..\UI\Core\Navigation.cpp" />
-    <ClCompile Include="..\..\UI\Core\StateManager.cpp" />
-    <ClCompile Include="..\..\UI\Core\States\Screen.cpp" />
-    <ClCompile Include="..\..\UI\Core\States\State.cpp" />
-    <ClCompile Include="..\..\UI\Messages.cpp" />
-    <ClCompile Include="..\..\UI\Rendering\ElementManager.cpp" />
-    <ClCompile Include="..\..\UI\Rendering\Elements\SelectElement.cpp" />
-    <ClCompile Include="..\..\UI\TextBlock.cpp" />
-    <ClCompile Include="..\..\UI\TextSystem.cpp" />
-    <ClCompile Include="..\..\UI\UIManger.cpp" />
-    <ClCompile Include="..\..\UI\ViewManager.cpp" />
-    <ClCompile Include="..\..\UI\WebkitThread.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\bin\Maps\Entrance.dat">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\Core\StringOperations\StringTemplate.inl" />
-    <None Include="..\..\Gameplay\ECS\DataStoreArrayIterator.h" />
-    <None Include="packages.config" />
+    <ProjectReference Include="..\NewSpaceSim\NewSpaceSim.vcxproj">
+      <Project>{61bfd15b-55f2-4621-b9df-5cc9d2baa035}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets'))" />
-    <Error Condition="!Exists('..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>
