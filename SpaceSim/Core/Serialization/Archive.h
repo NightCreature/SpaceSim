@@ -177,7 +177,8 @@ private:
         }
         else if constexpr (std::is_pointer_v<T>)
         {
-            m_file.Write(reinterpret_cast<const byte*>(&(*value)), sizeof(std::remove_pointer_t<T>));
+            const std::remove_pointer_t<T> nonPtrValue = *value;
+            m_file.Write(reinterpret_cast<const byte*>(&(nonPtrValue)), sizeof(std::remove_pointer_t<T>));
         }
         else
         {
@@ -218,7 +219,7 @@ private:
         {
             byte* data = nullptr;
             m_file.Read(data, sizeof(std::remove_pointer_t<T>));
-            value = reinterpret_cast<T*>(data); //This does not call a constructor
+            value = reinterpret_cast<T>(data); //This does not call a constructor
             delete data; //Carefull this might leak something or break needs more testing
         }
         else
