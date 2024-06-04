@@ -1,0 +1,10 @@
+<ScreenGeneric width="300" height="500">
+    <navStackerH> 
+        <navStackerV>
+            <Library>
+                <button />
+                <textfield />
+            </Library>
+        </navStackerV>
+    </navStackerH>
+</ScreenGeneric>

@@ -50,8 +50,8 @@ int UpdateThread::WorkerFunction()
 {
     while (isAlive())
     {
-        PROFILE_THREAD("UpdateThread");
-        OPTICK_THREAD("UpdateThread");
+        //PROFILE_THREAD("UpdateThread");
+        
         if (!m_done)
         {
             EnterCriticalSection(&m_criticalSection);

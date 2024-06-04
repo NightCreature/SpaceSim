@@ -44,7 +44,7 @@ public:
     CreateRenderResource(const char* typeName)
     {
         m_implementationData = new ResourceData<T>();
-        static_cast<ResourceData<T>*>(m_implementationData)->m_resourceType = hashString(typeName);
+        static_cast<ResourceData<T>*>(m_implementationData)->m_resourceType = Hashing::hashString(typeName);
         m_implementationDataSize = sizeof(ResourceData<T>);
 
         UNUSEDPARAM(typeName); //work arround for compile error parameter is used

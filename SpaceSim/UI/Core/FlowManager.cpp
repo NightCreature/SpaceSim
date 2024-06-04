@@ -6,6 +6,7 @@
 #include "UI/Transistion.h"
 #include "UI/Core/StateManager.h"
 #include "Core/Resource/GameResource.h"
+#include "Logging/LoggingMacros.h"
 #include <fstream>
 
 

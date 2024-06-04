@@ -2,6 +2,7 @@
 
 #include "Core/Resource/GameResource.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description

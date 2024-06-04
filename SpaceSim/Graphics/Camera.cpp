@@ -4,23 +4,13 @@
 #include "Input/InputSystem.h"
 #include "Math/matrix33.h"
 #include "Core/StringOperations/HashString.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <directxmath.h>
 #include <Core/Types/TypeHelpers.h>
-
-
-constexpr size_t moveForward = "move_forwards"_hash;
-constexpr size_t moveBackWards = "move_backwards"_hash;
-constexpr size_t moveLeft = "move_left"_hash;
-constexpr size_t moveRight = "move_right"_hash;
-constexpr size_t yawLeft = "move_yaw_left"_hash;
-constexpr size_t yawRight = "move_yaw_right"_hash;
-constexpr size_t pitchUp = "move_pitch_up"_hash;
-constexpr size_t pitchDown = "move_pitch_down"_hash;
-constexpr size_t rollLeft = "move_roll_left"_hash;
-constexpr size_t rollRight = "move_roll_right"_hash;
+#include "CameraMiscUtils.h"
 
 Camera::Camera() :
 m_roll(0.0f),
@@ -95,7 +85,7 @@ void Camera::moveOverPlane(float deltau, float deltav, float deltan)
 CameraConstants Camera::GetConstantData() const
 {
     CameraConstants constants;
-    constants.m_position = m_eye;
+    constants.m_position = m_eye.toArray();
     constants.m_matrix = m_camera;
     constants.m_inverseMatrix = m_invcamera;
 
@@ -139,32 +129,13 @@ float Camera::restrictAngleTo360(float angle) const
 ///-----------------------------------------------------------------------------
 void Camera::update( float elapsedTime, double time, const Input& input )
 {
+    PROFILE_FUNCTION();
+
     UNUSEDPARAM(time);
 
     const InputState* inputState = input.getInput(0);
     if (inputState)
     {
-        InputActions::ActionType fowardAction;
-        InputActions::ActionType backwardAction;
-        InputActions::ActionType moveLeftAction;
-        InputActions::ActionType moveRightAction;
-        InputActions::ActionType yawLeftAction;
-        InputActions::ActionType yawRightAction;
-        InputActions::ActionType pitchUpAction;
-        InputActions::ActionType pitchDownAction;
-        InputActions::ActionType rollLeftAction;
-        InputActions::ActionType rollRightAction;
-        InputSystem::getInputActionFromName(moveForward, fowardAction);
-        InputSystem::getInputActionFromName(moveBackWards, backwardAction);
-        InputSystem::getInputActionFromName(moveLeft, moveLeftAction);
-        InputSystem::getInputActionFromName(moveRight, moveRightAction);
-        InputSystem::getInputActionFromName(yawLeft, yawLeftAction);
-        InputSystem::getInputActionFromName(yawRight, yawRightAction);
-        InputSystem::getInputActionFromName(pitchUp, pitchUpAction);
-        InputSystem::getInputActionFromName(pitchDown, pitchDownAction);
-        InputSystem::getInputActionFromName(rollLeft, rollLeftAction);
-        InputSystem::getInputActionFromName(rollRight, rollRightAction);
-
         float moveAlongDirectionFactor = inputState->getActionValue(fowardAction) - inputState->getActionValue(backwardAction);
         moveAlongDirection(moveAlongDirectionFactor * m_movementSpeed * elapsedTime );//Move forwared, backward
         float strafeFactor = inputState->getActionValue(moveLeftAction) - inputState->getActionValue(moveRightAction);

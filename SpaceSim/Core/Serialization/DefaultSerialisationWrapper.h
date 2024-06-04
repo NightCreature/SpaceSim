@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SerialisationType.h"
+#include "SeriaisationTypeWrapper.h"
 
 namespace SerialisationDetails
 {

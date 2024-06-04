@@ -1,6 +1,7 @@
 #include "Profiler.h"
 
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 
 #include <algorithm>
 #include <chrono>
@@ -181,7 +182,7 @@ void Profiler::FlushToFile()
     }
     else
     {
-        MSG_TRACE("Failed to open File stream with error");
+        MSG_TRACE_CHANNEL_FMT("profiler","Failed to open File stream {} with error", m_fileNameForSession);
     }
 }
 

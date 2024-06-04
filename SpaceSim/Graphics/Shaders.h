@@ -40,7 +40,7 @@ class Shader
 {
 public:
     Shader() = default;
-    void cleanup() { if (m_shaderBlob != nullptr) { m_shaderBlob->Release(); m_shaderBlob = nullptr; } }
+    void cleanup() { if (m_shaderBlob != nullptr) { /*m_shaderBlob->Release(); m_shaderBlob = nullptr; */} }
 
     void deserialise(const tinyxml2::XMLElement* element, ShaderType defaultType);
 
@@ -57,13 +57,13 @@ public:
     ShaderType GetType() const { return m_type; }
     HASH_ELEMENT_DEFINITION(Shader);
 private:
+    void ValidateShader();
 
     CreatedShaderObjects m_shader;
 
     ID3DBlob* m_shaderBlob;
     std::string m_fileName;
     std::string m_entryPoint;
-    std::string m_profileVersion;
     ShaderType m_type;
     ShaderParameters m_parameters;
 };

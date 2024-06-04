@@ -6,6 +6,7 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/D3D12/CommandQueue.h"
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
+#include "Logging/LoggingMacros.h"
 
 #include <windows.h>
 #include <combaseapi.h>
@@ -16,7 +17,7 @@ class StructuredBuffer
 {
 public:
     template<class T>
-    void Create(const DeviceManager& deviceManager, CommandList& commandList, DescriptorHeap& heap, const std::vector<T>& data);
+    void Create(const DeviceManager& deviceManager, CommandList& commandList, DescriptorHeap& heap, const std::vector<T>& data, const std::string_view name);
     void Destroy();
 
     ID3D12Resource* GetBufferResource() const { return m_defaultResource; }
@@ -32,7 +33,7 @@ private:
 ///! @remark
 ///-----------------------------------------------------------------------------
 template <class T>
-void StructuredBuffer::Create(const DeviceManager& deviceManager, CommandList& commandList, DescriptorHeap& heap, const std::vector<T>& data)
+void StructuredBuffer::Create(const DeviceManager& deviceManager, CommandList& commandList, DescriptorHeap& heap, const std::vector<T>& data, const std::string_view name)
 {
     //D3D12 resource creation
     D3D12_HEAP_PROPERTIES defaultHeap;
@@ -121,7 +122,7 @@ void StructuredBuffer::Create(const DeviceManager& deviceManager, CommandList& c
 #ifdef _DEBUG
     static size_t bufferCount = 0;
     std::wstringstream str;
-    str << L"Structured Buffer" << bufferCount++;
+    str << L"Structured Buffer" << bufferCount++ << " " << name.data();
     m_defaultResource->SetName(str.str().c_str());
     str << L"Upload";
     m_uploadResource->SetName(str.str().c_str());

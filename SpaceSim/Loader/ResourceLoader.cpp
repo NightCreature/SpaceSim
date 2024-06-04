@@ -91,9 +91,9 @@ void ResourceLoader::DispatchResourceCommandQueue()
     m_commandListManager.Update();
 }
 
-bool ResourceLoader::GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList)
+bool ResourceLoader::GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList, CommandQueue*& commandQueue)
 {
-    return m_commandListManager.GetCommandListHandleForThreadIndex(threadIndex, commandList);
+    return m_commandListManager.GetCommandListHandleForThreadIndex(threadIndex, commandList, commandQueue);
 }
 
 void ResourceLoader::ReturnCommandListForThreadIndex(size_t threadIndex)

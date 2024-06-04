@@ -25,7 +25,7 @@ GameObject(resource)
 	m_active = true;
 
     m_name = "forcefield";
-    m_nameHash = hashString(m_name);
+    m_nameHash = Hashing::hashString(m_name);
 }
 
 ///-----------------------------------------------------------------------------
@@ -64,12 +64,12 @@ void ForceField::deserialise( const tinyxml2::XMLElement* element)
     if (attribute != nullptr)
     {
         m_name = attribute->Value();
-        m_nameHash = hashString(m_name);
+        m_nameHash = Hashing::hashString(m_name);
     }
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        auto typeHash = hashString(element->Value());
+        auto typeHash = Hashing::hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");

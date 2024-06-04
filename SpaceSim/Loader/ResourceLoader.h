@@ -35,7 +35,7 @@ public:
 
     void DispatchResourceCommandQueue();
 
-    bool GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList);
+    bool GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList, CommandQueue*& commandQueue);
     void ReturnCommandListForThreadIndex(size_t threadIndex);
 
     void AddedReturnMessageDataForThreadIndex(size_t m_threadIndex, size_t m_gameObjectId, size_t resourceHandle);

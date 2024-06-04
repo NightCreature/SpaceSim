@@ -256,13 +256,13 @@ void GunTurret::deserialise( const tinyxml2::XMLElement* element)
     if (attribute != nullptr)
     {
         m_name = attribute->Value();
-        m_nameHash = hashString(m_name);
+        m_nameHash = Hashing::hashString(m_name);
     }
 
     Matrix44 scaleTransform, translation, rotation;
     for (const tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if (childElementHash == Vector3::m_hash)
         {
             const tinyxml2::XMLAttribute* nameAttribute = childElement->FindAttribute("name"); //This material needs a name to distinguish between normal and glowing versions of the material
@@ -283,7 +283,7 @@ void GunTurret::deserialise( const tinyxml2::XMLElement* element)
                 }
             }
         }
-        if (childElementHash == hashString("Model"))
+        if (childElementHash == Hashing::hashString("Model"))
         {
             attribute = childElement->FindAttribute("file");
             if (attribute != nullptr)

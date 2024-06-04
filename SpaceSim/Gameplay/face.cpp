@@ -18,6 +18,8 @@
 #include <Graphics/Model/MeshHelperFunctions.h>
 #include "Loader/ResourceLoadJobs.h"
 
+#include "Core/Profiler/ProfilerMacros.h"
+
 
 namespace Face
 {
@@ -31,7 +33,7 @@ const size_t numberOfTexcoords = 1;
 ///-----------------------------------------------------------------------------
 CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* currentJob, CommandList& commandList)
 { 
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
     UNUSEDPARAM(currentJob);
 
     RenderResourceHelper renderResourceHelper(resource);
@@ -102,7 +104,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
     {
         if (!strICmp(params.m_materialParameters.m_textureNames[counter], ""))
         {
-            mat.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(params.m_materialParameters.m_textureNames[counter])), static_cast<Material::TextureSlotMapping::TextureSlot>(counter)));
+            mat.addTextureReference(Material::TextureSlotMapping(Hashing::hashString(getTextureNameFromFileName(params.m_materialParameters.m_textureNames[counter])), static_cast<Material::TextureSlotMapping::TextureSlot>(counter)));
             //LoadRequest loadRequest;
             //loadRequest.m_gameObjectId = 0;
             //loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
@@ -115,7 +117,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
             std::string inputTextureName = params.m_materialParameters.m_textureNames[counter];
             auto loadTextureLambda = [inputTextureName](ThreadContext* context)
             {
-                OPTICK_EVENT("Load Texture lambda");
+                PROFILE_TAG("Load Texture lambda");
 
                 if (inputTextureName.empty())
                     return true;
@@ -123,7 +125,8 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
                 RenderResource renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
 
                 CommandList commandList;
-                bool retVal = renderResource.getResourceLoader().GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+                CommandQueue* commandQueue = nullptr;
+                bool retVal = renderResource.getResourceLoader().GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList, commandQueue);
                 if (retVal)
                 {
                     //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
@@ -137,7 +140,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
                         info.m_loadRequested = true;
                         Texture12 texture;
                         size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
-                        if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, inputTextureName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
+                        if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, *commandQueue, inputTextureName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
                         {
                             MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", inputTextureName.c_str(), context->m_threadIndex);
                             return true;
@@ -175,7 +178,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* c
 ///-----------------------------------------------------------------------------
 VertexDataStreams createVertexData(const CreationParams& params, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     VertexDeclarationDescriptor vertexDesc;
     vertexDesc.position = 3;
@@ -280,7 +283,7 @@ VertexDataStreams createVertexData(const CreationParams& params, Bbox& boundingB
 ///-----------------------------------------------------------------------------
 void createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
     unsigned int nrcolumns = static_cast<unsigned int>(columns);
     for (unsigned int i = 0; i < static_cast<unsigned int>(rows - 1); i++)
     {

@@ -9,6 +9,7 @@
 class DeviceManager;
 class CommandQueueManager;
 struct CommandList;
+struct CommandQueue;
 
 class Texture12
 {
@@ -19,7 +20,7 @@ public:
     void cleanup();
     bool loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename);
     bool loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename, size_t commandQeueuHandle, size_t commandListHandle, D3D12_CPU_DESCRIPTOR_HANDLE handle);
-    bool loadTextureFromFile(DeviceManager& deviceManager, CommandList& commandList, const std::string& filename, D3D12_CPU_DESCRIPTOR_HANDLE handle);
+    bool loadTextureFromFile(DeviceManager& deviceManager, CommandList& commandList, CommandQueue& commandQueue, const std::string& filename, D3D12_CPU_DESCRIPTOR_HANDLE handle);
     //void createFromShaderResourceView(ID3D11ShaderResourceView* textureShaderResourceView, ID3D11SamplerState* textureSamplerState) { m_textureShaderResourceView = textureShaderResourceView; m_textureSamplerState = textureSamplerState; }
     //ID3D11ShaderResourceView* getShaderResourceView() const { return m_textureShaderResourceView; }
     //ID3D11SamplerState* getSamplerState() const { return m_textureSamplerState; }

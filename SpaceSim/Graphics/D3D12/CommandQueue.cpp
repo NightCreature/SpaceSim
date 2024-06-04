@@ -4,6 +4,9 @@
 #include "Core/Resource/RenderResource.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
+
+#include "Logging/LoggingMacros.h"
+
 #include <sstream>
 
 #ifdef DEBUG

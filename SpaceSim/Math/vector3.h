@@ -4,6 +4,8 @@
 #include "Memory/AlignMacros.h"
 #include "Core/tinyxml2.h"
 #include "Math/vector2.h"
+#include "Logging/LoggingMacros.h"
+#include <array>
 #include <iostream>
 
 class Vector3
@@ -48,6 +50,8 @@ public:
     static Vector3 xAxis() {return Vector3(1.0f, 0.0f, 0.0f);}
     static Vector3 yAxis() {return Vector3(0.0f, 1.0f, 0.0f);}
     static Vector3 zAxis() {return Vector3(0.0f, 0.0f, 1.0f);}
+
+    std::array<float, 3> toArray() const { return {m_x, m_y, m_z}; }
 protected:
 private:
     float m_x, m_y, m_z;

@@ -20,7 +20,7 @@ void InfinitySphere::deserialise(const tinyxml2::XMLElement* node)
 
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if (childElementHash == Material::m_hash)
         {
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
@@ -44,7 +44,7 @@ void InfinitySphere::deserialise(const tinyxml2::XMLElement* node)
                 auto resource = GameResourceHelper(m_resource).getWriteableResource();
                 DECLAREANDCREATERESOURCEMESSAGE(createModel, LoadModelResource);
                 createModel.SetData(modelResource);
-                createModel.SetGameObjectId(static_cast<size_t>(hashString(m_name))); //Not super but should work for now
+                createModel.SetGameObjectId(static_cast<size_t>(Hashing::hashString(m_name))); //Not super but should work for now
 
                 resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createModel);
 

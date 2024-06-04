@@ -50,6 +50,8 @@ public:
     const std::vector<RenderInterface*> GetRenderables(const Frustum& viewFrustum) const;
 
     void UpdateDebugModels(size_t objectId, Matrix44 m_world) const;
+
+    void UpdateSortKeysAndSortModels();
 protected:
 private:
     bool InternalHasRenderResource(size_t resourceId) const;

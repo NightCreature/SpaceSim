@@ -10,7 +10,7 @@
 #endif
 
 
-#define MESSAGE_ID(message_name) hashString(#message_name)
+#define MESSAGE_ID(message_name) Hashing::hashString(#message_name)
 
 namespace MessageSystem
 {

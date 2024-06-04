@@ -1,10 +1,15 @@
 #include "ShaderCache.h"
 #include <fstream>
 #include "Core/FileSystem/FileSystem.h"
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core/Resource/Resourceable.h"
 #include "Core/Paths.h"
 #include "Core/Resource/RenderResource.h"
+#include "Core/Thread/JobSystem.h"
+#include "Loader/ResourceLoadJobs.h"
+
 #include <D3Dcompiler.h>
+
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
@@ -27,7 +32,8 @@ ShaderCache::~ShaderCache()
 ///-----------------------------------------------------------------------------
 void ShaderCache::Initialise(Resource* resource)
 {
-    m_compiler.Initialise();
+    PROFILE_FUNCTION();
+    m_compiler.Initialise(resource);
 
     //Build file list of compiled shaders, looking for .cso in /Shaders/Compiled/
     VFS::FileSystem* fileSystem = resource->m_fileSystem;
@@ -74,59 +80,6 @@ void ShaderCache::cleanup()
     m_computeShaders.clear();
 }
 
-///-------------------------------------------------------------------------
-// @brief 
-///-------------------------------------------------------------------------
-size_t ShaderCache::getVertexShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
-{
-    UNUSEDPARAM(deviceManager);
-    return GetShader(ShaderType::eVertexShader, element, m_vertexShaders);
-}
-
-///-------------------------------------------------------------------------
-// @brief 
-///-------------------------------------------------------------------------
-size_t ShaderCache::getHullShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
-{
-    UNUSEDPARAM(deviceManager);
-    return GetShader(ShaderType::eHullShader, element, m_hullShaders);
-}
-
-///-------------------------------------------------------------------------
-// @brief 
-///-------------------------------------------------------------------------
-size_t ShaderCache::getDomainShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
-{
-    UNUSEDPARAM(deviceManager);
-    return GetShader(ShaderType::eDomainShader, element, m_domainShaders);
-}
-
-///-------------------------------------------------------------------------
-// @brief 
-///-------------------------------------------------------------------------
-size_t ShaderCache::getGeometryShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
-{
-    UNUSEDPARAM(deviceManager);
-    return GetShader(ShaderType::eGeometryShader, element, m_geometryShaders);
-}
-
-///-------------------------------------------------------------------------
-// @brief 
-///-------------------------------------------------------------------------
-size_t ShaderCache::getPixelShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
-{
-    UNUSEDPARAM(deviceManager);
-    return GetShader(ShaderType::ePixelShader, element, m_pixelShaders);
-}
-
-///-------------------------------------------------------------------------
-// @brief 
-///-------------------------------------------------------------------------
-size_t  ShaderCache::getComputeShader(const tinyxml2::XMLElement* element, const DeviceManager& deviceManager)
-{
-    UNUSEDPARAM(deviceManager);
-    return GetShader(ShaderType::eComputeShader, element, m_computeShaders);
-}
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -257,48 +210,28 @@ void ShaderCache::DumpLoadedShaderNames()
 }
 #endif
 
-size_t ShaderCache::GetShader(ShaderType type, const tinyxml2::XMLElement* element, ShaderMap& shaderMap)
+
+bool LoadOrCompileShaderJob::Execute(ThreadContext* context)
 {
-    Shader shader;
-    shader.deserialise(element, type);
-    size_t resourceName = hashString(getResourceNameFromFileName(shader.getFileName()));
+    PROFILE_FUNCTION();
+    Resource* resource = context->m_renderResource;
+    auto shaderPrecompiledPath = resource->m_paths->getEffectShaderPath() / "Shaders/Compiled/";
 
-    auto shaderIt = shaderMap.find(resourceName);
-    if (shaderIt == shaderMap.end())
-    {
-        if (GetPreCompiledOrCreateShader(shader))
-        {
-            shaderMap.emplace(std::make_pair(resourceName, shader));
-        }
-        else
-        {
-            return InvalidShaderId;
-        }
-    }
-
-    return resourceName;
-}
-
-
-///-----------------------------------------------------------------------------
-///! @brief   
-///! @remark
-///-----------------------------------------------------------------------------
-bool ShaderCache::GetPreCompiledOrCreateShader(Shader& shader)
-{
-    OPTICK_EVENT();
-
-    auto shaderPrecompiledPath = m_resource->m_paths->getEffectShaderPath() / "Shaders/Compiled/";
-
+    auto& shader = m_context.m_shader;
     auto prefix = getShaderPrefix(shader.GetType());
 
     auto shaderFilePath = std::filesystem::path(shader.getFileName());
+    if (shaderFilePath.empty())
+    {
+        MSG_ERROR_CHANNEL("Shader", "Failed to get shader file name");
+        return false;
+    }
     auto shaderName = std::filesystem::path(prefix + "_" + shaderFilePath.stem().string() + ".cso");
     auto findShaderName = [shaderName](const auto& path) { return shaderName == path; };
-    auto& deviceManager = RenderResourceHelper(m_resource).getWriteableResource().getDeviceManager();
+    auto& deviceManager = RenderResourceHelper(resource).getWriteableResource().getDeviceManager();
 
-    auto iterator = std::find_if(std::cbegin(m_compiledShaderSources), std::cend(m_compiledShaderSources), findShaderName);
-    if (iterator != std::cend(m_compiledShaderSources))
+    auto iterator = std::find_if(std::cbegin(m_context.m_compiledShaderSources), std::cend(m_context.m_compiledShaderSources), findShaderName);
+    if (iterator != std::cend(m_context.m_compiledShaderSources))
     {
         CreatedShaderObjects shaderObjects;
         
@@ -325,5 +258,5 @@ bool ShaderCache::GetPreCompiledOrCreateShader(Shader& shader)
         return true;
     }
 
-    return shader.createShader(deviceManager, m_compiler);
+    return shader.createShader(deviceManager, m_context.m_compiler);
 }

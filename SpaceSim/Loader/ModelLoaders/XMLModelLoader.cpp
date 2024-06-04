@@ -74,7 +74,7 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
     element = element->FirstChildElement();
     for (;element; element = element->NextSiblingElement())
     {
-        auto typeHash = hashString(element->Value());
+        auto typeHash = Hashing::hashString(element->Value());
 
         if (meshFaceHash == typeHash)
         {
@@ -82,12 +82,12 @@ CreatedModel XMLModelLoader::LoadModel(Resource* resource, const LoadData& loadD
             {
                 unsigned int count = 0;
                 unsigned int texCoordSetCount = 0;
-                typeHash = hashString(childElement->Value());
+                typeHash = Hashing::hashString(childElement->Value());
                 if( typeHash == meshVertexHash)
                 {
                     for (tinyxml2::XMLElement* vertexDataElement = childElement->FirstChildElement(); vertexDataElement; vertexDataElement = vertexDataElement->NextSiblingElement())
                     {
-                        typeHash = hashString(vertexDataElement->Value());
+                        typeHash = Hashing::hashString(vertexDataElement->Value());
                         if (Vector3::m_hash == typeHash)
                         {
                             Vector3 vec;

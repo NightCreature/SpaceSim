@@ -334,7 +334,7 @@ void Player::createScorchMark(const Vector3 &pos, const Vector3 &normal)
 ///-------------------------------------------------------------------------
 void Player::update( float elapsedTime, const Input& input )
 {
-    PROFILE_EVENT("Player::update", Green);
+    PROFILE_FUNCTION();
     //Should do move update and render list creation here
     UNUSEDPARAM(elapsedTime);
     UNUSEDPARAM(input);
@@ -397,7 +397,7 @@ void Player::deserialise( const tinyxml2::XMLElement* node )
 
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement())
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if ( Vector3::m_hash == childElementHash )
         {
             const tinyxml2::XMLAttribute* childAttribute = childElement->FindAttribute("name");

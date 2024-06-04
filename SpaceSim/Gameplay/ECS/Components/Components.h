@@ -12,7 +12,7 @@ struct RenderObjectComponent : public Component
     DECLARE_COMPONENT(RenderObjectComponent);
 
     size_t m_renderObjectHandle = 0; //very unlikely we get a zero from a hash function
-    MaterialContent m_material;
+    MaterialConstants m_material;
 };
 
 #define REGISTER_COMPONENT(ComponentName)\

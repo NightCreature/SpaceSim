@@ -22,3 +22,13 @@ using Vector4i64 = VectorBySize<int64, 4>;
 using Vector2d = VectorBySize<double, 2>;
 using Vector3d = VectorBySize<double, 3>;
 using Vector4d = VectorBySize<double, 4>;
+
+//template<class T, class Archive>
+//constexpr bool GlobalHasCreate = requires (T value, Archive ar) { Serialise(ar, value); };
+//
+////Allows us to add global functions to do serialisation and extend types
+//template<typename T, typename Archive>
+//concept HasGlobalSerialiseWrite = requires(T value, Archive archive)
+//{
+//    Serialise(archive, value, std::false_type());
+//};

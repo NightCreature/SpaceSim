@@ -24,6 +24,7 @@
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/RenderMessages.h"
 #include "Core/Resource/GameResource.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 MapLoader::~MapLoader()
 {
@@ -43,7 +44,7 @@ void MapLoader::reset()
 //Just transform this to reading of an xml file more structure and less debugging/easier to debug in the end
 bool MapLoader::loadMap(Resource* resource, const std::string& filename)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_NO_ERROR)
@@ -63,7 +64,7 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
 
     while (element != 0)
     {
-        size_t elementHash = hashString( element->Value() );
+        size_t elementHash = Hashing::hashString( element->Value() );
         if ( MapLoader::m_wallHash == elementHash )
         {
             readWallElement(resource, element);
@@ -337,7 +338,7 @@ void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement*
     unsigned int numberCornersRead = 0;
     while (childElement != 0)
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if (Vector3::m_hash == childElementHash)
         {
             corners[numberCornersRead].deserialise(childElement);

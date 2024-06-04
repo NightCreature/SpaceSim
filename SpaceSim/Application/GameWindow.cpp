@@ -134,14 +134,12 @@ void GameWindow::calculateFPS(float elapsedTime)
 ///-----------------------------------------------------------------------------
 void GameWindow::setFpsInWindowTitle(float elpasedTime)
 {
-    PROFILE_EVENT("GameWindow::setFpsInWindowTitle", Brown);
+    PROFILE_FUNCTION();
     std::stringstream strStream;
     {
-        PROFILE_EVENT("StringStreamUpdate", Brown);
         strStream << m_windowTitle.c_str() << " - fps: " << m_fps << " frame time: " << elpasedTime * 1000 << "ms";
     }
     {
-        PROFILE_EVENT("WindowTitleUpdate", Brown);
         SetWindowText(m_windowHandle, strStream.str().c_str());
     }
 }

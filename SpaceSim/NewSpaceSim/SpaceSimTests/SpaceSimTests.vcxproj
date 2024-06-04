@@ -19,8 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\GoogleTest\googletest\src\gtest-all.cc" />
-    <ClCompile Include="..\..\..\..\..\GoogleTest\googletest\src\gtest_main.cc" />
+    <ClCompile Include="..\..\..\SDK\GoogleTest\googletest\src\gtest-all.cc" />
+    <ClCompile Include="..\..\..\SDK\GoogleTest\googletest\src\gtest_main.cc" />
+    <ClCompile Include="..\..\..\SDK\microprofile\microprofile.cpp" />
     <ClCompile Include="..\..\Tests\ArchiveTest.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -84,9 +85,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ExternalIncludePath>F:\SDK\GoogleTest\googletest\include;F:\SDK\GoogleTest\googletest;$(SolutionDir)..\;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)..\..\SDK\GoogleTest\googletest\include;$(SolutionDir)..\..\SDK\GoogleTest\googletest\;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\optick\src;$(SolutionDir)..\;$(SolutionDir)..\..\SDK\fmt\include\;$(ExternalIncludePath)</ExternalIncludePath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSimTestsD</TargetName>
+    <LibraryPath>$(SolutionDir)..\..\bin;$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(SolutionDir)..\..\SDK\fmt\Debug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ExternalIncludePath>F:\SDK\GoogleTest\googletest\include;F:\SDK\GoogleTest\googletest;$(SolutionDir)..\..\SDK\optick\src;$(SolutionDir)..\;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\fmt\include\;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(SolutionDir)..\..\bin;$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -128,7 +133,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SpaceSim_x64d.lib;assimp-vc143-mtd.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK12.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;OptickCore.lib;vld.lib;WinPixEventRuntime.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SpaceSim_x64d.lib;assimp-vc143-mtd.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK12.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;OptickCore.lib;vld.lib;WinPixEventRuntime.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;ws2_32.lib;fmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,6 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

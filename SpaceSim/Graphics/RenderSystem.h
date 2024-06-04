@@ -65,7 +65,7 @@ public:
 	RenderSystem();
     ~RenderSystem();
 
-    void initialise(Resource* resource);
+    void initialise(Resource* resource, JobQueue* jobQueue);
 
     void cleanup();
     void beginDraw();

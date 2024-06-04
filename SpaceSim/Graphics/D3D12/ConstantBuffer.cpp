@@ -1,5 +1,7 @@
 #include "Graphics/D3D12/ConstantBuffer.h"
 
+#include "Logging/LoggingMacros.h"
+
 #ifdef _DEBUG
 static size_t numberOfConstantBuffers = 0;
 #endif
@@ -8,7 +10,7 @@ static size_t numberOfConstantBuffers = 0;
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& heap, size_t size)
+void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& heap, size_t size, const std::string_view name)
 {
     m_cpuSideData = ConstantData(size);
     m_cpuSideData.Create();
@@ -59,7 +61,7 @@ void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& 
 
 #ifdef _DEBUG
     std::wstringstream str;
-    str << L"ConstantBuffer" << numberOfConstantBuffers++ << L"sized:" << m_cpuSideData.m_size;
+    str << L"ConstantBuffer" << numberOfConstantBuffers++ << L"sized:" << m_cpuSideData.m_size << " name: " << name.data();
     m_constantBuffer->SetName(str.str().c_str());
 #endif
 }

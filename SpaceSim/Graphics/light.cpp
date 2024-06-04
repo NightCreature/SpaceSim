@@ -82,7 +82,7 @@ void Light::deserialise( const tinyxml2::XMLElement* element )
     int colorCounter = 0;
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        auto elementHash = hashString(element->Value());
+        auto elementHash = Hashing::hashString(element->Value());
         if (elementHash == Vector3::m_hash)
         {
             if (vector3Counter == 0)

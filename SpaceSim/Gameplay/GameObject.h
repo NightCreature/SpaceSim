@@ -66,7 +66,7 @@ public:
     bool getActive() const {return m_active;}
     void setActive(bool active) {m_active = active;}
 
-    const std::string& getName() const { if (m_nameHash == 0) { hashString(m_name); } return m_name; }
+    const std::string& getName() const { if (m_nameHash == 0) { Hashing::hashString(m_name); } return m_name; }
     const Resource& getResource() const { return *m_resource; }
 
     bool collision(const Bbox& bbox, const Vector3& dir)

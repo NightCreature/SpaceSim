@@ -29,6 +29,7 @@ Matrix44 RenderSystem::m_inverseView;
 Matrix44 RenderSystem::m_projection;
 
 constexpr size_t maxCameraConstants = 32;
+constexpr uint32 renderSystemProfileColor = 0xFFFFFF00;
 
 ///-------------------------------------------------------------------------
 // @brief 
@@ -132,21 +133,22 @@ RenderSystem::~RenderSystem()
 ///! @brief   Initialise the RenderSystem
 ///! @remark  Creates a window and reveals the window
 ///-----------------------------------------------------------------------------
-void RenderSystem::initialise(Resource* resource)
+void RenderSystem::initialise(Resource* resource, JobQueue* jobQueue)
 {
-    OPTICK_EVENT();
-    GameResource& gameResource = GameResourceHelper(resource).getWriteableResource();
-    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, resource->m_fileSystem, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, &(gameResource.getJobQueue()), &m_heapManager, &m_commandQueueManager, &m_perFrameDataStorage, this);
+    PROFILE_FUNCTION();
+    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, resource->m_fileSystem, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, jobQueue, &m_heapManager, &m_commandQueueManager, &m_perFrameDataStorage, this);
 
     
+    {
+        PROFILE_EVENT("RenderSystem", "Initiliase Systems", renderSystemProfileColor);
+        m_deviceManager.Initialise(m_renderResource);
+        m_modelManger.initialise(m_renderResource);
+        m_heapManager.Initialise(m_renderResource);
+        m_commandQueueManager.Initialise(m_renderResource);
+        m_perFrameDataStorage.Initialise(m_renderResource);
+        m_shaderCache.Initialise(m_renderResource);
 
-    m_deviceManager.Initialise(m_renderResource);
-    m_modelManger.initialise(m_renderResource);
-    m_heapManager.Initialise(m_renderResource);
-    m_commandQueueManager.Initialise(m_renderResource);
-    m_perFrameDataStorage.Initialise(m_renderResource);
-    m_shaderCache.Initialise(resource);
-    
+    }
     m_appName = "Demo app";
     m_windowName = "Demo app";
 
@@ -220,8 +222,8 @@ void RenderSystem::initialise(Resource* resource)
 
     m_textureManager.createSamplerStates(m_deviceManager);
 
-    m_sceneTransformBuffer.Create(m_deviceManager, m_heapManager.GetSRVCBVUAVHeap(), sizeof(WVPBufferContent));
-    m_cameraBuffer.Create(m_deviceManager, m_heapManager.GetSRVCBVUAVHeap(), sizeof(CameraConstants) * maxCameraConstants);
+    m_sceneTransformBuffer.Create(m_deviceManager, m_heapManager.GetSRVCBVUAVHeap(), sizeof(WVPData), "ProjectionData");
+    m_cameraBuffer.Create(m_deviceManager, m_heapManager.GetSRVCBVUAVHeap(), sizeof(CameraConstants) * maxCameraConstants, "CameraConstants");
 
     //Thiss all needs to move
     //D3D11_BUFFER_DESC lightContantsDescriptor;
@@ -273,19 +275,20 @@ void RenderSystem::initialise(Resource* resource)
         m_cameraSystem.getCamera("player_camera")->SetActive();
     }
 
+
     //initialiseCubemapRendererAndResources(m_renderResource);
     //m_shadowMapRenderer = new ShadowMapRenderer(m_deviceManager, m_blendState, m_alphaBlendState);
 
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
-    m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(&m_modelManger, &ModelManager::OnMessage));
-    m_feElementManager.RegisterElementDispatchFuncions(m_messageObservers);
+    {
+        PROFILE_EVENT("RenderSystem", "Register Message Observers", renderSystemProfileColor);
+        m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreateLightMessage), fastdelegate::MakeDelegate(&m_lightManager, &LightManager::dispatchMessage));
+        m_messageObservers.AddDispatchFunction(MESSAGE_ID(LoadResourceRequest), fastdelegate::MakeDelegate(&m_resourceLoader, &ResourceLoader::dispatchMessage));
+        m_messageObservers.AddDispatchFunction(MESSAGE_ID(RenderInformation), fastdelegate::MakeDelegate(&m_modelManger, &ModelManager::OnMessage));
+        m_feElementManager.RegisterElementDispatchFuncions(m_messageObservers);
+    }
 
     m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI / 4.0f, (float)windowWidth / (float)windowHeight, 1500.001f, 0.001f);
     m_view = m_cameraSystem.getCamera("global")->getCamera();
-
-    //not awesome but zero is the perframe data
-    m_perFrameDataStorage.CreateCBInterface(PerFrameConstants());
 
     //m_emmiter.initialise(m_renderResource);
 
@@ -331,7 +334,7 @@ void RenderSystem::update(float elapsedTime, double time)
 {
     //OPTICK_CATEGORY("RenderSystem::Update", Optick::Category::GPU_Scene);
     //OPTICK_CATEGORY("RenderSystem::Update", Optick::Category::Scene);
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
     m_window.update(elapsedTime, time);
     
     //Process Render Command queue
@@ -354,7 +357,7 @@ void RenderSystem::update(float elapsedTime, double time)
 
     std::vector<RenderInterface*> renderables;
     {
-        OPTICK_EVENT("VisCheck Main render list");
+        PROFILE_TAG("VisCheck Main render list");
         Frustum frustum(m_view, m_CullingProjectionMatrix);
         renderables = m_modelManger.GetRenderables(frustum);
     }
@@ -369,7 +372,7 @@ void RenderSystem::update(float elapsedTime, double time)
 
 #ifdef _DEBUG
     {
-        OPTICK_EVENT("debug axis");
+        PROFILE_TAG("debug axis");
         if (m_debugAxis != nullptr)
         {
             m_debugAxis->draw(m_deviceManager, m_view, m_projection, m_renderResource, renderCommandList);
@@ -381,28 +384,32 @@ void RenderSystem::update(float elapsedTime, double time)
         }
     }
 #endif
-
-    D3D12_RESOURCE_BARRIER barrier2;
-    ZeroMemory(&barrier2, sizeof(D3D12_RESOURCE_BARRIER));
-    barrier2.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier2.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrier2.Transition.pResource = m_deviceManager.GetCurrentBackBuffer();
-    barrier2.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier2.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-    renderCommandList.m_list->ResourceBarrier(1, &barrier2);
-
-    hr = renderCommandList.m_list->Close();
-    if (hr != S_OK)
     {
-        MSG_TRACE_CHANNEL("RENDERSYSTEM", "Failed to close the rendering commandlist for queue: %d, list %d", m_renderCommandQueueHandle, m_currentCommandListIndex);
+        PROFILE_EVENT("RenderSystem", "Barrier Transition on Backbuffer to present", 0xFF8B0000);
+        D3D12_RESOURCE_BARRIER barrier2;
+        ZeroMemory(&barrier2, sizeof(D3D12_RESOURCE_BARRIER));
+        barrier2.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier2.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+        barrier2.Transition.pResource = m_deviceManager.GetCurrentBackBuffer();
+        barrier2.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+        barrier2.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+        renderCommandList.m_list->ResourceBarrier(1, &barrier2);
     }
-    commandListsVector.push_back(renderCommandList.m_list);
+    {
+        PROFILE_EVENT("RenderSystem", "Close and Execute Command lists", 0xFF8B0000);
+        hr = renderCommandList.m_list->Close();
+        if (hr != S_OK)
+        {
+            MSG_TRACE_CHANNEL("RENDERSYSTEM", "Failed to close the rendering commandlist for queue: %d, list %d", m_renderCommandQueueHandle, m_currentCommandListIndex);
+        }
+        commandListsVector.push_back(renderCommandList.m_list);
 
 
-    commandListsVector.push_back(commandList.m_list);
+        commandListsVector.push_back(commandList.m_list);
 
-    commandQueue.m_queue->ExecuteCommandLists(static_cast<UINT>(commandListsVector.size()), &commandListsVector[0]);
+        commandQueue.m_queue->ExecuteCommandLists(static_cast<UINT>(commandListsVector.size()), &commandListsVector[0]);
 
+    }
     m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
 
     //PIXEndEvent();
@@ -472,8 +479,7 @@ void RenderSystem::cleanup()
 ///-------------------------------------------------------------------------
 void RenderSystem::beginDraw()
 {
-    PROFILE_EVENT("RenderSystem::beginDraw", Orange);
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
     //PIXBeginEvent(0, "Begin Draw");
 
     ID3D11DeviceContext* deviceContext = m_deviceManager.getDeviceContext();
@@ -528,9 +534,9 @@ void RenderSystem::beginDraw()
     m_view = m_cameraSystem.getCamera("global")->getCamera();
     m_inverseView = m_cameraSystem.getCamera("global")->getInvCamera();
 
-    WVPBufferContent sceneTransformData;
-    sceneTransformData.m_view = m_view;
-    sceneTransformData.m_projection = m_projection;
+    WVPData sceneTransformData;
+    sceneTransformData.View = m_view;
+    sceneTransformData.Projection = m_projection;
     m_sceneTransformBuffer.UpdateCpuData(sceneTransformData);
     m_sceneTransformBuffer.UpdateGpuData();
 
@@ -584,7 +590,7 @@ void RenderSystem::beginDraw()
     const CameraManager& cm = helper.getResource().getCameraManager();
     const Camera* cam = cm.getCamera("global");
 
-    PROFILE_EVENT("RenderSystem::beginDraw::LightUpdate", DarkRed);
+    PROFILE_EVENT("RenderSystem","beginDraw::LightUpdate", 0xFF8B0000);
     //Setup light constants they might change during the frame, only support up to 8 lights for now as we do forward shading
     if (cam != nullptr)
     {
@@ -665,15 +671,16 @@ void RenderSystem::endDraw()
     //OPTICK_STOP_CAPTURE();
     //OPTICK_SAVE_CAPTURE("E:\\SDK\\Demo\\SpaceSim\\bin\\Profile\\shaderCompileDuration.opt");
 
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
     //PIXBeginEvent(0, "End Draw");
-    PROFILE_EVENT("RenderSystem::endDraw", Orange);
+    
 
     //if (m_numberOfInstancePerFrame > 0)
     {
-         HRESULT hr = m_swapChain->Present(0, 0);
-        OPTICK_GPU_FLIP(m_swapChain);
-        OPTICK_CATEGORY("Present", Optick::Category::Wait);
+        PROFILE_TAG("Present");
+        HRESULT hr = m_swapChain->Present(0, 0);
+        PROFILE_GPU_FLIP(m_swapChain, nullptr);
+
         //++m_totalNumberOfRenderedFrames;
         //m_averageNumberOfInstancesRenderingPerFrame = m_totalNumberOfInstancesRendered / m_totalNumberOfRenderedFrames;
         if (FAILED(hr))
@@ -697,6 +704,7 @@ void RenderSystem::endDraw()
         UINT64 fenceValue = commandQueue.m_fence->GetCompletedValue();
         if (fenceValue < fence)
         {
+            PROFILE_TAG("Wait For Present fence");
             commandQueue.m_fence->SetEventOnCompletion(fence, commandQueue.m_fenceEvent);
             WaitForSingleObject(commandQueue.m_fenceEvent, INFINITE);
         }
@@ -705,7 +713,7 @@ void RenderSystem::endDraw()
     }
 
     {
-        OPTICK_CATEGORY("Reset CommandQueues", Optick::Category::Wait);
+        PROFILE_TAG("Reset CommandQueues");
         //Reset commandlists and allocators
         CommandQueue& commandQueue = m_commandQueueManager.GetCommandQueue(m_deviceManager.GetSwapChainCommandQueueIndex());//This should be the current command queue
         CommandList& commandList = commandQueue.GetCommandList(m_deviceManager.GetSwapChainCommandListIndex());
@@ -942,7 +950,7 @@ void RenderSystem::initialiseCubemapRendererAndResources(Resource* resource)
 ///-----------------------------------------------------------------------------
 void RenderSystem::CreateMainCommandList()
 {
-
+    PROFILE_FUNCTION();
     m_renderCommandQueueHandle = m_deviceManager.GetSwapChainCommandQueueIndex();
     m_tempCommandList = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle).CreateCommandList();
     m_currentCommandListIndex = m_commandQueueManager.GetCommandQueue(m_renderCommandQueueHandle).CreateCommandList();

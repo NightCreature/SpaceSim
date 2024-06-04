@@ -1,6 +1,7 @@
 #include "Core/FileSystem/File.h"
 
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 
 #include <windows.h>
 
@@ -56,6 +57,9 @@ void VFS::File::createFile(const std::filesystem::path& name, FileMode fileMode)
         break;
     case FileMode::OpenAndCreate:
         creationDisposition = OPEN_ALWAYS;
+        break;
+    case FileMode::OpenAndCreateTruncate:
+        creationDisposition = TRUNCATE_EXISTING;
         break;
     default:
         return;

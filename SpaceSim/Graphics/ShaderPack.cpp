@@ -4,13 +4,14 @@
 #include "Core/Paths.h"
 #include "RenderJobs.h"
 #include "Core/FileSystem/FileSystem.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 ///-------------------------------------------------------------------------
 // @brief This needs to be multi threaded the new compiler is really slow
 ///-------------------------------------------------------------------------
 bool ShaderPack::loadShaderPack( std::string shaderPack )
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
     RenderResourceHelper helper(m_resource);
     const Paths* paths = helper.getResource().m_paths;
     EffectCache& effectCache = helper.getWriteableResource().getEffectCache();
@@ -38,9 +39,7 @@ bool ShaderPack::loadShaderPack( std::string shaderPack )
         if (fileNameAttr != nullptr)
         {
             //MSG_TRACE_CHANNEL("ShaderPack", "Loading Effect: %s", fileNameAttr->Value());
-            //This should be a job
-            effectCache.createEffect(m_resource, fileNameAttr->Value());
-            //jobQueue.AddJob(new CompileShaderJob(m_resource, fileNameAttr->Value()));
+            effectCache.CreateEffect(m_resource, fileNameAttr->Value());
         }
     }
 

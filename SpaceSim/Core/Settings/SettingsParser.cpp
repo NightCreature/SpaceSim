@@ -78,6 +78,7 @@ void SettingsParser::readStringValues( tinyxml2::XMLElement* element )
         std::string text = children->GetText();
 
         m_settingsMananger->setSetting(new ISetting<std::string>(settingName, text));
+        m_settingsMananger->AddNewSetting(settingName, text);
     }
 }
 
@@ -99,6 +100,7 @@ void SettingsParser::readBooleanValues( tinyxml2::XMLElement* element )
         }
 
         m_settingsMananger->setSetting(new ISetting<bool>(settingName, value));
+        m_settingsMananger->AddNewSetting(settingName, value);
     }
 }
 
@@ -116,6 +118,7 @@ void SettingsParser::readintegerValues( tinyxml2::XMLElement* element )
         int value = strToint(textValue);
 
         m_settingsMananger->setSetting(new ISetting<int>(settingName, value));
+        m_settingsMananger->AddNewSetting(settingName, value);
     }
 }
 
@@ -133,6 +136,7 @@ void SettingsParser::readUnsignedintegerValues( tinyxml2::XMLElement* element )
         unsigned int value = (unsigned int)strToint(textValue);
 
         m_settingsMananger->setSetting(new ISetting<unsigned int>(settingName, value));
+        m_settingsMananger->AddNewSetting(settingName, value);
     }
 }
 
@@ -150,6 +154,7 @@ void SettingsParser::readfloatValues( tinyxml2::XMLElement* element )
         float value = strTofloat(textValue);
 
         m_settingsMananger->setSetting(new ISetting<float>(settingName, value));
+        m_settingsMananger->AddNewSetting(settingName, value);
     }
 }
 
@@ -167,6 +172,7 @@ void SettingsParser::readDoubleValues( tinyxml2::XMLElement* element )
         double value = strToDouble(textValue);
 
         m_settingsMananger->setSetting(new ISetting<double>(settingName, value));
+        m_settingsMananger->AddNewSetting(settingName, value);
     }
 }
 

@@ -39,7 +39,7 @@ CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData, 
     element = document.FirstChildElement();
     for (element = element->FirstChildElement(); element != nullptr; element = element->NextSiblingElement())
     {
-        auto element_hash = hashString(element->Name());
+        auto element_hash = Hashing::hashString(element->Name());
 
         if (element_hash == c_ModelHash)
         {

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "CommonStructures.ifx"
+#include "Shared/CommonStructures.h"
+#include "CommonConstants.ifx"
 #include "BindlessBuffers.h"
 
 

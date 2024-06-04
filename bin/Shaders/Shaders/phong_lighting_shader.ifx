@@ -1,6 +1,6 @@
 #ifndef PHONG_LIGHTING
 #define PHONG_LIGHTING
-#include "CommonStructures.ifx"
+#include "Shared/CommonStructures.h"
 
 #define SDKMARCH2009ZERO 0.0000001 //Fix for short coming in DX March 2009 SDK where max(0.0, value) doesn't work
 static const float almostZero = 0.0000001;

@@ -14,6 +14,7 @@
 
 #include "Loader/ResourceLoader.h"
 #include "Core/Thread/JobSystem.h"
+#include "Core/Profiler/ProfilerMacros.h"
 //None of this can send a return msg until the command list has been executed on the GPU
 
 
@@ -57,11 +58,12 @@ CommandList* ResourceLoadJob::GetCommandList()
 ///-----------------------------------------------------------------------------
 bool FaceJob::Execute(ThreadContext* context)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
     CommandList commandList;
-    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+    CommandQueue* commandQueue = nullptr;
+    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList, commandQueue);
     if (retVal)
     {
         m_resourceHandle = renderResource.getModelManager().AddFace(m_request.m_loadData.GetData<void>(), commandList, this);
@@ -86,10 +88,11 @@ void FaceJob::Finish(ThreadContext* context)
 ///-----------------------------------------------------------------------------
 bool LoadTextureJob::Execute(ThreadContext* context)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     CommandList commandList;
-    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+    CommandQueue* commandQueue = nullptr;
+    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList, commandQueue);
     if (retVal)
     {
         RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
@@ -104,7 +107,7 @@ bool LoadTextureJob::Execute(ThreadContext* context)
         {
             Texture12 texture;
             size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
-            if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, *fileName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
+            if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, *commandQueue, *fileName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
             {
                 MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", textureName.c_str(), context->m_threadIndex);
                 return true;
@@ -123,10 +126,11 @@ bool LoadTextureJob::Execute(ThreadContext* context)
 ///-----------------------------------------------------------------------------
 bool LoadModelJob::Execute(ThreadContext* context)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     CommandList commandList;
-    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+    CommandQueue* commandQueue = nullptr;
+    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList, commandQueue);
     if (retVal)
     {
         RenderResource& renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
@@ -144,7 +148,7 @@ bool LoadModelJob::Execute(ThreadContext* context)
 ///-----------------------------------------------------------------------------
 bool LoadTextureListJob::Execute(ThreadContext* context)
 {
-	OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     const auto* textureList = m_request.m_loadData.GetData<std::vector<std::filesystem::path>>();
     if (textureList != nullptr && textureList->empty())
@@ -153,7 +157,8 @@ bool LoadTextureListJob::Execute(ThreadContext* context)
     }
 
 	CommandList commandList;
-	bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList);
+    CommandQueue* commandQueue = nullptr;
+    bool retVal = m_loader->GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList, commandQueue);
 	if (retVal)
 	{
         for (const auto& filePath : *textureList)
@@ -169,7 +174,7 @@ bool LoadTextureListJob::Execute(ThreadContext* context)
             {
                 Texture12 texture;
                 size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
-                if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, filePath.string(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
+                if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, *commandQueue, filePath.string(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
                 {
                     MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", textureName.c_str(), context->m_threadIndex);
                     return true;

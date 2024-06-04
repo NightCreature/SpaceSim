@@ -141,7 +141,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
      m_lightViewPort.TopLeftX = 0;
      m_lightViewPort.TopLeftY = 0;
 
-     m_shadowMVP.m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI * 0.5f, 1.0f, 500.0f, 0.1f);
+     m_shadowMVP.Projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI * 0.5f, 1.0f, 500.0f, 0.1f);
 #ifdef _DEBUG
      hr = deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
 #endif

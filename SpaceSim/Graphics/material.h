@@ -76,8 +76,8 @@ public:
         TextureSlot m_textureSlot;
     };
 
-	Material();
-	Material( float shininess, const Color& ambient = Color::darkgray(), const Color& specular = Color::white(), const Color& emissive = Color::black(), const Color& diffuse = Color::white());
+	//Material();
+	Material( float shininess = 10.0f, const Color& ambient = Color::darkgray(), const Color& specular = Color::white(), const Color& emissive = Color::black(), const Color& diffuse = Color::white());
     Material(const Material& material);
 	~Material()
     {
@@ -90,23 +90,23 @@ public:
 
     void deserialise(Resource* resource, DeviceManager& deviceManager, const TextureManager& textureManger, const LightManager& lightManager, const tinyxml2::XMLElement* node);
 
-	Color getAmbient() const {return Color(m_materialCB.m_ambient);}
-    Color getDiffuse() const { return Color(m_materialCB.m_diffuse); }
-    Color getSpecular() const { return Color(m_materialCB.m_specular); }
-    Color getEmissive() const { return Color(m_materialCB.m_emissive); }
-    float getShininess() const { return m_materialCB.m_shininess; }
-    void setAmbient(const Color& ambient) { m_materialCB.m_ambient[0] = ambient.r(); m_materialCB.m_ambient[1] = ambient.g(); m_materialCB.m_ambient[2] = ambient.b(); m_materialCB.m_ambient[3] = ambient.a(); }
-    void setDiffuse(const Color& diffuse) { m_materialCB.m_diffuse[0] = diffuse.r(); m_materialCB.m_diffuse[1] = diffuse.g(); m_materialCB.m_diffuse[2] = diffuse.b(); m_materialCB.m_diffuse[3] = diffuse.a(); }
-    void setSpecular(const Color& specular) { m_materialCB.m_specular[0] = specular.r(); m_materialCB.m_specular[1] = specular.g(); m_materialCB.m_specular[2] = specular.b(); m_materialCB.m_specular[3] = specular.a(); }
-    void setEmissive(const Color& emissive) { m_materialCB.m_emissive[0] = emissive.r(); m_materialCB.m_emissive[1] = emissive.g(); m_materialCB.m_emissive[2] = emissive.b(); m_materialCB.m_emissive[3] = emissive.a(); }
-    void setShininess(const float shininess) { m_materialCB.m_shininess = shininess; }
-    void setMaterialContent(const MaterialContent& materialContent) { m_materialCB = materialContent; }
+	Color getAmbient() const {return Color(m_materialCB.ambient.GetData());}
+    Color getDiffuse() const { return Color(m_materialCB.diffuse.GetData()); }
+    Color getSpecular() const { return Color(m_materialCB.specular.GetData()); }
+    Color getEmissive() const { return Color(m_materialCB.emissive.GetData()); }
+    float getShininess() const { return m_materialCB.shininess; }
+    void setAmbient(const Color& ambient) { m_materialCB.ambient[0] = ambient.r(); m_materialCB.ambient[1] = ambient.g(); m_materialCB.ambient[2] = ambient.b(); m_materialCB.ambient[3] = ambient.a(); }
+    void setDiffuse(const Color& diffuse) { m_materialCB.diffuse[0] = diffuse.r(); m_materialCB.diffuse[1] = diffuse.g(); m_materialCB.diffuse[2] = diffuse.b(); m_materialCB.diffuse[3] = diffuse.a(); }
+    void setSpecular(const Color& specular) { m_materialCB.specular[0] = specular.r(); m_materialCB.specular[1] = specular.g(); m_materialCB.specular[2] = specular.b(); m_materialCB.specular[3] = specular.a(); }
+    void setEmissive(const Color& emissive) { m_materialCB.emissive[0] = emissive.r(); m_materialCB.emissive[1] = emissive.g(); m_materialCB.emissive[2] = emissive.b(); m_materialCB.emissive[3] = emissive.a(); }
+    void setShininess(const float shininess) { m_materialCB.shininess = shininess; }
+    void setMaterialContent(const MaterialConstants& materialContent) { m_materialCB = materialContent; }
     
     void addTextureReference( const TextureSlotMapping& textureSlot) { m_texture.push_back(textureSlot); }
     const std::vector<TextureSlotMapping>& getTextureHashes() const { return m_texture; }
 
     //static const size_t m_hash;
-    const MaterialContent& getMaterialCB() const { return m_materialCB; }
+    const MaterialConstants& getMaterialCB() const { return m_materialCB; }
     void setBlendState(bool alphaBlendEnabled) { m_alphaBlend = alphaBlendEnabled; }
     bool getBlendState() const { return m_alphaBlend; }
     
@@ -123,7 +123,7 @@ public:
 
         char m_textureNames[Material::TextureSlotMapping::NumSlots][256];
         //std::vector< TextureData > m_texture;
-        MaterialContent m_materialContent;
+        MaterialConstants m_materialContent;
         size_t m_effectHash;
         size_t m_techniqueHash;
         bool m_alphaBlend;
@@ -134,13 +134,9 @@ public:
 
     size_t GetNumberOfNeededDescriptors() const { return m_numberOfDescriptorsNeeded; }
     void Prepare(const EffectCache& effectCache);
-
-    const ShaderParameters& GetShaderParameters() const { return m_shaderParameterData; }
-    ShaderParameters& GetShaderParameters() { return m_shaderParameterData; }
 protected:
 private:
-    ShaderParameters m_shaderParameterData;
-    MaterialContent m_materialCB;
+    MaterialConstants m_materialCB;
     std::vector<TextureSlotMapping> m_texture;//Order is sampler order as well
     size_t m_techniqueHash;
     size_t m_effectHash;

@@ -1,3 +1,25 @@
+// The MIT License(MIT)
+//
+// Copyright(c) 2019 Vadim Slyusarev
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #pragma once
 
 #include "optick.config.h"
@@ -13,13 +35,35 @@
 #include <stdlib.h>
 
 #if defined(OPTICK_MSVC)
+
+#ifdef OPTICK_UE4
+#include "Core/Public/Windows/AllowWindowsPlatformTypes.h"
+#endif
+
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include <windows.h>
+
+#ifdef OPTICK_UE4
+#include "Core/Public/Windows/HideWindowsPlatformTypes.h"
 #endif
 
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#endif
+
+namespace Optick
+{
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Types
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +98,8 @@ static const ThreadID INVALID_THREAD_ID = (ThreadID)-1;
 typedef uint32 ProcessID;
 static const ProcessID INVALID_PROCESS_ID = (ProcessID)-1;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Memory
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #if defined(OPTICK_MSVC)
@@ -63,8 +109,6 @@ static const ProcessID INVALID_PROCESS_ID = (ProcessID)-1;
 #else
 #error Can not define OPTICK_ALIGN. Unknown platform.
 #endif
-#define OPTICK_CACHE_LINE_SIZE 64
-#define OPTICK_ALIGN_CACHE OPTICK_ALIGN(OPTICK_CACHE_LINE_SIZE)
 #define OPTICK_ARRAY_SIZE(ARR) (sizeof(ARR)/sizeof((ARR)[0]))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #if defined(OPTICK_MSVC)
@@ -122,6 +166,7 @@ inline int sprintf_s(char(&buffer)[sizeOfBuffer], const char* format, ...)
 #endif
 
 #if defined(OPTICK_GCC)
+#include <string.h>
 template<size_t sizeOfBuffer>
 inline int wcstombs_s(char(&buffer)[sizeOfBuffer], const wchar_t* src, size_t maxCount)
 {
@@ -134,7 +179,7 @@ template<size_t sizeOfBuffer>
 inline int wcstombs_s(char(&buffer)[sizeOfBuffer], const wchar_t* src, size_t maxCount)
 {
 	size_t converted = 0;
-	return wcstombs_s(&converted, buffer, src, maxCount);
+	return ::wcstombs_s(&converted, buffer, src, maxCount);
 }
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

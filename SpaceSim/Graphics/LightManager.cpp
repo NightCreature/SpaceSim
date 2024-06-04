@@ -3,6 +3,8 @@
 #include "Core/MessageSystem/RenderMessages.h"
 #include "Graphics/DebugHelperFunctions.h"
 #include "Core/Resource/RenderResource.h"
+#include "Core/Profiler/ProfilerMacros.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 
 constexpr size_t maxLights = 32;
 
@@ -14,10 +16,11 @@ struct LightConstantData
 
 void LightManager::Initialise(Resource* resource)
 {
+    PROFILE_FUNCTION();
     RenderResourceHelper renderResourceHelper(resource);
     RenderResource& renderResource = renderResourceHelper.getWriteableResource();
 
-    m_lightBuffer.Create(renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap(), sizeof(LightConstantData));
+    m_lightBuffer.Create(renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap(), sizeof(LightConstantData), "LightContants");
 }
 
 ///-------------------------------------------------------------------------
@@ -25,7 +28,7 @@ void LightManager::Initialise(Resource* resource)
 ///-------------------------------------------------------------------------
 void LightManager::addLight( const std::string& name, const Light& light )
 {
-    auto hashedName = hashString(name);
+    auto hashedName = Hashing::hashString(name);
     LightMap::const_iterator it = m_lights.find(hashedName);
     if (it == m_lights.end())
     {
@@ -38,7 +41,7 @@ void LightManager::addLight( const std::string& name, const Light& light )
 ///-------------------------------------------------------------------------
 const Light* LightManager::getLight( const std::string& name ) const
 {
-    auto hashedName = hashString(name);
+    auto hashedName = Hashing::hashString(name);
     LightMap::const_iterator it = m_lights.find(hashedName);
     if (it != m_lights.end())
     {
@@ -53,7 +56,7 @@ const Light* LightManager::getLight( const std::string& name ) const
 ///-------------------------------------------------------------------------
 Light* LightManager::getLight( const std::string& name )
 {
-    auto hashedName = hashString(name);
+    auto hashedName = Hashing::hashString(name);
     LightMap::iterator it = m_lights.find(hashedName);
     if (it != m_lights.end())
     {

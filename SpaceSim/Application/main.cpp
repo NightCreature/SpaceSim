@@ -22,6 +22,9 @@
 #include "Gameplay/ECS/Components/Components.h"
 #include "Core/Hashing/SipHash.h"
 
+#include "Core/Profiler/ProfilerMacros.h"
+
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
 
@@ -45,20 +48,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     UNUSEDPARAM(szCmdLine);
     UNUSEDPARAM(iCmdShow);
 
+
+
+    MicroProfileOnThreadCreate("Main");
+
     //HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     //if (FAILED(hr))
     //{
     //    MSG_TRACE_CHANNEL("COM ERROR", "Failed to make COM act in a multithreaded fashion");
     //}
 
-    //OPTICK_START_CAPTURE();
+    OPTICK_START_CAPTURE();
+    //turn on profiling
 
     Application application = Application();
     auto applicationPath = application.GetPaths().getPath();
+    MicroProfileSetEnableAllGroups(true);
+    MicroProfileSetForceMetaCounters(true);
     if( application.initialise() ) //Need to take the path manager from shader engine
     {
-        size_t hash = hashString("default");
+        size_t hash = "default"_hash;
         MSG_TRACE("default hased is: %x", hash);
+
+        printf("open localhost:1338 in chrome to capture profile data\n");
+        printf("press ctrl-c to quit\n");
 
         application.mainGameLoop();
 
@@ -72,11 +85,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     }
 
 
-    //OPTICK_STOP_CAPTURE();
-    //applicationPath = applicationPath / "Profile";
-    //OPTICK_SAVE_CAPTURE(applicationPath.string().c_str());
+    OPTICK_STOP_CAPTURE();
+    applicationPath = applicationPath / "Profile";
+    OPTICK_SAVE_CAPTURE(applicationPath.string().c_str());
     //OPTICK_SAVE_CAPTURE("D:\\SDK\\Demo\\SpaceSim\\bin\\Profile");
     //OPTICK_SAVE_CAPTURE();
+    MicroProfileShutdown();
 
     return 0;
 }

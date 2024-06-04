@@ -1,8 +1,10 @@
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
 
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include <dxgidebug.h>
 #include "Core/Resource/RenderResource.h"
+#include "Logging/LoggingMacros.h"
 #include "D3D12X.h"
 #include <sstream>
 
@@ -53,6 +55,7 @@ void DeviceManager::cleanup()
 ///-----------------------------------------------------------------------------
 bool DeviceManager::createDevice()
 {
+    PROFILE_FUNCTION();
     if (!InitialiseDebugLayers())
     {
         //This is not a hard error
@@ -141,6 +144,7 @@ bool DeviceManager::createDevice()
 ///-----------------------------------------------------------------------------
 IDXGIAdapter* DeviceManager::EnumerateAdapters()
 {
+    PROFILE_FUNCTION();
     IDXGIAdapter* adapter = nullptr;
 
     adapter = nullptr;
@@ -182,6 +186,7 @@ ID3D12Resource* DeviceManager::GetCurrentBackBuffer()
 ///-----------------------------------------------------------------------------
 bool DeviceManager::CheckFeatures()
 {
+    PROFILE_FUNCTION();
     D3D12_FEATURE_DATA_D3D12_OPTIONS featureSupport = {};
     m_device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &featureSupport, sizeof(featureSupport));
 
@@ -222,6 +227,7 @@ bool DeviceManager::CheckFeatures()
 ///-----------------------------------------------------------------------------
 bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int windowHeight)
 {
+    PROFILE_FUNCTION();
     auto writableResource = RenderResourceHelper(m_resource).getWriteableResource();
 
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};

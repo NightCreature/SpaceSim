@@ -14,7 +14,7 @@ void ConnectionDefinition::Deserialise(const tinyxml2::XMLElement& nodeDefinitio
 {
     for (auto attribute = nodeDefinition.FirstAttribute(); attribute; attribute = attribute->Next())
     {
-        switch (hashString(attribute->Name()))
+        switch (Hashing::hashString(attribute->Name()))
         {
         case "node1Id"_hash:
         {

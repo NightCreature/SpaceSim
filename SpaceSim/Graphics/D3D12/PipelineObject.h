@@ -44,6 +44,7 @@ public:
         m_pipeLineStateDescriptor.GS.pShaderBytecode = shader.GetShaderBufferPointer();
     }
 
+
     D3D12_BLEND_DESC& GetBLendDescriptor() { return m_pipeLineStateDescriptor.BlendState; }
     D3D12_DEPTH_STENCIL_DESC& GetDepthStencilDescriptor() { return m_pipeLineStateDescriptor.DepthStencilState; }
     D3D12_RASTERIZER_DESC& GetRasterizerDescriptor() { return m_pipeLineStateDescriptor.RasterizerState; }
@@ -61,7 +62,7 @@ public:
 
     void BindToCommandList(CommandList& commandList);
 
-    bool IsValid() const { return m_pipeLineStateDescriptor.VS.pShaderBytecode != nullptr; }
+    bool IsValid() const { return (m_pipeLineStateDescriptor.VS.pShaderBytecode != nullptr && m_pipeLineStateDescriptor.PS.pShaderBytecode != nullptr) && m_pipelineObject != nullptr; }
 
     ID3D12PipelineState* m_pipelineObject = nullptr;
     D3D12_GRAPHICS_PIPELINE_STATE_DESC m_pipeLineStateDescriptor = { 0 };

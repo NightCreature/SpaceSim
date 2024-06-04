@@ -40,7 +40,7 @@ public:
     void draw(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection, Resource* resource, CommandList& list);
 private:
 
-    size_t CreateConstantBuffer(size_t size, const DeviceManager& deviceManager, DescriptorHeap& heap);
+    size_t CreateConstantBuffer(size_t size, const DeviceManager& deviceManager, DescriptorHeap& heap, std::string_view name);
     void transform(const DeviceManager& deviceManager, const Matrix44& view, const Matrix44& projection);
     //static Color m_colorStream[];
     Effect* m_effect;

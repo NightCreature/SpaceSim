@@ -1,10 +1,12 @@
 #include "WorkerThread.h"
 
+#include "Core/Profiler/ProfilerMacros.h"
+#include "Logging/LoggingMacros.h"
 #include "JobSystem.h"
-#include <Optick.h>
 
 void ReturnJobToQueueToWait(Workload& workLoad, JobQueue& queue)
 {
+    PROFILE_FUNCTION();
     //workLoad.m_job->m_waitingForChildren = true;
     queue.AddJob(workLoad.m_job);
     workLoad.m_job = nullptr;
@@ -27,9 +29,12 @@ void CleanupWorkLoad(Workload& workLoad, ThreadContext* context)
 ///-----------------------------------------------------------------------------
 int WorkerThread::WorkerFunction()
 {
-    OPTICK_THREAD("WorkerThread");
+    HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    if (FAILED(hr))
+    {
+        MSG_TRACE_CHANNEL("COM ERROR", "Failed to make COM act in a multithreaded fashion");
+    }
 
-    CoInitialize(NULL);
     ThreadContext* context = m_jobSystem->GetThreadStatus(m_index);
 
     while(isAlive())
@@ -45,7 +50,7 @@ int WorkerThread::WorkerFunction()
         auto workLoad = queue.GetNextWorkLoad();
         if (!workLoad.m_empty)
         {
-            OPTICK_EVENT();
+            PROFILE_TAG("Execute Workload");
             if (!workLoad.IsFinished() && !workLoad.m_job->m_waitingForChildren)
             {//Execute this workload
                 if (workLoad.m_job->Execute(context))
@@ -95,6 +100,8 @@ int WorkerThread::WorkerFunction()
 ///-----------------------------------------------------------------------------
 void WorkerThread::pauzeThread()
 {
+    PROFILE_FUNCTION();
+
     if (isAlive())
     {
         m_threadPaused = true;

@@ -9,8 +9,8 @@
 #include <vector>
 
 #include <D3D12.h>
-#include <Optick.h>
 #include "Graphics/RenderInterface.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 
 class Input;
@@ -66,7 +66,7 @@ public:
 
     void PopulateCommandlist(Resource* resource, CommandList& commandList) override
     {
-        OPTICK_EVENT();
+        PROFILE_FUNCTION();
         if (!m_modelData.empty())
         {
             for (auto& group : m_modelData)
@@ -127,15 +127,19 @@ public:
             const Effect* effect = effectCache.getEffect(material.getEffectHash());
             if (effect != nullptr)
             {
-                m_sortKey |= effect->getTechnique(material.getTechnique())->getTechniqueId();
-                hasAlphaBlending |= material.getBlendState();
+                const Technique* technique = effect->getTechnique(material.getTechnique());
+                if (technique != nullptr)
+                {
+                    m_sortKey |= technique->getTechniqueId();
+                    hasAlphaBlending |= material.getBlendState();
+                    if (hasAlphaBlending)
+                    {
+                        //we want these to be last in the list so set the first bit to 1
+                        m_sortKey |= (1ull << 63);
+                    }
+                }
+                
             }
-        }
-
-        if (hasAlphaBlending)
-        {
-            //we want these to be last in the list so set the first bit to 1
-            m_sortKey |= (1ull << 63);
         }
     }
 

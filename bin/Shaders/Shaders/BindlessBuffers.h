@@ -1,9 +1,9 @@
-#ifdef __cplusplus
 #pragma once
+#ifdef __cplusplus
 #include "Core/Types/Types.h"
 #include <limits>
 #endif
-
+//This file is shared between shaders and c++
 struct MeshResourceIndices
 {
 #ifdef __cplusplus
@@ -13,42 +13,51 @@ struct MeshResourceIndices
 	}
 #endif
 	//mesh information
-	uint posBufferIndex;
-	uint textureBufferIndex;
-	uint normalBufferIndex;
-	uint tangentBufferIndex;
-	uint vertexColorBufferIndex;
+	/*0*/uint posBufferIndex;
+	/*1*/uint textureBufferIndex;
+	/*2*/uint normalBufferIndex;
+	/*3*/uint tangentBufferIndex;
+	/*4*/uint vertexColorBufferIndex;
 
-	uint numberOfTextureStreams;
+	/*5*/uint numberOfTextureStreams;
 
 	//transform information
-	uint transformIndex;
-	uint sceneTransformIndex; //This is view projection
+	/*6*/uint transformIndex;
+	/*7*/uint sceneTransformIndex; //This is view projection
 
-	uint materialIndex;
+	/*8*/uint materialIndex;
 	
 	//textures information
-	uint shadowMapIndex;
-	uint shadowSamplerIndex;
+	/*9*/uint shadowMapIndex;
+	/*10*/uint shadowSamplerIndex;
 
-	uint albedoMapIndex;
-	uint albedoSamplerIndex;
+	/*11*/uint albedoMapIndex;
+	/*12*/uint albedoSamplerIndex;
 	
-	uint normalMapIndex;
-	uint normalSamplerIndex;
+	/*13*/uint normalMapIndex;
+	/*14*/uint normalSamplerIndex;
 
-	uint cubeReflectionIndex;
+	/*15*/uint cubeReflectionIndex;
 
-	uint ShadowProjection;
+	/*16*/uint ShadowProjection;
 
-	uint emmisiveMap;
+	/*17*/uint emmisiveMap;
 
 	//Light info
-	uint LightBufferIndex;
-	uint NumberOfLights; //This is now in the light data buffer
+	/*18*/uint LightBufferIndex;
+	/*19*/uint NumberOfLights; //This is now in the light data buffer
 
 	//Camera info
-	uint CameraBufferIndex;
+	/*20*/uint CameraBufferIndex;
+
+	/*21*/uint roughnessMapIndex;
+	/*22*/uint metalnessMapIndex;
+	/*23*/uint specularMapIndex;
+	/*24*/uint heightMapIndex;
+	/*25*/uint opacityMapIndex;
+	/*26*/uint ambientOcclusionMapIndex;
+	/*27*/uint refractionMapIndex;
+	/*28*/uint cubeImageBasedLightningMapIndex;
 };
 
 struct ParticleData

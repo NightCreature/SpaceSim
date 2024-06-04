@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/ShaderDataStructures.h"
+#include "..\bin\Shaders\Shaders\Shared\CommonStructures.h"
 #include "Math/matrix44.h"
 
 #include <vector>
@@ -32,7 +32,7 @@ struct ShaderParameter
 
     size_t m_rootParamIndex;
     size_t m_nameHash;
-    using ShaderParameterData = std::variant<WVPBufferContent, MaterialContent, PerFrameConstants, TextureData>;
+    using ShaderParameterData = std::variant<WVPData, MaterialConstants, LightParameters, TextureData>;
     ShaderParameterData m_data;
 };
 
@@ -50,7 +50,7 @@ void PrintParameters(const ShaderParameters& parameters);
 struct ShaderParameterData
 {
     size_t m_nameHash;
-    std::variant<WVPBufferContent, MaterialContent, PerFrameConstants> m_data;
+    std::variant<WVPData, MaterialConstants, LightParameters> m_data;
 };
 
 using ShaderParamersData = std::vector<ShaderParameterData>;

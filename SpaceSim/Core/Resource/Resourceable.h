@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Core/Paths.h"
-#include "Core/Settings/SettingsManager.h"
 
 class Logger;
 class PerformanceTimer;
 class Resourceable;
+class SettingsManager;
+
 namespace MessageSystem
 {
 class MessageQueues;

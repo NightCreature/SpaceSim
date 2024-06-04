@@ -212,15 +212,15 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
     
     //This is test code to draw should be really refactored
     {
-        WVPBufferContent wvp;
-        wvp.m_world.identity();
-        wvp.m_view = view;
-        wvp.m_projection = projection;
+        WVPData wvp;
+        wvp.World.identity();
+        wvp.View = view;
+        wvp.Projection = projection;
 
         //PROFILE_EVENT("ParticleEmitter::SubmitInstance", Color::DarkBlue);
 
-        const Effect* effect = helper.getWriteableResource().getEffectCache().getEffect(hashString("ParticleSystem.xml"));
-        Technique* technique = const_cast<Technique*>(effect->getTechnique(hashString("default")));
+        const Effect* effect = helper.getWriteableResource().getEffectCache().getEffect(Hashing::hashString("ParticleSystem.xml"));
+        Technique* technique = const_cast<Technique*>(effect->getTechnique(Hashing::hashString("default")));
         UNUSEDPARAM(technique);
         deviceContext->UpdateSubresource(m_constantBuffers[0], 0, 0, (void*)&wvp, 0, 0);
         deviceContext->UpdateSubresource(m_constantBuffers[1], 0, 0, (void*)&inverseView, 0, 0);
@@ -237,39 +237,7 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
         //deviceContext->PSSetShader(shaderCache.getPixelShader(technique->getPixelShader()) ? shaderCache.getPixelShader(technique->getPixelShader())->getShader() : nullptr, nullptr, 0);
 
         //technique->setupTechnique();
-        ShaderParameters& shaderParams = technique->GetShaderParameters(); //THis really should perhaps be a material instead
-        for (size_t counter = 0; counter < shaderParams.size(); ++counter)
-        {
-            ShaderParameter& shaderParam = shaderParams[counter];
-            auto index = shaderParam.m_data.index();
-            switch (index)
-            {
-            case 0:
-            {
-                auto constantBuffer = *(std::get_if<0>(&shaderParam.m_data));
-
-
-                //if (shaderParam.m_rootParamIndex == 0 || shaderParam.m_rootParamIndex == 2)
-                {
-                    //This should be world stuffs
-                    constantBuffer.m_projection = projection;
-                    constantBuffer.m_view = view;
-                    constantBuffer.m_world = inverseView;
-                    //shaderParam.m_cbData.UpdateCpuData(constantBuffer);
-                    //shaderParam.m_cbData.UpdateGpuData();
-                }
-
-                //list.m_list->SetGraphicsRootConstantBufferView(static_cast<UINT>(shaderParam.m_rootParamIndex), shaderParam.m_cbData.GetConstantBuffer()->GetGPUVirtualAddress());
-                //MSG_TRACE_CHANNEL("Mesh Group", "Set WVP data for param: %d", shaderParam.m_rootParamIndex);
-            }
-            break;
-            case 1:
-            case 2:
-            case 3:
-            default:
-                break;
-            }
-        }
+        //Since bindless doesn't need to know anything about shader params this is no longer needed
 
 
         //list.m_list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //Adjecency infocmtoin

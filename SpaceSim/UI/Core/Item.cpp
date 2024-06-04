@@ -4,6 +4,7 @@
 #include "UI/Core/Behaviours/Behaviour.h"
 #include "UI/Core/Behaviours/Registry/BehaviourRegistry.h"
 #include "UI/Transistion.h"
+#include "Logging/LoggingMacros.h"
 
 namespace FE
 {

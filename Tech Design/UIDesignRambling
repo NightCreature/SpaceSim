@@ -28,3 +28,6 @@ You are going to always need a layer between the UI system and the Gameplay syst
 UIFlowManager -> manages the state transitions and how screens go from one to the other
 UIStateManager -> manages all the UI states, think screens but can be other things too
 ScreensStates -> manages the flow on  a screen and updating the widgets themselves
+
+OLD code
+G:\SDK\SpaceSimulator\SpaceSimulator\GameObjects\Components

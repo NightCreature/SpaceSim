@@ -125,7 +125,9 @@ public:
     T& Get(const size_t index) { return m_data[index]; }
     const T& operator [](size_t index) const { return Get(index); }
     T& operator [](size_t index) { return Get(index); }
+    constexpr size_t Size() const { return size; }
 
+    std::array<T, size> GetData() const { return m_data; }
 private:
     std::array<T, size> m_data;
 };

@@ -2,6 +2,7 @@
 
 #include "Core/Serialization/Archive.h"
 
+
 ///-----------------------------------------------------------------------------
 ///! @brief  Todo Add comment
 ///! @remark
@@ -30,7 +31,7 @@ void SettingsManager::SaveSettings(const std::filesystem::path& settingsFilePath
     Archive settingsArchive;
     settingsArchive.Open(settingsFilePath);
 
-    settingsArchive.WriteContainer(m_settings);
+    settingsArchive.WriteContainer(m_newSettings);
 
     settingsArchive.Close();
 }
@@ -45,7 +46,7 @@ void SettingsManager::LoadSettings(const std::filesystem::path& settingsFilePath
     settingsArchive.Open(settingsFilePath);
 
     Settings settings;
-    settingsArchive.Read(settings);
+    settingsArchive.Read(m_newSettings);
 
     settingsArchive.Close();
 }

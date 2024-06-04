@@ -10,7 +10,7 @@ void NodeGraph::PinDefinition::Deserialise(const tinyxml2::XMLElement& pinDefini
 {
     for (auto attribute = pinDefinition.FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
     {
-        switch (hashString(attribute->Name()))
+        switch (Hashing::hashString(attribute->Name()))
         {
         case "type"_hash:
         {

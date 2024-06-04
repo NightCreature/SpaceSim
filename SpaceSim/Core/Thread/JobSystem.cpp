@@ -1,12 +1,13 @@
 #include "JobSystem.h"
 
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 
 #include <atomic>
 #include <sstream>
 #include "Core/Types/TypeHelpers.h"
-#include <Optick.h>
 #include "Core/Resource/Resourceable.h"
+#include "../Profiler/ProfilerMacros.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -161,7 +162,7 @@ void JobSystem::WaitfForJobsToFinish()
 ///-----------------------------------------------------------------------------
 void JobSystem::ProcessWork()
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
     ResetEvent(m_workFinishedEvent);
     if (!m_jobQueue.m_jobs.empty())
     {

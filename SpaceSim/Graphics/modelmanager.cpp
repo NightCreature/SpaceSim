@@ -18,6 +18,8 @@
 #include "Frustum.h"
 #include "Gameplay/box.h"
 #include "DebugBox.h"
+#include "Core/Profiler/ProfilerMacros.h"
+#include "Logging/LoggingMacros.h"
 
 ModelManager::~ModelManager()
 {
@@ -77,7 +79,7 @@ size_t ModelManager::LoadModel( const void* data, CommandList& commandList)
 
     ModelLoader::LoadData loadData;
     loadData.m_fileName = modelData->m_fixedData.m_fileName;
-    size_t renderResourceId = hashString(loadData.m_fileName);
+    size_t renderResourceId = Hashing::hashString(loadData.m_fileName);
     if (!HasRenderResource(renderResourceId) && renderResourceId)
     {
         if (loadData.m_fileName.empty())
@@ -191,9 +193,11 @@ const CreatedModel* ModelManager::GetRenderResource(size_t renderResourceId) con
 ///-----------------------------------------------------------------------------
 const std::vector<RenderInterface*> ModelManager::GetRenderables(const Frustum& viewFrustum) const
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
     
     UNUSEDPARAM(viewFrustum);
+
+    std::scoped_lock<std::mutex> lock(m_mutex);
 
     std::vector<RenderInterface*> retVal;
 
@@ -244,4 +248,23 @@ void ModelManager::UpdateDebugModels(size_t objectId, Matrix44 m_world) const
             it->second->UpdateCbs();
         }
     }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief This will be triggered from shader updates, because that determines if we can update sort keys
+///! @remark
+///-----------------------------------------------------------------------------
+void ModelManager::UpdateSortKeysAndSortModels()
+{
+    std::scoped_lock<std::mutex> lock(m_mutex);
+
+    const EffectCache& effectCache = RenderResourceHelper(m_resource).getResource().getEffectCache();
+
+    for (auto& model : m_models)
+    {
+        model.m_model.model->CalculateSortKey(effectCache);
+    }
+
+    std::sort(begin(m_models), end(m_models), [](const ModelResourceHandle& lhs, const ModelResourceHandle& rhs) { return lhs.m_model.model->GetSortKey() < rhs.m_model.model->GetSortKey(); });
+
 }

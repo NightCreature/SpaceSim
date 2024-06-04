@@ -185,8 +185,8 @@
     <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\optick\include;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDIr)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;E:\SDK\optick-master\src;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\bin;$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\optick\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDIr)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(SolutionDir)..\..\SDK\fmt\include\fmt;E:\SDK\optick-master\src;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\bin;$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(SolutionDir)..\..\SDK\fmt\include\Debug;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d_game</TargetName>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
@@ -194,10 +194,10 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|x64'">
-    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\optick\include;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDIr)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;E:\SDK\optick-master\src;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\optick\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDIr)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(SolutionDir)..\..\SDK\fmt\include\;E:\SDK\optick-master\src;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\bin\vs2019\x64\Debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\fmt\Debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
-    <TargetName>SpaceSim_x64d</TargetName>
+    <TargetName>SpaceSim_x64d_game</TargetName>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -206,7 +206,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>SpaceSim_x64</TargetName>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
-    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\bin\Shaders\Shaders\;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Optick\include;E:\SDK\optick-master\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\bin\Shaders\Shaders\;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\Optick\include;E:\SDK\optick-master\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\release;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Release;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Release\;E:\SDK\optick-master\bin\vs2019\x64\Release;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\bin\win.x86_64.vc142.mt\release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)..\..\SDK\VLD\lib\Win64</LibraryPath>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -214,7 +214,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseClang|x64'">
     <TargetName>SpaceSim_x64</TargetName>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
-    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\bin\Shaders\Shaders\;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Optick\include;E:\SDK\optick-master\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\bin\Shaders\Shaders\;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\fmt\include\;$(SolutionDir)..\..\SDK\Optick\include;E:\SDK\optick-master\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\release;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Release;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Release\;E:\SDK\optick-master\bin\vs2019\x64\Release;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\bin\win.x86_64.vc142.mt\release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)..\..\SDK\VLD\lib\Win64</LibraryPath>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -274,7 +274,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\SDK\PhysX\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK12.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;OptickCore.lib;vld.lib;WinPixEventRuntime.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK12.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;OptickCore.lib;vld.lib;WinPixEventRuntime.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;fmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <Profile>false</Profile>
     </Link>
@@ -296,10 +296,10 @@
       <EnableModules>true</EnableModules>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\SDK\PhysX\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <SuppressStartupBanner>false</SuppressStartupBanner>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK12.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;OptickCore.lib;vld.lib;WinPixEventRuntime.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK12.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;OptickCore.lib;vld.lib;WinPixEventRuntime.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;ws2_32.lib;fmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <Profile>false</Profile>
     </Link>
@@ -442,6 +442,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\SDK\microprofile\microprofile.cpp" />
     <ClCompile Include="..\..\Application\main.cpp" />
   </ItemGroup>
   <ItemGroup>

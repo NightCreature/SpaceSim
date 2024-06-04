@@ -2,6 +2,7 @@
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/Effect.h"
+#include "Logging/LoggingMacros.h"
 
 #include <D3Dcompiler.h>
 #include <d3d12.h>

@@ -1,7 +1,7 @@
 #include "Input/KeyboardController.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Core/Types/TypeHelpers.h"
-
+#include "Logging/LoggingMacros.h"
 #include <limits>
 
 //#define DEBUG_KEY_STATE

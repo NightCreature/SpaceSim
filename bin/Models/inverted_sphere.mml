@@ -1,0 +1,7 @@
+<xml>
+	<Material>
+      <Effect file_name="Shaders\Effects\skydome.xml" />
+      <Texture file_name="Textures\skysphere_original_size.png" texture_slot="8"/>
+    </Material>
+	<Model file_name="Models/inverted_sphere.dae" />
+</xml>

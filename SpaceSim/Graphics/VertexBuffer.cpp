@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 
 #include "Graphics/D3DDebugHelperFunctions.h"
 
@@ -227,19 +228,19 @@ MeshResourceIndices VertexBuffer::CreateBuffer(const DeviceManager& deviceManage
         switch (dataVariantArray.index())
         {
         case 0:
-            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<0>(dataVariantArray));
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<0>(dataVariantArray), "Float Data");
             break;
         case 1:
-            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<1>(dataVariantArray));
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<1>(dataVariantArray), "Vector2 Data");
             break;
         case 2:
-            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<2>(dataVariantArray));
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<2>(dataVariantArray), "Vector3 Data");
             break;
         case 3:
-            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<3>(dataVariantArray));
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<3>(dataVariantArray), "Vector4 Data");
             break;
         case 4:
-            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<4>(dataVariantArray));
+            m_data[strucutredBufferArrayIndex].second.Create(deviceManager, commandList, heap, std::get<4>(dataVariantArray), "Color Data");
             break;
         default:
             MSG_TRACE_CHANNEL("VertexBuffer", "Sending unknonwn data to a vertex buffer, known types are float, Vector2, Vector3, Vector4 and Color");

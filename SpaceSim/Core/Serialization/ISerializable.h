@@ -24,5 +24,5 @@ public:
         }
     }
 
-    virtual const SerializationTag& GetTag() const = 0;
+    //virtual const SerializationTag& GetTag() const = 0;
 };

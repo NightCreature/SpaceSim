@@ -1,6 +1,15 @@
 #include "Core/Thread/Thread.h"
 
 #include "Core/Types/TypeHelpers.h"
+#include "../Profiler/ProfilerMacros.h"
+
+class BaseThreadContext 
+{
+public:
+    BaseThreadContext(const std::string& name, Thread* thread) : m_threadName(name), m_thread(thread) {}
+    std::string m_threadName = "";
+    Thread* m_thread = nullptr;
+};
 
 Thread::~Thread()
 {
@@ -12,12 +21,14 @@ Thread::~Thread()
 
 void Thread::createThread(int stacksize, const std::string& name)
 {
+    BaseThreadContext* context = new BaseThreadContext(name, this);
 #ifdef _DEBUG
     m_threadName = name;
 #else
     UNUSEDPARAM(name);
 #endif
-    m_thread = CreateThread(NULL, stacksize, (unsigned long(__stdcall *)(void *))this->run, (void *)this, 0, nullptr);
+    
+    m_thread = CreateThread(NULL, stacksize, (unsigned long(__stdcall *)(void *))this->run, (void *)context, 0, nullptr);
     if (m_thread != 0)
     {
 #ifdef _DEBUG
@@ -29,7 +40,11 @@ void Thread::createThread(int stacksize, const std::string& name)
 
 int Thread::run(void* parameter)
 {
-    Thread* thisthread = reinterpret_cast<Thread*>(parameter);
+    BaseThreadContext* context = reinterpret_cast<BaseThreadContext*>(parameter);
+
+    PROFILE_THREAD(context->m_threadName.c_str());
+    Thread* thisthread = context->m_thread;
+    delete context;
     if (thisthread)
         return thisthread->WorkerFunction();
     return 0;

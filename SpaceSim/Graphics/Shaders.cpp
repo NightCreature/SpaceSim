@@ -3,6 +3,7 @@
 #include "Graphics/D3DDebugHelperFunctions.h"
 #include "Graphics/DeviceManager.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 
 #include <fstream>
 #include <numeric>
@@ -169,17 +170,13 @@ char* getShaderBuffer(const std::string& fileName, size_t& length)
     return buffer;
 }
 
-void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string& entryPoint, std::string& profileVersion, std::string& fileName, ShaderType& type)
+void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string& entryPoint, std::string& fileName, ShaderType& type)
 {
     for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
     {
         if (strICmp(attribute->Name(), "entry_point"))
         {
             entryPoint = attribute->Value();
-        }
-        else if (strICmp(attribute->Name(), "profile_version"))
-        {
-            profileVersion = attribute->Value();
         }
         else if (strICmp(attribute->Name(), "file_name"))
         {
@@ -214,7 +211,8 @@ void deserialiseSahderNode(const tinyxml2::XMLElement* element, std::string& ent
 void Shader::deserialise(const tinyxml2::XMLElement* element, ShaderType defaultType)
 {
     m_type = defaultType;
-    deserialiseSahderNode(element, m_entryPoint, m_profileVersion, m_fileName, m_type);
+    deserialiseSahderNode(element, m_entryPoint, m_fileName, m_type);
+    ValidateShader();
 }
 
 ///-----------------------------------------------------------------------------
@@ -223,7 +221,7 @@ void Shader::deserialise(const tinyxml2::XMLElement* element, ShaderType default
 ///-----------------------------------------------------------------------------
 bool Shader::createShader(const DeviceManager& deviceManager, const ShaderCompiler& compiler)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     std::string profileName = "";
     getProfileName(deviceManager, m_type, profileName);
@@ -234,4 +232,20 @@ bool Shader::createShader(const DeviceManager& deviceManager, const ShaderCompil
     }
 
     return true;
+}
+
+void Shader::ValidateShader()
+{
+    if (m_fileName.empty())
+    {
+        MSG_TRACE_CHANNEL("Shader", "Shader file name is empty");
+    }
+    if (m_entryPoint.empty())
+    {
+        MSG_TRACE_CHANNEL("Shader", "Shader entry point is empty");
+    }
+    if (m_type == ShaderType::Count)
+    {
+        MSG_TRACE_CHANNEL("Shader", "Shader type is not set");
+    }
 }

@@ -10,33 +10,33 @@
 
 
 
-Material::Material() :
-m_materialCB(),
-m_techniqueHash(hashString("default")),
-m_alphaBlend(false)
-{
-}
+//Material::Material() :
+//m_materialCB(),
+//m_techniqueHash("default"_hash),
+//m_alphaBlend(false)
+//{
+//}
 
 Material::Material(float shininess, const Color& ambient, const Color& specular, const Color& emissive, const Color& diffuse) :
-m_techniqueHash(hashString("default"))
+m_techniqueHash("default"_hash)
 {
-    m_materialCB.m_ambient[3] = ambient.a();
-    m_materialCB.m_ambient[0] = ambient.r();
-    m_materialCB.m_ambient[1] = ambient.g();
-    m_materialCB.m_ambient[2] = ambient.b();
-    m_materialCB.m_diffuse[3] = diffuse.a();
-    m_materialCB.m_diffuse[0] = diffuse.r();
-    m_materialCB.m_diffuse[1] = diffuse.g();
-    m_materialCB.m_diffuse[2] = diffuse.b();
-    m_materialCB.m_emissive[3] = emissive.a();
-    m_materialCB.m_emissive[0] = emissive.r();
-    m_materialCB.m_emissive[1] = emissive.g();
-    m_materialCB.m_emissive[2] = emissive.b();
-    m_materialCB.m_specular[3] = specular.a();
-    m_materialCB.m_specular[0] = specular.r();
-    m_materialCB.m_specular[1] = specular.g();
-    m_materialCB.m_specular[2] = specular.b();
-    m_materialCB.m_shininess = shininess;
+    m_materialCB.ambient[3] = ambient.a();
+    m_materialCB.ambient[0] = ambient.r();
+    m_materialCB.ambient[1] = ambient.g();
+    m_materialCB.ambient[2] = ambient.b();
+    m_materialCB.diffuse[3] = diffuse.a();
+    m_materialCB.diffuse[0] = diffuse.r();
+    m_materialCB.diffuse[1] = diffuse.g();
+    m_materialCB.diffuse[2] = diffuse.b();
+    m_materialCB.emissive[3] = emissive.a();
+    m_materialCB.emissive[0] = emissive.r();
+    m_materialCB.emissive[1] = emissive.g();
+    m_materialCB.emissive[2] = emissive.b();
+    m_materialCB.specular[3] = specular.a();
+    m_materialCB.specular[0] = specular.r();
+    m_materialCB.specular[1] = specular.g();
+    m_materialCB.specular[2] = specular.b();
+    m_materialCB.shininess = shininess;
     m_alphaBlend = false;
 }
 
@@ -62,7 +62,7 @@ void Material::deserialise( Resource* resource, DeviceManager& deviceManager, co
     unsigned int numberOfColorsDeserialised = 1;
     for(;node; node = node->NextSiblingElement())
     {
-        auto elementHash = hashString(node->Value());
+        auto elementHash = Hashing::hashString(node->Value());
         if( Color::m_hash == elementHash)
         {
             Color temp;
@@ -70,31 +70,31 @@ void Material::deserialise( Resource* resource, DeviceManager& deviceManager, co
             {
             case 1:
                 temp.deserialise(node);
-                m_materialCB.m_ambient[0] = temp.r();
-                m_materialCB.m_ambient[1] = temp.g();
-                m_materialCB.m_ambient[2] = temp.b();
-                m_materialCB.m_ambient[3] = temp.a();
+                m_materialCB.ambient[0] = temp.r();
+                m_materialCB.ambient[1] = temp.g();
+                m_materialCB.ambient[2] = temp.b();
+                m_materialCB.ambient[3] = temp.a();
                 break;
             case 2:
                 temp.deserialise(node);
-                m_materialCB.m_diffuse[0] = temp.r();
-                m_materialCB.m_diffuse[1] = temp.g();
-                m_materialCB.m_diffuse[2] = temp.b();
-                m_materialCB.m_diffuse[3] = temp.a();
+                m_materialCB.diffuse[0] = temp.r();
+                m_materialCB.diffuse[1] = temp.g();
+                m_materialCB.diffuse[2] = temp.b();
+                m_materialCB.diffuse[3] = temp.a();
                 break;
             case 3:
                 temp.deserialise(node);
-                m_materialCB.m_specular[0] = temp.r();
-                m_materialCB.m_specular[1] = temp.g();
-                m_materialCB.m_specular[2] = temp.b();
-                m_materialCB.m_specular[3] = temp.a();
+                m_materialCB.specular[0] = temp.r();
+                m_materialCB.specular[1] = temp.g();
+                m_materialCB.specular[2] = temp.b();
+                m_materialCB.specular[3] = temp.a();
                 break;
             case 4:
                 temp.deserialise(node);
-                m_materialCB.m_emissive[0] = temp.r();
-                m_materialCB.m_emissive[1] = temp.g();
-                m_materialCB.m_emissive[2] = temp.b();
-                m_materialCB.m_emissive[3] = temp.a();
+                m_materialCB.emissive[0] = temp.r();
+                m_materialCB.emissive[1] = temp.g();
+                m_materialCB.emissive[2] = temp.b();
+                m_materialCB.emissive[3] = temp.a();
                 break;
             }
             
@@ -105,7 +105,7 @@ void Material::deserialise( Resource* resource, DeviceManager& deviceManager, co
             const tinyxml2::XMLAttribute* attribute = node->FindAttribute("value");
             if (attribute)
             {
-                m_materialCB.m_shininess = attribute->FloatValue();
+                m_materialCB.shininess = attribute->FloatValue();
             }
         }
         else if (Texture::m_hash == elementHash)
@@ -118,12 +118,12 @@ void Material::deserialise( Resource* resource, DeviceManager& deviceManager, co
             const tinyxml2::XMLAttribute* attribute = node->FindAttribute("file_name");
             if (attribute)
             {
-                m_effectHash = hashString( getResourceNameFromFileName(attribute->Value()) );
+                m_effectHash = Hashing::hashString( getResourceNameFromFileName(attribute->Value()) );
             }
             attribute = node->FindAttribute("technique_name");
             if (attribute)
             {
-                m_techniqueHash = hashString(attribute->Value());
+                m_techniqueHash = Hashing::hashString(attribute->Value());
             }
             //m_effect.deserialise(deviceManager, node);
         }
@@ -178,7 +178,7 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
     unsigned int numberOfColorsDeserialised = 1;
     for (; childElement; childElement = childElement->NextSiblingElement())
     {
-        auto elementHash = hashString(childElement->Value());
+        auto elementHash = Hashing::hashString(childElement->Value());
         if (Color::m_hash == elementHash)
         {
             Color temp;
@@ -186,31 +186,31 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
             {
             case 1:
                 temp.deserialise(childElement);
-                returnVal.m_materialContent.m_ambient[0] = temp.r();
-                returnVal.m_materialContent.m_ambient[1] = temp.g();
-                returnVal.m_materialContent.m_ambient[2] = temp.b();
-                returnVal.m_materialContent.m_ambient[3] = temp.a();
+                returnVal.m_materialContent.ambient[0] = temp.r();
+                returnVal.m_materialContent.ambient[1] = temp.g();
+                returnVal.m_materialContent.ambient[2] = temp.b();
+                returnVal.m_materialContent.ambient[3] = temp.a();
                 break;
             case 2:
                 temp.deserialise(childElement);
-                returnVal.m_materialContent.m_diffuse[0] = temp.r();
-                returnVal.m_materialContent.m_diffuse[1] = temp.g();
-                returnVal.m_materialContent.m_diffuse[2] = temp.b();
-                returnVal.m_materialContent.m_diffuse[3] = temp.a();
+                returnVal.m_materialContent.diffuse[0] = temp.r();
+                returnVal.m_materialContent.diffuse[1] = temp.g();
+                returnVal.m_materialContent.diffuse[2] = temp.b();
+                returnVal.m_materialContent.diffuse[3] = temp.a();
                 break;
             case 3:
                 temp.deserialise(childElement);
-                returnVal.m_materialContent.m_specular[0] = temp.r();
-                returnVal.m_materialContent.m_specular[1] = temp.g();
-                returnVal.m_materialContent.m_specular[2] = temp.b();
-                returnVal.m_materialContent.m_specular[3] = temp.a();
+                returnVal.m_materialContent.specular[0] = temp.r();
+                returnVal.m_materialContent.specular[1] = temp.g();
+                returnVal.m_materialContent.specular[2] = temp.b();
+                returnVal.m_materialContent.specular[3] = temp.a();
                 break;
             case 4:
                 temp.deserialise(childElement);
-                returnVal.m_materialContent.m_emissive[0] = temp.r();
-                returnVal.m_materialContent.m_emissive[1] = temp.g();
-                returnVal.m_materialContent.m_emissive[2] = temp.b();
-                returnVal.m_materialContent.m_emissive[3] = temp.a();
+                returnVal.m_materialContent.emissive[0] = temp.r();
+                returnVal.m_materialContent.emissive[1] = temp.g();
+                returnVal.m_materialContent.emissive[2] = temp.b();
+                returnVal.m_materialContent.emissive[3] = temp.a();
                 break;
             }
 
@@ -221,7 +221,7 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
             const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("value");
             if (attribute)
             {
-                returnVal.m_materialContent.m_shininess = attribute->FloatValue();
+                returnVal.m_materialContent.shininess = attribute->FloatValue();
             }
         }
         else if (Texture::m_hash == elementHash)
@@ -244,13 +244,13 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
             const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("file_name");
             if (attribute)
             {
-                returnVal.m_effectHash = hashString(getResourceNameFromFileName(attribute->Value()) );
+                returnVal.m_effectHash = Hashing::hashString(getResourceNameFromFileName(attribute->Value()) );
             }
-            returnVal.m_techniqueHash = hashString("default"); //In case we dont have an attached technique name
+            returnVal.m_techniqueHash = "default"_hash; //In case we dont have an attached technique name
             attribute = childElement->FindAttribute("technique_name");
             if (attribute)
             {
-                returnVal.m_techniqueHash = hashString(attribute->Value());
+                returnVal.m_techniqueHash = Hashing::hashString(attribute->Value());
             }
             //m_effect.deserialise(deviceManager, childElement);
         }
@@ -273,19 +273,6 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
 ///-----------------------------------------------------------------------------
 void Material::Prepare(const EffectCache& effectCache)
 {
-    //Prepare the shader parameters
-    const auto* effect = effectCache.getEffect(m_effectHash);
-    if (effect)
-    {
-        const auto* technique = effect->getTechnique(m_techniqueHash);
-        if (nullptr != technique)
-        {
-            m_shaderParameterData = technique->GetShaderParameters();
-        }
-    }
-
-    //for (auto& shaderParam : m_shaderParameterData)
-    //{
-    //    shaderParam.CreateConstantBuffer(deviceManager, heap);
-    //}
+    //With bindless we have to do nothing here, or we could bind the textures here
+    UNUSEDPARAM(effectCache);
 }

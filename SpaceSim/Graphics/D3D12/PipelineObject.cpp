@@ -112,6 +112,10 @@ void PipelineObject::CreatePipelineStateObject(ID3D12Device6* device)
         MSG_TRACE_CHANNEL("PipelineObject", "Failed to create Root signature from shader data with error: 0x%x, %s", hr, getLastErrorMessage(hr));
         assert(false);
     }
+    else
+    {
+        MSG_TRACE_CHANNEL("PipelineObject", "Created Root signature from shader data");
+    }
 
     hr = device->CreateGraphicsPipelineState(&m_pipeLineStateDescriptor, IID_PPV_ARGS(&m_pipelineObject));
 
@@ -119,6 +123,12 @@ void PipelineObject::CreatePipelineStateObject(ID3D12Device6* device)
     {
         MSG_TRACE_CHANNEL("PipelineObject", "Failed to create Pipeline state with error: 0x%x, %s", hr, getLastErrorMessage(hr));
     }
+    else
+    {
+        MSG_TRACE_CHANNEL("PipelineObject", "Created PSO");
+    }
+
+    MSG_TRACE_CHANNEL_FMT("pipelinobject", "{} PS shader", m_pipeLineStateDescriptor.PS.pShaderBytecode != nullptr ? "Has a" : "Doesn't have a");
 
     //CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
     //rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -173,7 +183,13 @@ void PipelineObject::BindToCommandList(CommandList& commandList)
 
 void PipelineObject::Destroy()
 {
-    m_pipelineObject->Release();
-    m_rootSignatureBlob->Release();
+    if (m_pipelineObject)
+    {
+        m_pipelineObject->Release();
+    }
+    if (m_rootSignatureBlob)
+    {
+        m_rootSignatureBlob->Release();
+    }
 }
 

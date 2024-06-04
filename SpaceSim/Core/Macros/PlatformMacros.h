@@ -16,7 +16,12 @@
 #define FUNCTION_NAME
 #endif
 
-#define IS_DEBUG 0
 #if defined(DEBUG) || defined(_DEBUG)
+#ifndef IS_DEBUG
 #define IS_DEBUG 1
+#endif
+#else
+#ifndef IS_DEBUG
+#define IS_DEBUG 0
+#endif
 #endif

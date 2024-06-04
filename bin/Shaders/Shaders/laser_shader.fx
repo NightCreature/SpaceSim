@@ -1,5 +1,5 @@
 #include "BindlessBuffers.ifx"
-#include "CommonStructures.ifx"
+#include "Shared/CommonStructures.h"
 #include "rootsignatures.ifx"
 #include "Samplers.ifx"
 //--------------------------------------------------------------------------------------

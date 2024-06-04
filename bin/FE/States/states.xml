@@ -10,4 +10,6 @@
 			<StaticText text="localisation_id" />
 		</Item>
 	</Screen>
+
+	<Screen name="press_start" />
 </states>

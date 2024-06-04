@@ -1,9 +1,11 @@
 #include "Graphics/D3D12/MultithreadedCommandlistManager.h"
 
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core/Resource/RenderResource.h"
+
 #include "Graphics/DebugHelperFunctions.h"
 
-#include <optick.h>
+
 
 void MultithreadedCommandlistManager::Cleanup()
 {
@@ -30,9 +32,9 @@ void MultithreadedCommandlistManager::Initialise(Resource* resource, const std::
     }
 }
 
-bool MultithreadedCommandlistManager::GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList)
+bool MultithreadedCommandlistManager::GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList, CommandQueue*& commandQueue)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     ASSERT(threadIndex <= CommandQueue::MaxCommandLists, "Trying to grab a commandlist handle for a non buffered thread");
 
@@ -43,8 +45,8 @@ bool MultithreadedCommandlistManager::GetCommandListHandleForThreadIndex(size_t 
         std::scoped_lock lock(m_mutex);
 
         auto& helper = RenderResourceHelper(m_resource).getWriteableResource();
-        CommandQueue& commandQueue = helper.getCommandQueueManager().GetCommandQueue(m_queueHandle);
-        commandList = commandQueue.GetCommandList(threadIndex);
+        commandQueue = &(helper.getCommandQueueManager().GetCommandQueue(m_queueHandle));
+        commandList = commandQueue->GetCommandList(threadIndex);
         return true;
     }
 
@@ -53,7 +55,7 @@ bool MultithreadedCommandlistManager::GetCommandListHandleForThreadIndex(size_t 
 
 void MultithreadedCommandlistManager::ReturnCommandListForThreadIndex(size_t threadIndex)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     ASSERT(threadIndex <= CommandQueue::MaxCommandLists / 2, "Trying to return a commandlist handle for a non buffered thread");
     std::scoped_lock lock(m_mutex);
@@ -109,7 +111,7 @@ void MultithreadedCommandlistManager::ReturnCommandListForThreadIndex(size_t thr
 
 void MultithreadedCommandlistManager::Update()
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     std::scoped_lock lock(m_mutex);
     //Check the command queue complted state and reset the semaphores
@@ -142,6 +144,7 @@ void MultithreadedCommandlistManager::Update()
 
 HRESULT MultithreadedCommandlistManager::ResetCommandListAndAllocator(auto& resourceCommandQueue, size_t index)
 {
+    PROFILE_FUNCTION();
     HRESULT hr = S_OK;
     auto& resourceCommandList = resourceCommandQueue.GetCommandList(index);
     if (resourceCommandList.m_list != nullptr)

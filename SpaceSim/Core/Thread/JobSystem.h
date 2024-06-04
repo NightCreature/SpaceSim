@@ -53,6 +53,5 @@ public:
 
     std::mutex m_finishedMutex;
     std::atomic_size_t m_numberOfSleepingThreads;
-
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 //#include "Graphics/material.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 #include "Math/vector4.h"
 
 #include <string>
@@ -26,8 +27,8 @@ public:
         eString,
         eUserType,
     };
-    ISettingBase() : m_settingName(""), m_settingNameHash(hashString("")) {}
-    ISettingBase(const std::string& name) : m_settingName(name), m_settingNameHash(hashString(name)) {}
+    ISettingBase() : m_settingName(""), m_settingNameHash(Hashing::hashString("")) {}
+    ISettingBase(const std::string& name) : m_settingName(name), m_settingNameHash(Hashing::hashString(name)) {}
     virtual ~ISettingBase() {}
 
     const std::string& getSettingName() const { return m_settingName; }
@@ -50,7 +51,7 @@ public:
         archive.Write(m_type);
     }
 
-    REGISTER_SERIALIZATION_OBJECT(ISettingBase);
+    //REGISTER_SERIALIZATION_OBJECT(ISettingBase);
 protected:
     std::string m_settingName;
     size_t m_settingNameHash;
@@ -148,7 +149,7 @@ public:
         }
     }
 
-    REGISTER_SERIALIZATION_TEMPLATE(ISetting<T>); 
+    //REGISTER_SERIALIZATION_TEMPLATE(ISetting<T>); 
 protected:
     T     m_data;
 private:
@@ -166,7 +167,7 @@ public:
     void Serialize(Archive& archive, std::true_type) override { ISettingBase::Serialize(archive, std::true_type()); }
     void Serialize(Archive& archive, std::false_type) const override { ISettingBase::Serialize(archive, std::false_type()); }
 
-    REGISTER_SERIALIZATION_OBJECT(DeserialisableSetting);
+    //REGISTER_SERIALIZATION_OBJECT(DeserialisableSetting);
 protected:
 private:
 };
@@ -205,7 +206,7 @@ public:
         archive.Write(m_windowName);
     }
 
-    REGISTER_SERIALIZATION_OBJECT(RenderSetting)
+    //REGISTER_SERIALIZATION_OBJECT(RenderSetting)
 protected:
 private:
     unsigned int m_resolutionWidth;
@@ -247,7 +248,7 @@ public:
         archive.Write(m_numberElements);
     }
 
-    REGISTER_SERIALIZATION_OBJECT(VectorSetting)
+    //REGISTER_SERIALIZATION_OBJECT(VectorSetting)
 protected:
 private:
     Vector4 m_vector;

@@ -1,17 +1,27 @@
 #include "Graphics\D3D12\ShaderCompiler.h"
 
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core\StringOperations\StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
+
 
 #include <combaseapi.h>
 #include <string>
 #include "..\Shaders.h"
+#include <ios>
+#include "Core\FileSystem\FileSystem.h"
+#include "Core\Resource\Resourceable.h"
+#include <filesystem>
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-bool ShaderCompiler::Initialise()
+bool ShaderCompiler::Initialise(Resource* resource)
 {
+    m_resource = resource;
+
     HRESULT hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&m_dxcUtils));
     if (FAILED(hr))
     {
@@ -44,10 +54,12 @@ bool ShaderCompiler::Initialise()
 ///-----------------------------------------------------------------------------
 bool ShaderCompiler::CreateShader(const std::filesystem::path& filePath, const std::wstring& entrypoint, const std::wstring& profileName, size_t compilerFlags, bool createRootDescriptor, CreatedShaderObjects& shaderObject) const
 {
+    PROFILE_FUNCTION();
     UNUSEDPARAM(compilerFlags);
-    OPTICK_EVENT();
-    std::string fileName = filePath.string();
-    OPTICK_TAG("CreateShader: ", fileName.c_str());
+    std::string OptickTagName = "ShaderCompiler::CreateShader " + filePath.string();
+    OPTICK_EVENT_DYNAMIC(OptickTagName.c_str());
+    //std::string fileName = filePath.string();
+    //OPTICK_TAG("CreateShader: ", fileName.c_str());
     uint32_t codePage = CP_UTF8;
     IDxcBlobEncoding* shaderSourceFromFile = nullptr;
     const std::wstring& wideFilePath = filePath.wstring();
@@ -81,7 +93,7 @@ bool ShaderCompiler::CreateShader(const std::filesystem::path& filePath, const s
 
     IDxcResult* results = nullptr;
     {
-        OPTICK_EVENT("Compile Shader");
+        PROFILE_TAG("Compile Shader");
         hr = m_compiler->Compile(&shaderSourceCode, arguments.data(), static_cast<UINT>(arguments.size()), m_includeHandler, IID_PPV_ARGS(&results));
     }
 
@@ -105,49 +117,6 @@ bool ShaderCompiler::CreateShader(const std::filesystem::path& filePath, const s
         MSG_TRACE_CHANNEL("ShaderCompiler", "Failed to compile shader: %s", filePath.string().c_str());
         return false;
     }
-
-    //Write output to a file
-    //CComPtr<IDxcBlob> pShader = nullptr;
-    //CComPtr<IDxcBlobUtf16> pShaderName = nullptr;
-    //pResults->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&pShader), &pShaderName);
-    //if (pShader != nullptr)
-    //{
-    //    FILE* fp = NULL;
-
-    //    _wfopen_s(&fp, pShaderName->GetStringPointer(), L"wb");
-    //    fwrite(pShader->GetBufferPointer(), pShader->GetBufferSize(), 1, fp);
-    //    fclose(fp);
-    //}
-
-    //
-    // Save pdb.
-    //
-    //CComPtr<IDxcBlob> pPDB = nullptr;
-    //CComPtr<IDxcBlobUtf16> pPDBName = nullptr;
-    //pResults->GetOutput(DXC_OUT_PDB, IID_PPV_ARGS(&pPDB), &pPDBName);
-    //{
-    //    FILE* fp = NULL;
-
-    //    // Note that if you don't specify -Fd, a pdb name will be automatically generated.
-    //    // Use this file name to save the pdb so that PIX can find it quickly.
-    //    _wfopen_s(&fp, pPDBName->GetStringPointer(), L"wb");
-    //    fwrite(pPDB->GetBufferPointer(), pPDB->GetBufferSize(), 1, fp);
-    //    fclose(fp);
-    //}
-
-    ////
-    //// Print hash.
-    ////
-    //CComPtr<IDxcBlob> pHash = nullptr;
-    //pResults->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(&pHash), nullptr);
-    //if (pHash != nullptr)
-    //{
-    //    wprintf(L"Hash: ");
-    //    DxcShaderHash* pHashBuf = (DxcShaderHash*)pHash->GetBufferPointer();
-    //    for (int i = 0; i < _countof(pHashBuf->HashDigest); i++)
-    //        wprintf(L"%.2x", pHashBuf->HashDigest[i]);
-    //    wprintf(L"\n");
-    //}
 
     ////
     //// Demonstrate getting the hash from the PDB blob using the IDxcUtils::GetPDBContents API
@@ -178,7 +147,7 @@ bool ShaderCompiler::CreateShader(const std::filesystem::path& filePath, const s
     // Get separate reflection.
     //
     {
-        OPTICK_EVENT("Reflect Shader");
+        PROFILE_TAG("Reflect Shader");
         IDxcBlob* reflectionData;
         results->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(&reflectionData), nullptr);
         if (reflectionData != nullptr)
@@ -207,7 +176,7 @@ bool ShaderCompiler::CreateShader(const std::filesystem::path& filePath, const s
     if (createRootDescriptor)
     {
         {
-            OPTICK_EVENT("Create RootSignature");
+            PROFILE_TAG("Create RootSignature");
             hr = results->GetOutput(DXC_OUT_ROOT_SIGNATURE, IID_PPV_ARGS(&shaderObject.m_rootSignatureBlob), nullptr);
             if (FAILED(hr))
             {
@@ -219,7 +188,7 @@ bool ShaderCompiler::CreateShader(const std::filesystem::path& filePath, const s
     }
 
     {
-        OPTICK_EVENT("Get Compiled Shader");
+        PROFILE_TAG("Get Compiled Shader");
         hr = results->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderObject.m_shaderObject), nullptr);
         if (FAILED(hr))
         {
@@ -229,8 +198,59 @@ bool ShaderCompiler::CreateShader(const std::filesystem::path& filePath, const s
         }
     }
     
+    WriteDataToFileCache(results);
 
     return true;
 }
 
+void ShaderCompiler::WriteDataToFileCache(IDxcResult* compileResult) const
+{
+    ////
+    //// Print hash.
+    ////
+    IDxcBlob* pHash = nullptr;
+    compileResult->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(&pHash), nullptr);
+    std::stringstream shaderHash;
+    if (pHash != nullptr)
+    {
+        DxcShaderHash* pHashBuf = (DxcShaderHash*)pHash->GetBufferPointer();
+        for (int i = 0; i < _countof(pHashBuf->HashDigest); i++)
+            shaderHash << std::hex << pHashBuf->HashDigest[1]; // wprintf(L"%.2x", pHashBuf->HashDigest[i]);
+        //wprintf(L"\n");
+        MSG_TRACE_CHANNEL("ShaderCompiler", "Shader hash is: %x", shaderHash.str().c_str());
+    }
+
+    auto csoFileName = fmt::format("{}{}", shaderHash.str(), ".cso");
+    std::filesystem::path outputPath = m_resource->m_paths->getTempPath() / csoFileName;
+    VFS::FileSystem* fileSystem = m_resource->m_fileSystem;
+
+    //Write output to a file
+    IDxcBlob* pShader = nullptr;
+    IDxcBlobUtf16* pShaderName = nullptr;
+    compileResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&pShader), &pShaderName);
+    if (pShader != nullptr)
+    {
+        VFS::File csoFile = fileSystem->CreateFile(outputPath, VFS::FileMode::OpenAndCreate);
+        csoFile.Write(static_cast<byte*>(pShader->GetBufferPointer()), pShader->GetBufferSize());
+        csoFile.Close();
+    }
+
+
+ 
+    //
+    // Save pdb.
+    //
+    IDxcBlob* pPDB = nullptr;
+    IDxcBlobUtf16* pPDBName = nullptr;
+    compileResult->GetOutput(DXC_OUT_PDB, IID_PPV_ARGS(&pPDB), &pPDBName);
+    {
+        //modify the output path to the pdb path
+        auto pdbFileName = fmt::format("{}{}", shaderHash.str(), ".pdb");
+        outputPath = m_resource->m_paths->getTempPath() / pdbFileName;
+        VFS::File csoFile = fileSystem->CreateFile(outputPath, VFS::FileMode::OpenAndCreate);
+        csoFile.Write(static_cast<byte*>(pPDB->GetBufferPointer()), pPDB->GetBufferSize());
+        csoFile.Close();
+    }
+
+}
 

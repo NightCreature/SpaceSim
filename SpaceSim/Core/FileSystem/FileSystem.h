@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 
+#if defined CreateFile
+#undef CreateFile
+#endif
+
 namespace VFS
 {
 

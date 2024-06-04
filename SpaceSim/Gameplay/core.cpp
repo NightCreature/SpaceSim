@@ -93,7 +93,7 @@ void Core::deserialise( const tinyxml2::XMLElement* element)
 
     for (const tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if (childElementHash == Material::m_hash)
         {
             const tinyxml2::XMLAttribute* nameAttribute = childElement->FindAttribute("name"); //This material needs a name to distinguish between normal and glowing versions of the material

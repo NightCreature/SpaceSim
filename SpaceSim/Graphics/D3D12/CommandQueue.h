@@ -28,7 +28,9 @@ struct CommandQueue
     
 
     CommandQueue(const DeviceManager& deviceManager) : m_deviceManager(deviceManager) {}
+    CommandQueue(const CommandQueue&) = default;
 
+    CommandQueue& operator =(const CommandQueue&) = default;
 
     CommandLists& GetCommandLists() { return m_commandLists; }
     size_t CreateCommandList();

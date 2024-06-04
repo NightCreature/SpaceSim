@@ -9,7 +9,7 @@
 
 #include <windows.h>
 #include <combaseapi.h>
-#include <Optick.h>
+#include "Core/Profiler/ProfilerMacros.h"
 
 struct ConstantData
 {
@@ -46,25 +46,25 @@ ConstantData CreateConstantBufferData(const T& data)
 class ConstantBuffer
 {
 public:
-    void Create(const DeviceManager& deviceManager, DescriptorHeap& heap, size_t size);
+    void Create(const DeviceManager& deviceManager, DescriptorHeap& heap, size_t size, const std::string_view name);
     void Destroy();
     void UpdateGpuData() 
     {
-        OPTICK_EVENT();
+        PROFILE_FUNCTION();
         memcpy(m_GPUDataBegin, m_cpuSideData.m_data, m_cpuSideData.m_size); 
     }
 
     template<class T>
     void UpdateCpuData(const T& data) 
     {
-        OPTICK_EVENT();
+        PROFILE_FUNCTION();
         memcpy(m_cpuSideData.m_data, &data, sizeof(T));
     }
 
     template<class T, size_t ElementCount>
     void UpdateCpuData(const T (&data)[ElementCount])
     {
-        OPTICK_EVENT();
+        PROFILE_FUNCTION();
         memcpy(m_cpuSideData.m_data, &data, sizeof(T) * ElementCount);
     }
 

@@ -5,6 +5,9 @@
 #include "UI/Core/States/Registry/StateRegistry.h"
 #include "UI/Core/States/State.h"
 
+#include "Core/tinyxml2.h"
+#include "Logging/LoggingMacros.h"
+
 namespace FE
 {
 

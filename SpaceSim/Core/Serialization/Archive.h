@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Core/Serialization/DefaultSerialisationWrapper.h"
 #include "Core/Types/Types.h"
 #include "Core/FileSystem/File.h"
-#include "Core/Serialization/SerializationRegister.h"
+#include "Logging/LoggingMacros.h"
 
 #include <array>
 #include <filesystem>
@@ -79,9 +80,40 @@ constexpr bool HasSerialiseFuncPtr = requires (T value, Archive & archive, std::
 template<class T, class Archive>
 constexpr bool HasSerialiseFuncPtrConst = requires (T value, const Archive & archive, std::bool_constant<true> writeOrRead) { value->Serialize(archive, writeOrRead); };
 
+
+template<class T, class Archive>
+constexpr bool GlobalHasCreate = requires (T value, Archive ar) { Serialise(ar, value); };
+
+//Allows us to add global functions to do serialisation and extend types
+template<typename T, typename Archive>
+concept HasGlobalSerialiseWrite = requires(T value, Archive archive)
+{
+    Serialise(archive, value, std::false_type());
+};
+
+template<typename T, typename Archive>
+concept HasGlobalSerialiseRead = requires(T value, Archive archive)
+{
+    Serialise(archive, value, std::true_type());
+};
+
+//template<class T, class U, class Archive>
+//concept HasGlobalSerialiseTemplateRead = requires (T<U> value, Archive archive)
+//{
+//    Serialise(archive, value, std::true_type());
+//};
+//
+//template<class T, class U, class Archive>
+//concept HasGlobalSerialiseTemplateWrite = requires (T<U> value, Archive archive)
+//{
+//    Serialise(archive, value, std::false_type());
+//};
+
+
+
 //Regardless of if T is a pointer or value, check if it has a serialise function
 template<class T, class Archive>
-concept IsSerialisable = HasSerialiseFunc<T, Archive> || HasSerialiseFuncConst<T, Archive> || HasSerialiseFuncPtr<T, Archive> || HasSerialiseFuncPtrConst<T, Archive>;
+concept IsSerialisable = HasSerialiseFunc<T, Archive> || HasSerialiseFuncConst<T, Archive> || HasSerialiseFuncPtr<T, Archive> || HasSerialiseFuncPtrConst<T, Archive> || HasGlobalSerialiseWrite<T, Archive> || HasGlobalSerialiseRead<T, Archive>;
 }
 
 class Archive
@@ -158,7 +190,11 @@ private:
     template<class T>
     void WriteSerialiseObject(const T& value)
     {
-        if constexpr (std::is_pointer_v<T>)
+        if constexpr (Details::HasGlobalSerialiseWrite<T, Archive>)
+        {
+            Serialise(*this, value, std::false_type());
+        }
+        else if constexpr (std::is_pointer_v<T>)
         {
             value->Serialize(*this, std::false_type());
         }
@@ -183,16 +219,34 @@ private:
         else
         {
             MSG_WARN_CHANNEL("Archive", "Cannot Write object of type: %s to the archive", typeid(T).name());
+            MSG_WARN_CHANNEL("Archive", "Type is not a Serialisable: %s", Details::IsSerialisable<T, Archive> ? "true" : "false");
+            MSG_WARN_CHANNEL("Archive", "Type is HasSerialiseFunc: %s", Details::HasSerialiseFunc<T, Archive> ? "true" : "false");
+            MSG_WARN_CHANNEL("Archive", "Type is HasSerialiseFuncConst: %s", Details::HasSerialiseFuncConst<T, Archive> ? "true" : "false");
+            MSG_WARN_CHANNEL("Archive", "Type is PTR HasSerialiseFunc: %s", Details::HasSerialiseFuncPtr<T, Archive> ? "true" : "false");
+            MSG_WARN_CHANNEL("Archive", "Type is PTR HasSerialiseFuncConst: %s", Details::HasSerialiseFuncPtrConst<T, Archive> ? "true" : "false");
+            MSG_WARN_CHANNEL("Archive", "Type is Global HasSerialiseWrite: %s", Details::HasGlobalSerialiseWrite<T, Archive> ? "true" : "false");
+            MSG_WARN_CHANNEL("Archive", "Type is Global HasSerialiseRead: %s", Details::HasGlobalSerialiseRead<T, Archive> ? "true" : "false");
         }
     }
 
     template<class T>
     void ReadSerialiseObject(T& value) const
     {
-        value = GetCreateFPForSerialisationType<T>()();
+        if constexpr (std::is_copy_assignable_v<T>)
+        {
+            value = GetCreateFPForSerialisationType<T>()();
+        }
+        else
+        {
+            value = std::move(GetCreateFPForSerialisationType<T>()());
+        }
 
         //Need to see if we have a pointer or not
-        if constexpr (std::is_pointer_v<T>)
+        if constexpr (Details::HasGlobalSerialiseRead<T, Archive>)
+        {
+            Serialise(*this, value, std::true_type());
+        }
+        else if constexpr (std::is_pointer_v<T>)
         {
             value->Serialize(*this, std::true_type());
         }
@@ -206,7 +260,14 @@ private:
     template<class T>
     void ReadObject(T& value) const
     {
-        value = GetCreateFPForSerialisationType<T>()();
+        if constexpr (std::is_copy_assignable_v<T>)
+        {
+            value = GetCreateFPForSerialisationType<T>()();
+        }
+        else
+        {
+            value = std::move(GetCreateFPForSerialisationType<T>()());
+        }
 
         if constexpr (std::is_fundamental_v<T>) //This cannot be a pointer or reference, also this doesnt need a type check
         {

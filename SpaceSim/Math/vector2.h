@@ -3,6 +3,7 @@
 
 #include "Memory/AlignMacros.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 #include "Core/tinyxml2.h"
 #include <iostream>
 

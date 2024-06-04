@@ -2,7 +2,8 @@
 #define COLOR_H
 
 #include "Core/StringOperations/StringHelperFunctions.h"
-#include <fstream>
+#include <array>
+#include <ostream>
 
 namespace tinyxml2
 {
@@ -16,6 +17,7 @@ public:
     Color(float r, float g, float b);
     Color(float r, float g, float b, float a);
     Color(const float rgba[4]);
+    Color(const std::array<float, 4>& rgba);
     ~Color();
 
     float a() const {return m_rgba[3];}

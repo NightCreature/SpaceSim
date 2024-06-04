@@ -3,12 +3,12 @@
 #include "Core/Resource/Resourceable.h"
 #include "Core/MessageSystem/GameMessages.h"
 #include "Core/MessageSystem/MessageQueue.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 #include "Gameplay/ECS/Components/Components.h"
 #include "Gameplay/ECS/Components/MaterialComponent.h"
 #include "Gameplay/ECS/Entity.h"
 
-#include <Optick.h>
 
 
 namespace ECS
@@ -20,7 +20,7 @@ namespace ECS
 ///-----------------------------------------------------------------------------
 void RenderableSystem::AddEntity(Entity& entity)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     UNUSEDPARAM(entity);
 }
@@ -31,7 +31,7 @@ void RenderableSystem::AddEntity(Entity& entity)
 ///-----------------------------------------------------------------------------
 void RenderableSystem::Update()
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
 
     auto entities = m_entityManager->GetEntitiesForTag(RenderObjectComponent::GetTag() | TransformComponent::GetTag());
     for (Entity* entity : entities)
@@ -114,7 +114,7 @@ void RenderableSystem::Update()
 ///-----------------------------------------------------------------------------
 void RenderableSystem::HandleMessage(const MessageSystem::Message& message)
 {
-    OPTICK_EVENT();
+    PROFILE_FUNCTION();
     if (MESSAGE_ID(CreatedRenderResourceMessage) == message.getMessageId())
     {
         auto& msg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(message);

@@ -3,6 +3,8 @@
 #include "Graphics/D3DDebugHelperFunctions.h"
 #include "Core/Paths.h"
 
+#include "Logging/LoggingMacros.h"
+
 #include "WICTextureLoader.h"
 #include <DDSTextureLoader.h>
 

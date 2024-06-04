@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core/Resource/RenderResource.h"
 #include "Graphics\D3D12\ConstantBuffer.h"
 #include <vector>
@@ -31,6 +32,7 @@ private:
 template<class T>
 size_t PerFrameDataStorage::CreateCBInterface(const T& data)
 {
+    PROFILE_FUNCTION();
     UNUSEDPARAM(data);
     if (m_resource == nullptr)
     {
@@ -38,7 +40,7 @@ size_t PerFrameDataStorage::CreateCBInterface(const T& data)
     }
     m_constantBuffers[m_usedBuffers] = ConstantBuffer();
     RenderResource* renderResource = static_cast<RenderResource*>(m_resource);
-    m_constantBuffers[m_usedBuffers].Create(renderResource->getDeviceManager(), renderResource->getDescriptorHeapManager().GetSRVCBVUAVHeap(), sizeof(T));
+    m_constantBuffers[m_usedBuffers].Create(renderResource->getDeviceManager(), renderResource->getDescriptorHeapManager().GetSRVCBVUAVHeap(), sizeof(T), "PerFrameStorage");
 
 
     return m_usedBuffers++;

@@ -34,7 +34,7 @@ void RotatingBlades::deserialise( const tinyxml2::XMLElement* element)
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        auto typeHash = hashString(element->Value());
+        auto typeHash = Hashing::hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
             //This all needs to be a message to the renderer to create a render object

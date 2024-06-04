@@ -55,7 +55,7 @@ void Switch::deserialise( const tinyxml2::XMLElement* element)
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        auto typeHash = hashString(element->Value());
+        auto typeHash = Hashing::hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
@@ -75,7 +75,7 @@ void Switch::deserialise( const tinyxml2::XMLElement* element)
         else if( "Link"_hash == typeHash)
         {
             const char* linkedSpecial = element->Attribute("link");
-            MSG_TRACE_CHANNEL( "SWITCH", "Hash this name to get a link to the object from the object manager: %s, %d", linkedSpecial, hashString(linkedSpecial) );
+            MSG_TRACE_CHANNEL( "SWITCH", "Hash this name to get a link to the object from the object manager: %s, %d", linkedSpecial, Hashing::hashString(linkedSpecial) );
             const GameObject* linkedGameObject = GameResourceHelper(m_resource).getResource().getGameObjectManager().getGameObject(linkedSpecial);
             if (linkedGameObject)
             {

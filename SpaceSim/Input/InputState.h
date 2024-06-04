@@ -6,6 +6,8 @@
 #include "Core/tinyxml2.h"
 #include "Input/InputAction.h"
 
+#include "Core/Profiler/ProfilerMacros.h"
+
 class InputState
 {
 public:
@@ -19,6 +21,8 @@ public:
 
     float getActionValue(const InputActions::ActionType& action) const
     {
+        PROFILE_FUNCTION();
+
         InputStateMap::const_iterator it = std::find_if(m_inputState.cbegin(), m_inputState.cend(), [&action](const StandardInputAction& standardInput)
         {
             if (action.getType() == standardInput.getAction().getType())

@@ -19,7 +19,7 @@ public:
     void Cleanup();
     void Initialise(Resource* resource, const std::string_view& name);
 
-    bool GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList);
+    bool GetCommandListHandleForThreadIndex(size_t threadIndex, CommandList& commandList, CommandQueue*& commandQueue);
     void ReturnCommandListForThreadIndex(size_t threadIndex);
 
     void Update();

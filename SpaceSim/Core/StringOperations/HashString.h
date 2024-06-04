@@ -1,7 +1,8 @@
 #pragma once
 
-#include "StringHelperFunctions.h"
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <string>
+#include <string_view>
 
 ///-----------------------------------------------------------------------------
 ///! @brief Helper object that in debug also shows the string its based on
@@ -16,7 +17,7 @@ public:
 #ifdef _DEBUG
         m_string(str),
 #endif
-        m_hash(hashString(str)) {}
+        m_hash(Hashing::hashString(str)) {}
     explicit HashString(size_t hash) : m_hash(hash) {}
 
     constexpr ~HashString() {}
@@ -44,7 +45,7 @@ private:
 #endif
     size_t m_hash = static_cast<size_t>(-1);
 
-    static constexpr std::string_view emptyString = "";
+    static std::string emptyString;
 };
 
 // Specialization so we can use this type as a hash key in unordered map

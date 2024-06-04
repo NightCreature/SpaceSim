@@ -2,6 +2,7 @@
 #define VECTOR4_H
 
 #include "Memory/AlignMacros.h"
+#include "Logging/LoggingMacros.h"
 #include <Math/vector3.h>
 #include <iostream>
 

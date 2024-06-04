@@ -2,7 +2,7 @@
 #include "Core/Types/TypeHelpers.h"
 #include "Input/MouseControlDefines.h"
 #include "Math/MathUtilityFunctions.h"
-
+#include "Logging/LoggingMacros.h"
 
 
 MouseController::MouseController()
@@ -146,7 +146,7 @@ void MouseController::internalActionSetup(InputActions::ActionType inputAction, 
     UNUSEDPARAM(inputAction);
 
     InputDefines::MouseControlDefinitions mouseDefinitions;
-    auto inputHash = hashString(input->Value());
+    auto inputHash = Hashing::hashString(input->Value());
     InputDefines::MouseControlDefinitions::MouseInput mouseInput = mouseDefinitions.FindControllerInputIdForHashId(inputHash);
 
     m_physicalKeyToAction.insert(PhysicalInputPair(castToUnderlyingType(mouseInput), inputAction));

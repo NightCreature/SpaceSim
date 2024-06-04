@@ -228,10 +228,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                 {
                     LoadRequest loadRequest(std::string(path.C_Str()));
                     loadRequest.m_gameObjectId = 0;
-                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                    loadRequest.m_resourceType = "LOAD_TEXTURE"_hash;
                     resourceLoader.AddLoadRequest(std::move(loadRequest));
 
-                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Ambient0 + counter)));
+                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(Hashing::hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Ambient0 + counter)));
                 }
             }
             for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_DIFFUSE) && counter < Material::TextureSlotMapping::Diffuse7; ++counter)
@@ -256,10 +256,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
 
                     LoadRequest loadRequest(std::string(path.C_Str()));
                     loadRequest.m_gameObjectId = 0;
-                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                    loadRequest.m_resourceType = "LOAD_TEXTURE"_hash;
                     resourceLoader.AddLoadRequest(std::move(loadRequest));
 
-                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Diffuse0 + counter)));
+                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(Hashing::hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Diffuse0 + counter)));
                 }
             }
             for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_EMISSIVE) && counter < Material::TextureSlotMapping::Emmisive7; ++counter)
@@ -268,10 +268,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                 {
                     LoadRequest loadRequest(std::string(path.C_Str()));
                     loadRequest.m_gameObjectId = 0;
-                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                    loadRequest.m_resourceType = "LOAD_TEXTURE"_hash;
 					resourceLoader.AddLoadRequest(std::move(loadRequest));
 
-                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Emmisive0 + counter)));
+                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(Hashing::hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Emmisive0 + counter)));
                 }
             }
             for (size_t counter = 0; counter < aimaterial->GetTextureCount(aiTextureType_SPECULAR) && counter < Material::TextureSlotMapping::Specular7; ++counter)
@@ -280,10 +280,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
                 {
                     LoadRequest loadRequest(std::string(path.C_Str()));
                     loadRequest.m_gameObjectId = 0;
-                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                    loadRequest.m_resourceType = "LOAD_TEXTURE"_hash;
 					resourceLoader.AddLoadRequest(std::move(loadRequest));
 
-                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Specular0 + counter)));
+                    shaderMaterial.addTextureReference(Material::TextureSlotMapping(Hashing::hashString(getTextureNameFromFileName(path.C_Str())), static_cast<Material::TextureSlotMapping::TextureSlot>(Material::TextureSlotMapping::Specular0 + counter)));
                 }
             }
 
@@ -291,10 +291,10 @@ CreatedModel LoadModel(Resource* resource, const Material& material, const std::
             {
                 LoadRequest loadRequest(std::string(path.C_Str()));
                 loadRequest.m_gameObjectId = 0;
-                loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+                loadRequest.m_resourceType = "LOAD_TEXTURE"_hash;
 				resourceLoader.AddLoadRequest(std::move(loadRequest));
 
-                shaderMaterial.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Normals));
+                shaderMaterial.addTextureReference(Material::TextureSlotMapping(Hashing::hashString(getTextureNameFromFileName(path.C_Str())), Material::TextureSlotMapping::Normals));
             }
             MSG_TRACE_CHANNEL("ASSIMP LOADER", "Trying to read material %d", aimaterial);
 

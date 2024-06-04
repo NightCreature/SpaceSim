@@ -1,5 +1,5 @@
 #pragma once
-#include "CommonStructures.ifx"
+#include "Shared/CommonStructures.h"
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------

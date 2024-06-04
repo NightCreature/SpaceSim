@@ -52,7 +52,7 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
         return false;
     }
 
-    size_t hash = hashString(text);
+    size_t hash = Hashing::hashString(text);
     size_t index = getTextIndex(hash);
     if (index < m_textBlocks.size())
     {
@@ -83,7 +83,7 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
 ///-----------------------------------------------------------------------------
 size_t TextBlockCache::getTextIndex(const std::string& text)
 {
-    return getTextIndex(hashString(text));
+    return getTextIndex(Hashing::hashString(text));
 }
 
 ///-----------------------------------------------------------------------------
@@ -109,7 +109,7 @@ size_t TextBlockCache::getTextIndex(size_t textHash)
 ///-----------------------------------------------------------------------------
 bool TextBlockCache::removeText(const std::string& text)
 {
-    return removeText(hashString(text));
+    return removeText(Hashing::hashString(text));
 }
 
 ///-----------------------------------------------------------------------------
@@ -564,12 +564,12 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 {
 	Material mat;
 	RenderResourceHelper gameResource(resource);
-    mat.setEffectHash(hashString("sdf_font_effect.xml"));
+    mat.setEffectHash("sdf_font_effect.xml"_hash);
 	mat.setBlendState(true);
 	//Should fix this if we have more than one page somehow
-	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName.string()), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
+	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)Hashing::hashString(m_font->getPages().m_pages[0].m_fileName.string()), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
-	mat.setTechnique(hashString("default"));
+	mat.setTechnique("default"_hash);
 	//m_shaderInstance.setMaterial(mat);
 	//WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
     //TODO FIX ME SHOULD ASK RENDER SYSTEM FOR VIEW AND PROJECTION

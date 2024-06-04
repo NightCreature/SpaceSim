@@ -20,4 +20,6 @@
   <ActionName name="fe_cancel" lng="lng_cancel"/>
 
   <ActionName name="exit_game" lng="lng_quit_game"/>
+
+  <ActionName name="printflow" lng="debug_print_flow" />
 </xml>

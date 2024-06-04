@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/ShaderDataStructures.h"
+#include "..\bin\Shaders\Shaders\Shared\CommonStructures.h"
 #include "Input/Input.h"
 #include "Math/matrix44.h"
 #include "Math/matrixmath.h"

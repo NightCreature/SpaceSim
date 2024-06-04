@@ -25,7 +25,7 @@ m_changeWindingOrder(changeWindingOrder)
     str << "plane_" << m_planeCount;
     ++m_planeCount;
     m_name = str.str();
-    m_nameHash = hashString(m_name);
+    m_nameHash = Hashing::hashString(m_name);
 	m_fillx = false;
 	m_filly = false;
 	m_fillz = false;
@@ -139,7 +139,7 @@ void Plane::deserialise( const tinyxml2::XMLElement* node )
 {
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != 0; childElement = childElement->NextSiblingElement())
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if (Material::m_hash == childElementHash)
         {
             m_materialParameters = Material::GetMaterialParameters(childElement);

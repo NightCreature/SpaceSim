@@ -1,4 +1,5 @@
 #include "Core/ConstructionFactory.h"
+#include "Logging/LoggingMacros.h"
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
@@ -6,7 +7,7 @@
 ///-----------------------------------------------------------------------------
 std::any ConstructionFactory::ConstructForName(const std::string& name)
 {
-    size_t hash = hashString(name);
+    size_t hash = Hashing::hashString(name);
 
     auto iterator = std::find_if(m_constructors.begin(), m_constructors.end(), [hash](auto constructionPair) { return constructionPair.first == hash; });
     if (iterator != m_constructors.end())
