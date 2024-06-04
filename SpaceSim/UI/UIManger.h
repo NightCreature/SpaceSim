@@ -1,8 +1,9 @@
 #pragma once
 
-#include "WebkitThread.h"
-
 #include <windows.h>
+
+#include "UI/Core/StateManager.h"
+#include "UI/Core/FlowManager.h"
 
 class UIManger
 {
@@ -10,10 +11,13 @@ public:
     UIManger() {}
     ~UIManger() {}
 
-    //void initialise();
+    void Initialise(Resource* resource);
+
+    void Update(float deltaTime, const InputState& input);
 private:
-    //This will need a thread handle so EAWebkit can run on it
-    HANDLE m_threadHandle;
-    //WebkitThread m_webKitThread;
+    Resource* m_resource = nullptr;
+    FE::StateManager m_stateManager;
+    FE::FlowManager m_flowManager;
+    
 };
 

@@ -14,6 +14,18 @@
 
 #include "Core/Profiler/ProfilerMacros.h"
 
+#include "Physics/PhysicsManager.h"
+#include "Gameplay/ECS/SystemsManager.h"
+
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+UpdateThread::~UpdateThread()
+{
+    
+}
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
@@ -23,6 +35,10 @@ void UpdateThread::Initialise(Resource* resource)
 {
     m_resource = resource;
     m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedRenderResourceMessage), fastdelegate::MakeDelegate(m_gameObjectManager, &GameObjectManager::handleMessage));
+    //m_messageObservers.AddDispatchFunction(MESSAGE_ID(CreatedRenderResourceMessage), fastdelegate::MakeDelegate(&m_renderableSystem, &ECS::RenderableSystem::HandleMessage));
+
+    m_uiManager.Initialise(m_resource);
+    
     m_done = true;
 }
 
@@ -34,7 +50,8 @@ int UpdateThread::WorkerFunction()
 {
     while (isAlive())
     {
-        PROFILE_THREAD("UpdateThread");
+        //PROFILE_THREAD("UpdateThread");
+        
         if (!m_done)
         {
             EnterCriticalSection(&m_criticalSection);
@@ -42,13 +59,29 @@ int UpdateThread::WorkerFunction()
             m_messageObservers.DispatchMessages(*(m_resource->m_messageQueues->getUpdateMessageQueue())); //Dispatch the messages
             m_resource->m_messageQueues->getUpdateMessageQueue()->reset();//m_messageQueue->reset(); //Reset the queue so we can track new message in it
 
-            m_renderList.clear();
+            LeaveCriticalSection(&m_criticalSection);
 
-            m_gameObjectManager->update(m_renderList, m_elapsedTime, m_input);
-            m_laserManager->update(m_renderList, m_elapsedTime, Matrix44(), Matrix44()); //TODO FIX LASERS
+            m_gameObjectManager->update( m_elapsedTime, m_input);
+            
+            auto& entitySystemsManager = m_entityManager->GetSystemsManager();
+            {
+                //This group could be on its own job
+                entitySystemsManager.PrePhysicsUpdate();
+                m_physicsManager->Update(m_elapsedTime);
+                entitySystemsManager.PostPhysicsUpdate();
+            }
+            //Potentially own job
+            entitySystemsManager.Update(); //This one is system that dont have a link with the physics, this could be farmed off to a job
+            m_laserManager->update( m_elapsedTime, Matrix44(), Matrix44()); //TODO FIX LASERS
+
+            const InputState* inputState = m_input.getInput(0);
+            if (inputState != nullptr)
+            {
+                m_uiManager.Update(m_elapsedTime, *inputState);
+            }
 
             m_done = true;
-            LeaveCriticalSection(&m_criticalSection);
+            
         }
         else
         {

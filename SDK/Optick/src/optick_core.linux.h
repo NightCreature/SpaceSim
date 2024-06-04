@@ -1,3 +1,25 @@
+// The MIT License(MIT)
+//
+// Copyright(c) 2019 Vadim Slyusarev
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #pragma once
 #if defined(__linux__)
 
@@ -16,7 +38,11 @@ namespace Optick
 {
 	const char* Platform::GetName() 
 	{
+#if defined(__ANDROID__)
+	    return "Android";
+#else
 		return "Linux";
+#endif
 	}
 
 	ThreadID Platform::GetThreadID()
@@ -80,7 +106,7 @@ namespace ft
 			Stopped,
 			//X	dead(should never be seen)
 			Dead,
-			//Z	Defunct(ìzombieî) process, terminated but not reaped by its parent.
+			//Z	Defunct(‚Äúzombie‚Äù) process, terminated but not reaped by its parent.
 			Zombie,
 		};
 	};
@@ -114,13 +140,14 @@ class FTrace : public Trace
 {
 	bool isActive;
 	string password;
+	unordered_set<pid_t> pidCache;
 
 	bool Parse(const char* line);
 	bool ProcessEvent(const ft::base_event& ev);
 
-	void Set(const char* name, bool value);
-	void Set(const char* name, const char* value);
-	void Exec(const char* cmd);
+	bool Set(const char* name, bool value);
+	bool Set(const char* name, const char* value);
+	bool Exec(const char* cmd);
 public:
 
 	FTrace();
@@ -192,7 +219,9 @@ CaptureStatus::Type FTrace::Start(Mode::Type mode, int /*frequency*/, const Thre
 	if (!isActive)
 	{
 		// Disable tracing
-		Set(FTRACE_TRACING_ON, false);
+		if (!Set(FTRACE_TRACING_ON, false)) 
+			return CaptureStatus::ERR_TRACER_INVALID_PASSWORD;
+
 		// Cleanup old data
 		Set(FTRACE_TRACE, "");
 		// Set clock type
@@ -231,11 +260,13 @@ bool FTrace::Stop()
 		size_t len = 0;
 		while ((getline(&line, &len, pipe)) != -1)
 			Parse(line);
-		fclose(pipe);
+		pclose(pipe);
 	}
 
 	// Cleanup data
 	Set(FTRACE_TRACE, "");
+
+	pidCache.clear();
 
 	isActive = false;
 
@@ -356,6 +387,13 @@ bool FTrace::ProcessEvent(const ft::base_event& ev)
 		desc.newThreadId = (uint64)switchEv.next_pid;
 		desc.timestamp = switchEv.timestamp;
 		Core::Get().ReportSwitchContext(desc);
+
+		if (pidCache.find(switchEv.next_pid) == pidCache.end())
+		{
+			pidCache.insert(switchEv.next_pid);
+			Core::Get().RegisterThreadDescription(ThreadDescription(switchEv.next_comm, (ThreadID)switchEv.next_pid, (ProcessID)switchEv.next_pid, switchEv.next_prio));
+		}
+
 		return true;
 	}
 	break;
@@ -364,23 +402,23 @@ bool FTrace::ProcessEvent(const ft::base_event& ev)
 	return false;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void FTrace::Set(const char * name, bool value)
+bool FTrace::Set(const char * name, bool value)
 {
-	Set(name, value ? "1" : "0");
+	return Set(name, value ? "1" : "0");
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void FTrace::Set(const char* name, const char* value)
+bool FTrace::Set(const char* name, const char* value)
 {
 	char buffer[256] = { 0 };
 	sprintf_s(buffer, "echo %s > %s/%s", value, KERNEL_TRACING_PATH, name);
-	Exec(buffer);
+	return Exec(buffer);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void FTrace::Exec(const char* cmd)
+bool FTrace::Exec(const char* cmd)
 {
 	char buffer[256] = { 0 };
-	sprintf_s(buffer, "echo \'%s\' | sudo -S sh -c \'%s\'", password.c_str(), cmd);
-	std::system(buffer);
+	sprintf_s(buffer, "echo \'%s\' | sudo -S sh -c \'%s\' 2> /dev/null", password.c_str(), cmd);
+	return std::system(buffer) == 0;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FTrace::FTrace() : isActive(false)

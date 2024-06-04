@@ -1,97 +1,211 @@
 #ifndef PHONG_LIGHTING
 #define PHONG_LIGHTING
-#include "shared_data_types.ifx"
+#include "Shared/CommonStructures.h"
 
 #define SDKMARCH2009ZERO 0.0000001 //Fix for short coming in DX March 2009 SDK where max(0.0, value) doesn't work
+static const float almostZero = 0.0000001;
 
-//--------------------------------------------------------------------------------------
-// Phong directional light
-//--------------------------------------------------------------------------------------
-float4 PhongShadingDirectionalLight( float3 normal, float3 lightdirection, float3 viewdirection, float4 texcolor, MaterialData md, float4 lightColor)
+struct LightAccumulator
 {
-    float3 nnormal = normalize(normal);
-    float ndotl = dot(nnormal, normalize(lightdirection));
-    
-    float3 reflection = normalize( ( ( 2.0 * nnormal) * ndotl) - normalize(lightdirection));
-    float3 nviewdirection = normalize(viewdirection);
-    float rdotv = max(SDKMARCH2009ZERO, dot(reflection, nviewdirection));
-    float4 ambientcolor = md.g_emissive + md.g_ambient * texcolor;
-    
-    float4 returnValue = ambientcolor;
-    
-    returnValue += lightColor * md.g_diffuse * ndotl * texcolor + lightColor * md.g_specular * pow(rdotv, md.g_specpower);
-    
-    return returnValue;
+    float4 m_diffuseColor;
+    float4 m_specularColor;
 }
 
 //--------------------------------------------------------------------------------------
-// Phong point light
+// Phong Spot Light
 //--------------------------------------------------------------------------------------
-float4 PhongShadingPointLight( float3 normal, float3 lightdirection, float3 viewdirection, float4 texcolor, float attenuation, MaterialData md, float4 lightColor)
+float4 PhongShadingSpotLight(LightConstants light, float3 lightDirection, float3 nnormal, float3 nviewdirection, float distance, float shininess, float4 albedo, LightAccumulator accumulator)
 {
-    float3 nnormal = normalize(normal);
-    float ndotl = dot(nnormal, normalize(lightdirection));
+    float4 color = float4(0, 0, 0, 1);
+    float attenuation = clamp(0.0, 1.0, 1.0 / (light.m_attenuationFallOff.x + light.m_attenuationFallOff.y * distance + light.m_attenuationFallOff.z * distance * distance));
+    float innerConeCosine = cos(light.m_position.w);
+    float outerConeCosine = cos(light.m_direction.w);
     
-    float3 reflection = normalize( ( ( 2.0 * nnormal) * ndotl) - normalize(lightdirection));
-    float3 nviewdirection = normalize(viewdirection);
-    float rdotv = max(SDKMARCH2009ZERO, dot(reflection, nviewdirection));
-    float4 ambientcolor = md.g_emissive + md.g_ambient * texcolor;
+    //constants.m_attenuationFallOff[0] = m_constantAttenuation;
+    //constants.m_attenuationFallOff[1] = m_linearAttenuation;
+    //constants.m_attenuationFallOff[2] = m_quadraticAttenuation;
+    //constants.m_attenuationFallOff[3] = m_fallOff;
     
-    float4 returnValue = ambientcolor;
-    
-    if (ndotl > 0.0) 
+    lightDirection = normalize(lightDirection);
+    float cosA = dot(normalize(light.m_direction.xyz), -lightDirection);
+    if (cosA >= outerConeCosine) //THis is not ndotl, this is the angle between you light pos to pixel in world space direction and the direction of the light, if this is bigger than the cos(outercone angle) your vector is within the spot cone
     {
-        returnValue += lightColor * md.g_diffuse * ndotl * texcolor * attenuation + lightColor * md.g_specular * pow(rdotv, md.g_specpower);
-    }
-    
-    return returnValue;
-}
+        float ndotl = dot(nnormal, -lightDirection);
+        float baseFalloffValue = abs((cosA - outerConeCosine) / max(almostZero, (innerConeCosine - outerConeCosine)));
+        float fallOff = pow(baseFalloffValue, light.m_attenuationFallOff.w);
 
-//--------------------------------------------------------------------------------------
-// Phong spot light
-//! @remark lightdirection is expected to be vertexPosition - lightPosition
-//--------------------------------------------------------------------------------------
-float4 PhongShadingSpotLight( float3 normal, float3 lightdirection, float3 viewdirection, float3 spotdirection, float innerConeAngle, float outerConeAngle, float fallOffFactor, float attenuation, float4 texcolor, MaterialData md, float4 lightColor)
-{
-    float4 ambientcolor = md.g_emissive + md.g_ambient * texcolor;
-    float4 returnValue = ambientcolor;
-    float outerConeCosine = cos ( outerConeAngle / 2.0 );
-    float innerConeCosine = cos ( innerConeAngle / 2.0 );
-
-    float3 lightDirection = normalize(lightdirection);
-    float cosA = dot(normalize(spotdirection), -lightDirection); //you want to calculate the angle between the normal and the vector coming form the vertex to the light
-
-    if (cosA >= outerConeCosine) //We are in the outer cone calculate light and fall off values
-    {
-        //calculate falloff factor
-        float baseValue =  abs(( cosA - outerConeCosine ) / max(SDKMARCH2009ZERO,( innerConeCosine - outerConeCosine )));
-        float fallOff = pow( baseValue , fallOffFactor);
-
-        float3 nnormal = normalize(normal);
-        float ndotl = dot(nnormal, lightDirection);
-
-        float3 reflection = normalize( ( ( 2.0 * nnormal) * ndotl) - lightDirection);
-        float3 nviewdirection = normalize(viewdirection);
-        float rdotv = max(SDKMARCH2009ZERO, dot(reflection, nviewdirection));
-
-        float4 specularColor = lightColor * md.g_specular * pow(max(SDKMARCH2009ZERO,rdotv), md.g_specpower);
-        float4 diffuseColor = lightColor * md.g_diffuse * ndotl * texcolor;
-
+        float3 reflection = normalize(((2.0 * nnormal) * ndotl) - lightDirection);
+        float rdotv = pow(saturate(dot(reflection, nviewdirection)), shininess);
+        [flatten]
         if (ndotl > 0.0)
         {
-            if (cosA >= innerConeCosine) //we are in the inner cone full light should be applied here
+            [branch]
+            if (cosA >= innerConeCosine) //This vector is inside the inner cone angle, so no attentuation due to cone falloff
             {
-                returnValue = ambientcolor + diffuseColor * attenuation + specularColor;
+                color = light.m_diffuse * attenuation * ndotl * albedo + rdotv * light.m_specular;
+                accumulator.m_diffuseColor = light.m_diffuse * attenuation * ndotl * albedo;
+                accumulator.m_specularColor = rdotv * light.m_specular;
             }
             else
             {
-                returnValue = ambientcolor + diffuseColor * attenuation * fallOff + specularColor;
+                color = light.m_diffuse * attenuation * fallOff * albedo + rdotv * light.m_specular;
+                accumulator.m_diffuseColor = light.m_diffuse * fallOff * albedo;
+                accumulator.m_specularColor = rdotv * light.m_specular;
             }
         }
     }
     
-    return returnValue;
+    return color;
 }
+
+//--------------------------------------------------------------------------------------
+// Phong Directional
+//--------------------------------------------------------------------------------------
+float4 PhongShadingDirectionalLight(LightConstants light, float3 lightDirection, float3 nnormal, float3 nviewdirection, float distance, float shininess, float4 albedo)
+{
+    float ndotl = dot(nnormal, normalize(lightDirection));
+    
+    float3 reflection = normalize(((2.0 * nnormal) * ndotl) - normalize(lightDirection));
+    float rdotv = dot(reflection, nviewdirection);
+    
+    return  light.m_diffuse * ndotl * albedo + light.m_specular * pow(rdotv, shininess);
+}
+
+//--------------------------------------------------------------------------------------
+// Phong Point
+//--------------------------------------------------------------------------------------
+float4 PhongShadingPointLight(LightConstants light, float3 lightDirection, float3 nnormal, float3 nviewdirection, float distance, float shininess, float4 albedo)
+{
+    float ndotl = dot(nnormal, normalize(lightDirection));
+    
+    float3 reflection = normalize(((2.0 * nnormal) * ndotl) - normalize(lightDirection));
+    float rdotv = dot(reflection, nviewdirection);
+    float4 retVal = float4(0, 0, 0, 1);
+    
+    if (ndotl > 0.0)
+    {
+        float attenuation = clamp(0.0, 1.0, 1.0 / (light.m_attenuationFallOff.x + light.m_attenuationFallOff.y * distance + light.m_attenuationFallOff.z * distance * distance));
+        retVal = light.m_diffuse * ndotl * albedo * attenuation + light.m_specular * pow(rdotv, shininess);
+    }
+        return retVal;
+}
+
+//--------------------------------------------------------------------------------------
+// Phong lighting dispatch
+//--------------------------------------------------------------------------------------
+float4 DoPhongShading(LightConstants light, float3 lightDir, float3 nnormal, float3 nviewdirection, float distance, float shininess, float4 albedo)
+{
+    float4 retVal = float4(0, 0, 0, 1);
+    switch (light.m_type[0]) //spotlight
+    {
+        case 0:
+        {
+                retVal = PhongShadingSpotLight(light, lightDir, nnormal, nviewdirection, distance, shininess, albedo);
+            }
+            break;
+        case 1: //Directional
+        {
+                retVal = PhongShadingDirectionalLight(light, lightDir, nnormal, nviewdirection, distance, shininess, albedo);
+            }
+            break;
+        case 2: //point 
+        {
+                retVal = PhongShadingPointLight(light, lightDir, nnormal, nviewdirection, distance, shininess, albedo);
+            }
+            break;
+    }
+
+    return retVal;
+}
+
+////--------------------------------------------------------------------------------------
+//// Phong directional light
+////--------------------------------------------------------------------------------------
+//float4 PhongShadingDirectionalLight( float3 normal, float3 lightdirection, float3 viewdirection, float4 texcolor, MaterialData md, float4 lightColor)
+//{
+//    float3 nnormal = normalize(normal);
+//    float ndotl = dot(nnormal, normalize(lightdirection));
+    
+//    float3 reflection = normalize( ( ( 2.0 * nnormal) * ndotl) - normalize(lightdirection));
+//    float3 nviewdirection = normalize(viewdirection);
+//    float rdotv = max(SDKMARCH2009ZERO, dot(reflection, nviewdirection));
+//    float4 ambientcolor = md.g_emissive + md.g_ambient * texcolor;
+    
+//    float4 returnValue = ambientcolor;
+    
+//    returnValue += lightColor * md.g_diffuse * ndotl * texcolor + lightColor * md.g_specular * pow(rdotv, md.g_specpower);
+    
+//    return returnValue;
+//}
+
+////--------------------------------------------------------------------------------------
+//// Phong point light
+////--------------------------------------------------------------------------------------
+//float4 PhongShadingPointLight( float3 normal, float3 lightdirection, float3 viewdirection, float4 texcolor, float attenuation, MaterialData md, float4 lightColor)
+//{
+//    float3 nnormal = normalize(normal);
+//    float ndotl = dot(nnormal, normalize(lightdirection));
+    
+//    float3 reflection = normalize( ( ( 2.0 * nnormal) * ndotl) - normalize(lightdirection));
+//    float3 nviewdirection = normalize(viewdirection);
+//    float rdotv = max(SDKMARCH2009ZERO, dot(reflection, nviewdirection));
+//    float4 ambientcolor = md.g_emissive + md.g_ambient * texcolor;
+    
+//    float4 returnValue = ambientcolor;
+    
+//    if (ndotl > 0.0) 
+//    {
+//        returnValue += lightColor * md.g_diffuse * ndotl * texcolor * attenuation + lightColor * md.g_specular * pow(rdotv, md.g_specpower);
+//    }
+    
+//    return returnValue;
+//}
+
+////--------------------------------------------------------------------------------------
+//// Phong spot light
+////! @remark lightdirection is expected to be vertexPosition - lightPosition
+////--------------------------------------------------------------------------------------
+//float4 PhongShadingSpotLight( float3 normal, float3 lightdirection, float3 viewdirection, float3 spotdirection, float innerConeAngle, float outerConeAngle, float fallOffFactor, float attenuation, float4 texcolor, MaterialData md, float4 lightColor)
+//{
+//    float4 ambientcolor = md.g_emissive + md.g_ambient * texcolor;
+//    float4 returnValue = ambientcolor;
+//    float outerConeCosine = cos ( outerConeAngle / 2.0 );
+//    float innerConeCosine = cos ( innerConeAngle / 2.0 );
+
+//    float3 lightDirection = normalize(lightdirection);
+//    float cosA = dot(normalize(spotdirection), -lightDirection); //you want to calculate the angle between the normal and the vector coming form the vertex to the light
+
+//    if (cosA >= outerConeCosine) //We are in the outer cone calculate light and fall off values
+//    {
+//        //calculate falloff factor
+//        float baseValue =  abs(( cosA - outerConeCosine ) / max(SDKMARCH2009ZERO,( innerConeCosine - outerConeCosine )));
+//        float fallOff = pow( baseValue , fallOffFactor);
+
+//        float3 nnormal = normalize(normal);
+//        float ndotl = dot(nnormal, lightDirection);
+
+//        float3 reflection = normalize( ( ( 2.0 * nnormal) * ndotl) - lightDirection);
+//        float3 nviewdirection = normalize(viewdirection);
+//        float rdotv = max(SDKMARCH2009ZERO, dot(reflection, nviewdirection));
+
+//        float4 specularColor = lightColor * md.g_specular * pow(max(SDKMARCH2009ZERO,rdotv), md.g_specpower);
+//        float4 diffuseColor = lightColor * md.g_diffuse * ndotl * texcolor;
+
+//        if (ndotl > 0.0)
+//        {
+//            if (cosA >= innerConeCosine) //we are in the inner cone full light should be applied here
+//            {
+//                returnValue = ambientcolor + diffuseColor * attenuation + specularColor;
+//            }
+//            else
+//            {
+//                returnValue = ambientcolor + diffuseColor * attenuation * fallOff + specularColor;
+//            }
+//        }
+//    }
+    
+//    return returnValue;
+//}
 
 //-----------------------------------------------------------
 //Toon Shaders

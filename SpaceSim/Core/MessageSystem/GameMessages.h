@@ -4,6 +4,7 @@
 #include "Core/MessageSystem/Messages.h"
 
 #include "Math/matrix44.h"
+#include <source_location>
 
 namespace MessageSystem
 {
@@ -43,7 +44,7 @@ public:
     CreateRenderResource(const char* typeName)
     {
         m_implementationData = new ResourceData<T>();
-        static_cast<ResourceData<T>*>(m_implementationData)->m_resourceType = hashString(typeName);
+        static_cast<ResourceData<T>*>(m_implementationData)->m_resourceType = Hashing::hashString(typeName);
         m_implementationDataSize = sizeof(ResourceData<T>);
 
         UNUSEDPARAM(typeName); //work arround for compile error parameter is used
@@ -68,6 +69,7 @@ public:
         size_t m_renderObjectid;
         size_t m_gameobjectid;
         const char* m_name;
+        bool m_shouldRender = false;
     };
 
     RenderInformation()
@@ -90,7 +92,7 @@ public:
 
 #ifdef _DEBUG
 #define DECLAREANDCREATERESOURCEMESSAGE(name, type) auto name = CREATERENDERRESOURCEMESSAGE(type); \
-name.m_sourceInfo = SourceInfo(__FILE__, __LINE__);
+name.m_sourceInfo = SourceInfo();
 #else
 #define DECLAREANDCREATERESOURCEMESSAGE(name, type) auto name = CREATERENDERRESOURCEMESSAGE(type);
 #endif

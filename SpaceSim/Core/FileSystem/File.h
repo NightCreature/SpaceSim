@@ -3,6 +3,8 @@
 #include "Core/FileSystem/Flags.h"
 #include "Core/Types/Types.h"
 
+#include <filesystem>
+
 namespace VFS
 {
 
@@ -16,11 +18,11 @@ public:
 
     void Close();
 
-    void Write(byte* data, size_t length);
-    void Write(byte* data, size_t offset, size_t length);
-    byte* Read(byte*& data);
-    byte* Read(byte*& data, size_t amount);
-    byte* Read(byte*& data, size_t offset, size_t amount);
+    void Write(const byte* data, size_t length);
+    void Write(const byte* data, size_t offset, size_t length);
+    byte* Read(byte*& data) const;
+    byte* Read(byte*& data, size_t amount) const;
+    byte* Read(byte*& data, size_t offset, size_t amount) const;
 
     bool IsValid() const { return m_platformSpecificData != nullptr; }
 

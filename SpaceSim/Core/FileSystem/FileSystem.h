@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 
+#if defined CreateFile
+#undef CreateFile
+#endif
+
 namespace VFS
 {
 
@@ -24,6 +28,7 @@ public:
 
     //this all redirects to the mount points the filesystem is aware off.
     std::vector<std::filesystem::path> ListFiles();
+    std::vector<std::filesystem::path> ListFiles(const std::filesystem::path& path);
     File CreateFile(const std::filesystem::path& name, FileMode fileMode);
     File CreateDirectory(const std::filesystem::path& name);
 

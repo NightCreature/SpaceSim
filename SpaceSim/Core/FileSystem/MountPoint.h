@@ -24,6 +24,7 @@ public:
     bool IsValid() { return m_valid; }
 
     std::vector<std::filesystem::path> ListFiles();
+    std::vector<std::filesystem::path> ListFiles(const std::filesystem::path& path);
     File FileCreate(const std::filesystem::path& name, FileMode fileMode);
     File DirectoryCreate(const std::filesystem::path& name);
 

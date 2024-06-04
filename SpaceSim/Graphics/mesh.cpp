@@ -29,7 +29,7 @@ CreatedModel CreateMesh(const CreationParams& params, const EffectCache& effectC
 
     for (size_t counter = 0; counter < params.m_meshGroups.size(); ++counter)
     {
-        mesh.model->addMeshGroup(params.m_meshGroups[counter].meshGroup);
+        mesh.model->addMeshGroup(*(params.m_meshGroups[counter].meshGroup));
         mesh.boundingBox.enclose(params.m_meshGroups[counter].boundingBox);
     }
 
@@ -39,7 +39,7 @@ CreatedModel CreateMesh(const CreationParams& params, const EffectCache& effectC
 
 void normalizeNormals(std::vector<Vector3>& normals)
 {
-    for (int i = 0; i < normals.size(); i++)
+    for (size_t i = 0; i < normals.size(); i++)
     {
         normals[i].normalize();
     }

@@ -390,7 +390,7 @@
 //
 //    }
 //
-//    bool toBool() const;
+//    bool toBool() const;ser
 //    int  toInt() const;
 //    unsigned int toUint() const;
 //    float toFloat() const;

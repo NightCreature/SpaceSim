@@ -1,4 +1,5 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 #include <assert.h>
 
 //#ifndef _DEBUG

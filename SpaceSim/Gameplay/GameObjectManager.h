@@ -20,7 +20,7 @@ public:
     const std::vector<GameObject*> getGameObjectsThatContain(const std::string& partOfObjectName) const;
     const std::vector<GameObject*> getGameObjectsThatDontContain(const std::string& partOfObjectName) const;
 
-    void update(RenderInstanceTree& renderList, float elapsedTime, const Input& input);
+    void update(float elapsedTime, const Input& input);
 
     void handleMessage( const MessageSystem::Message& message );
     void addMessage(const Message& message);

@@ -3,7 +3,7 @@
 Open Asset Import Library - Java Binding (jassimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2012, assimp team
+Copyright (c) 2006-2020, assimp team
 
 All rights reserved.
 
@@ -140,15 +140,102 @@ public final class AiMesh {
     /**
      * Number of bytes per float value.
      */
-    private static final int SIZEOF_FLOAT = 4;
-    
-    
+    private final int SIZEOF_FLOAT = Jassimp.NATIVE_FLOAT_SIZE;
+        
     /**
      * Number of bytes per int value.
      */
-    private static final int SIZEOF_INT = 4;
+    private final int SIZEOF_INT = Jassimp.NATIVE_INT_SIZE;
+
+    /**
+     * Size of an AiVector3D in the native world.
+     */
+    private final int SIZEOF_V3D = Jassimp.NATIVE_AIVEKTOR3D_SIZE;
     
     
+	    /**
+     * The primitive types used by this mesh.
+     */
+    private final Set<AiPrimitiveType> m_primitiveTypes = 
+            EnumSet.noneOf(AiPrimitiveType.class);
+    
+    
+    /**
+     * Number of vertices in this mesh.
+     */
+    private int m_numVertices = 0;
+    
+    
+    /**
+     * Number of faces in this mesh.
+     */
+    private int m_numFaces = 0;
+    
+    /**
+     * Material used by this mesh.
+     */
+    private int m_materialIndex = -1;
+    
+    /**
+     * The name of the mesh.
+     */
+    private String m_name = "";
+    
+    /**
+     * Buffer for vertex position data.
+     */
+    private ByteBuffer m_vertices = null;
+        
+    /**
+     * Buffer for faces/ indices.
+     */
+    private ByteBuffer m_faces = null;
+    
+
+    /**
+     * Index structure for m_faces.<p>
+     * 
+     * Only used by meshes that are not pure triangular
+     */
+    private ByteBuffer m_faceOffsets = null;
+    
+    /**
+     * Buffer for normals.
+     */
+    private ByteBuffer m_normals = null;
+    
+    /**
+     * Buffer for tangents.
+     */
+    private ByteBuffer m_tangents = null;
+    
+    /**
+     * Buffer for bitangents.
+     */
+    private ByteBuffer m_bitangents = null;
+    
+    /**
+     * Vertex colors.
+     */
+    private ByteBuffer[] m_colorsets = 
+            new ByteBuffer[JassimpConfig.MAX_NUMBER_COLORSETS];
+      
+    /**
+     * Number of UV components for each texture coordinate set.
+     */
+    private int[] m_numUVComponents = new int[JassimpConfig.MAX_NUMBER_TEXCOORDS];
+    
+    /**
+     * Texture coordinates.
+     */
+    private ByteBuffer[] m_texcoords = 
+            new ByteBuffer[JassimpConfig.MAX_NUMBER_TEXCOORDS];
+        
+    /**
+     * Bones.
+     */
+    private final List<AiBone> m_bones = new ArrayList<AiBone>();
+
     /**
      * This class is instantiated via JNI, no accessible constructor.
      */
@@ -316,7 +403,7 @@ public final class AiMesh {
      * 
      * @return the number of vertices.
      */
-    public int getNumVertives() {
+    public int getNumVertices() {
         return m_numVertices;
     }
     
@@ -432,7 +519,7 @@ public final class AiMesh {
      * Returns a buffer containing vertex positions.<p>
      * 
      * A vertex position consists of a triple of floats, the buffer will 
-     * therefore contain <code>3 * getNumVertives()</code> floats
+     * therefore contain <code>3 * getNumVertices()</code> floats
      * 
      * @return a native-order direct buffer, or null if no data is available
      */
@@ -503,7 +590,7 @@ public final class AiMesh {
      * used to check whether this is the case.<p>
      * 
      * Indices are stored as integers, the buffer will therefore contain 
-     * <code>3 * getNumVertives()</code> integers (3 indices per triangle)
+     * <code>3 * getNumVertices()</code> integers (3 indices per triangle)
      * 
      * @return a native-order direct buffer
      * @throws UnsupportedOperationException
@@ -523,7 +610,7 @@ public final class AiMesh {
      * Returns a buffer containing normals.<p>
      * 
      * A normal consists of a triple of floats, the buffer will 
-     * therefore contain <code>3 * getNumVertives()</code> floats
+     * therefore contain <code>3 * getNumVertices()</code> floats
      * 
      * @return a native-order direct buffer
      */
@@ -540,7 +627,7 @@ public final class AiMesh {
      * Returns a buffer containing tangents.<p>
      * 
      * A tangent consists of a triple of floats, the buffer will 
-     * therefore contain <code>3 * getNumVertives()</code> floats
+     * therefore contain <code>3 * getNumVertices()</code> floats
      * 
      * @return a native-order direct buffer
      */
@@ -557,7 +644,7 @@ public final class AiMesh {
      * Returns a buffer containing bitangents.<p>
      * 
      * A bitangent consists of a triple of floats, the buffer will 
-     * therefore contain <code>3 * getNumVertives()</code> floats
+     * therefore contain <code>3 * getNumVertices()</code> floats
      * 
      * @return a native-order direct buffer
      */
@@ -574,7 +661,7 @@ public final class AiMesh {
      * Returns a buffer containing vertex colors for a color set.<p>
      * 
      * A vertex color consists of 4 floats (red, green, blue and alpha), the 
-     * buffer will therefore contain <code>4 * getNumVertives()</code> floats
+     * buffer will therefore contain <code>4 * getNumVertices()</code> floats
      * 
      * @param colorset the color set
      * 
@@ -595,7 +682,7 @@ public final class AiMesh {
      * A texture coordinate consists of up to 3 floats (u, v, w). The actual
      * number can be queried via {@link #getNumUVComponents(int)}. The 
      * buffer will contain 
-     * <code>getNumUVComponents(coords) * getNumVertives()</code> floats
+     * <code>getNumUVComponents(coords) * getNumVertices()</code> floats
      * 
      * @param coords the texture coordinate set
      * 
@@ -1331,99 +1418,4 @@ public final class AiMesh {
         }
     }
     // }}
-    
-    
-    /**
-     * The primitive types used by this mesh.
-     */
-    private final Set<AiPrimitiveType> m_primitiveTypes = 
-            EnumSet.noneOf(AiPrimitiveType.class);
-    
-    
-    /**
-     * Number of vertices in this mesh.
-     */
-    private int m_numVertices = 0;
-    
-    
-    /**
-     * Number of faces in this mesh.
-     */
-    private int m_numFaces = 0;
-    
-    
-    /**
-     * Material used by this mesh.
-     */
-    private int m_materialIndex = -1;
-    
-    
-    /**
-     * The name of the mesh.
-     */
-    private String m_name = "";
-    
-    
-    /**
-     * Buffer for vertex position data.
-     */
-    private ByteBuffer m_vertices = null;
-    
-    
-    /**
-     * Buffer for faces/ indices.
-     */
-    private ByteBuffer m_faces = null;
-    
-    
-    /**
-     * Index structure for m_faces.<p>
-     * 
-     * Only used by meshes that are not pure triangular
-     */
-    private ByteBuffer m_faceOffsets = null;
-    
-    
-    /**
-     * Buffer for normals.
-     */
-    private ByteBuffer m_normals = null;
-    
-    
-    /**
-     * Buffer for tangents.
-     */
-    private ByteBuffer m_tangents = null;
-    
-    
-    /**
-     * Buffer for bitangents.
-     */
-    private ByteBuffer m_bitangents = null;
-    
-    
-    /**
-     * Vertex colors.
-     */
-    private ByteBuffer[] m_colorsets = 
-            new ByteBuffer[JassimpConfig.MAX_NUMBER_COLORSETS];
-    
-    
-    /**
-     * Number of UV components for each texture coordinate set.
-     */
-    private int[] m_numUVComponents = new int[JassimpConfig.MAX_NUMBER_TEXCOORDS];
-    
-    
-    /**
-     * Texture coordinates.
-     */
-    private ByteBuffer[] m_texcoords = 
-            new ByteBuffer[JassimpConfig.MAX_NUMBER_TEXCOORDS];
-    
-    
-    /**
-     * Bones.
-     */
-    private final List<AiBone> m_bones = new ArrayList<AiBone>();
 }

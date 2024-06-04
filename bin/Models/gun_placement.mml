@@ -1,6 +1,7 @@
 <xml>
 	<Material>
-      <Effect file_name="Shaders\Effects\spaceship.xml" />
+      <Effect file_name="Shaders\Effects\gun.xml" />
+      <Texture file_name="Textures\turret\SciFi_Props-Pack03-diffuse.jpg"  texture_slot="8" />
     </Material>
-	<Model file_name="Models/turret/gun_turret_2.DAE" />
+	<Model file_name="Models/turret/gun_turret3.DAE" />
 </xml>

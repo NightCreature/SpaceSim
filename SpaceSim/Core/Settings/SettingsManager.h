@@ -1,8 +1,12 @@
 #pragma once
 
 #include "Core/Settings/Settings.h"
-#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/Settings/NewSetting.h"
+#include "Logging/LoggingMacros.h"
+
+#include <filesystem>
 #include <vector>
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief  Todo Add comment
@@ -42,7 +46,7 @@ public:
         {
             if (m_settings[index] != 0)
             {
-                MSG_TRACE_CHANNEL("SETTINGS", "warning this setting already has a value setting in question is: %s", m_settings[index]->getSettingName().c_str() )
+                MSG_TRACE_CHANNEL("SETTINGS", "warning this setting already has a value setting in question is: %s", m_settings[index]->getSettingName().c_str());
                 ISettingBase* setting = m_settings[index];
                 delete setting;
             }
@@ -51,13 +55,26 @@ public:
         else
         {
             m_settings.push_back(value);
+            
         }
+    }
+    ///-----------------------------------------------------------------------------
+    ///! @brief   
+    ///! @remark
+    ///-----------------------------------------------------------------------------
+    void SaveSettings(const std::filesystem::path& settingsFilePath);
+    void LoadSettings(const std::filesystem::path& settingsFilePath);
+
+    template <class T>
+    void AddNewSetting(const std::string_view& name, const T& value)
+    {
+        m_newSettings.emplace_back( name, value );
     }
 protected:
 private:
     int getSettingIndex(const std::string& settingName) const 
     {
-        size_t hashedSettingName = hashString(settingName);
+        size_t hashedSettingName = Hashing::hashString(settingName);
         for (int counter = 0; counter < (int)m_settings.size(); ++counter)
         {
             if (m_settings[counter]->getHashValue() == hashedSettingName)
@@ -70,4 +87,5 @@ private:
     }
 
 	Settings    m_settings;
+    std::vector<NewSetting> m_newSettings;
 };

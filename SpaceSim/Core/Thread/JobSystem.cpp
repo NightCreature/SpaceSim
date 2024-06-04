@@ -1,10 +1,13 @@
 #include "JobSystem.h"
 
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 
 #include <atomic>
 #include <sstream>
-#include "../Types/TypeHelpers.h"
+#include "Core/Types/TypeHelpers.h"
+#include "Core/Resource/Resourceable.h"
+#include "../Profiler/ProfilerMacros.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -19,7 +22,7 @@ JobSystem::JobSystem(size_t numThreads)
     m_workAvaliable = CreateEvent(NULL, TRUE, FALSE, "SignalWorkAvailable");
     m_workFinishedEvent = CreateEvent(NULL, TRUE, FALSE, "WorkFinishedEvent");
 
-    size_t index = 1; //this starts at one so we can use this thread as a working thread too
+    size_t index = 0; //this starts at one so we can use this thread as a working thread too
     for (auto& threadStatus : m_workerThreads)
     {
         threadStatus.m_thread.SetJobsystem(this, index, m_workAvaliable);
@@ -36,9 +39,18 @@ JobSystem::JobSystem(size_t numThreads)
     for (auto& threadStatus : m_workerThreads)
     {
         std::stringstream str;
-        str << "WorkerThread" << index;
-        threadStatus.m_working = true;
-        threadStatus.m_thread.createThread(1024*1024, str.str());
+        threadStatus.m_threadIndex = index;
+        if (index == 0)
+        {
+            str << "JobSystemThread";
+        }
+        else
+        {
+            str << "WorkerThread" << index;
+            threadStatus.m_working = true;
+            threadStatus.m_thread.createThread(1024 * 1024, str.str());
+        }
+        ++index;
     }
 }
 
@@ -117,13 +129,13 @@ void JobSystem::SignalWorkAvailable()
 ///-----------------------------------------------------------------------------
 void JobSystem::WaitfForJobsToFinish()
 {
-    std::stringstream str("");
-    str << "<<<<< JobSystem >>>>>\n";
-    str << "Number of sleeping threads: " << m_numberOfSleepingThreads << "\n";
-    str << "Number of WorkerThreads: " << m_workerThreads.size() << "\n";
-    str << "Number of tasks: " << m_jobQueue.m_jobs.size() << "\n";
-    str << "<<<<< JobSystem >>>>>\n";
-    OutputDebugString(str.str().c_str());
+    //std::stringstream str("");
+    //str << "<<<<< JobSystem >>>>>\n";
+    //str << "Number of sleeping threads: " << m_numberOfSleepingThreads << "\n";
+    //str << "Number of WorkerThreads: " << m_workerThreads.size() << "\n";
+    //str << "Number of tasks: " << m_jobQueue.m_jobs.size() << "\n";
+    //str << "<<<<< JobSystem >>>>>\n";
+    //OutputDebugString(str.str().c_str());
 
     ResetEvent(m_workFinishedEvent);
     if (!m_jobQueue.m_jobs.empty())
@@ -132,15 +144,16 @@ void JobSystem::WaitfForJobsToFinish()
         SetEvent(m_workAvaliable);
     }
     DWORD waitReturn = WaitForSingleObject(m_workFinishedEvent, INFINITE);
+    UNUSEDPARAM(waitReturn);
 
-    str.str("");
-    str << "<<<<< JobSystem >>>>>\n";
-    str << "Number of sleeping threads: " << m_numberOfSleepingThreads << "\n";
-    str << "Number of WorkerThreads: " << m_workerThreads.size() << "\n";
-    str << "Number of tasks: " << m_jobQueue.m_jobs.size() << "\n";
-    str << "waitReturn: " << waitReturn << "\n";
-    str << "<<<<< JobSystem >>>>>\n";
-    OutputDebugString(str.str().c_str());
+    //str.str("");
+    //str << "<<<<< JobSystem >>>>>\n";
+    //str << "Number of sleeping threads: " << m_numberOfSleepingThreads << "\n";
+    //str << "Number of WorkerThreads: " << m_workerThreads.size() << "\n";
+    //str << "Number of tasks: " << m_jobQueue.m_jobs.size() << "\n";
+    //str << "waitReturn: " << waitReturn << "\n";
+    //str << "<<<<< JobSystem >>>>>\n";
+    //OutputDebugString(str.str().c_str());
 }
 
 ///-----------------------------------------------------------------------------
@@ -149,6 +162,7 @@ void JobSystem::WaitfForJobsToFinish()
 ///-----------------------------------------------------------------------------
 void JobSystem::ProcessWork()
 {
+    PROFILE_FUNCTION();
     ResetEvent(m_workFinishedEvent);
     if (!m_jobQueue.m_jobs.empty())
     {
@@ -157,15 +171,14 @@ void JobSystem::ProcessWork()
 
     //pick up a job here until there is nothing left
     auto workLoad = m_jobQueue.GetNextWorkLoad();
-    while (workLoad.m_job != nullptr)
+    while (!workLoad.m_empty)
     {
         //Execute this workload
-
-        workLoad.m_job->Execute(0); //running on the main thread
-
+        
+        workLoad.m_job->Execute(&m_workerThreads[0]); //running on the main thread
+        workLoad.m_job->FinishJob();
         //once we are done with the work load get ride of it, this should probably be done better
         //delete workLoad.m_job;
-        workLoad.m_job = nullptr;
         workLoad = m_jobQueue.GetNextWorkLoad();
     }
 
@@ -180,4 +193,21 @@ void JobSystem::ProcessWork()
         DWORD waitReturn = WaitForSingleObject(m_workFinishedEvent, INFINITE);
         UNUSEDPARAM(waitReturn);
     }
+}
+
+void JobSystem::SetGameResource(Resource* resource)
+{
+    for (auto& threadStatus : m_workerThreads)
+    {
+        threadStatus.m_gameResource = resource;
+    }
+}
+
+void JobSystem::SetRenderResource(Resource* resource)
+{
+    for (auto& threadStatus : m_workerThreads)
+    {
+        threadStatus.m_renderResource = resource;
+    }
+
 }

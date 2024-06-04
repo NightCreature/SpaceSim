@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/StringOperations/StringHelperFunctions.h"
 #include <string>
 
 namespace InputActions
@@ -34,8 +35,8 @@ namespace InputActions
     {
     public:
         ActionType() : m_actionType(0), m_actionTypeLngKey(0){}
-        ActionType(const std::string& actionTypeName) : m_actionType(hashString(actionTypeName)), m_actionTypeLngKey(0) {}
-        ActionType(const std::string& actionTypeName, const std::string& lngActionName) : m_actionType(hashString(actionTypeName)), m_actionTypeLngKey(hashString(lngActionName.c_str())) {}
+        ActionType(const std::string& actionTypeName) : m_actionType(Hashing::hashString(actionTypeName)), m_actionTypeLngKey(0) {}
+        ActionType(const std::string& actionTypeName, const std::string& lngActionName) : m_actionType(Hashing::hashString(actionTypeName)), m_actionTypeLngKey(Hashing::hashString(lngActionName.c_str())) {}
 
         size_t getType() const { return m_actionType; }
         size_t getLanguageString() const { return m_actionTypeLngKey; }

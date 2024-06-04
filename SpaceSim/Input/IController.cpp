@@ -2,6 +2,8 @@
 #include "Input/InputSystem.h"
 #include "Core/Types/TypeHelpers.h"
 #include "Core/StringOperations/HashString.h"
+#include "Logging/LoggingMacros.h"
+
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
@@ -12,7 +14,7 @@ void IInputDevice::deserialise( const tinyxml2::XMLElement* element, const Input
     auto inputActionHash = "InputAction"_hash;
     for (; element; element = element->NextSiblingElement())
     {
-        if (hashString(element->Value()) == inputActionHash)
+        if (Hashing::hashString(element->Value()) == inputActionHash)
         {
             const tinyxml2::XMLAttribute* inputActionAttr = element->FindAttribute("input_action");
             if (inputActionAttr != nullptr)

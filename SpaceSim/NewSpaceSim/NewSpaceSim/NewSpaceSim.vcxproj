@@ -1,9 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugClang|Win32">
+      <Configuration>DebugClang</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DebugClang|x64">
+      <Configuration>DebugClang</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ProfilingClang|Win32">
+      <Configuration>ProfilingClang</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ProfilingClang|x64">
+      <Configuration>ProfilingClang</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Profiling|Win32">
       <Configuration>Profiling</Configuration>
@@ -11,6 +27,14 @@
     </ProjectConfiguration>
     <ProjectConfiguration Include="Profiling|x64">
       <Configuration>Profiling</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseClang|Win32">
+      <Configuration>ReleaseClang</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseClang|x64">
+      <Configuration>ReleaseClang</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -38,7 +62,20 @@
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseClang|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
@@ -52,23 +89,50 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ProfilingClang|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseClang|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ProfilingClang|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -76,55 +140,116 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
+    <Import Project="..\packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets" Condition="Exists('..\packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets')" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseClang|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ProfilingClang|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseClang|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ProfilingClang|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|Win32'">
+    <IncludePath>D:\SDK\Demo\SpaceSim\SpaceSim;D:\SDK\Assimp\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Windows10_2019\x64\Debug\;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\optick\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDIr)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\imgui;$(SolutionDir)..\..\SDK\imgui\backends;$(SolutionDir)..\..\SDK\imgui\misc\cpp\;$(SolutionDir)..\..\SDK\fmt\include\;E:\SDK\optick-master\src;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(SolutionDir)..\..\SDK\fmt\Debug;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSim_x64d</TargetName>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|x64'">
+    <IncludePath>$(SolutionDir)..;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\optick\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDIr)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\fmt\include\;$(SolutionDir)..\..\SDK\imgui\;$(SolutionDir)..\..\SDK\imgui\backends\;$(SolutionDir)..\..\SDK\imgui\misc\cpp\;E:\SDK\optick-master\src;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)..\..\SDK\VLD\include</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\..\bin\</OutDir>
+    <TargetName>SpaceSim_x64d</TargetName>
+    <EnableCppCoreCheck>true</EnableCppCoreCheck>
+    <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>SpaceSim_x64</TargetName>
-    <OutDir>$(SolutionDir)..\..\bin</OutDir>
-    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Release\;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)..\..\SDK\VLD\lib\Win64</LibraryPath>
+    <OutDir>$(SolutionDir)..\..\bin\</OutDir>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\bin\Shaders\Shaders\;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\Optick\include;E:\SDK\optick-master\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\release;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Release;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Release\;E:\SDK\optick-master\bin\vs2019\x64\Release;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\bin\win.x86_64.vc142.mt\release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)..\..\SDK\VLD\lib\Win64</LibraryPath>
+    <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseClang|x64'">
+    <TargetName>SpaceSim_x64</TargetName>
+    <OutDir>$(SolutionDir)..\..\bin\</OutDir>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\bin\Shaders\Shaders\;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDir)..\..\SDK\Assimp\build\x64\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\fmt\include\;$(SolutionDir)..\..\SDK\optick\src;E:\SDK\optick-master\src;$(SolutionDir)..\..\SDK\WinPixEventRuntime\Include\WinPixEventRuntime;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\release;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Release;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Release\;E:\SDK\optick-master\bin\vs2019\x64\Release;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;$(SolutionDir)..\..\SDK\PhysX5\physx\install\vc17win64\PhysX\bin\win.x86_64.vc142.mt\release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)..\..\SDK\VLD\lib\Win64</LibraryPath>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'">
     <TargetName>SpaceSim_x64p</TargetName>
     <OutDir>$(SolutionDir)..\..\bin</OutDir>
-    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include\nlohmann\;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Windows10_2019\x64\Release\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\JSON\include\nlohmann\;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Windows10_2019\x64\Release\;$(SolutionDir)..\..\SDK\PhysX\physx\bin\win.x86_64.vc142.mt\debug;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
     <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ProfilingClang|x64'">
+    <TargetName>SpaceSim_x64p</TargetName>
+    <OutDir>$(SolutionDir)..\..\bin</OutDir>
+    <IncludePath>$(SolutionDir)..\;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\DirectXCompiler\inc;$(SolutionDir)..\..\SDK\DirectXTK12\Inc;$(SolutionDir)..\..\SDK\Assimp\include;$(SolutionDIr)..\..\SDK\FastDelegate;$(SolutionDir)..\..\SDK\JSON\include\nlohmann\;$(SolutionDir)..\..\SDK\Brofiler;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Brofiler;$(SolutionDir)..\..\SDK\Assimp\lib64;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK\Bin\Windows10_2019\x64\Release\;$(SolutionDir)..\..\SDK\PhysX\physx\bin\win.x86_64.vc142.mt\debug;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <CodeAnalysisRuleSet>CppCoreCheckLifetimeRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|x64'" Label="Vcpkg">
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -138,29 +263,62 @@
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
       <DisableSpecificWarnings>4324;4820;4061;4365;4307</DisableSpecificWarnings>
-      <PreprocessorDefinitions>NOMINMAX; _CRT_SECURE_NO_WARNINGS; %(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>IS_DEBUG;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX20_CISO646_REMOVED_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <EnablePREfast>true</EnablePREfast>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <ExceptionHandling>Sync</ExceptionHandling>
       <AdditionalOptions>/d1reportSingleClassLayoutSize40Structure %(AdditionalOptions)</AdditionalOptions>
       <EnableModules>true</EnableModules>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\SDK\PhysX\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;vld.lib;WinPixEventRuntime.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK12.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;OptickCore.lib;vld.lib;WinPixEventRuntime.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <Profile>false</Profile>
     </Link>
-    <FxCompile>
-      <ShaderModel>5.1</ShaderModel>
-      <EntryPointName>vs_main</EntryPointName>
-      <ObjectFileOutput>$(SolutionDir)..\..\bin\Shaders\Compiled\(Filename).cso</ObjectFileOutput>
-      <ShaderType>Vertex</ShaderType>
-    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugClang|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DisableSpecificWarnings>4324;4820;4061;4365;4307</DisableSpecificWarnings>
+      <PreprocessorDefinitions>IS_DEBUG;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX20_CISO646_REMOVED_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <EnablePREfast>true</EnablePREfast>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableModules>true</EnableModules>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\SDK\PhysX\PhysX\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;d3d11.lib;d3d12.lib;DXGI.lib;DirectXTK12.lib;dxcompiler.lib;d3dcompiler.lib;XInput.lib;OptickCore.lib;vld.lib;WinPixEventRuntime.lib;LowLevel_static_64.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <Profile>false</Profile>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseClang|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
@@ -186,6 +344,19 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ProfilingClang|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
@@ -195,8 +366,8 @@
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4820;4324;4307</DisableSpecificWarnings>
-      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>IS_RELEASE;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX20_CISO646_REMOVED_WARNING;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <EnablePREfast>true</EnablePREfast>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -204,7 +375,31 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp.lib;D3D11.lib;DXGI.lib;dxguid.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;ProfilerCore64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;D3D12.lib;WinPixEventRuntime.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;D3D11.lib;DXGI.lib;dxguid.lib;DirectXTK12.lib;D3dcompiler.lib;dxcompiler.lib;XInput.lib;OptickCore.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;D3D12.lib;WinPixEventRuntime.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ShowProgress>NotSet</ShowProgress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseClang|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DisableSpecificWarnings>4820;4324;4307</DisableSpecificWarnings>
+      <PreprocessorDefinitions>IS_RELEASE;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX20_CISO646_REMOVED_WARNING;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <EnablePREfast>true</EnablePREfast>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>-Wno-nonportable-include-path -Wno-unused-but-set-parameter -Wno-unused-private-field %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>assimp-vc143-mt.lib;D3D11.lib;DXGI.lib;dxguid.lib;DirectXTK12.lib;D3dcompiler.lib;dxcompiler.lib;XInput.lib;OptickCore.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;D3D12.lib;WinPixEventRuntime.lib;PhysX_static_64.lib;PhysXCommon_static_64.lib;PhysXFoundation_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ShowProgress>NotSet</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profiling|x64'">
@@ -216,20 +411,47 @@
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4820;4324</DisableSpecificWarnings>
-      <PreprocessorDefinitions>NOMINMAX; PROFILING; USE_PROFILER 1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>IS_PROFILING;NOMINMAX; PROFILING; USE_PROFILER 1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <EnablePREfast>true</EnablePREfast>
       <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp.lib;d3d11.lib;DXGI.lib;dxguid.lib;DirectXTK.lib;D3dcompiler.lib;XInput.lib;BrofilerCore.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc143-mt.lib;d3d11.lib;DXGI.lib;dxguid.lib;DirectXTK.lib;D3dcompiler.lib;dxcompiler.lib;XInput.lib;BrofilerCore.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXDevice_64.lib;PhysXFoundation_64.lib;PhysXGpu_64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ProfilingClang|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DisableSpecificWarnings>4820;4324</DisableSpecificWarnings>
+      <PreprocessorDefinitions>IS_PROFILING;NOMINMAX; PROFILING; USE_PROFILER 1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <EnablePREfast>true</EnablePREfast>
+      <ExceptionHandling>false</ExceptionHandling>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>assimp-vc143-mt.lib;d3d11.lib;DXGI.lib;dxguid.lib;DirectXTK.lib;D3dcompiler.lib;dxcompiler.lib;XInput.lib;BrofilerCore.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXDevice_64.lib;PhysXFoundation_64.lib;PhysXGpu_64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\bin\Shaders\Shaders\BindlessBuffers.h" />
+    <ClInclude Include="..\..\..\bin\Shaders\Shaders\Shared\CommonStructures.h" />
     <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegate.h" />
     <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegateBind.h" />
+    <ClInclude Include="..\..\..\SDK\imgui\backends\imgui_impl_dx12.h" />
+    <ClInclude Include="..\..\..\SDK\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\..\..\SDK\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\..\..\SDK\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\..\..\SDK\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="..\..\Application\applicationsetting.h" />
     <ClInclude Include="..\..\Application\BaseApplication.h" />
     <ClInclude Include="..\..\Application\displaywindow.h" />
@@ -241,6 +463,8 @@
     <ClInclude Include="..\..\Core\FileSystem\Flags.h" />
     <ClInclude Include="..\..\Core\FileSystem\MountPoint.h" />
     <ClInclude Include="..\..\Core\FileSystem\Platform\Win\MountPointWin.h" />
+    <ClInclude Include="..\..\Core\Hashing\FNVHash.h" />
+    <ClInclude Include="..\..\Core\Hashing\SipHash.h" />
     <ClInclude Include="..\..\Core\ICommand.h" />
     <ClInclude Include="..\..\Core\Macros\PlatformMacros.h" />
     <ClInclude Include="..\..\Core\MessageSystem\GameMessages.h" />
@@ -261,10 +485,18 @@
     <ClInclude Include="..\..\Core\Resource\RenderResources.h" />
     <ClInclude Include="..\..\Core\Resource\resource.h" />
     <ClInclude Include="..\..\Core\Resource\Resourceable.h" />
+    <ClInclude Include="..\..\Core\Serialization\Archive.h" />
+    <ClInclude Include="..\..\Core\Serialization\DefaultSerialisationWrapper.h" />
+    <ClInclude Include="..\..\Core\Serialization\ISerializable.h" />
+    <ClInclude Include="..\..\Core\Serialization\SeriaisationTypeWrapper.h" />
+    <ClInclude Include="..\..\Core\Serialization\SerialisationType.h" />
+    <ClInclude Include="..\..\Core\Serialization\SerializationRegister.h" />
+    <ClInclude Include="..\..\Core\Settings\NewSetting.h" />
     <ClInclude Include="..\..\Core\Settings\Settings.h" />
     <ClInclude Include="..\..\Core\Settings\SettingsManager.h" />
     <ClInclude Include="..\..\Core\Settings\SettingsParser.h" />
     <ClInclude Include="..\..\Core\StringOperations\HashString.h" />
+    <ClInclude Include="..\..\Core\StringOperations\StringFormat.h" />
     <ClInclude Include="..\..\Core\StringOperations\StringHelperFunctions.h" />
     <ClInclude Include="..\..\Core\StringOperations\StringTemplate.h" />
     <ClInclude Include="..\..\Core\Thread\Job.h" />
@@ -273,17 +505,31 @@
     <ClInclude Include="..\..\Core\Thread\Timer.h" />
     <ClInclude Include="..\..\Core\Thread\WorkerThread.h" />
     <ClInclude Include="..\..\Core\tinyxml2.h" />
+    <ClInclude Include="..\..\Core\Types\FunctionWrapper.h" />
     <ClInclude Include="..\..\Core\Types\TemplateTypeMagic.h" />
+    <ClInclude Include="..\..\Core\Types\TypeErasedStorage.h" />
     <ClInclude Include="..\..\Core\Types\TypeHelpers.h" />
     <ClInclude Include="..\..\Core\Types\Types.h" />
     <ClInclude Include="..\..\Gameplay\bbox.h" />
     <ClInclude Include="..\..\Gameplay\box.h" />
     <ClInclude Include="..\..\Gameplay\core.h" />
     <ClInclude Include="..\..\Gameplay\door.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Component.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\Components.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\ComponentType.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\ComponentTypeRegistry.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\MaterialComponent.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\PhysicsComponent.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\TransformComponent.h" />
     <ClInclude Include="..\..\Gameplay\ECS\DataStore.h" />
     <ClInclude Include="..\..\Gameplay\ECS\DataTag.h" />
     <ClInclude Include="..\..\Gameplay\ECS\Entity.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\EntityTagManager.h" />
     <ClInclude Include="..\..\Gameplay\ECS\Processor.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\System.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\SystemsManager.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Systems\HandleMessageSystem.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Systems\RenderableSystem.h" />
     <ClInclude Include="..\..\Gameplay\EntityManager.h" />
     <ClInclude Include="..\..\Gameplay\face.h" />
     <ClInclude Include="..\..\Gameplay\forcefield.h" />
@@ -305,16 +551,21 @@
     <ClInclude Include="..\..\Gameplay\switch.h" />
     <ClInclude Include="..\..\Generators\astar.h" />
     <ClInclude Include="..\..\Generators\MapGenerator.h" />
+    <ClInclude Include="..\..\Graphics\AssetLoaders\TexturePackLoader.h" />
     <ClInclude Include="..\..\Graphics\Camera.h" />
     <ClInclude Include="..\..\Graphics\CameraManager.h" />
+    <ClInclude Include="..\..\Graphics\CameraMiscUtils.h" />
     <ClInclude Include="..\..\Graphics\color.h" />
     <ClInclude Include="..\..\Graphics\CubeMapRenderer.h" />
     <ClInclude Include="..\..\Graphics\D3D11\Profiler\D3D11GPUProfiler.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\MultithreadedCommandlistManager.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\StructuredBuffer.h" />
     <ClInclude Include="..\..\Graphics\D3D12\CommandQueue.h" />
     <ClInclude Include="..\..\Graphics\D3D12\ConstantBuffer.h" />
     <ClInclude Include="..\..\Graphics\D3D12\DescriptorHeapManager.h" />
     <ClInclude Include="..\..\Graphics\D3D12\DeviceManagerD3D12.h" />
     <ClInclude Include="..\..\Graphics\D3D12\PipelineObject.h" />
+    <ClInclude Include="..\..\Graphics\D3D12\ShaderCompiler.h" />
     <ClInclude Include="..\..\Graphics\D3D12\ShaderParameter.h" />
     <ClInclude Include="..\..\Graphics\D3D12\ShaderParamMatcher.h" />
     <ClInclude Include="..\..\Graphics\D3DDebugHelperFunctions.h" />
@@ -337,9 +588,15 @@
     <ClInclude Include="..\..\Graphics\MeshGroupCreator.h" />
     <ClInclude Include="..\..\Graphics\Model.h" />
     <ClInclude Include="..\..\Graphics\modelmanager.h" />
+    <ClInclude Include="..\..\Graphics\Model\MeshHelperFunctions.h" />
     <ClInclude Include="..\..\Graphics\OrientationAxis.h" />
     <ClInclude Include="..\..\Graphics\Renderable.h" />
+    <ClInclude Include="..\..\Graphics\RenderGraph\DependencyTree.h" />
+    <ClInclude Include="..\..\Graphics\RenderGraph\Pass.h" />
+    <ClInclude Include="..\..\Graphics\RenderGraph\RenderGraph.h" />
+    <ClInclude Include="..\..\Graphics\RenderGraph\ResourceDescriptor.h" />
     <ClInclude Include="..\..\Graphics\RenderInstance.h" />
+    <ClInclude Include="..\..\Graphics\RenderInterface.h" />
     <ClInclude Include="..\..\Graphics\RenderJobs.h" />
     <ClInclude Include="..\..\Graphics\RenderSystem.h" />
     <ClInclude Include="..\..\Graphics\ShaderCache.h" />
@@ -349,12 +606,15 @@
     <ClInclude Include="..\..\Graphics\ShaderPack.h" />
     <ClInclude Include="..\..\Graphics\Shaders.h" />
     <ClInclude Include="..\..\Graphics\ShadowMapRenderer.h" />
+    <ClInclude Include="..\..\Graphics\Shapes\DebugBox.h" />
+    <ClInclude Include="..\..\Graphics\Technique.h" />
     <ClInclude Include="..\..\Graphics\texture.h" />
     <ClInclude Include="..\..\Graphics\texture12.h" />
     <ClInclude Include="..\..\Graphics\texturemanager.h" />
     <ClInclude Include="..\..\Graphics\VertexBuffer.h" />
     <ClInclude Include="..\..\Input\controller.h" />
     <ClInclude Include="..\..\Input\ControllerDefines.h" />
+    <ClInclude Include="..\..\Input\FE\NavigationActions.h" />
     <ClInclude Include="..\..\Input\IController.h" />
     <ClInclude Include="..\..\Input\Input.h" />
     <ClInclude Include="..\..\Input\InputAction.h" />
@@ -378,6 +638,9 @@
     <ClInclude Include="..\..\Loader\WICTTextureLoader.h" />
     <ClInclude Include="..\..\Logging\FileLogger.h" />
     <ClInclude Include="..\..\Logging\Logger.h" />
+    <ClInclude Include="..\..\Logging\LoggingFunctions.h" />
+    <ClInclude Include="..\..\Logging\LoggingMacros.h" />
+    <ClInclude Include="..\..\Math\Assimp\AssimpMathHelpers.h" />
     <ClInclude Include="..\..\Math\MathUtilityFunctions.h" />
     <ClInclude Include="..\..\Math\matrix33.h" />
     <ClInclude Include="..\..\Math\matrix44.h" />
@@ -404,30 +667,63 @@
     <ClInclude Include="..\..\NodeGraph\NodeFactory.h" />
     <ClInclude Include="..\..\NodeGraph\Nodes\AddNode.h" />
     <ClInclude Include="..\..\Physics\PhysicsManager.h" />
+    <ClInclude Include="..\..\Physics\PhysicsProperties.h" />
     <ClInclude Include="..\..\Physics\spatialhashmap.h" />
     <ClInclude Include="..\..\SourceInformation\SourceInfo.h" />
     <ClInclude Include="..\..\UI\BitmapFont.h" />
+    <ClInclude Include="..\..\UI\Core\Behaviours\Behaviour.h" />
+    <ClInclude Include="..\..\UI\Core\Behaviours\behaviours.h" />
+    <ClInclude Include="..\..\UI\Core\Behaviours\Registry\BehaviourRegistry.h" />
+    <ClInclude Include="..\..\UI\Core\Behaviours\Registry\BehaviourType.h" />
+    <ClInclude Include="..\..\UI\Core\Behaviours\SelectObject.h" />
+    <ClInclude Include="..\..\UI\Core\Behaviours\StaticText.h" />
+    <ClInclude Include="..\..\UI\Core\FlowManager.h" />
+    <ClInclude Include="..\..\UI\Core\Item.h" />
+    <ClInclude Include="..\..\UI\Core\Localisation\LocalisationId.h" />
+    <ClInclude Include="..\..\UI\Core\Navigation.h" />
+    <ClInclude Include="..\..\UI\Core\StateManager.h" />
+    <ClInclude Include="..\..\UI\Core\States\Registry\StateRegistry.h" />
+    <ClInclude Include="..\..\UI\Core\States\Registry\StateType.h" />
+    <ClInclude Include="..\..\UI\Core\States\Screen.h" />
+    <ClInclude Include="..\..\UI\Core\States\State.h" />
+    <ClInclude Include="..\..\UI\Core\States\States.h" />
     <ClInclude Include="..\..\UI\main.h" />
     <ClInclude Include="..\..\UI\Messages.h" />
+    <ClInclude Include="..\..\UI\Rendering\Element.h" />
+    <ClInclude Include="..\..\UI\Rendering\ElementManager.h" />
+    <ClInclude Include="..\..\UI\Rendering\ElementRegistry\ElementRegistry.h" />
+    <ClInclude Include="..\..\UI\Rendering\ElementRegistry\ElementType.h" />
+    <ClInclude Include="..\..\UI\Rendering\Elements.h" />
+    <ClInclude Include="..\..\UI\Rendering\Elements\SelectElement.h" />
     <ClInclude Include="..\..\UI\TextBlock.h" />
     <ClInclude Include="..\..\UI\TextSystem.h" />
+    <ClInclude Include="..\..\UI\Transistion.h" />
     <ClInclude Include="..\..\UI\UIManger.h" />
+    <ClInclude Include="..\..\UI\Utils\DirtyValue.h" />
     <ClInclude Include="..\..\UI\ViewManager.h" />
     <ClInclude Include="..\..\UI\WebkitCommands.h" />
     <ClInclude Include="..\..\UI\WebkitThread.h" />
-    <ClInclude Include="ConstantBufferManager.h" />
+    <ClInclude Include="RenderInterface.h" />
     <ClInclude Include="Task.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\SDK\imgui\backends\imgui_impl_dx12.cpp" />
+    <ClCompile Include="..\..\..\SDK\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\..\SDK\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\..\SDK\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\..\SDK\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\..\SDK\imgui\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="..\..\..\SDK\microprofile\microprofile.cpp" />
     <ClCompile Include="..\..\Application\BaseApplication.cpp" />
     <ClCompile Include="..\..\Application\displaywindow.cpp" />
     <ClCompile Include="..\..\Application\GameWindow.cpp" />
-    <ClCompile Include="..\..\Application\main.cpp" />
     <ClCompile Include="..\..\Application\UpdateThread.cpp" />
     <ClCompile Include="..\..\Core\ConstructionFactory.cpp" />
     <ClCompile Include="..\..\Core\FileSystem\FileSystem.cpp" />
     <ClCompile Include="..\..\Core\FileSystem\Platform\Win\FileWin.cpp" />
     <ClCompile Include="..\..\Core\FileSystem\Platform\Win\MountPointWin.cpp" />
+    <ClCompile Include="..\..\Core\Hashing\FNVHash.cpp" />
+    <ClCompile Include="..\..\Core\Hashing\SipHash.cpp" />
     <ClCompile Include="..\..\Core\MessageSystem\MessageObserver.cpp" />
     <ClCompile Include="..\..\Core\Paths.cpp" />
     <ClCompile Include="..\..\Core\Profiler\Event.cpp" />
@@ -442,6 +738,7 @@
     <ClCompile Include="..\..\Core\StringOperations\StringTemplate.cpp" />
     <ClCompile Include="..\..\Core\Thread\Job.cpp" />
     <ClCompile Include="..\..\Core\Thread\JobSystem.cpp" />
+    <ClCompile Include="..\..\Core\Thread\Task.cpp" />
     <ClCompile Include="..\..\Core\Thread\Thread.cpp" />
     <ClCompile Include="..\..\Core\Thread\Timer.cpp" />
     <ClCompile Include="..\..\Core\Thread\WorkerThread.cpp" />
@@ -450,8 +747,16 @@
     <ClCompile Include="..\..\Gameplay\box.cpp" />
     <ClCompile Include="..\..\Gameplay\core.cpp" />
     <ClCompile Include="..\..\Gameplay\door.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\Component.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\Components\ComponentType.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\Components\ComponentTypeRegistry.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\Components\PhysicsComponent.cpp" />
     <ClCompile Include="..\..\Gameplay\ECS\DataStore.cpp" />
     <ClCompile Include="..\..\Gameplay\ECS\Entity.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\EntityTagManager.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\SystemsManager.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\Systems\HandleMessageSystem.cpp" />
+    <ClCompile Include="..\..\Gameplay\ECS\Systems\RenderableSystem.cpp" />
     <ClCompile Include="..\..\Gameplay\EntityManager.cpp" />
     <ClCompile Include="..\..\Gameplay\face.cpp" />
     <ClCompile Include="..\..\Gameplay\forcefield.cpp" />
@@ -476,16 +781,21 @@
       <FileType>Document</FileType>
     </ClInclude>
     <ClCompile Include="..\..\Generators\MapGenerator.cpp" />
+    <ClCompile Include="..\..\Graphics\AssetLoaders\TexturePackLoader.cpp" />
     <ClCompile Include="..\..\Graphics\Camera.cpp" />
     <ClCompile Include="..\..\Graphics\CameraManager.cpp" />
     <ClCompile Include="..\..\Graphics\color.cpp" />
     <ClCompile Include="..\..\Graphics\CubeMapRenderer.cpp" />
     <ClCompile Include="..\..\Graphics\D3D11\Profiler\D3D11GPUProfiler.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\MultithreadedCommandlistManager.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\StructuredBuffer.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\CommandQueue.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\ConstantBuffer.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\ConstantBufferManager.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\DescriptorHeapManager.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\DeviceManagerD3D12.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\PipelineObject.cpp" />
+    <ClCompile Include="..\..\Graphics\D3D12\ShaderCompiler.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\ShaderParameter.cpp" />
     <ClCompile Include="..\..\Graphics\D3D12\ShaderParamMatcher.cpp" />
     <ClCompile Include="..\..\Graphics\DebugBox.cpp" />
@@ -504,6 +814,8 @@
     <ClCompile Include="..\..\Graphics\modelmanager.cpp" />
     <ClCompile Include="..\..\Graphics\OrientationAxis.cpp" />
     <ClCompile Include="..\..\Graphics\Renderable.cpp" />
+    <ClCompile Include="..\..\Graphics\RenderGraph\Pass.cpp" />
+    <ClCompile Include="..\..\Graphics\RenderGraph\RenderGraph.cpp" />
     <ClCompile Include="..\..\Graphics\RenderInstance.cpp" />
     <ClCompile Include="..\..\Graphics\RenderJobs.cpp" />
     <ClCompile Include="..\..\Graphics\RenderSystem.cpp" />
@@ -513,11 +825,13 @@
     <ClCompile Include="..\..\Graphics\ShaderPack.cpp" />
     <ClCompile Include="..\..\Graphics\Shaders.cpp" />
     <ClCompile Include="..\..\Graphics\ShadowMapRenderer.cpp" />
+    <ClCompile Include="..\..\Graphics\Technique.cpp" />
     <ClCompile Include="..\..\Graphics\texture.cpp" />
     <ClCompile Include="..\..\Graphics\texture12.cpp" />
     <ClCompile Include="..\..\Graphics\texturemanager.cpp" />
     <ClCompile Include="..\..\Graphics\VertexBuffer.cpp" />
     <ClCompile Include="..\..\Input\controller.cpp" />
+    <ClCompile Include="..\..\Input\FE\NavigationActions.cpp" />
     <ClCompile Include="..\..\Input\IController.cpp" />
     <ClCompile Include="..\..\Input\Input.cpp" />
     <ClCompile Include="..\..\Input\InputState.cpp" />
@@ -539,6 +853,7 @@
     <ClCompile Include="..\..\Loader\WICTTextureLoader.cpp" />
     <ClCompile Include="..\..\Logging\FileLogger.cpp" />
     <ClCompile Include="..\..\Logging\Logger.cpp" />
+    <ClCompile Include="..\..\Logging\LoggingFunctions.cpp" />
     <ClCompile Include="..\..\Math\matrix33.cpp" />
     <ClCompile Include="..\..\Math\matrix44.cpp" />
     <ClCompile Include="..\..\Math\matrixmath.cpp" />
@@ -557,37 +872,42 @@
     <ClCompile Include="..\..\NodeGraph\Nodes\AddNode.cpp" />
     <ClCompile Include="..\..\Physics\PhysicsManager.cpp" />
     <ClCompile Include="..\..\UI\BitmapFont.cpp" />
+    <ClCompile Include="..\..\UI\Core\Behaviours\SelectObject.cpp" />
+    <ClCompile Include="..\..\UI\Core\Behaviours\StaticText.cpp" />
+    <ClCompile Include="..\..\UI\Core\FlowManager.cpp" />
+    <ClCompile Include="..\..\UI\Core\Item.cpp" />
+    <ClCompile Include="..\..\UI\Core\Navigation.cpp" />
+    <ClCompile Include="..\..\UI\Core\StateManager.cpp" />
+    <ClCompile Include="..\..\UI\Core\States\Screen.cpp" />
+    <ClCompile Include="..\..\UI\Core\States\State.cpp" />
     <ClCompile Include="..\..\UI\Messages.cpp" />
+    <ClCompile Include="..\..\UI\Rendering\ElementManager.cpp" />
+    <ClCompile Include="..\..\UI\Rendering\Elements\SelectElement.cpp" />
     <ClCompile Include="..\..\UI\TextBlock.cpp" />
     <ClCompile Include="..\..\UI\TextSystem.cpp" />
     <ClCompile Include="..\..\UI\UIManger.cpp" />
     <ClCompile Include="..\..\UI\ViewManager.cpp" />
     <ClCompile Include="..\..\UI\WebkitThread.cpp" />
-    <ClCompile Include="ConstantBufferManager.cpp" />
-    <ClCompile Include="Task.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\Maps\Entrance.dat">
       <SubType>Designer</SubType>
     </None>
+    <None Include="..\..\..\SDK\imgui\misc\debuggers\imgui.natstepfilter" />
     <None Include="..\..\Core\StringOperations\StringTemplate.inl" />
     <None Include="..\..\Gameplay\ECS\DataStoreArrayIterator.h" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\..\bin\Shaders\Shaders\laser_shader.fx" />
+    <Natvis Include="..\..\..\SDK\imgui\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets" Condition="Exists('..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets')" />
-    <Import Project="..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets" Condition="Exists('..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets')" />
-    <Import Project="..\..\..\..\..\..\ms.fxcompile.targets" />
-  </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk_desktop_win10.2021.8.2.1\build\native\directxtk_desktop_win10.targets'))" />
     <Error Condition="!Exists('..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk12_desktop_2017.2021.8.2.1\build\native\directxtk12_desktop_2017.targets'))" />
+    <Error Condition="!Exists('..\packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinPixEventRuntime.1.0.240308001\build\WinPixEventRuntime.targets'))" />
   </Target>
 </Project>

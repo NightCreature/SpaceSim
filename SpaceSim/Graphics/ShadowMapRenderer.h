@@ -30,15 +30,13 @@ public:
 
     void cleanup();
 
-    void renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light);
+    void renderShadowMap(Resource* resource, const DeviceManager& deviceManager, const Light* light);
 
     ID3D11ShaderResourceView* getShadowMap() { return m_shadowMapRV; }
-    WVPBufferContent getShadowMapMVP() { return m_shadowMVP; }
+    WVPData getShadowMapMVP() { return m_shadowMVP; }
 private:
 
-    void CheckVisibility(RenderInstanceTree& visibileInstances, const RenderInstanceTree& renderInstances);
-
-    WVPBufferContent m_shadowMVP;
+    WVPData m_shadowMVP;
     D3D11_VIEWPORT m_lightViewPort;
 
     ID3D11BlendState* m_alphaBlendState;

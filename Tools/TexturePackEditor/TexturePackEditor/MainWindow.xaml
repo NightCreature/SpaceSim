@@ -1,0 +1,26 @@
+﻿<Window x:Class="TexturePackEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TexturePackEditor"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Height="434" VerticalAlignment="Top">
+        <GroupBox Header="Select a Texture" VerticalAlignment="Top">
+            <Grid>
+                <Label Content="Path" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox Margin="38,1,114,1" Height="24" />
+                <Button Content="..." Click="BrowseFile" Width="50" VerticalAlignment="Center" Margin="679,0,59,0"/>
+                <Button Content="Add" Click="AddToPack" Width="44" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="734,0,0,0"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Texture List" Margin="0,54,0,10">
+            <Grid>
+                
+            </Grid>
+        </GroupBox>
+
+
+    </Grid>
+</Window>

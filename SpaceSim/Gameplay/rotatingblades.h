@@ -13,9 +13,8 @@ public:
 	RotatingBlades(Resource* resource) : GameObject(resource) {}
 	~RotatingBlades(){}
 	RotatingBlades(Resource* resource, const Vector3& position);
-    void initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder) 
+    void initialise( bool changeWindingOrder) 
     {
-		UNUSEDPARAM(shaderInstance);
         Face::CreationParams params;
         //params.shaderInstance = &shaderInstance;
         //params.resource = m_resource;
@@ -37,12 +36,12 @@ public:
     ///-------------------------------------------------------------------------
     // @brief 
     ///-------------------------------------------------------------------------
-    const ShaderInstance deserialise( const tinyxml2::XMLElement* element );
+    void deserialise( const tinyxml2::XMLElement* element );
 
     ///-------------------------------------------------------------------------
     // @brief 
     ///-------------------------------------------------------------------------
-    virtual void update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input );
+    virtual void update( float elapsedTime, const Input& input );
 
     ///-------------------------------------------------------------------------
     // @brief 

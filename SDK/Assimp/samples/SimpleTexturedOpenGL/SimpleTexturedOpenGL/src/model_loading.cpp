@@ -12,14 +12,22 @@
 // Thanks to NeHe on whose OpenGL tutorials this one's based on! :)
 // http://nehe.gamedev.net/
 // ----------------------------------------------------------------------------
-
-
-
 #include <windows.h>
+#include <shellapi.h>
 #include <stdio.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <IL/il.h>
+
+#ifdef _MSC_VER
+#pragma warning(disable: 4100) // Disable warning 'unreferenced formal parameter'
+#endif // _MSC_VER
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "contrib/stb/stb_image.h"
+
+#ifdef _MSC_VER
+#pragma warning(default: 4100) // Enable warning 'unreferenced formal parameter'
+#endif // _MSC_VER
 
 #include <fstream>
 
@@ -27,27 +35,24 @@
 #include <string.h>
 #include <map>
 
-
 // assimp include files. These three are usually needed.
-#include "assimp/Importer.hpp"	//OO version Header!
-#include "assimp/postprocess.h"
-#include "assimp/scene.h"
-#include "assimp/DefaultLogger.hpp"
-#include "assimp/LogStream.hpp"
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <assimp/DefaultLogger.hpp>
+#include <assimp/LogStream.hpp>
 
-
-// The default hardcoded path. Can be overridden by supplying a path through the commandline.
+// The default hard-coded path. Can be overridden by supplying a path through the command line.
 static std::string modelpath = "../../test/models/OBJ/spider.obj";
 
-
-HGLRC		hRC=NULL;			// Permanent Rendering Context
-HDC			hDC=NULL;			// Private GDI Device Context
-HWND		hWnd=NULL;			// Holds Window Handle
-HINSTANCE	hInstance;	// Holds The Instance Of The Application
+HGLRC       hRC = nullptr;         // Permanent Rendering Context
+HDC         hDC = nullptr;            // Private GDI Device Context
+HWND        g_hWnd = nullptr;         // Holds Window Handle
+HINSTANCE   g_hInstance = nullptr;    // Holds The Instance Of The Application
 
 bool		keys[256];			// Array used for Keyboard Routine;
 bool		active=TRUE;		// Window Active Flag Set To TRUE by Default
-bool		fullscreen=TRUE;	// Fullscreen Flag Set To Fullscreen By Default
+bool		fullscreen=TRUE;	// full-screen Flag Set To full-screen By Default
 
 GLfloat		xrot;
 GLfloat		yrot;
@@ -63,10 +68,8 @@ GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
 GLfloat LightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat LightPosition[]= { 0.0f, 0.0f, 15.0f, 1.0f };
 
-
-
 // the global Assimp scene object
-const aiScene* scene = NULL;
+const aiScene* g_scene = nullptr;
 GLuint scene_list = 0;
 aiVector3D scene_min, scene_max, scene_center;
 
@@ -77,10 +80,8 @@ GLuint*		textureIds;							// pointer to texture Array
 // Create an instance of the Importer class
 Assimp::Importer importer;
 
-
-void createAILogger()
-{
-	//Assimp::Logger::LogSeverity severity = Assimp::Logger::NORMAL;
+void createAILogger() {
+    // Change this line to normal if you not want to analyze the import process
 	Assimp::Logger::LogSeverity severity = Assimp::Logger::VERBOSE;
 
 	// Create a logger instance for Console Output
@@ -93,62 +94,54 @@ void createAILogger()
 	Assimp::DefaultLogger::get()->info("this is my info-call");
 }
 
-void destroyAILogger()
-{
-	// Kill it after the work is done
+void destroyAILogger() {
 	Assimp::DefaultLogger::kill();
 }
 
-void logInfo(std::string logString)
-{
-	//Will add message to File with "info" Tag
+void logInfo(const std::string &logString) {
 	Assimp::DefaultLogger::get()->info(logString.c_str());
 }
 
-void logDebug(const char* logString)
-{
-	//Will add message to File with "debug" Tag
+void logDebug(const char* logString) {
 	Assimp::DefaultLogger::get()->debug(logString);
 }
 
 
-bool Import3DFromFile( const std::string& pFile)
-{
-	//check if file exists
-	std::ifstream fin(pFile.c_str());
-	if(!fin.fail())
-	{
-		fin.close();
+bool Import3DFromFile( const std::string &filename) {
+	// Check if file exists
+    std::ifstream fin(filename.c_str());
+	if(fin.fail()) {
+        std::string message = "Couldn't open file: " + filename;
+		std::wstring targetMessage;
+        //utf8::utf8to16(message.c_str(), message.c_str() + message.size(), targetMessage);
+        ::MessageBox(nullptr, targetMessage.c_str(), L"Error", MB_OK | MB_ICONEXCLAMATION);
+        logInfo(importer.GetErrorString());
+        return false;
 	}
-	else
-	{
-		MessageBox(NULL, ("Couldn't open file: " + pFile).c_str() , "ERROR", MB_OK | MB_ICONEXCLAMATION);
-		logInfo( importer.GetErrorString());
-		return false;
-	}
-
-	scene = importer.ReadFile( pFile, aiProcessPreset_TargetRealtime_Quality);
+    
+	fin.close();
+	
+	g_scene = importer.ReadFile(filename, aiProcessPreset_TargetRealtime_Quality);
 
 	// If the import failed, report it
-	if( !scene)
-	{
+	if (g_scene == nullptr) {
 		logInfo( importer.GetErrorString());
 		return false;
 	}
 
 	// Now we can access the file's contents.
-	logInfo("Import of scene " + pFile + " succeeded.");
+    logInfo("Import of scene " + filename + " succeeded.");
 
 	// We're done. Everything will be cleaned up by the importer destructor
 	return true;
 }
 
-
-void ReSizeGLScene(GLsizei width, GLsizei height)				// Resize And Initialize The GL Window
-{
-	if (height==0)								// Prevent A Divide By Zero By
-	{
-		height=1;							// Making Height Equal One
+// Resize And Initialize The GL Window
+void ReSizeGLScene(GLsizei width, GLsizei height) {
+    // Prevent A Divide By Zero By
+	if (height == 0) {
+        // Making Height Equal One
+        height=1;
 	}
 
 	glViewport(0, 0, width, height);					// Reset The Current Viewport
@@ -164,29 +157,26 @@ void ReSizeGLScene(GLsizei width, GLsizei height)				// Resize And Initialize Th
 }
 
 
-std::string getBasePath(const std::string& path)
-{
+std::string getBasePath(const std::string& path) {
 	size_t pos = path.find_last_of("\\/");
 	return (std::string::npos == pos) ? "" : path.substr(0, pos + 1);
 }
 
-int LoadGLTextures(const aiScene* scene)
-{
-	ILboolean success;
+void freeTextureIds() {
+    // no need to delete pointers in it manually here. (Pointers point to textureIds deleted in next step)
+	textureIdMap.clear();
 
-	/* Before calling ilInit() version should be checked. */
-	if (ilGetInteger(IL_VERSION_NUM) < IL_VERSION)
-	{
-		/// wrong DevIL version ///
-		std::string err_msg = "Wrong DevIL version. Old devil.dll in system32/SysWow64?";
-		char* cErr_msg = (char *) err_msg.c_str();
-		abortGLInit(cErr_msg);
-		return -1;
+	if (textureIds) {
+		delete[] textureIds;
+		textureIds = nullptr;
 	}
+}
 
-	ilInit(); /* Initialization of DevIL */
+int LoadGLTextures(const aiScene* scene) {
+	freeTextureIds();
 
-	if (scene->HasTextures()) abortGLInit("Support for meshes with embedded textures is not implemented");
+    if (scene->HasTextures()) 
+		return 1;
 
 	/* getTexture Filenames and Numb of Textures */
 	for (unsigned int m=0; m<scene->mNumMaterials; m++)
@@ -199,94 +189,73 @@ int LoadGLTextures(const aiScene* scene)
 		while (texFound == AI_SUCCESS)
 		{
 			texFound = scene->mMaterials[m]->GetTexture(aiTextureType_DIFFUSE, texIndex, &path);
-			textureIdMap[path.data] = NULL; //fill map with textures, pointers still NULL yet
+			textureIdMap[path.data] = nullptr; //fill map with textures, pointers still NULL yet
 			texIndex++;
 		}
 	}
 
-	int numTextures = textureIdMap.size();
-
-	/* array with DevIL image IDs */
-	ILuint* imageIds = NULL;
-	imageIds = new ILuint[numTextures];
-
-	/* generate DevIL Image IDs */
-	ilGenImages(numTextures, imageIds); /* Generation of numTextures image names */
+	const size_t numTextures = textureIdMap.size();
 
 	/* create and fill array with GL texture ids */
 	textureIds = new GLuint[numTextures];
-	glGenTextures(numTextures, textureIds); /* Texture name generation */
-
-	/* define texture path */
-	//std::string texturepath = "../../../test/models/Obj/";
+	glGenTextures(static_cast<GLsizei>(numTextures), textureIds); /* Texture name generation */
 
 	/* get iterator */
 	std::map<std::string, GLuint*>::iterator itr = textureIdMap.begin();
 
 	std::string basepath = getBasePath(modelpath);
-	for (int i=0; i<numTextures; i++)
+	for (size_t i=0; i<numTextures; i++)
 	{
-
-		//save IL image ID
 		std::string filename = (*itr).first;  // get filename
 		(*itr).second =  &textureIds[i];	  // save texture id for filename in map
 		itr++;								  // next texture
 
 
-		ilBindImage(imageIds[i]); /* Binding of DevIL image name */
 		std::string fileloc = basepath + filename;	/* Loading of image */
-		success = ilLoadImage(fileloc.c_str());
+        int x, y, n;
+        unsigned char *data = stbi_load(fileloc.c_str(), &x, &y, &n, STBI_rgb_alpha);
 
-		if (success) /* If no error occured: */
+		if (nullptr != data )
 		{
-			success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE); /* Convert every colour component into
-			unsigned byte. If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
-			if (!success)
-			{
-				/* Error occured */
-				abortGLInit("Couldn't convert image");
-				return -1;
-			}
-			//glGenTextures(numTextures, &textureIds[i]); /* Texture name generation */
-			glBindTexture(GL_TEXTURE_2D, textureIds[i]); /* Binding of texture name */
-			//redefine standard texture values
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); /* We will use linear
-			interpolation for magnification filter */
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); /* We will use linear
-			interpolation for minifying filter */
-			glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
-				ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
-				ilGetData()); /* Texture specification */
-		}
-		else
-		{
-			/* Error occured */
-			MessageBox(NULL, ("Couldn't load Image: " + fileloc).c_str() , "ERROR", MB_OK | MB_ICONEXCLAMATION);
-		}
+            // Binding of texture name
+            glBindTexture(GL_TEXTURE_2D, textureIds[i]);
+			// redefine standard texture values
+            // We will use linear interpolation for magnification filter
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+            // We will use linear interpolation for minifying filter
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+            // Texture specification
+            glTexImage2D(GL_TEXTURE_2D, 0, n, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);// Texture specification.
 
-
+            // we also want to be able to deal with odd texture dimensions
+            glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+            glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 );
+            glPixelStorei( GL_UNPACK_SKIP_PIXELS, 0 );
+            glPixelStorei( GL_UNPACK_SKIP_ROWS, 0 );
+            stbi_image_free(data);
+        } else {
+            /* Error occurred */
+            const std::string message = "Couldn't load Image: " + fileloc;
+            std::wstring targetMessage;
+            wchar_t *tmp = new wchar_t[message.size() + 1];
+            memset(tmp, L'\0', sizeof(wchar_t) *(message.size() + 1));
+            utf8::utf8to16(message.c_str(), message.c_str() + message.size(), tmp);
+            targetMessage = tmp;
+            delete [] tmp;
+            MessageBox(nullptr, targetMessage.c_str(), TEXT("ERROR"), MB_OK | MB_ICONEXCLAMATION);
+		}
 	}
 
-	ilDeleteImages(numTextures, imageIds); /* Because we have already copied image data into texture data
-	we can release memory used by image. */
-
-	//Cleanup
-	delete [] imageIds;
-	imageIds = NULL;
-
-	//return success;
 	return TRUE;
 }
 
-
-
-int InitGL()					 // All Setup For OpenGL goes here
+// All Setup For OpenGL goes here
+int InitGL()
 {
-	if (!LoadGLTextures(scene))
+	if (!LoadGLTextures(g_scene))
 	{
 		return FALSE;
 	}
-
 
 	glEnable(GL_TEXTURE_2D);
 	glShadeModel(GL_SMOOTH);		 // Enables Smooth Shading
@@ -306,9 +275,6 @@ int InitGL()					 // All Setup For OpenGL goes here
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);
 	glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);
 	glEnable(GL_LIGHT1);
-
-	//glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-
 
 	return TRUE;					// Initialization Went OK
 }
@@ -346,7 +312,7 @@ void apply_material(const aiMaterial *mtl)
 	aiColor4D specular;
 	aiColor4D ambient;
 	aiColor4D emission;
-	float shininess, strength;
+	ai_real shininess, strength;
 	int two_sided;
 	int wireframe;
 	unsigned int max;	// changed: to unsigned
@@ -426,12 +392,12 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd, float 
 	// draw all meshes assigned to this node
 	for (; n < nd->mNumMeshes; ++n)
 	{
-		const struct aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
+		const struct aiMesh* mesh = sc->mMeshes[nd->mMeshes[n]];
 
 		apply_material(sc->mMaterials[mesh->mMaterialIndex]);
 
 
-		if(mesh->mNormals == NULL)
+		if(mesh->mNormals == nullptr)
 		{
 			glDisable(GL_LIGHTING);
 		}
@@ -440,7 +406,7 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd, float 
 			glEnable(GL_LIGHTING);
 		}
 
-		if(mesh->mColors[0] != NULL)
+		if(mesh->mColors[0] != nullptr)
 		{
 			glEnable(GL_COLOR_MATERIAL);
 		}
@@ -448,8 +414,6 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd, float 
 		{
 			glDisable(GL_COLOR_MATERIAL);
 		}
-
-
 
 		for (t = 0; t < mesh->mNumFaces; ++t) {
 			const struct aiFace* face = &mesh->mFaces[t];
@@ -468,9 +432,9 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd, float 
 			for(i = 0; i < face->mNumIndices; i++)		// go through all vertices in face
 			{
 				int vertexIndex = face->mIndices[i];	// get group index for current index
-				if(mesh->mColors[0] != NULL)
+				if(mesh->mColors[0] != nullptr)
 					Color4f(&mesh->mColors[0][vertexIndex]);
-				if(mesh->mNormals != NULL)
+				if(mesh->mNormals != nullptr)
 
 					if(mesh->HasTextureCoords(0))		//HasTextureCoords(texture_coordinates_set)
 					{
@@ -480,13 +444,9 @@ void recursive_render (const struct aiScene *sc, const struct aiNode* nd, float 
 					glNormal3fv(&mesh->mNormals[vertexIndex].x);
 					glVertex3fv(&mesh->mVertices[vertexIndex].x);
 			}
-
 			glEnd();
-
 		}
-
 	}
-
 
 	// draw all children
 	for (n = 0; n < nd->mNumChildren; ++n)
@@ -519,14 +479,11 @@ int DrawGLScene()				//Here's where we do all the drawing
 	glRotatef(yrot, 0.0f, 1.0f, 0.0f);
 	glRotatef(zrot, 0.0f, 0.0f, 1.0f);
 
-	drawAiScene(scene);
+	drawAiScene(g_scene);
 
+	yrot += 0.2f;
 
-	//xrot+=0.3f;
-	yrot+=0.2f;
-	//zrot+=0.4f;
-
-	return TRUE;					// Ewwrissing okay
+	return TRUE;					// okay
 }
 
 
@@ -534,47 +491,60 @@ void KillGLWindow()			// Properly Kill The Window
 {
 	if (fullscreen)					// Are We In Fullscreen Mode?
 	{
-		ChangeDisplaySettings(NULL, 0);		// If So Switch Back To The Desktop
+		ChangeDisplaySettings(nullptr, 0);	// If So Switch Back To The Desktop
 		ShowCursor(TRUE);					// Show Mouse Pointer
 	}
 
 	if (hRC)					// Do We Have A Rendering Context?
 	{
-		if (!wglMakeCurrent(NULL, NULL))	// Are We Able To Release The DC And RC Contexts?
+		if (!wglMakeCurrent(nullptr, nullptr))	// Are We Able To Release The DC And RC Contexts?
 		{
-			MessageBox(NULL, "Release Of DC And RC Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
+			MessageBox(nullptr, TEXT("Release Of DC And RC Failed."), TEXT("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
 		}
 
 		if (!wglDeleteContext(hRC))			// Are We Able To Delete The RC?
 		{
-			MessageBox(NULL, "Release Rendering Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
+			MessageBox(nullptr, TEXT("Release Rendering Context Failed."), TEXT("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
 		}
-		hRC = NULL;
+		hRC = nullptr;
 	}
 
-	if (hDC && !ReleaseDC(hWnd, hDC))	// Are We able to Release The DC?
+	if (hDC)
 	{
-		MessageBox(NULL, "Release Device Context Failed.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
-		hDC=NULL;
+		if (!ReleaseDC(g_hWnd, hDC)) // Are We able to Release The DC?
+			MessageBox(nullptr, TEXT("Release Device Context Failed."), TEXT("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
+		hDC = nullptr;
 	}
 
-	if (hWnd && !DestroyWindow(hWnd))	// Are We Able To Destroy The Window
+	if (g_hWnd)
 	{
-		MessageBox(NULL, "Could Not Release hWnd.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
-		hWnd = NULL;
+		if (!DestroyWindow(g_hWnd)) // Are We Able To Destroy The Window
+			MessageBox(nullptr, TEXT("Could Not Release hWnd."), TEXT("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
+		g_hWnd = nullptr;
 	}
 
-	if (!UnregisterClass("OpenGL", hInstance))	// Are We Able To Unregister Class
+	if (g_hInstance)
 	{
-		MessageBox(NULL, "Could Not Unregister Class.", "SHUTDOWN ERROR", MB_OK | MB_ICONINFORMATION);
-		hInstance = NULL;
+		if (!UnregisterClass(TEXT("OpenGL"), g_hInstance)) // Are We Able To Unregister Class
+			MessageBox(nullptr, TEXT("Could Not Unregister Class."), TEXT("SHUTDOWN ERROR"), MB_OK | MB_ICONINFORMATION);
+		g_hInstance = nullptr;
 	}
 }
 
 GLboolean abortGLInit(const char* abortMessage)
 {
-	KillGLWindow();									// Reset Display
-	MessageBox(NULL, abortMessage, "ERROR", MB_OK|MB_ICONEXCLAMATION);
+    // Reset Display
+	KillGLWindow();
+    const std::string message = abortMessage;
+    std::wstring targetMessage;
+    const size_t len = std::strlen(abortMessage) + 1;
+    wchar_t *tmp = new wchar_t[len];
+    memset(tmp, L'\0', len);
+    utf8::utf8to16(message.c_str(), message.c_str() + message.size(), tmp);
+    targetMessage = tmp;
+    delete [] tmp;
+
+	MessageBox(nullptr, targetMessage.c_str(), TEXT("ERROR"), MB_OK|MB_ICONEXCLAMATION);
 	return FALSE;									// quit and return False
 }
 
@@ -592,21 +562,21 @@ BOOL CreateGLWindow(const char* title, int width, int height, int bits, bool ful
 
 	fullscreen = fullscreenflag;
 
-	hInstance = GetModuleHandle(NULL);	// Grab An Instance For Our Window
+	g_hInstance = GetModuleHandle(nullptr);	// Grab An Instance For Our Window
 	wc.style		= CS_HREDRAW | CS_VREDRAW | CS_OWNDC; // Redraw On Move, And Own DC For Window
 	wc.lpfnWndProc	= (WNDPROC) WndProc;		// WndProc handles Messages
 	wc.cbClsExtra	= 0;	// No Extra Window Data
 	wc.cbWndExtra	= 0;	// No Extra Window Data
-	wc.hInstance	= hInstance;
-	wc.hIcon		= LoadIcon(NULL, IDI_WINLOGO);	// Load The Default Icon
-	wc.hCursor		= LoadCursor(NULL, IDC_ARROW);	// Load the default arrow
-	wc.hbrBackground= NULL;							// No Background required for OpenGL
-	wc.lpszMenuName	= NULL;							// No Menu
-	wc.lpszClassName= "OpenGL";						// Class Name
+	wc.hInstance	= g_hInstance;
+	wc.hIcon		= LoadIcon(nullptr, IDI_WINLOGO);	// Load The Default Icon
+	wc.hCursor		= LoadCursor(nullptr, IDC_ARROW);	// Load the default arrow
+	wc.hbrBackground= nullptr;						// No Background required for OpenGL
+	wc.lpszMenuName	= nullptr;						// No Menu
+	wc.lpszClassName= TEXT("OpenGL");		        // Class Name
 
 	if (!RegisterClass(&wc))
 	{
-		MessageBox(NULL, "Failed to register the window class", "ERROR", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(nullptr, TEXT("Failed to register the window class"), TEXT("ERROR"), MB_OK | MB_ICONEXCLAMATION);
 		return FALSE;		//exit and return false
 	}
 
@@ -624,14 +594,15 @@ BOOL CreateGLWindow(const char* title, int width, int height, int bits, bool ful
 		if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN)!=DISP_CHANGE_SUCCESSFUL)
 		{
 			// If The Mode Fails, Offer Two Options.  Quit Or Run In A Window.
-			if (MessageBox(NULL,"The Requested Fullscreen Mode Is Not Supported By\nYour Video Card. Use Windowed Mode Instead?","NeHe GL",MB_YESNO|MB_ICONEXCLAMATION)==IDYES)
+			if (MessageBox(nullptr,TEXT("The Requested Fullscreen Mode Is Not Supported By\nYour Video Card. Use Windowed Mode Instead?"),
+				TEXT("NeHe GL"),MB_YESNO|MB_ICONEXCLAMATION)==IDYES)
 			{
 				fullscreen = FALSE;		// Select Windowed Mode (Fullscreen = FALSE)
 			}
 			else
 			{
 				//Popup Messagebox: Closing
-				MessageBox(NULL, "Program will close now.", "ERROR", MB_OK|MB_ICONSTOP);
+				MessageBox(nullptr, TEXT("Program will close now."), TEXT("ERROR"), MB_OK|MB_ICONSTOP);
 				return FALSE; //exit, return false
 			}
 		}
@@ -649,29 +620,31 @@ BOOL CreateGLWindow(const char* title, int width, int height, int bits, bool ful
 		dwStyle=WS_OVERLAPPEDWINDOW;					// Windows style
 	}
 
-	AdjustWindowRectEx(&WindowRect, dwStyle, FALSE, dwExStyle);		// Adjust Window To True Requestes Size
+	AdjustWindowRectEx(&WindowRect, dwStyle, FALSE, dwExStyle);		// Adjust Window To True Requested Size
 
-	if (!(hWnd=CreateWindowEx(	dwExStyle,						// Extended Style For The Window
-								"OpenGL",						// Class Name
-								title,							// Window Title
+    const size_t len = std::strlen(title) + 1;
+    wchar_t *tmp = new wchar_t[len];
+    memset(tmp, L'\0', sizeof(wchar_t) * len);
+    utf8::utf8to16(title, title+len, tmp);
+    std::wstring targetMessage = tmp;
+    delete[] tmp;
+
+	if (nullptr == (g_hWnd = CreateWindowEx(dwExStyle,			// Extended Style For The Window
+								TEXT("OpenGL"),						// Class Name
+								targetMessage.c_str(), // Window Title
 								WS_CLIPSIBLINGS |				// Required Window Style
 								WS_CLIPCHILDREN |				// Required Window Style
 								dwStyle,						// Selected WIndow Style
 								0, 0,							// Window Position
 								WindowRect.right-WindowRect.left, // Calc adjusted Window Width
 								WindowRect.bottom-WindowRect.top, // Calc adjustes Window Height
-								NULL,							// No Parent Window
-								NULL,							// No Menu
-								hInstance,						// Instance
-								NULL )))						// Don't pass anything To WM_CREATE
+								nullptr,						// No Parent Window
+								nullptr,						// No Menu
+								g_hInstance,					// Instance
+								nullptr )))						// Don't pass anything To WM_CREATE
 	{
 		abortGLInit("Window Creation Error.");
 		return FALSE;
-		/*
-		KillGLWindow();											// Reset The Display
-		MessageBox(NULL, "Window Creation Error.", "ERROR", MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;											// Return False
-		*/
 	}
 
 	static	PIXELFORMATDESCRIPTOR pfd=					// pfd Tells Windows How We Want Things To Be
@@ -682,7 +655,7 @@ BOOL CreateGLWindow(const char* title, int width, int height, int bits, bool ful
 		PFD_SUPPORT_OPENGL |							// Format Must Support OpenGL
 		PFD_DOUBLEBUFFER,								// Must Support Double Buffering
 		PFD_TYPE_RGBA,									// Request An RGBA Format
-		bits,											// Select Our Color Depth
+		BYTE(bits),											// Select Our Color Depth
 		0, 0, 0, 0, 0, 0,								// Color Bits Ignored
 		0,												// No Alpha Buffer
 		0,												// Shift Bit Ignored
@@ -696,13 +669,13 @@ BOOL CreateGLWindow(const char* title, int width, int height, int bits, bool ful
 		0, 0, 0											// Layer Masks Ignored
 	};
 
-	if (!(hDC=GetDC(hWnd)))								// Did we get the Device Context?
+	if (nullptr == (hDC=GetDC(g_hWnd)))					// Did we get the Device Context?
 	{
 		abortGLInit("Can't Create A GL Device Context.");
 		return FALSE;
 	}
 
-	if (!(PixelFormat=ChoosePixelFormat(hDC, &pfd)))	// Did We Find a matching pixel Format?
+	if (0 == (PixelFormat=ChoosePixelFormat(hDC, &pfd))) // Did We Find a matching pixel Format?
 	{
 		abortGLInit("Can't Find Suitable PixelFormat");
 		return FALSE;
@@ -714,7 +687,7 @@ BOOL CreateGLWindow(const char* title, int width, int height, int bits, bool ful
 		return FALSE;
 	}
 
-	if (!(hRC=wglCreateContext(hDC)))
+	if (nullptr == (hRC=wglCreateContext(hDC)))
 	{
 		abortGLInit("Can't Create A GL Rendering Context.");
 		return FALSE;
@@ -728,9 +701,9 @@ BOOL CreateGLWindow(const char* title, int width, int height, int bits, bool ful
 
 	//// *** everything okay ***
 
-	ShowWindow(hWnd, SW_SHOW);		// Show The Window
-	SetForegroundWindow(hWnd);		// Slightly Higher Prio
-	SetFocus(hWnd);					// Sets Keyboard Focus To The Window
+	ShowWindow(g_hWnd, SW_SHOW);	// Show The Window
+	SetForegroundWindow(g_hWnd);	// Slightly Higher Prio
+	SetFocus(g_hWnd);				// Sets Keyboard Focus To The Window
 	ReSizeGLScene(width, height);	// Set Up Our Perspective GL Screen
 
 	if (!InitGL())
@@ -740,6 +713,16 @@ BOOL CreateGLWindow(const char* title, int width, int height, int bits, bool ful
 	}
 
 	return TRUE;
+}
+
+void cleanup()
+{
+	freeTextureIds();
+
+	destroyAILogger();
+
+	if (g_hWnd)
+		KillGLWindow();
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd,				// Handles for this Window
@@ -767,8 +750,8 @@ LRESULT CALLBACK WndProc(HWND hWnd,				// Handles for this Window
 			{
 				switch (wParam)
 				{
-					case SC_SCREENSAVE:		// Screensaver trying to start
-					case SC_MONITORPOWER:	// Monitor tryig to enter powersafe
+					case SC_SCREENSAVE:		// Screen-saver trying to start
+					case SC_MONITORPOWER:	// Monitor trying to enter power-safe
 					return 0;
 				}
 				break;
@@ -799,16 +782,16 @@ LRESULT CALLBACK WndProc(HWND hWnd,				// Handles for this Window
 			}
 	}
 
-	// Pass All Unhandled Messaged To DefWindowProc
+	// Pass All unhandled Messaged To DefWindowProc
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-int WINAPI WinMain( HINSTANCE hInstance, // Instance
-				   HINSTANCE hPrevInstance,      // Previous Instance
-				   LPSTR lpCmdLine,              // Command Line Parameters
-				   int nShowCmd )                // Window Show State
+int WINAPI WinMain( HINSTANCE /*hInstance*/,     // The instance
+				   HINSTANCE /*hPrevInstance*/,  // Previous instance
+				   LPSTR /*lpCmdLine*/,          // Command Line Parameters
+				   int /*nShowCmd*/ )            // Window Show State
 {
-	MSG msg;
+	MSG msg = {};
 	BOOL done=FALSE;
 
 	createAILogger();
@@ -817,33 +800,42 @@ int WINAPI WinMain( HINSTANCE hInstance, // Instance
 	// Check the command line for an override file path.
 	int argc;
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-	if (argv != NULL && argc > 1)
+	if (argv != nullptr && argc > 1)
 	{
 		std::wstring modelpathW(argv[1]);
-		modelpath = std::string(modelpathW.begin(), modelpathW.end());
+        char *tmp = new char[modelpathW.size() + 1];
+        memset(tmp, '\0', modelpathW.size() + 1);
+        utf8::utf16to8(modelpathW.c_str(), modelpathW.c_str() + modelpathW.size(), tmp);
+        modelpath = tmp;
+        delete[]tmp;
 	}
 
-	if (!Import3DFromFile(modelpath)) return 0;
+	if (!Import3DFromFile(modelpath))
+	{
+		cleanup();
+		return 0;
+	}
 
 	logInfo("=============== Post Import ====================");
 
-	if (MessageBox(NULL, "Would You Like To Run In Fullscreen Mode?", "Start Fullscreen?", MB_YESNO|MB_ICONEXCLAMATION)==IDNO)
+	if (MessageBox(nullptr, TEXT("Would You Like To Run In Fullscreen Mode?"), TEXT("Start Fullscreen?"), MB_YESNO|MB_ICONEXCLAMATION)==IDNO)
 	{
 		fullscreen=FALSE;
 	}
 
 	if (!CreateGLWindow(windowTitle, 640, 480, 16, fullscreen))
 	{
+		cleanup();
 		return 0;
 	}
 
 	while(!done)	// Game Loop
 	{
-		if (PeekMessage(&msg, NULL, 0,0, PM_REMOVE))
+		if (PeekMessage(&msg, nullptr, 0,0, PM_REMOVE))
 		{
 			if (msg.message==WM_QUIT)
 			{
-				done=TRUE;
+				done = TRUE;
 			}
 			else
 			{
@@ -874,6 +866,7 @@ int WINAPI WinMain( HINSTANCE hInstance, // Instance
 				fullscreen=!fullscreen;
 				if (!CreateGLWindow(windowTitle, 640, 480, 16, fullscreen))
 				{
+					cleanup();
 					return 0;
 				}
 			}
@@ -881,18 +874,6 @@ int WINAPI WinMain( HINSTANCE hInstance, // Instance
 	}
 
 	// *** cleanup ***
-
-	textureIdMap.clear(); //no need to delete pointers in it manually here. (Pointers point to textureIds deleted in next step)
-
-	if (textureIds)
-	{
-		delete[] textureIds;
-		textureIds = NULL;
-	}
-
-	// *** cleanup end ***
-
-	destroyAILogger();
-	KillGLWindow();
-	return (msg.wParam);
+	cleanup();
+	return static_cast<int>(msg.wParam);
 }

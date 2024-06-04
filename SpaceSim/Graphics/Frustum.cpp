@@ -98,7 +98,7 @@ Frustum::~Frustum(void)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-bool Frustum::IsInside(const Bbox& boundingBox)
+bool Frustum::IsInside(const Bbox& boundingBox) const
 {
     const Vector3 center = boundingBox.center();
     const float radius = boundingBox.radius();
@@ -132,7 +132,7 @@ void Frustum::ViewPlane::NormalizePlane()
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-float Frustum::ViewPlane::ClassifyPoint(const Vector3& pt)
+float Frustum::ViewPlane::ClassifyPoint(const Vector3& pt) const
 {
     return a * pt.x() + b * pt.y() + c * pt.z() + d;
 }

@@ -2,12 +2,16 @@
 #include "Core/Resource/GameResource.h"
 #include "Graphics/EffectCache.h"
 #include "Core/Paths.h"
+#include "RenderJobs.h"
+#include "Core/FileSystem/FileSystem.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 ///-------------------------------------------------------------------------
-// @brief 
+// @brief This needs to be multi threaded the new compiler is really slow
 ///-------------------------------------------------------------------------
 bool ShaderPack::loadShaderPack( std::string shaderPack )
 {
+    PROFILE_FUNCTION();
     RenderResourceHelper helper(m_resource);
     const Paths* paths = helper.getResource().m_paths;
     EffectCache& effectCache = helper.getWriteableResource().getEffectCache();
@@ -25,14 +29,17 @@ bool ShaderPack::loadShaderPack( std::string shaderPack )
     {
         return false;
     }
+    
 
+    auto& jobQueue = helper.getWriteableResource().getJobQueue();
+    UNUSEDPARAM(jobQueue);
     for (const tinyxml2::XMLElement* effectElement = shaderPackElement->FirstChildElement( "Effect" ); effectElement != nullptr; effectElement = effectElement->NextSiblingElement())
     {
         const tinyxml2::XMLAttribute* fileNameAttr = effectElement->FindAttribute("file_name");
         if (fileNameAttr != nullptr)
         {
             //MSG_TRACE_CHANNEL("ShaderPack", "Loading Effect: %s", fileNameAttr->Value());
-            effectCache.createEffect(m_resource, fileNameAttr->Value());
+            effectCache.CreateEffect(m_resource, fileNameAttr->Value());
         }
     }
 

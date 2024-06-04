@@ -24,10 +24,8 @@ GameObject(resource)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* element)
+void RotatingBlades::deserialise( const tinyxml2::XMLElement* element)
 {
-    ShaderInstance shaderInstance;
-
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
     {
@@ -36,7 +34,7 @@ const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* el
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        auto typeHash = hashString(element->Value());
+        auto typeHash = Hashing::hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
             //This all needs to be a message to the renderer to create a render object
@@ -61,14 +59,12 @@ const ShaderInstance RotatingBlades::deserialise( const tinyxml2::XMLElement* el
             //m_rotatingblades2.setWorld(temp);
         }
     }
-
-    return shaderInstance;
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void RotatingBlades::update( float elapsedTime, const Input& input )
 {
     m_angle += 25.0f*elapsedTime;
 
@@ -123,7 +119,6 @@ void RotatingBlades::update( RenderInstanceTree& renderInstances, float elapsedT
     //glEnd();
 
     UNUSEDPARAM(input);
-    UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(elapsedTime);
 }
 

@@ -7,6 +7,8 @@
 
 class Resource;
 
+static size_t InvalidDescriptorHeapIndex = static_cast<size_t>(-1);
+
 struct DescriptorHeap
 {
     //These are in out params, if you pass invalidDescriptorIndex they will create one for you and give you the index in the heap back in the param you pass in
@@ -54,4 +56,4 @@ private:
     DescriptorHeap m_shaderVisibleHeap;
 
     Resource* m_resource = nullptr;
-};
+}; 

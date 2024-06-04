@@ -12,6 +12,9 @@
 #include "Graphics/D3D12/D3D12X.h"
 #include <NewSpaceSim/packages/directxtk12_desktop_2017.2021.8.2.1/include/DirectXHelpers.h>
 #include "D3D12/CommandQueue.h"
+#include "Core/Profiler/ProfilerMacros.h"
+#include "Logging/LoggingMacros.h"
+#include <NewSpaceSim/packages/directxtk12_desktop_2017.2021.8.2.1/include/ResourceUploadBatch.h>
 
 Texture12::Texture12()
 {
@@ -27,6 +30,27 @@ Texture12::~Texture12()
 ///-----------------------------------------------------------------------------
 bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename, size_t commandQeueuHandle, size_t commandListHandle, D3D12_CPU_DESCRIPTOR_HANDLE handle)
 {
+    auto& commandQueue = commandQueueManager.GetCommandQueue(commandQeueuHandle);
+    auto& commandList = commandQueue.GetCommandList(commandListHandle);
+    return loadTextureFromFile(deviceManager, commandList, commandQueue, filename, handle);
+}
+
+
+
+bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename) //shouldnt use this function
+{
+    MSG_TRACE_CHANNEL("TEXTURE12", "This cannot create a working texture");
+    return loadTextureFromFile(deviceManager, commandQueueManager, filename, 0, 0, D3D12_CPU_DESCRIPTOR_HANDLE());
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandList& commandList, CommandQueue& commandQueue, const std::string& filename, D3D12_CPU_DESCRIPTOR_HANDLE handle)
+{
+    PROFILE_FUNCTION();
+
     ID3D12Device* device = deviceManager.GetDevice();
     HRESULT hr = S_OK;
 
@@ -34,51 +58,72 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueMa
     std::string extension = extractExtensionFromFileName(filename);
     std::wstring wfilename;
 
-    std::unique_ptr<uint8_t[]> textureData;
-    std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+    //std::unique_ptr<uint8_t[]> textureData;
+    //std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 
     convertToWideString(makeAbsolutePath(filename), wfilename);
+
+    //This deals with uploads and mip generation, might need to be global at the texture manager level so we can batch everything
+    DirectX::ResourceUploadBatch resourceUpload(device);
+    resourceUpload.Begin();
+
     if (extension == "dds")
     {
-        hr = DirectX::LoadDDSTextureFromFile(device, wfilename.c_str(), &m_texture, textureData, subresources);
+        hr = DirectX::CreateDDSTextureFromFile(device, resourceUpload, wfilename.c_str(), &m_texture, true);
+        //hr = DirectX::LoadDDSTextureFromFile(device, wfilename.c_str(), &m_texture, true, textureData, subresources);
 
         //hr = DirectX::CreateDDSTextureFromFile(device, deviceManager.getDeferredDeviceContext(), wfilename.c_str(), 0, &m_textureShaderResourceView);
         //D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("SRV for Texture %s", filename.c_str()));
     }
     else
     {
-        subresources.push_back(D3D12_SUBRESOURCE_DATA());
-        hr = DirectX::LoadWICTextureFromFile(device, wfilename.c_str(), &m_texture, textureData, subresources[0]);
+        //subresources.push_back(D3D12_SUBRESOURCE_DATA());
+        //hr = DirectX::LoadWICTextureFromFileEx(device, wfilename.c_str(), &m_texture, textureData, subresources[0]);
+        DirectX::CreateWICTextureFromFile(device, resourceUpload, wfilename.c_str(), &m_texture, true);
         //hr = DirectX::CreateWICTextureFromFile(device, deviceManager.getDeferredDeviceContext(), wfilename.c_str(), 0, &m_textureShaderResourceView, 0);
         //D3DDebugHelperFunctions::SetDebugChildName(m_textureShaderResourceView, FormatString("RTV for Texture %s", filename.c_str()));
     }
 
+    
     if (hr != S_OK)
     {
-        MSG_TRACE_CHANNEL("Texture12", "Failed to load texture (%s) for reason: %d, %s", filename.c_str(), hr, getLastErrorMessage(hr));
+        //{#x}
+        MSG_TRACE_CHANNEL_FMT("Texture12", "Failed to load texture ({0}) for reason: {1:#x}, {2}", filename.c_str(), static_cast<unsigned long>(hr), getLastErrorMessage(hr));
+        MSG_TRACE_CHANNEL_FMT("Texture12", "Fail reason: {}", getLastErrorMessage(deviceManager.GetDevice()->GetDeviceRemovedReason()));
+        return false;
     }
 
 
-    const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture, 0, static_cast<UINT>(subresources.size()));
+    //const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture, 0, static_cast<UINT>(subresources.size()));
 
     // Create the GPU upload buffer.
-    CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
+    //CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
 
-    auto desc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
+    //auto desc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
 
-    ID3D12Resource* uploadRes;
-    hr = device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&uploadRes));
+    //ID3D12Resource* uploadRes;
+    //hr = device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&uploadRes));
 
     //have to pass commandlist here
-    auto& commandList = commandQueueManager.GetCommandQueue(commandQeueuHandle).GetCommandList(commandListHandle);
-    UpdateSubresources(commandList.m_list, m_texture, uploadRes, 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
 
-    auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_texture, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-    commandList.m_list->ResourceBarrier(1, &barrier);
+    //UpdateSubresources(commandList.m_list, m_texture, uploadRes, 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
+
+    //auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_texture, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    //commandList.m_list->ResourceBarrier(1, &barrier);
 
     //Need to find a way to get this here
     DirectX::CreateShaderResourceView(device, m_texture, handle);
     m_handle = handle;
+
+    auto uploadResourcesFinished = resourceUpload.End(commandQueue.m_queue);
+
+    // Wait for the command list to finish executing
+    //m_deviceResources->WaitForGpu();
+
+    // Wait for the upload thread to terminate
+    uploadResourcesFinished.wait();
+
+    m_isValid = true;
     //Create resource view here, CPU handle
 
     //m_gpuAddress = m_texture->GetGPUVirtualAddress();
@@ -113,14 +158,6 @@ bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueMa
     return true;
 }
 
-
-
-bool Texture12::loadTextureFromFile(DeviceManager& deviceManager, CommandQueueManager& commandQueueManager, const std::string& filename) //shouldnt use this function
-{
-    MSG_TRACE_CHANNEL("TEXTURE12", "This cannot create a working texture");
-    return loadTextureFromFile(deviceManager, commandQueueManager, filename, 0, 0, D3D12_CPU_DESCRIPTOR_HANDLE());
-}
-
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
@@ -136,9 +173,40 @@ void Texture12::cleanup()
     //}
     //}
 
-    if (m_texture)
+    if (m_texture && m_isValid)
     {
         m_texture->Release();
         m_texture = nullptr;
+        m_isValid = false;
     }
 }
+
+//void LoadTextureResource()
+//{
+//    DirectX::ResourceUploadBatch resourceUpload(device);
+//
+//    resourceUpload.Begin();
+//
+//    DirectX::DX::ThrowIfFailed(
+//        DirectX::CreateDDSTextureFromFile(device, resourceUpload, L"assets\\seafloor.dds", m_texture1.ReleaseAndGetAddressOf())
+//    );
+//
+//    //Just pass the normal handle here
+//    DirectX::CreateShaderResourceView(device, m_texture1.Get(), m_resourceDescriptors->GetCpuHandle(Descriptors::SeaFloor));
+//
+//    DirectX::DX::ThrowIfFailed(
+//        CreateDDSTextureFromFile(device, resourceUpload, L"assets\\windowslogo.dds", m_texture2.ReleaseAndGetAddressOf())
+//    );
+//
+//    DirectX::CreateShaderResourceView(device, m_texture2.Get(), m_resourceDescriptors->GetCpuHandle(Descriptors::WindowsLogo));
+//
+//
+//    // Upload the resources to the GPU.
+//    auto uploadResourcesFinished = resourceUpload.End(m_deviceResources->GetCommandQueue());
+//
+//    // Wait for the command list to finish executing
+//    m_deviceResources->WaitForGpu();
+//
+//    // Wait for the upload thread to terminate
+//    uploadResourcesFinished.wait();
+//}

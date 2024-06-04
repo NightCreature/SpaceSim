@@ -2,19 +2,20 @@
 
 #include "Core/Resource/GameResource.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-FileLogger::FileLogger(const std::string& logPath)
+FileLogger::FileLogger(const std::filesystem::path& logPath)
 {
-    std::string logFile = logPath + "log.log";
+    std::filesystem::path logFile = logPath / "log.log";
     m_fileLog.open(logFile, std::ios_base::out | std::ios_base::trunc);
 
     if (!m_fileLog.is_open())
     {
-        MSG_TRACE_CHANNEL("FILE LOGGER", "Failed to open log file: %s", logFile.c_str());
+        MSG_WARN_CHANNEL("FILE LOGGER", "Failed to open log file: %s", logFile.c_str());
     }
 }
 

@@ -3,7 +3,7 @@
 #include "Graphics/IndexBuffer.h"
 #include "Graphics/VertexBuffer.h"
 #include "Core/Types/TypeHelpers.h"
-#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 #include <vector>
 
 //Wrapper to hold a vertex and index buffer reference

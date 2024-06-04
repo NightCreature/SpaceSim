@@ -22,16 +22,22 @@ struct CommandList
 
 struct CommandQueue
 {
-    using CommandLists = std::array<CommandList, 16>;
+    constexpr static size_t MaxCommandLists = 32;
+    constexpr static size_t InvalidCommandListHandle = MaxCommandLists;
+    using CommandLists = std::array<CommandList, MaxCommandLists>;
+    
 
     CommandQueue(const DeviceManager& deviceManager) : m_deviceManager(deviceManager) {}
+    CommandQueue(const CommandQueue&) = default;
 
+    CommandQueue& operator =(const CommandQueue&) = default;
 
     CommandLists& GetCommandLists() { return m_commandLists; }
     size_t CreateCommandList();
     CommandList& GetCommandList(size_t commandListHandle) { assert(!m_commandLists.empty() && commandListHandle < m_commandLists.size()); return m_commandLists[commandListHandle]; }
 
-    void SetName(std::string commandListName);
+    void SetName(const std::string_view& commandListName);
+    void Cleanup();
 
     CommandLists m_commandLists;
 
@@ -55,6 +61,7 @@ public:
     ~CommandQueueManager() {}
 
     void Initialise(Resource* resource) { m_resource = resource; }
+    void Cleanup();
 
     std::vector<CommandQueue>& GetCommandQueues() { return m_commandQueues; }
     size_t CreateCommandQueue();

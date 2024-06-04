@@ -1,5 +1,6 @@
 #pragma once
 
+#include "..\bin\Shaders\Shaders\Shared\CommonStructures.h"
 #include "Input/Input.h"
 #include "Math/matrix44.h"
 #include "Math/matrixmath.h"
@@ -7,6 +8,7 @@
 
 #include <sstream>
 #include <iostream>
+
 
 class Camera
 {
@@ -46,6 +48,9 @@ public:
     {
         m_eye += -amount * m_cameraRight;//Needed to invert the input amount to correct for left right
     }
+    void SetActive() { m_activeRenderingCamera = true; }
+    bool IsActive() const { return m_activeRenderingCamera; }
+    CameraConstants GetConstantData() const;
 protected:
 private:
     float restrictAngleTo360(float angle) const;
@@ -65,5 +70,7 @@ private:
 
     float m_movementSpeed;
     float m_rotationSpeed;
-    static const float m_maxPitchAngle;
+    static constexpr float m_maxPitchAngle = 89.9f;
+
+    bool m_activeRenderingCamera = false;
 };

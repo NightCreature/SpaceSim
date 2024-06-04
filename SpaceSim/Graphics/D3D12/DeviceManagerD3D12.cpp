@@ -1,10 +1,16 @@
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
 
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include <dxgidebug.h>
 #include "Core/Resource/RenderResource.h"
+#include "Logging/LoggingMacros.h"
 #include "D3D12X.h"
 #include <sstream>
+
+extern "C" { __declspec(dllexport) extern const UINT D3D12SDKVersion = 608; }
+
+extern "C" { __declspec(dllexport) extern const char* D3D12SDKPath = ".\\D3D12\\"; } //Path to where we can find D3D12Core.dll
 
 ///-----------------------------------------------------------------------------
 ///! @brief 
@@ -49,6 +55,7 @@ void DeviceManager::cleanup()
 ///-----------------------------------------------------------------------------
 bool DeviceManager::createDevice()
 {
+    PROFILE_FUNCTION();
     if (!InitialiseDebugLayers())
     {
         //This is not a hard error
@@ -104,7 +111,7 @@ bool DeviceManager::createDevice()
 
             MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Selected Feature level: 0x%x", m_featureLevel);
 
-            hr = D3D12CreateDevice(adapter, m_featureLevel, __uuidof(ID3D12Device), &(static_cast<void*>(m_device)));
+            hr = D3D12CreateDevice(adapter, m_featureLevel, IID_PPV_ARGS(&m_device));
             if (FAILED(hr))
             {
                 MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create a D3D device with error code: 0x%x %s", hr, getLastErrorMessage(hr))
@@ -137,34 +144,27 @@ bool DeviceManager::createDevice()
 ///-----------------------------------------------------------------------------
 IDXGIAdapter* DeviceManager::EnumerateAdapters()
 {
+    PROFILE_FUNCTION();
     IDXGIAdapter* adapter = nullptr;
 
-    HRESULT hr = S_OK;
-    for (size_t counter = 0; hr == S_OK; ++counter)
+    adapter = nullptr;
+    //Ask for the high performance GPU, this should be the dedicated GPU in a laptop
+    m_dxgiFactory->EnumAdapterByGpuPreference((UINT)0, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter));
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter number: %d", 0);
+    if (adapter != nullptr)
     {
-        adapter = nullptr;
-        hr = m_dxgiFactory->EnumAdapters((UINT)counter, &adapter);
-        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter number: %d", counter);
-        if (adapter != nullptr)
-        {
-            DXGI_ADAPTER_DESC adapterDesc;
-            adapter->GetDesc(&adapterDesc);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter vendor id: %x", adapterDesc.VendorId);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter device id: %x", adapterDesc.DeviceId);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter subsytem id: %x", adapterDesc.SubSysId);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter revision: %d", adapterDesc.Revision);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Dedicated VRAM: %llu MiB", adapterDesc.DedicatedVideoMemory / (1024 * 1024));
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Dedicated RAM: %llu MiB", adapterDesc.DedicatedSystemMemory / (1024 * 1024));
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Shared RAM: %llu MiB", adapterDesc.SharedSystemMemory / (1024 * 1024));
-            std::string str;
-            convertToCString(adapterDesc.Description, str);
-            MSG_TRACE_CHANNEL("DeviceManagerD3D12", "description: %s", str.c_str());
-
-            if (adapterDesc.VendorId != 0x8086) //THis is a hack to avoid igpus from intel, we need to do somethign else for AMD chips
-            {
-                break;
-            }
-        }
+        DXGI_ADAPTER_DESC adapterDesc;
+        adapter->GetDesc(&adapterDesc);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter vendor id: %x", adapterDesc.VendorId);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter device id: %x", adapterDesc.DeviceId);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter subsytem id: %x", adapterDesc.SubSysId);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter revision: %d", adapterDesc.Revision);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Dedicated VRAM: %llu MiB", adapterDesc.DedicatedVideoMemory / (1024 * 1024));
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Dedicated RAM: %llu MiB", adapterDesc.DedicatedSystemMemory / (1024 * 1024));
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Graphics Adapter Shared RAM: %llu MiB", adapterDesc.SharedSystemMemory / (1024 * 1024));
+        std::string str;
+        convertToCString(adapterDesc.Description, str);
+        MSG_TRACE_CHANNEL("DeviceManagerD3D12", "description: %s", str.c_str());
     }
 
     return adapter;
@@ -186,6 +186,7 @@ ID3D12Resource* DeviceManager::GetCurrentBackBuffer()
 ///-----------------------------------------------------------------------------
 bool DeviceManager::CheckFeatures()
 {
+    PROFILE_FUNCTION();
     D3D12_FEATURE_DATA_D3D12_OPTIONS featureSupport = {};
     m_device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS, &featureSupport, sizeof(featureSupport));
 
@@ -199,8 +200,23 @@ bool DeviceManager::CheckFeatures()
     MSG_TRACE_CHANNEL("DeviceManagerD3D12", "PS Specified Stencil Reference Support: %s", featureSupport.PSSpecifiedStencilRefSupported ? "true" : "false");
     MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Resource Binding Tier: %d", featureSupport.ResourceBindingTier);
 
+    D3D12_FEATURE_DATA_ARCHITECTURE architecture;
+    architecture.NodeIndex = 0;
+    m_device->CheckFeatureSupport(D3D12_FEATURE_ARCHITECTURE, &architecture, sizeof(architecture));
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Type of GPU: %s", architecture.UMA ? "APU" : "DGPU");
 
+    //Initialise this with the highest possible value, if its supported it will return that value or the highest the device does support
+    D3D12_FEATURE_DATA_SHADER_MODEL shaderModel;
+    shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_6;
+    m_device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel));
 
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Highest Shader Model supported: 0x%X", shaderModel.HighestShaderModel);
+    
+    D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureSupport5{};
+    m_device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureSupport5, sizeof(featureSupport5));
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Raytracing tier: %d", featureSupport5.RaytracingTier);
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Render Passes Tier: %d", featureSupport5.RenderPassesTier);
+    MSG_TRACE_CHANNEL("DeviceManagerD3D12", "SRV Only tiled resources tier 3: %s", featureSupport5.SRVOnlyTiledResourceTier3 ? "true" : "false");
 
     return true;
 }
@@ -211,6 +227,7 @@ bool DeviceManager::CheckFeatures()
 ///-----------------------------------------------------------------------------
 bool DeviceManager::createSwapChain(HWND windowHandle, int windowWidth, int windowHeight)
 {
+    PROFILE_FUNCTION();
     auto writableResource = RenderResourceHelper(m_resource).getWriteableResource();
 
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
@@ -364,11 +381,20 @@ bool DeviceManager::InitialiseDebugLayers()
 #if defined(_DEBUG)
     // Enable the D3D12 debug layer.
     HRESULT hr = D3D12GetDebugInterface(IID_PPV_ARGS(&m_debugInterface));
-    if (hr != S_OK)
+    if (hr != S_OK || m_debugInterface == nullptr)
     {
         MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create the debug interface with error: 0x%x, %s", hr, getLastErrorMessage(hr));
         return false;
     }
+
+    hr = m_debugInterface->QueryInterface(IID_PPV_ARGS(&m_debug1Interface));
+	if (hr != S_OK || m_debug1Interface == nullptr)
+	{
+		MSG_TRACE_CHANNEL("DeviceManagerD3D12", "Failed to create the debug1 interface with error: 0x%x, %s", hr, getLastErrorMessage(hr));
+		return false;
+	}
+
+    m_debug1Interface->SetEnableGPUBasedValidation(true);
 
     m_debugInterface->EnableDebugLayer();
 #endif

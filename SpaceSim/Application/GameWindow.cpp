@@ -107,7 +107,7 @@ void GameWindow::update( float elapsedTime, double time )
 {
     calculateFPS(elapsedTime);
     
-    time = 0.0;
+    UNUSEDPARAM(time);
 }
 
 ///-----------------------------------------------------------------------------
@@ -134,14 +134,12 @@ void GameWindow::calculateFPS(float elapsedTime)
 ///-----------------------------------------------------------------------------
 void GameWindow::setFpsInWindowTitle(float elpasedTime)
 {
-    PROFILE_EVENT("GameWindow::setFpsInWindowTitle", Brown);
+    PROFILE_FUNCTION();
     std::stringstream strStream;
     {
-        PROFILE_EVENT("StringStreamUpdate", Brown);
         strStream << m_windowTitle.c_str() << " - fps: " << m_fps << " frame time: " << elpasedTime * 1000 << "ms";
     }
     {
-        PROFILE_EVENT("WindowTitleUpdate", Brown);
         SetWindowText(m_windowHandle, strStream.str().c_str());
     }
 }
@@ -165,7 +163,7 @@ void GameWindow::messageHandler( HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         PostQuitMessage(0);
     }
 
-    lParam = 0;
+    UNUSEDPARAM(lParam);
     UNUSEDPARAM(hwnd);
     UNUSEDPARAM(wParam);
 }

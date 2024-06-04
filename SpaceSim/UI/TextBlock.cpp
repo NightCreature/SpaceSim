@@ -52,7 +52,7 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
         return false;
     }
 
-    size_t hash = hashString(text);
+    size_t hash = Hashing::hashString(text);
     size_t index = getTextIndex(hash);
     if (index < m_textBlocks.size())
     {
@@ -71,7 +71,6 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
     m_textBlocks.push_back(info);
 	if (m_textBlocks[m_textBlocks.size() - 1].ProcessText(m_resource))
 	{
-		m_textBlocksToRender.push_back(m_textBlocks[m_textBlocks.size() - 1].getRenderInstance());
 		return true;
 	}
 
@@ -84,7 +83,7 @@ bool TextBlockCache::addText(const std::string& text, const Vector4& textBox, Al
 ///-----------------------------------------------------------------------------
 size_t TextBlockCache::getTextIndex(const std::string& text)
 {
-    return getTextIndex(hashString(text));
+    return getTextIndex(Hashing::hashString(text));
 }
 
 ///-----------------------------------------------------------------------------
@@ -110,7 +109,7 @@ size_t TextBlockCache::getTextIndex(size_t textHash)
 ///-----------------------------------------------------------------------------
 bool TextBlockCache::removeText(const std::string& text)
 {
-    return removeText(hashString(text));
+    return removeText(Hashing::hashString(text));
 }
 
 ///-----------------------------------------------------------------------------
@@ -153,7 +152,7 @@ void TextBlockCache::removeAllTexts()
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
+void TextBlockCache::ProvideRenderInstances()
 {
 	//Should only really do this for blocks that are active
 	//for (auto& textBlock : m_textBlocks)
@@ -163,10 +162,6 @@ void TextBlockCache::ProvideRenderInstances(RenderInstanceTree& renderInstances)
 	//}
 
 	//std::copy(m_textBlocksToRender.begin(), m_textBlocksToRender.end(), renderInstances.end());
-	for (size_t counter = 0; counter < m_textBlocksToRender.size(); ++counter)
-	{
-		renderInstances.push_back(m_textBlocksToRender[counter]);
-	}
 }
 
 ///-----------------------------------------------------------------------------
@@ -197,15 +192,15 @@ bool TextBlockInfo::ProcessText(Resource* resource)
     float maxWidth = m_textBlockSize.w() - m_textBlockSize.y();
     float lineWidth = 0.f;
 	float sizeScale = m_size / (float)m_font->getFontInfo().m_fontSize;
-    char* lastChar = nullptr;
-    int lineNumber = 1;
-    int wordNumber = 1;
+    //char* lastChar = nullptr;
+    size_t lineNumber = 1;
+    size_t wordNumber = 1;
     float wordWidth = 0.f;
     bool firstCharOfLine = true;
     
     const CommonFontInfo& commonFontInfo = m_font->getCommonFontInfo();
 
-    for (int i = 0; i < m_text.size(); i++)
+    for (size_t i = 0; i < m_text.size(); i++)
     {
         const Glyph& glyph = m_font->getGlyph(m_text[i]);
         float xOffset = glyph.m_xOffset * sizeScale;
@@ -246,9 +241,9 @@ bool TextBlockInfo::ProcessText(Resource* resource)
             {
                 // Next character extends past text box width
                 // We have to move the last word down one line
-                char* newLineLastChar = nullptr;
+                //char* newLineLastChar = nullptr;
                 lineWidth = 0.f;
-                for (int j = 0; j < m_glyphQuads.size(); j++)
+                for (size_t j = 0; j < m_glyphQuads.size(); j++)
                 {
                     const Glyph& glyphToReset = m_font->getGlyph(static_cast<short>(m_glyphQuads[j].m_character));
                     if (m_alignment == Align::left)
@@ -324,14 +319,14 @@ bool TextBlockInfo::ProcessText(Resource* resource)
                             }
                         }
                     }
-                    newLineLastChar = &(m_glyphQuads[j].m_character);
+                    //newLineLastChar = &(m_glyphQuads[j].m_character);
                 }
 
                 // Make post-newline justifications
                 if (m_alignment == Align::center || m_alignment == Align::right)
                 {
                     // Justify the new line
-                    for (int k = 0; k < m_glyphQuads.size(); k++)
+                    for (size_t k = 0; k < m_glyphQuads.size(); k++)
                     {
                         if (m_glyphQuads[k].m_lineNumber == lineNumber + 1)
                         {
@@ -341,7 +336,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
                     x -= offset;
 
                     // Rejustify the line it was moved from
-                    for (int k = 0; k < m_glyphQuads.size(); k++)
+                    for (size_t k = 0; k < m_glyphQuads.size(); k++)
                     {
                         if (m_glyphQuads[k].m_lineNumber == lineNumber)
                         {
@@ -462,7 +457,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 
         x += xAdvance;
         lineWidth += xAdvance;
-        lastChar = &(m_text[i]);
+        //lastChar = &(m_text[i]);
 
         // Rejustify m_text
         if (m_alignment == Align::center)
@@ -474,7 +469,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
             {
                 offset += kernAmount * 0.5f;
             }
-            for (int j = 0; j < m_glyphQuads.size(); j++)
+            for (size_t j = 0; j < m_glyphQuads.size(); j++)
             {
                 if (m_glyphQuads[j].m_lineNumber == lineNumber)
                 {
@@ -492,7 +487,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
             {
                 offset += kernAmount;
             }
-            for (int j = 0; j < m_glyphQuads.size(); j++)
+            for (size_t j = 0; j < m_glyphQuads.size(); j++)
             {
                 if (m_glyphQuads[j].m_lineNumber == lineNumber)
                 {
@@ -511,15 +506,7 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 
     CreateVertexBuffer(resource);
 	CreateShaderSetup(resource);
-	if (m_renderInstance)
-	{
-		delete m_renderInstance;
-	}
-	m_renderInstance = new RenderInstance(&m_geometryInstance, &m_shaderInstance);
-#ifdef _DEBUG
-	m_renderInstance->m_name = L"TextBlock";
-#endif
-
+	
 	return true;
 }
 
@@ -529,39 +516,44 @@ bool TextBlockInfo::ProcessText(Resource* resource)
 ///-----------------------------------------------------------------------------
 void TextBlockInfo::CreateVertexBuffer(Resource* resource)
 {
-	RenderResourceHelper renderResourceHelper(resource);
-	VertexDeclarationDescriptor descriptor;
-	descriptor.position = 3;
-	descriptor.textureCoordinateDimensions.push_back(2);
-    
-    auto& commandQueue = renderResourceHelper.getWriteableResource().getCommandQueueManager().GetCommandQueue(renderResourceHelper.getResource().getResourceLoader().m_uploadQueueHandle);
-    auto& commandList = commandQueue.GetCommandList(renderResourceHelper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
+    UNUSEDPARAM(resource);
+	//RenderResourceHelper renderResourceHelper(resource);
+	//VertexDeclarationDescriptor descriptor;
+	//descriptor.position = 3;
+	//descriptor.textureCoordinateDimensions.push_back(2);
+ //   
+ //   auto& commandQueue = renderResourceHelper.getWriteableResource().getCommandQueueManager().GetCommandQueue(renderResourceHelper.getResource().getResourceLoader().GetCommandQueueHandle());
+ //   auto& commandList = commandQueue.GetCommandList();
+ //   auto& srvCBVUAVHeap = renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap();
 
-	vb.Create(renderResourceHelper.getResource().getDeviceManager(), commandList, sizeof(GlyphVertex) * m_glyphVerts.size(), &m_glyphVerts[0], descriptor.GetVertexStride());
-	m_geometryInstance.setPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+ //   VertexDataStreams dataStreams;
+ //   //Fit the Glyph Vertex into the streams needs some rewriting
+ //   MSG_ERROR_CHANNEL("TextBlockInfo", "Glyph Vertex has not been transformed yet created an empty buffer for text!");
+	//vb.CreateBuffer(renderResourceHelper.getResource().getDeviceManager(), commandList, srvCBVUAVHeap, dataStreams);
+	//m_geometryInstance.setPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	unsigned int glyphIndexBufer[] = 
-	{
-		0, 1, 2,
-		2, 3, 0
-	};
+	//unsigned int glyphIndexBufer[] = 
+	//{
+	//	0, 1, 2,
+	//	2, 3, 0
+	//};
 
-	size_t numberIndecis = 6 * (m_glyphVerts.size() / 4);
-	unsigned int* indexBuffer = new unsigned int[numberIndecis];
-	for (size_t counter = 0; counter < m_glyphVerts.size() / 4; ++counter)
-	{
-		for (size_t indexCounter = 0; indexCounter < 6; ++indexCounter)
-		{
-			indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
-		}
-	}
-	ib.Create(renderResourceHelper.getResource().getDeviceManager(), commandList, static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer);
-	ib.setNumberOfIndecis(static_cast<unsigned int>(numberIndecis));
+	//size_t numberIndecis = 6 * (m_glyphVerts.size() / 4);
+	//unsigned int* indexBuffer = new unsigned int[numberIndecis];
+	//for (size_t counter = 0; counter < m_glyphVerts.size() / 4; ++counter)
+	//{
+	//	for (size_t indexCounter = 0; indexCounter < 6; ++indexCounter)
+	//	{
+	//		indexBuffer[counter * 6 + indexCounter] = glyphIndexBufer[indexCounter] + (unsigned int)counter * 4;
+	//	}
+	//}
+	//ib.Create(renderResourceHelper.getResource().getDeviceManager(), commandList, static_cast<unsigned int>(numberIndecis) * sizeof(unsigned int), indexBuffer);
+	//ib.setNumberOfIndecis(static_cast<unsigned int>(numberIndecis));
 
-	m_geometryInstance.setVB(&vb);
-	m_geometryInstance.setIB(&ib);
+	//m_geometryInstance.setVB(&vb);
+	//m_geometryInstance.setIB(&ib);
 
-	delete [] indexBuffer;
+	//delete [] indexBuffer;
 }
 
 ///-----------------------------------------------------------------------------
@@ -572,12 +564,12 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 {
 	Material mat;
 	RenderResourceHelper gameResource(resource);
-    mat.setEffectHash(hashString("sdf_font_effect.xml"));
+    mat.setEffectHash("sdf_font_effect.xml"_hash);
 	mat.setBlendState(true);
 	//Should fix this if we have more than one page somehow
-	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)hashString(m_font->getPages().m_pages[0].m_fileName.string()), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
+	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)Hashing::hashString(m_font->getPages().m_pages[0].m_fileName.string()), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
-	mat.setTechnique(hashString("default"));
+	mat.setTechnique("default"_hash);
 	//m_shaderInstance.setMaterial(mat);
 	//WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
     //TODO FIX ME SHOULD ASK RENDER SYSTEM FOR VIEW AND PROJECTION

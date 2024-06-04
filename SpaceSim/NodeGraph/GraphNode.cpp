@@ -1,6 +1,8 @@
 #include "GraphNode.h"
 
 #include "Core/Types/Types.h"
+#include "Math/vector2.h"
+#include "Math/vector3.h"
 #include "NodeGraph/GraphNodePin.h"
 
 #include <algorithm>

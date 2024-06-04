@@ -1,14 +1,10 @@
-#include "CommonConstantBuffers.ivs"
-#include "rootsignatures.ifx"
+
+#include "BindlessBuffers.ifx"
+#include "Rootsignatures.ifx"
+
+ConstantBuffer<MeshResourceIndices> resourceIndices : register(b0);
 
 //--------------------------------------------------------------------------------------
-struct VS_INPUT
-{
-    float4 Pos  : POSITION0;
-    float3 Nor  : NORMAL0;
-    float2 Tex1 : TEXCOORD0;
-};
-
 struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
@@ -17,22 +13,27 @@ struct PS_INPUT
     float3 WorldPos : TEXCOORD1;
 };
 
+
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-[RootSignature(coreEffectRS)]
-PS_INPUT vs_main( VS_INPUT input )
+[RootSignature(bindlessRS)]
+PS_INPUT vs_main( uint id:SV_VERTEXID )
 {
-    PS_INPUT output = (PS_INPUT)0;
-    output.Pos = mul( input.Pos, World );
-    output.WorldPos = output.Pos.xyz;
-    output.Pos = mul( output.Pos, View );
-    output.Pos = mul( output.Pos, Projection );
+    float4 pos = float4(GetInstanceFromBufferT<float3>(resourceIndices.posBufferIndex, id),1);
+    ConstantBuffer<WVPData> wvpData = GetConstantBuffer<WVPData>(resourceIndices.transformIndex);
+    ConstantBuffer<WVPData> perScene = GetConstantBuffer<WVPData>(resourceIndices.sceneTransformIndex);
 
-    output.Nor = input.Nor;
+    PS_INPUT output = (PS_INPUT)0;
+    output.Pos = mul( pos, wvpData.World );
+    output.WorldPos = output.Pos.xyz;
+    output.Pos = mul( output.Pos, perScene.View );
+    output.Pos = mul( output.Pos, perScene.Projection );
+
+    output.Nor = GetInstanceFromBufferT<float3>(resourceIndices.normalBufferIndex, id);
 
     //output.inpos = input.Tex1;
     //output.Pos = input.Pos;
-    output.Tex = input.Tex1; 
+    output.Tex = GetInstanceFromBufferT<float2>(resourceIndices.textureBufferIndex, id);
     return output;
 }

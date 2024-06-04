@@ -51,7 +51,7 @@ GameObject(resource), m_position(position), m_radius(radius), m_slices(slices), 
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void Core::initialise(const ShaderInstance& shaderInstance)
+void Core::initialise()
 {
     //m_drawableObject->dontCleanupGeometry();
     m_position = Vector3(525, -75, 175);
@@ -60,7 +60,7 @@ void Core::initialise(const ShaderInstance& shaderInstance)
 
     MSG_TRACE_CHANNEL("REFACTOR", "SEND create Render Object message to render system");
 
-    Super::initialise(shaderInstance);
+    Super::initialise();
 }
 
 void Core::onHit()
@@ -82,9 +82,8 @@ void Core::onHit()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
+void Core::deserialise( const tinyxml2::XMLElement* element)
 {
-    ShaderInstance shaderInstance;
     
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
@@ -94,7 +93,7 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
 
     for (const tinyxml2::XMLElement* childElement = element->FirstChildElement(); childElement; childElement = childElement->NextSiblingElement())
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if (childElementHash == Material::m_hash)
         {
             const tinyxml2::XMLAttribute* nameAttribute = childElement->FindAttribute("name"); //This material needs a name to distinguish between normal and glowing versions of the material
@@ -143,14 +142,12 @@ const ShaderInstance Core::deserialise( const tinyxml2::XMLElement* element)
         //tm.addLoad(getResource().getDeviceManager(), textureString->getData());
         //shaderInstance.getMaterial().addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(textureString->getData())), Material::TextureSlotMapping::Diffuse0));
     }
-
-    return shaderInstance;
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Core::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void Core::update( float elapsedTime, const Input& input )
 {
     if (360 > m_angle)
         m_angle += 10.0f * elapsedTime;
@@ -216,7 +213,7 @@ void Core::update( RenderInstanceTree& renderInstances, float elapsedTime, const
         //	}
         //	glPopMatrix();
         //}
-        Super::update(renderInstances, elapsedTime, input);
+        Super::update(elapsedTime, input);
     //}
 
     //glPointSize(4.0f);
@@ -226,7 +223,6 @@ void Core::update( RenderInstanceTree& renderInstances, float elapsedTime, const
     //glEnd();
     
     UNUSEDPARAM(input);
-    UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(elapsedTime);
 }
 

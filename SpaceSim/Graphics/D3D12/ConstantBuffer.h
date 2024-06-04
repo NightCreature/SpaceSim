@@ -9,10 +9,12 @@
 
 #include <windows.h>
 #include <combaseapi.h>
+#include "Core/Profiler/ProfilerMacros.h"
 
-struct ConstantBufferData
+struct ConstantData
 {
-    ConstantBufferData(size_t size) : m_size(CalculateCBSize(size)) {}
+    ConstantData() = default;
+    ConstantData(size_t size) : m_size(CalculateCBSize(size)) {}
 
     size_t CalculateCBSize(size_t size)
     {
@@ -34,9 +36,9 @@ struct ConstantBufferData
 };
 
 template<class T>
-ConstantBufferData CreateConstantBufferData(const T& data)
+ConstantData CreateConstantBufferData(const T& data)
 {
-    ConstantBufferData retval(sizeof(T));
+    ConstantData retval(sizeof(T));
     memcpy(retval.m_data, static_cast<const byte*>(&data), sizeof(T));
     return retval;
 }
@@ -44,21 +46,32 @@ ConstantBufferData CreateConstantBufferData(const T& data)
 class ConstantBuffer
 {
 public:
-    void Create(const DeviceManager& deviceManager, DescriptorHeap& heap, size_t size);
+    void Create(const DeviceManager& deviceManager, DescriptorHeap& heap, size_t size, const std::string_view name);
     void Destroy();
     void UpdateGpuData() 
     {
+        PROFILE_FUNCTION();
         memcpy(m_GPUDataBegin, m_cpuSideData.m_data, m_cpuSideData.m_size); 
     }
 
     template<class T>
     void UpdateCpuData(const T& data) 
     {
+        PROFILE_FUNCTION();
         memcpy(m_cpuSideData.m_data, &data, sizeof(T));
     }
+
+    template<class T, size_t ElementCount>
+    void UpdateCpuData(const T (&data)[ElementCount])
+    {
+        PROFILE_FUNCTION();
+        memcpy(m_cpuSideData.m_data, &data, sizeof(T) * ElementCount);
+    }
+
     ID3D12Resource* GetConstantBuffer() const { return m_constantBuffer; }
+    size_t GetHeapIndex() const { return m_heapIndex; }
 private:
-    ConstantBufferData m_cpuSideData = {0};
+    ConstantData m_cpuSideData = {0};
     ID3D12Resource* m_constantBuffer = nullptr;
     byte* m_GPUDataBegin = nullptr;
     size_t m_heapIndex = DescriptorHeap::invalidDescriptorIndex;

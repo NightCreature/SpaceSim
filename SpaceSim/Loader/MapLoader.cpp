@@ -23,6 +23,8 @@
 
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/RenderMessages.h"
+#include "Core/Resource/GameResource.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 MapLoader::~MapLoader()
 {
@@ -42,6 +44,8 @@ void MapLoader::reset()
 //Just transform this to reading of an xml file more structure and less debugging/easier to debug in the end
 bool MapLoader::loadMap(Resource* resource, const std::string& filename)
 {
+    PROFILE_FUNCTION();
+
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_NO_ERROR)
     {
@@ -60,7 +64,7 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
 
     while (element != 0)
     {
-        size_t elementHash = hashString( element->Value() );
+        size_t elementHash = Hashing::hashString( element->Value() );
         if ( MapLoader::m_wallHash == elementHash )
         {
             readWallElement(resource, element);
@@ -68,32 +72,32 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
         else if (ForceField::m_hash == elementHash)
         {
             ForceField* forceField = new ForceField(resource);
-            ShaderInstance instance = forceField->deserialise(element);
-            forceField->initialise(instance, false);
+            forceField->deserialise(element);
+            forceField->initialise(false);
             map.insertSpecial(forceField);
             gameObjectManager.addGameObject(forceField);
         }
         else if (Door::m_hash == elementHash)
         {
             Door* door = new Door(resource);
-            ShaderInstance instance = door->deserialise(element);
-            door->initialise(instance, false);
+            door->deserialise(element);
+            door->initialise(false);
             map.insertSpecial(door);
             gameObjectManager.addGameObject(door);
         }
         else if (RotatingBlades::m_hash == elementHash)
         {
             RotatingBlades* rotatingBlades = new RotatingBlades(resource);
-            ShaderInstance instance = rotatingBlades->deserialise(element);
-            rotatingBlades->initialise(instance, false);
+            rotatingBlades->deserialise(element);
+            rotatingBlades->initialise(false);
             map.insertSpecial(rotatingBlades);
             gameObjectManager.addGameObject(rotatingBlades);
         }
         else if (Core::m_hash == elementHash)
         {
             Core* core = new Core(resource);
-            ShaderInstance instance = core->deserialise(element);
-            core->initialise(instance);
+            core->deserialise(element);
+            core->initialise();
             map.insertSpecial(core);
             gameObjectManager.addGameObject(core);
         }
@@ -101,16 +105,16 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
         {
             MSG_TRACE_CHANNEL("MAP", "Map loading switch");
             Switch* switchObject = new Switch(resource);
-            const ShaderInstance shaderInstance = switchObject->deserialise(element);
-            switchObject->initialise(shaderInstance);
+            switchObject->deserialise(element);
+            switchObject->initialise();
             map.insertSpecial(switchObject);
             gameObjectManager.addGameObject(switchObject);
         }
         else if (GunTurret::m_hash == elementHash)
         {
             GunTurret* gun = new GunTurret(resource);
-            const ShaderInstance shaderInstance = gun->deserialise(element);
-            gun->initialise(shaderInstance);
+            gun->deserialise(element);
+            gun->initialise();
             map.insertSpecial(gun);
             gameObjectManager.addGameObject(gun);
         }
@@ -123,7 +127,6 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
                 lightName = attribute->Value();
             }
 
-            MSG_TRACE_CHANNEL("REFACTOR", "SEND message to add a light to the render side");
             MessageSystem::CreateLightMessage lightMessage;
             Light light;
             light.deserialise(element);
@@ -135,7 +138,8 @@ bool MapLoader::loadMap(Resource* resource, const std::string& filename)
         else if (InfinitySphere::m_hash == elementHash)
         {
             InfinitySphere* infSphere = new InfinitySphere(resource);
-            infSphere->initialise(infSphere->deserialise(element));
+            infSphere->deserialise(element);
+            infSphere->initialise();
             gameObjectManager.addGameObject(infSphere);
         }
         element = element->NextSiblingElement();
@@ -326,13 +330,15 @@ void MapLoader::getCollisionNormal(PlanesMap::const_iterator& it, Vector3& norma
 ///-------------------------------------------------------------------------
 void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement* element )
 {
+    ECS::Entity wallEntity;
+
     const tinyxml2::XMLElement* childElement = element->FirstChildElement();
     Material mat;
     Vector3 corners[4];
     unsigned int numberCornersRead = 0;
     while (childElement != 0)
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if (Vector3::m_hash == childElementHash)
         {
             corners[numberCornersRead].deserialise(childElement);
@@ -373,7 +379,7 @@ void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement*
         p->invertNormal();
     }
 
-    const ShaderInstance shaderInstance = p->deserialise(element);
+    p->deserialise(element);
     PlanesMap::iterator pit = m_planes.find(type);
     if (pit != m_planes.end())
         pit->second.push_back(p);
@@ -381,7 +387,7 @@ void MapLoader::readWallElement( Resource* resource, const tinyxml2::XMLElement*
     {
         m_planes.insert(std::pair<int, Planes>(type, Planes(1, p)));
     }
-    p->initialise(shaderInstance);
+    p->initialise();
     GameResourceHelper gameResourceHelper(resource);
     GameObjectManager& gameObjectManager = gameResourceHelper.getWriteableResource().getGameObjectManager();
     gameObjectManager.addGameObject(p);

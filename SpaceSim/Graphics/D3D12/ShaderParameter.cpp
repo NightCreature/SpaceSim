@@ -1,6 +1,9 @@
 #include "ShaderParameter.h"
 #include "DeviceManagerD3D12.h"
 #include "DescriptorHeapManager.h"
+
+#include "Logging/LoggingMacros.h"
+
 #include <variant>
 
 //std::visit([](auto&& arg) {
@@ -132,15 +135,15 @@ ShaderParameter::ShaderParameterData GetVariant(const std::string& name)
 {
     if (name == "WVPConstants" || name == "ShadowConstants")
     {
-        return WVPBufferContent();
+        return WVPData();
     }
     else if (name == "LightParameters")
     {
-        return PerFrameConstants();
+        return LightParameters();
     }
     else if (name == "MaterialConstants")
     {
-        return MaterialContent();
+        return MaterialConstants();
     }
 
     return ShaderParameter::ShaderParameterData();

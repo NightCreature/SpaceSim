@@ -1,12 +1,35 @@
-#include "optick.config.h"
+// The MIT License(MIT)
+//
+// Copyright(c) 2019 Vadim Slyusarev
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+#include "optick_core.h"
 
 #if USE_OPTICK
 
-#include "optick_core.h"
+#include "optick.h"
 #include "optick_server.h"
 
 #include <algorithm>
 #include <fstream>
+#include <iomanip>
 
 //////////////////////////////////////////////////////////////////////////
 // Start of the Platform-specific stuff
@@ -42,7 +65,11 @@ namespace Optick
 void* (*Memory::allocate)(size_t) = [](size_t size)->void* { return operator new(size); };
 void (*Memory::deallocate)(void* p) = [](void* p) { operator delete(p); };
 void (*Memory::initThread)(void) = nullptr;
-std::atomic<uint64_t> Memory::memAllocated;
+#if defined(OPTICK_32BIT)
+	std::atomic<uint32_t> Memory::memAllocated;
+#else
+	std::atomic<uint64_t> Memory::memAllocated;
+#endif
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 uint64_t MurmurHash64A(const void * key, int len, uint64_t seed)
 {
@@ -70,13 +97,13 @@ uint64_t MurmurHash64A(const void * key, int len, uint64_t seed)
 
 	switch (len & 7)
 	{
-	case 7: h ^= uint64_t(data2[6]) << 48;
-	case 6: h ^= uint64_t(data2[5]) << 40;
-	case 5: h ^= uint64_t(data2[4]) << 32;
-	case 4: h ^= uint64_t(data2[3]) << 24;
-	case 3: h ^= uint64_t(data2[2]) << 16;
-	case 2: h ^= uint64_t(data2[1]) << 8;
-	case 1: h ^= uint64_t(data2[0]);
+	case 7: h ^= uint64_t(data2[6]) << 48; // fallthrough
+	case 6: h ^= uint64_t(data2[5]) << 40; // fallthrough
+	case 5: h ^= uint64_t(data2[4]) << 32; // fallthrough
+	case 4: h ^= uint64_t(data2[3]) << 24; // fallthrough
+	case 3: h ^= uint64_t(data2[2]) << 16; // fallthrough
+	case 2: h ^= uint64_t(data2[1]) << 8;  // fallthrough
+	case 1: h ^= uint64_t(data2[0]);       // fallthrough
 		h *= m;
 	};
 
@@ -197,9 +224,9 @@ void SortMemoryPool(MemoryPool<T, SIZE>& memoryPool)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescription::Create(const char* eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
+EventDescription* EventDescription::Create(const char* eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/, const uint8_t eventFlags /*= 0*/)
 {
-	return EventDescriptionBoard::Get().CreateDescription(eventName, fileName, fileLine, eventColor, filter);
+	return EventDescriptionBoard::Get().CreateDescription(eventName, fileName, fileLine, eventColor, filter, eventFlags);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 EventDescription* EventDescription::CreateShared(const char* eventName, const char* fileName, const unsigned long fileLine, const unsigned long eventColor /*= Color::Null*/, const unsigned long filter /*= 0*/)
@@ -207,7 +234,7 @@ EventDescription* EventDescription::CreateShared(const char* eventName, const ch
 	return EventDescriptionBoard::Get().CreateSharedDescription(eventName, fileName, fileLine, eventColor, filter);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription::EventDescription() : name(""), file(""), line(0), color(0)
+EventDescription::EventDescription() : name(""), file(""), line(0), index((uint32_t)-1), color(0), filter(0), flags(0)
 {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -231,7 +258,7 @@ EventData* Event::Start(const EventDescription& description)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Event::Stop(EventData& data)
 {
-	if (EventStorage* storage = Core::storage)
+	if (Core::storage != nullptr)
 	{
 		data.Stop();
 	}
@@ -241,11 +268,14 @@ void OPTICK_INLINE PushEvent(EventStorage* pStorage, const EventDescription* des
 {
 	if (EventStorage* storage = pStorage)
 	{
-		EventData& result = storage->NextEvent();
-		result.description = description;
-		result.start = timestampStart;
-		result.finish = EventTime::INVALID_TIMESTAMP;
-		storage->pushPopEventStack[storage->pushPopEventStackIndex++] = &result;
+		if (storage->pushPopEventStackIndex++ < storage->pushPopEventStack.size())
+		{
+			EventData& result = storage->NextEvent();
+			result.description = description;
+			result.start = timestampStart;
+			result.finish = EventTime::INVALID_TIMESTAMP;
+			storage->pushPopEventStack[storage->pushPopEventStackIndex - 1] = &result;
+		}
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,7 +283,8 @@ void OPTICK_INLINE PopEvent(EventStorage* pStorage, int64_t timestampFinish)
 {
 	if (EventStorage* storage = pStorage)
 		if (storage->pushPopEventStackIndex > 0)
-			storage->pushPopEventStack[--storage->pushPopEventStackIndex]->finish = timestampFinish;
+			if (--(storage->pushPopEventStackIndex) < storage->pushPopEventStack.size())
+				storage->pushPopEventStack[storage->pushPopEventStackIndex]->finish = timestampFinish;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Event::Push(const char* name)
@@ -261,7 +292,7 @@ void Event::Push(const char* name)
 	if (EventStorage* storage = Core::storage)
 	{
 		EventDescription* desc = EventDescription::CreateShared(name);
-		Push(*desc);
+		PushEvent(storage, desc, GetHighPrecisionTime());
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,10 +404,16 @@ void Tag::Attach(const EventDescription& description, const char* val)
 			storage->tagStringBuffer.Add(TagString(description, val));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void Tag::Attach(const EventDescription& description, const char* val, uint16_t length)
+{
+	if (EventStorage * storage = Core::storage)
+		if (storage->currentMode & Mode::TAGS)
+			storage->tagStringBuffer.Add(TagString(description, val, length));
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream & operator<<(OutputDataStream &stream, const EventDescription &ob)
 {
-	byte flags = 0;
-	return stream << ob.name << ob.file << ob.line << ob.filter << ob.color << (float)0.0f << flags;
+	return stream << ob.name << ob.file << ob.line << ob.filter << ob.color << (float)0.0f << ob.flags;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const EventTime& ob)
@@ -397,6 +434,11 @@ OutputDataStream& operator<<(OutputDataStream& stream, const SyncData& ob)
 OutputDataStream& operator<<(OutputDataStream& stream, const FiberSyncData& ob)
 {
 	return stream << (EventTime)(ob) << ob.threadId;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+OutputDataStream& operator<<(OutputDataStream& stream, const FrameData& ob)
+{
+	return stream << (EventData)(ob) << ob.threadID;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -426,7 +468,7 @@ void EventDescriptionBoard::Shutdown()
 	sharedDescriptions.clear();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-EventDescription* EventDescriptionBoard::CreateDescription(const char* name, const char* file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/)
+EventDescription* EventDescriptionBoard::CreateDescription(const char* name, const char* file /*= nullptr*/, uint32_t line /*= 0*/, uint32_t color /*= Color::Null*/, uint32_t filter /*= 0*/, uint8_t flags /*= 0*/)
 {
 	std::lock_guard<std::mutex> lock(GetBoardLock());
 
@@ -434,11 +476,12 @@ EventDescription* EventDescriptionBoard::CreateDescription(const char* name, con
 
 	EventDescription& desc = boardDescriptions.Add();
 	desc.index = (uint32)index;
-	desc.name = name;
-	desc.file = file;
+	desc.name = (flags & EventDescription::COPY_NAME_STRING) != 0 ? CacheString(name) : name;
+	desc.file = (flags & EventDescription::COPY_FILENAME_STRING) != 0 ? CacheString(file) : file;
 	desc.line = line;
 	desc.color = color;
 	desc.filter = filter;
+	desc.flags = flags;
 
 	return &desc;
 }
@@ -453,11 +496,16 @@ EventDescription* EventDescriptionBoard::CreateSharedDescription(const char* nam
 
 	if (cached.second)
 	{
-		const char* nameCopy = sharedNames.Add(name, strlen(name) + 1, false);
+		const char* nameCopy = CacheString(name);
 		cached.first->second = CreateDescription(nameCopy, file, line, color, filter);
 	}
 
 	return cached.first->second;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const char* EventDescriptionBoard::CacheString(const char* name)
+{
+	return sharedNames.Add(name, strlen(name) + 1, false);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator << (OutputDataStream& stream, const EventDescriptionBoard& ob)
@@ -574,6 +622,8 @@ bool CallstackCollector::SerializeSymbols(OutputDataStream& stream)
 	typedef unordered_set<uint64> SymbolSet;
 	SymbolSet symbolSet;
 
+	Core::Get().DumpProgress("Collecting Callstacks...");
+
 	for (CallstacksPool::const_iterator it = callstacksPool.begin(); it != callstacksPool.end();)
 	{
 		CallstacksPool::const_iterator startIt = it;
@@ -614,16 +664,23 @@ bool CallstackCollector::SerializeSymbols(OutputDataStream& stream)
 	vector<const Symbol*> symbols;
 	symbols.reserve(symbolSet.size());
 
-	Core::Get().DumpProgress("Resolving addresses... ");
+	Core::Get().DumpProgress("Resolving addresses ... ");
 
 	if (symEngine)
 	{
+		int total = (int)symbolSet.size();
+		const int progressBatchSize = 100;
 		for (auto it = symbolSet.begin(); it != symbolSet.end(); ++it)
 		{
 			uint64 address = *it;
 			if (const Symbol* symbol = symEngine->GetSymbol(address))
 			{
 				symbols.push_back(symbol);
+
+				if ((symbols.size() % progressBatchSize == 0) && Core::Get().IsTimeToReportProgress())
+				{
+					Core::Get().DumpProgressFormatted("Resolving addresses %d / %d", (int)symbols.size(), total);
+				}
 			}
 		}
 	}
@@ -684,8 +741,10 @@ bool SwitchContextCollector::Serialize(OutputDataStream& stream)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #if defined(OPTICK_MSVC)
+#include <intrin.h>
 #define CPUID(INFO, ID) __cpuid(INFO, ID)
-#include <intrin.h> 
+#elif (defined(__ANDROID__) || defined(OPTICK_ARM))
+// Nothing
 #elif defined(OPTICK_GCC)
 #include <cpuid.h>
 #define CPUID(INFO, ID) __cpuid(ID, INFO[0], INFO[1], INFO[2], INFO[3])
@@ -695,6 +754,26 @@ bool SwitchContextCollector::Serialize(OutputDataStream& stream)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 string GetCPUName()
 {
+#if defined(__ANDROID__)
+	FILE * fp = popen("cat /proc/cpuinfo | grep -m1 'model name'","r");
+    char res[128] = {0};
+    fread(res, 1, sizeof(res)-1, fp);
+    fclose(fp);
+    char* name = strstr(res, ":");
+    if (name && strlen(name) > 2)
+    {
+    	string s = name + 2;
+    	s.erase(std::remove(s.begin(), s.end(), '\n'), s.end());
+    	return s;
+    }
+	return "Undefined CPU";
+#elif defined(OPTICK_ARM)
+	#if defined(OPTICK_ARM32)
+		return "ARM 32-bit";
+	#else
+		return "ARM 64-bit";
+	#endif
+#else
 	int cpuInfo[4] = { -1 };
 	char cpuBrandString[0x40] = { 0 };
 	CPUID(cpuInfo, 0x80000000);
@@ -710,6 +789,7 @@ string GetCPUName()
 			memcpy(cpuBrandString + 32, cpuInfo, sizeof(cpuInfo));
 	}
 	return string(cpuBrandString);
+#endif
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Core& Core::Get()
@@ -737,7 +817,6 @@ void Core::DumpCapture()
 {
 	pendingState = State::DUMP_CAPTURE;
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Core::DumpProgress(const char* message)
 {
@@ -749,14 +828,58 @@ void Core::DumpProgress(const char* message)
 	Server::Get().Send(DataResponse::ReportProgress, stream);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#if defined(OPTICK_MSVC)
+#pragma warning( push )
+#pragma warning( disable : 4996)
+#endif
 void Core::DumpProgressFormatted(const char* format, ...)
 {
 	va_list arglist;
 	char buffer[256] = { 0 };
 	va_start(arglist, format);
+#ifdef OPTICK_MSVC
+	vsprintf_s(buffer, format, arglist);
+#else
 	vsprintf(buffer, format, arglist);
+#endif
 	va_end(arglist);
 	DumpProgress(buffer);
+}
+#if defined(OPTICK_MSVC)
+#pragma warning( pop )
+#endif
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool IsFrameDescription(const EventDescription* desc)
+{
+	for (int i = 0; i < FrameType::COUNT; ++i)
+		if (GetFrameDescription((FrameType::Type)i) == desc)
+			return true;
+
+	return false;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool IsSleepDescription(const EventDescription* desc)
+{
+	return desc->color == Color::White;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool IsSleepOnlyScope(const ScopeData& scope)
+{
+	//if (!scope.categories.empty())
+	//	return false;
+
+	const vector<EventData>& events = scope.events;
+	for (auto it = events.begin(); it != events.end(); ++it)
+	{
+		const EventData& data = *it;
+
+		if (!IsSleepDescription(data.description))
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Core::DumpEvents(EventStorage& entry, const EventTime& timeSlice, ScopeData& scope)
@@ -764,6 +887,7 @@ void Core::DumpEvents(EventStorage& entry, const EventTime& timeSlice, ScopeData
 	if (!entry.eventBuffer.IsEmpty())
 	{
 		const EventData* rootEvent = nullptr;
+		const int64 batchLimitMs = 3;
 
 		entry.eventBuffer.ForEach([&](const EventData& data)
 		{
@@ -776,7 +900,13 @@ void Core::DumpEvents(EventStorage& entry, const EventTime& timeSlice, ScopeData
 				} 
 				else if (rootEvent->finish < data.finish)
 				{
-					scope.Send();
+					// Batching together small buckets
+					// Flushing if we hit the following conditions:
+					// * Frame Description - don't batch frames together
+					// * SleepOnly scope - we ignore them
+					// * Sleep Event - flush the previous batch
+					if (IsFrameDescription(rootEvent->description) || TicksToMs(scope.header.event.finish - scope.header.event.start) > batchLimitMs || IsSleepDescription(data.description) || IsSleepOnlyScope(scope))
+						scope.Send();
 
 					rootEvent = &data;
 					scope.InitRootEvent(*rootEvent);
@@ -821,7 +951,6 @@ void Core::DumpTags(EventStorage& entry, ScopeData& scope)
 		entry.ClearTags(false);
 	}
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Core::DumpThread(ThreadEntry& entry, const EventTime& timeSlice, ScopeData& scope)
 {
@@ -866,6 +995,17 @@ EventTime CalculateRange(const ThreadEntry& entry, const EventDescription* rootD
 	return timeSlice;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+EventTime CalculateRange(FrameStorage& frameStorage)
+{
+	EventTime timeSlice = { INT64_MAX, INT64_MIN };
+	frameStorage.m_Frames.ForEach([&](const FrameData& data)
+	{
+		timeSlice.start = std::min(timeSlice.start, data.start);
+		timeSlice.finish = std::max(timeSlice.finish, data.finish);
+	});
+	return timeSlice;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Core::DumpFrames(uint32 mode)
 {
     std::lock_guard<std::recursive_mutex> lock(threadsLock);
@@ -875,6 +1015,8 @@ void Core::DumpFrames(uint32 mode)
 
 	++boardNumber;
 
+	Server::Get().SendStart();
+
 	DumpProgress("Generating summary...");
 
 	GenerateCommonSummary();
@@ -882,21 +1024,23 @@ void Core::DumpFrames(uint32 mode)
 
 	DumpProgress("Collecting Frame Events...");
 
-
-	ThreadID mainThreadID = Platform::GetThreadID();
-	uint32 mainThreadIndex = 0;
-	for (size_t i = 0; i < threads.size(); ++i)
-		if (threads[i]->description.threadID == mainThreadID)
-			mainThreadIndex = (uint32)i;
-
-	EventTime timeSlice = CalculateRange(*threads[mainThreadIndex], GetFrameDescription(FrameType::CPU)); 
-	if (timeSlice.start >= timeSlice.finish)
+	std::array<EventTime, FrameType::COUNT> timeSlice;
+	for (int i = 0; i < FrameType::COUNT; ++i)
 	{
-		timeSlice.start = frames.front().start;
-		timeSlice.finish = frames.back().finish;
-	}
+		timeSlice[i] = CalculateRange(frames[i]);
+	} 
 
-	DumpBoard(mode, timeSlice, mainThreadIndex);
+	DumpBoard(mode, timeSlice[FrameType::CPU]);
+
+	{
+		DumpProgress("Serializing Frames");
+		OutputDataStream framesStream;
+		framesStream << boardNumber;
+		framesStream << (uint32)frames.size();
+		for (size_t i = 0; i < frames.size(); ++i)
+			framesStream << frames[i].m_Frames;
+		Server::Get().Send(DataResponse::FramesPack, framesStream);
+	}
 
 	ScopeData threadScope;
 	threadScope.header.boardNumber = boardNumber;
@@ -908,7 +1052,15 @@ void Core::DumpFrames(uint32 mode)
 	for (size_t i = 0; i < threads.size(); ++i)
 	{
 		threadScope.header.threadNumber = (uint32)i;
-		DumpThread(*threads[i], timeSlice, threadScope);
+
+		ThreadEntry* entry = threads[i];
+
+		EventTime range = timeSlice[FrameType::CPU];
+
+		if ((entry->description.mask & ThreadMask::GPU) != 0 && timeSlice[FrameType::GPU].IsValid())
+			range = timeSlice[FrameType::GPU];
+
+		DumpThread(*entry, range, threadScope);
 	}
 
 	ScopeData fiberScope;
@@ -917,10 +1069,12 @@ void Core::DumpFrames(uint32 mode)
 	for (size_t i = 0; i < fibers.size(); ++i)
 	{
 		fiberScope.header.fiberNumber = (uint32)i;
-		DumpFiber(*fibers[i], timeSlice, fiberScope);
+		DumpFiber(*fibers[i], timeSlice[FrameType::CPU], fiberScope);
 	}
 
-	frames.clear();
+	for (int i = 0; i < FrameType::COUNT; ++i)
+		frames[i].Clear(false);
+
 	CleanupThreadsAndFibers();
 
 	{
@@ -941,16 +1095,16 @@ void Core::DumpFrames(uint32 mode)
 
 	if (!callstackCollector.IsEmpty())
 	{
-		DumpProgress("Resolving callstacks");
 		OutputDataStream symbolsStream;
 		symbolsStream << boardNumber;
+		DumpProgress("Serializing Modules");
 		callstackCollector.SerializeModules(symbolsStream);
 		callstackCollector.SerializeSymbols(symbolsStream);
 		Server::Get().Send(DataResponse::CallstackDescriptionBoard, symbolsStream);
 
 		// We can free some memory now to unlock space for callstack serialization
 		DumpProgress("Deallocating memory for SymbolEngine");
-		Memory::Free(symbolEngine);
+		Memory::Delete(symbolEngine);
 		symbolEngine = nullptr;
 
 		DumpProgress("Serializing callstacks");
@@ -960,8 +1114,9 @@ void Core::DumpFrames(uint32 mode)
 		Server::Get().Send(DataResponse::CallstackPack, callstacksStream);
 	}
 
-	OutputDataStream empty;
-	Server::Get().Send(DataResponse::NullFrame, empty);
+	forcedMainThreadIndex = (uint32)-1;
+
+	Server::Get().SendFinish();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Core::DumpSummary()
@@ -973,8 +1128,8 @@ void Core::DumpSummary()
 
 	// Frames
 	double frequency = (double)Platform::GetFrequency();
-	stream << (uint32_t)frames.size();
-	for (const EventTime& frame : frames)
+	stream << (uint32_t)frames[FrameType::CPU].m_Frames.Size();
+	for (const EventTime& frame : frames[FrameType::CPU].m_Frames)
 	{
 		double frameTimeMs = 1000.0 * (frame.finish - frame.start) / frequency;
 		stream << (float)frameTimeMs;
@@ -1014,7 +1169,7 @@ void Core::CleanupThreadsAndFibers()
 	}
 }
 
-void Core::DumpBoard(uint32 mode, EventTime timeSlice, uint32 mainThreadIndex)
+void Core::DumpBoard(uint32 mode, EventTime timeSlice)
 {
 	OutputDataStream boardStream;
 
@@ -1025,7 +1180,7 @@ void Core::DumpBoard(uint32 mode, EventTime timeSlice, uint32 mainThreadIndex)
 	boardStream << timeSlice;
 	boardStream << threads;
 	boardStream << fibers;
-	boardStream << mainThreadIndex;
+	boardStream << forcedMainThreadIndex;
 	boardStream << EventDescriptionBoard::Get();
 	boardStream << (uint32)0; // Tags
 	boardStream << (uint32)0; // Run
@@ -1054,18 +1209,19 @@ void Core::GenerateCommonSummary()
 Core::Core()
 	: progressReportedLastTimestampMS(0)
 	, boardNumber(0)
-	, frameNumber(0)
 	, stateCallback(nullptr)
 	, currentState(State::DUMP_CAPTURE)
 	, pendingState(State::DUMP_CAPTURE)
+	, forcedMainThreadIndex((uint32)-1)
 	, currentMode(Mode::OFF)
+	, previousMode(Mode::OFF)
 	, symbolEngine(nullptr)
 	, tracer(nullptr)
 	, gpuProfiler(nullptr)
 {
-	frameDescriptions[FrameType::CPU] = EventDescription::Create("CPU Frame", __FILE__, __LINE__);
-	frameDescriptions[FrameType::GPU] = EventDescription::Create("GPU Frame", __FILE__, __LINE__);
-	frameDescriptions[FrameType::Render] = EventDescription::Create("Render Frame", __FILE__, __LINE__);
+	frames[FrameType::CPU].m_Description = EventDescription::Create("CPU Frame", __FILE__, __LINE__);
+	frames[FrameType::GPU].m_Description = EventDescription::Create("GPU Frame", __FILE__, __LINE__);
+	frames[FrameType::Render].m_Description = EventDescription::Create("Render Frame", __FILE__, __LINE__);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool Core::UpdateState()
@@ -1087,11 +1243,11 @@ bool Core::UpdateState()
 
 		case State::STOP_CAPTURE:
 		case State::CANCEL_CAPTURE:
-				Activate(Mode::OFF);
+			Activate(Mode::OFF);
 			break;
 
 		case State::DUMP_CAPTURE:
-			DumpFrames();
+			DumpFrames(previousMode);
 			break;
 		}
 		currentState = nextState;
@@ -1101,45 +1257,70 @@ bool Core::UpdateState()
 }
 
 
-uint32_t Core::Update()
+void Core::Update()
 {
 	std::lock_guard<std::recursive_mutex> lock(coreLock);
-	
+
 	if (currentMode != Mode::OFF)
 	{
-		if (!frames.empty())
-			frames.back().Stop();
+		FrameBuffer frameBuffer = frames[FrameType::CPU].m_Frames;
 
-		if (settings.frameLimit > 0 && frames.size() >= settings.frameLimit)
-			DumpCapture();
-
-		if (settings.timeLimitUs > 0)
+		if (frameBuffer.Size() > 0)
 		{
-			if (TicksToUs(frames.back().finish - frames.front().start) >= settings.timeLimitUs)
+			if (settings.frameLimit > 0 && frameBuffer.Size() >= settings.frameLimit)
 				DumpCapture();
-		}
 
-		if (settings.spikeLimitUs > 0)
-		{
-			if (TicksToUs(frames.back().finish - frames.back().start) >= settings.spikeLimitUs)
-				DumpCapture();
+			if (settings.timeLimitUs > 0)
+			{
+				if (TicksToUs(frameBuffer.Back()->finish - frameBuffer.Front()->start) >= settings.timeLimitUs)
+					DumpCapture();
+			}
+
+			if (settings.spikeLimitUs > 0)
+			{
+				if (TicksToUs(frameBuffer.Back()->finish - frameBuffer.Front()->start) >= settings.spikeLimitUs)
+					DumpCapture();
+			}
 		}
 
 		if (IsTimeToReportProgress())
-			DumpCapturingProgress();		
+			DumpCapturingProgress();
 	}
 
 	UpdateEvents();
 
 	while (UpdateState()) {}
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+uint32_t Core::BeginUpdateFrame(FrameType::Type frameType, int64_t timestamp, uint64_t threadID)
+{
+	std::lock_guard<std::recursive_mutex> lock(coreLock);
 
 	if (currentMode != Mode::OFF)
 	{
-		frames.push_back(EventTime());
-		frames.back().Start();
+		FrameData& data = frames[frameType].m_Frames.Add();
+		data.description = frames[frameType].m_Description;
+		data.start = timestamp;
+		data.finish = timestamp;
+		data.threadID = threadID;
 	}
 
-	return ++frameNumber;
+	return ++frames[frameType].m_FrameNumber;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+uint32_t Core::EndUpdateFrame(FrameType::Type frameType, int64_t timestamp, uint64_t /*threadID*/)
+{
+	std::lock_guard<std::recursive_mutex> lock(coreLock);
+
+	if (currentMode != Mode::OFF)
+	{
+		if (FrameData* lastFrame = frames[frameType].m_Frames.Back())
+		{
+			lastFrame->finish = timestamp;
+		}
+	}
+
+	return frames[frameType].m_FrameNumber;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Core::UpdateEvents()
@@ -1165,7 +1346,7 @@ void Core::Activate(Mode::Type mode)
 {
 	if (mode != currentMode)
 	{
-		Mode::Type prevMode = currentMode;
+		previousMode = currentMode;
 		currentMode = mode;
 
         {
@@ -1191,10 +1372,11 @@ void Core::Activate(Mode::Type mode)
 				if (tracer)
 				{
 					tracer->SetPassword(settings.password.c_str());
-					{
-						std::lock_guard<std::recursive_mutex> lock(threadsLock);
-						status = tracer->Start(mode, settings.samplingFrequency, threads);
-					}
+
+					std::lock_guard<std::recursive_mutex> lock(threadsLock);
+
+					status = tracer->Start(mode, settings.samplingFrequency, threads);
+					
 					// Let's retry with more narrow setup
 					if (status != CaptureStatus::OK && (mode & Mode::AUTOSAMPLING))
 						status = tracer->Start((Mode::Type)(mode & ~Mode::AUTOSAMPLING), settings.samplingFrequency, threads);
@@ -1222,7 +1404,7 @@ void Core::Activate(Mode::Type mode)
 				
 
 			if (gpuProfiler)
-				gpuProfiler->Stop(prevMode);
+				gpuProfiler->Stop(previousMode);
 		}
 	}
 }
@@ -1235,8 +1417,8 @@ void Core::DumpCapturingProgress()
 	{
 		size_t memUsedKb = Memory::GetAllocatedSize() >> 10;
 		float memUsedMb = memUsedKb / 1024.0f;
-		// VS TODO: Format to 3 digits
-		stream << "Capturing Frame " << (uint32)frames.size() << "..." << std::endl << "Memory Used: " << memUsedMb << " Mb";
+
+		stream << "Capturing Frame " << (uint32)frames[FrameType::CPU].m_Frames.Size() << "..." << std::endl << "Memory Used: " << std::fixed << std::setprecision(3) << memUsedMb << " Mb";
 	}
 
 	DumpProgress(stream.str().c_str());
@@ -1270,15 +1452,23 @@ bool Core::IsRegistredThread(ThreadID id)
 	}
 	return false;
 }
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ThreadEntry* Core::RegisterThread(const ThreadDescription& description, EventStorage** slot)
 {
 	std::lock_guard<std::recursive_mutex> lock(threadsLock);
 
-	ThreadEntry* entry = Memory::New<ThreadEntry>(description, slot);
-	threads.push_back(entry);
+	ThreadEntry* entry = nullptr;
+
+	auto it = std::find_if(threads.begin(), threads.end(), [&description](const ThreadEntry* entry) { return entry->description == description; });
+	if (it == threads.end())
+	{
+		entry = Memory::New<ThreadEntry>(description, slot);
+		threads.push_back(entry);
+	}
+	else
+	{
+		entry = *it;
+	}
 
 	if ((currentMode != Mode::OFF) && slot != nullptr)
 		*slot = &entry->storage;
@@ -1399,7 +1589,6 @@ bool Core::AttachFile(File::Type type, const char* name, const wchar_t* path)
 void Core::InitGPUProfiler(GPUProfiler* profiler)
 {
 	OPTICK_ASSERT(gpuProfiler == nullptr, "Can't reinitialize GPU profiler! Not supported yet!");
-	Memory::Delete<GPUProfiler>(gpuProfiler);
 	gpuProfiler = profiler;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1416,14 +1605,38 @@ bool Core::SetSettings(const CaptureSettings& captureSettings)
 	return false;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void Core::SetMainThreadID(uint64_t threadID)
+{
+	std::lock_guard<std::recursive_mutex> lock(threadsLock);
+
+	if (threadID == INVALID_THREAD_ID)
+	{
+		forcedMainThreadIndex = (uint32)-1;
+	}
+	else
+	{
+		for (size_t i = 0; i < threads.size(); ++i)
+		{
+			ThreadEntry* entry = threads[i];
+			if (entry->description.threadID == threadID)
+			{
+				forcedMainThreadIndex = (uint32)i;
+			}
+		}
+	}
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const EventDescription* Core::GetFrameDescription(FrameType::Type frame) const
 {
-	return frameDescriptions[frame];
+	return frames[frame].m_Description;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Core::Shutdown()
 {
 	std::lock_guard<std::recursive_mutex> lock(threadsLock);
+
+	Memory::Delete<GPUProfiler>(gpuProfiler);
+	gpuProfiler = nullptr;
 
 	for (ThreadList::iterator it = threads.begin(); it != threads.end(); ++it)
 	{
@@ -1436,6 +1649,9 @@ void Core::Shutdown()
 		Memory::Delete(*it);
 	}
 	fibers.clear();
+
+	Memory::Delete(symbolEngine);
+	symbolEngine = nullptr;
 
 	EventDescriptionBoard::Get().Shutdown();
 }
@@ -1454,7 +1670,7 @@ OPTICK_THREAD_LOCAL EventStorage* Core::storage = nullptr;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-ScopeHeader::ScopeHeader() : boardNumber(0), threadNumber(0), fiberNumber(0)
+ScopeHeader::ScopeHeader() : boardNumber(0), threadNumber(0), fiberNumber(0), type(FrameType::NONE)
 {
 	event.start = EventTime::INVALID_TIMESTAMP;
 	event.finish = EventTime::INVALID_TIMESTAMP;
@@ -1462,7 +1678,7 @@ ScopeHeader::ScopeHeader() : boardNumber(0), threadNumber(0), fiberNumber(0)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const ScopeHeader& header)
 {
-	return stream << header.boardNumber << header.threadNumber << header.fiberNumber << header.event;
+	return stream << header.boardNumber << header.threadNumber << header.fiberNumber << header.event << header.type;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OutputDataStream& operator<<(OutputDataStream& stream, const ScopeData& ob)
@@ -1525,9 +1741,19 @@ OutputDataStream& operator<<(OutputDataStream& stream, const Point& ob)
 	return stream << ob.x << ob.y << ob.z;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-OPTICK_API uint32_t NextFrame()
+OPTICK_API void Update()
 {
-	return Core::NextFrame();
+	return Core::Get().Update();
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+OPTICK_API uint32_t BeginFrame(Optick::FrameType::Type frameType, int64_t timestamp, uint64_t threadID)
+{
+	return Core::BeginFrame(frameType, timestamp != EventTime::INVALID_TIMESTAMP ? timestamp : Optick::GetHighPrecisionTime(), threadID != INVALID_THREAD_ID ? threadID : Platform::GetThreadID());
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+OPTICK_API uint32_t EndFrame(Optick::FrameType::Type frameType, int64_t timestamp, uint64_t threadID)
+{
+	return Core::EndFrame(frameType, timestamp != EventTime::INVALID_TIMESTAMP ? timestamp : Optick::GetHighPrecisionTime(), threadID != INVALID_THREAD_ID ? threadID : Platform::GetThreadID());
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OPTICK_API bool IsActive(Mode::Type mode /*= Mode::INSTRUMENTATION_EVENTS*/)
@@ -1602,6 +1828,122 @@ OPTICK_API void SetAllocator(AllocateFn allocateFn, DeallocateFn deallocateFn, I
 	Memory::SetAllocator(allocateFn, deallocateFn, initThreadCb);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+OPTICK_API bool StartCapture(Mode::Type mode /*= Mode::DEFAULT*/, int samplingFrequency /*= 1000*/, bool force /*= true*/)
+{
+	if (IsActive())
+		return false;
+
+	CaptureSettings settings;
+	settings.mode = mode | Mode::NOGUI;
+	settings.samplingFrequency = samplingFrequency;
+
+	Core& core = Core::Get();
+	core.SetSettings(settings);
+
+	if (!core.IsRegistredThread(Platform::GetThreadID()))
+		RegisterThread("MainThread");
+
+	core.StartCapture();
+
+	if (force)
+	{
+		core.Update();
+		core.SetMainThreadID(Platform::GetThreadID());
+		core.BeginFrame(FrameType::CPU, GetHighPrecisionTime(), Platform::GetThreadID());
+	}
+	
+	return true;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+OPTICK_API bool StopCapture(bool force /*= true*/)
+{
+	if (!IsActive())
+		return false;
+
+	Core& core = Core::Get();
+	core.StopCapture();
+
+	if (force)
+	{
+		core.EndFrame(FrameType::CPU, GetHighPrecisionTime(), Platform::GetThreadID());
+		core.Update();
+	}
+
+	return true;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+struct SaveHelper
+{
+	static void Init(const char* path)
+	{
+		GetOutputFile().open(path, std::ios::out | std::ios::binary);
+	}
+
+	static void Write(const char* data, size_t size)
+	{
+		if (data)
+			GetOutputFile().write(data, size);
+		else
+			GetOutputFile().close();
+	}
+
+	static fstream& GetOutputFile()
+	{
+		static fstream file;
+		return file;
+	}
+};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool EndsWith(const char* str, const char* substr)
+{
+	size_t strLength = strlen(str);
+	size_t substrLength = strlen(substr);
+	return strLength >= substrLength && strcmp(substr, &str[strLength - substrLength]) == 0;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+OPTICK_API bool SaveCapture(const char* path, bool force /*= true*/)
+{
+	char filePath[512] = { 0 };
+#if defined(OPTICK_MSVC)
+	strcpy_s(filePath, 512, path);
+#else
+	strcpy(filePath, path);
+#endif
+	
+	if (path == nullptr || !EndsWith(path, ".opt"))
+	{
+		time_t now = time(0);
+		struct tm tstruct;
+#if defined(OPTICK_MSVC)
+		localtime_s(&tstruct, &now);
+#else
+		localtime_r(&now, &tstruct);
+#endif
+		char timeStr[80] = { 0 };
+		strftime(timeStr, sizeof(timeStr), "(%Y-%m-%d.%H-%M-%S).opt", &tstruct);
+#if defined(OPTICK_MSVC)
+		strcat_s(filePath, 512, timeStr);
+#else
+		strcat(filePath, timeStr);
+#endif
+	}
+
+	SaveHelper::Init(filePath);
+	return SaveCapture(SaveHelper::Write, force);
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+OPTICK_API bool SaveCapture(CaptureSaveChunkCb dataCb /*= nullptr*/, bool force /*= true*/)
+{
+	Server::Get().SetSaveCallback(dataCb);
+
+	Core& core = Core::Get();
+	core.DumpCapture();
+	if (force)
+		core.Update();
+
+	return true;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 OPTICK_API void Shutdown()
 {
 	Core::Get().Shutdown();
@@ -1632,25 +1974,6 @@ void ThreadEntry::Sort()
 	SortMemoryPool(storage.eventBuffer);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool IsSleepOnlyScope(const ScopeData& scope)
-{
-	//if (!scope.categories.empty())
-	//	return false;
-
-	const vector<EventData>& events = scope.events;
-	for(auto it = events.begin(); it != events.end(); ++it)
-	{
-		const EventData& data = *it;
-
-		if (data.description->color != Color::White)
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void ScopeData::Send()
 {
 	if (!events.empty() || !categories.empty())
@@ -1666,8 +1989,15 @@ void ScopeData::Send()
 	Clear();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void ScopeData::ResetHeader()
+{
+	header.event.start = INT64_MAX;
+	header.event.finish = INT64_MIN;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void ScopeData::Clear()
 {
+	ResetHeader();
 	events.clear();
 	categories.clear();
 }

@@ -1,10 +1,10 @@
 #include "Input/KeyboardController.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Core/Types/TypeHelpers.h"
-
+#include "Logging/LoggingMacros.h"
 #include <limits>
 
-
+//#define DEBUG_KEY_STATE
 
 KeyboardInputDevice::KeyboardInputDevice(void)
 {
@@ -247,13 +247,17 @@ void KeyboardInputDevice::getHumanReadableChar(char*& buffer, unsigned int flags
 
 void KeyboardInputDevice::printKeyState( PRAWINPUT prawInput )
 {
-    //MSG_TRACE("VKEY code pressed %d", prawInput->data.keyboard.VKey);
-    //MSG_TRACE("SCAN code pressed %d", prawInput->data.keyboard.MakeCode);
-    //MSG_TRACE("Flags pressed %d", prawInput->data.keyboard.Flags);
+#if defined(DEBUG_KEY_STATE)
+    MSG_TRACE("VKEY code pressed %d", prawInput->data.keyboard.VKey);
+    MSG_TRACE("SCAN code pressed %d", prawInput->data.keyboard.MakeCode);
+    MSG_TRACE("Flags pressed %d", prawInput->data.keyboard.Flags);
     char* buffer;
     getHumanReadableChar(buffer, prawInput->data.keyboard.Flags, prawInput->data.keyboard.MakeCode, ((prawInput->data.keyboard.Flags & RI_KEY_E1) != 0));
     MSG_TRACE("Character pressed %s", buffer);
     delete buffer;
+#else
+    UNUSEDPARAM(prawInput);
+#endif
 }
 
 ///-----------------------------------------------------------------------------

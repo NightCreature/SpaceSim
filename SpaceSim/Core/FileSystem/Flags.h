@@ -9,7 +9,8 @@ enum class FileMode : uint8
 {
     Open,
     Create,
-    OpenAndCreate
+    OpenAndCreate,
+    OpenAndCreateTruncate
 };
 
 enum class FileOperation : uint8

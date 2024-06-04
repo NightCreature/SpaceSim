@@ -2,6 +2,8 @@
 #include "Math/MathUtilityFunctions.h"
 #include "Input/InputSystem.h"
 
+#include "Logging/LoggingMacros.h"
+
 #ifdef _DEBUG
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description

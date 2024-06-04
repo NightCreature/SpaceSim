@@ -1,6 +1,6 @@
 #include "AddNode.h"
 
-#include "Core/StringOperations/StringHelperFunctions.h"
+#include "Logging/LoggingMacros.h"
 
 ///-----------------------------------------------------------------------------
 ///! @brief This adds the two input pins together and passes the value to the output pin

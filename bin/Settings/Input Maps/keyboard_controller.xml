@@ -32,7 +32,27 @@
     <Button input="69"/>
   </InputAction>
 
-  <InputAction input_action="exit_game" >
+<!-- Front End Actions This is going to need remapped actions from the move actions too-->
+  <InputAction input_action="fe_up" >
+    <Button input="38" />
+  </InputAction>
+  <InputAction input_action="fe_down" >
+    <Button input="40" />
+  </InputAction>
+  <InputAction input_action="fe_left" >
+    <Button input="37" />
+  </InputAction>
+  <InputAction input_action="fe_right" >
+    <Button input="39" />
+  </InputAction>
+  <InputAction input_action="fe_accept" >
+    <Button input="13" />
+  </InputAction>
+  <InputAction input_action="fe_cancel" >
     <Button input="27" />
+  </InputAction>
+
+  <InputAction input_action="printflow" >
+    <Button input="80" />
   </InputAction>
 </xml>

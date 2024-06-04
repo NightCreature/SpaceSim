@@ -1,18 +1,6 @@
-#define LIGHTING
-#include "CommonConstantBuffers.ips"
-//--------------------------------------------------------------------------------------
-// Constant Buffer Variables
-//--------------------------------------------------------------------------------------
 
-SamplerState SampleType
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
-
-Texture2D<float4> shaderTextures : register(t8);
-TextureCube<float4> cubeTexture : register(t33);
+#include "BindlessBuffers.ifx"
+#include "Samplers.ifx"
 
 //--------------------------------------------------------------------------------------
 struct PS_INPUT
@@ -23,6 +11,8 @@ struct PS_INPUT
     float3 WorldPos : TEXCOORD1;
 };
 
+ConstantBuffer<MeshResourceIndices> resourceIndices : register(b0);
+
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
@@ -30,23 +20,30 @@ float4 ps_main( PS_INPUT input) : SV_Target
 {
     float3 vertexPos = input.WorldPos;
     float4 color;
-    float4 texColor = shaderTextures.Sample(SampleType, input.Tex);
+    Texture2D<float4> shaderTextures = GetColorTexture(resourceIndices.albedoMapIndex);
+    float4 texColor = shaderTextures.Sample(linearWrapSampler, input.Tex);
+
+    ConstantBuffer<MaterialConstants> materialConstants = GetConstantBuffer<MaterialConstants>(resourceIndices.materialIndex);
+    ConstantBuffer<LightParameters> lightDataBuffer = GetConstantBuffer<LightParameters>(resourceIndices.LightBufferIndex);
+    ConstantBuffer<CameraConstantArray> cameraSettings = GetConstantBuffer<CameraConstantArray>(resourceIndices.CameraBufferIndex);
+    uint NumberOfLights = lightDataBuffer.NumberOfLights;
 	
     float3 nnormal = normalize(input.Nor);
-    float3 nviewdirection = normalize(camera_position - vertexPos);
+    float3 nviewdirection = normalize(cameraSettings.m_constants[0].m_position - vertexPos);
 
-    float4 cubeTextureColor = cubeTexture.Sample(SampleType,  refract(nnormal, nviewdirection, 0.99)) *0.75;
-    float4 relfectColor = cubeTexture.Sample(SampleType,  reflect(nnormal, nviewdirection));
-    color = float4(ambient.rgb, 1.0) * cubeTextureColor + float4(emissive.rgb, 0.0);
-    for (int counter = 0; counter < 3; ++counter)
+    Texture3D<float4> cubeTexture = GetCubeTexture(resourceIndices.cubeReflectionIndex );
+    float4 cubeTextureColor = cubeTexture.Sample(linearWrapSampler,  refract(nnormal, nviewdirection, 0.99)) *0.75;
+    float4 relfectColor = cubeTexture.Sample(linearWrapSampler,  reflect(nnormal, nviewdirection));
+    color = float4(materialConstants.ambient.rgb, 1.0) * cubeTextureColor + float4(materialConstants.emissive.rgb, 0.0);
+    for (int counter = 0; counter < NumberOfLights; ++counter)
     {        
-        float3 lightDir = normalize(m_lights[counter].m_position.xyz - vertexPos);
+        float3 lightDir = normalize(lightDataBuffer.m_lights[counter].m_position.xyz - vertexPos);
         float ndotl = dot(nnormal, -lightDir);
         float3 reflection = normalize(((2.0 * nnormal) * ndotl) - lightDir);
-        float rdotv = pow(saturate(dot(reflection, nviewdirection)), shininess);
+        float rdotv = pow(saturate(dot(reflection, nviewdirection)), materialConstants.shininess);
         if (ndotl > 0.0)
         {
-            color = color + (m_lights[counter].m_diffuse * ndotl * (cubeTextureColor * float4(diffuse.rgb, 1.0)));// + rdotv;
+            color = color + (lightDataBuffer.m_lights[counter].m_diffuse * ndotl * (cubeTextureColor * float4(materialConstants.diffuse.rgb, 1.0)));// + rdotv;
         }
     }
     

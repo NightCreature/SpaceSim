@@ -1,16 +1,14 @@
 #pragma once
+#include <source_location>
 
 class SourceInfo
 {
 public:
-    explicit SourceInfo() {}
-    SourceInfo(const char* file_name, size_t line_number) : m_fileName(file_name), m_lineNumber(line_number) 
-    {}
+    SourceInfo(const std::source_location& location = std::source_location::current()) : m_sourceInfo(location) {}
 
-    const std::string& getSourceFileName() const { return m_fileName; }
-    size_t getSourceFileLineNumber() const { return m_lineNumber; }
+    const std::string& getSourceFileName() const { return m_sourceInfo.file_name(); }
+    size_t getSourceFileLineNumber() const { return m_sourceInfo.line(); }
 
 private:
-    std::string m_fileName;
-    size_t m_lineNumber;
+    std::source_location m_sourceInfo;
 };

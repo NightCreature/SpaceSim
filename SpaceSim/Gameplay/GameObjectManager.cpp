@@ -21,7 +21,7 @@ GameObjectManager::~GameObjectManager(void)
 ///-------------------------------------------------------------------------
 void GameObjectManager::addGameObject( GameObject* model )
 {
-    m_gameObjects.insert( ModelPair(hashString(model->getName()), model) );
+    m_gameObjects.insert( ModelPair(Hashing::hashString(model->getName()), model) );
 }
 
 ///-------------------------------------------------------------------------
@@ -29,7 +29,7 @@ void GameObjectManager::addGameObject( GameObject* model )
 ///-------------------------------------------------------------------------
 void GameObjectManager::removeGameObject( GameObject* model )
 {
-    GameObjectMap::iterator gameObjectIt = m_gameObjects.find( hashString(model->getName()) );
+    GameObjectMap::iterator gameObjectIt = m_gameObjects.find(Hashing::hashString(model->getName()) );
     if (gameObjectIt != m_gameObjects.end())
     {
         m_gameObjects.erase(gameObjectIt);
@@ -41,7 +41,7 @@ void GameObjectManager::removeGameObject( GameObject* model )
 ///-------------------------------------------------------------------------
 const GameObject* GameObjectManager::getGameObject( const std::string& objectName ) const
 {
-    GameObjectMap::const_iterator gameObjectIt = m_gameObjects.find(hashString(objectName));
+    GameObjectMap::const_iterator gameObjectIt = m_gameObjects.find(Hashing::hashString(objectName));
     if (m_gameObjects.end() != gameObjectIt)
     {
         return gameObjectIt->second;
@@ -81,14 +81,14 @@ const std::vector<GameObject*> GameObjectManager::getGameObjectsThatDontContain(
     return returnValue;
 }
 
-void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime, const Input& input)
+void GameObjectManager::update(float elapsedTime, const Input& input)
 {
-    PROFILE_EVENT("GameObjectManagerUpdate", Red);
+    PROFILE_FUNCTION();
     for (auto gameObject : m_gameObjects)
     {
         if (gameObject.second != nullptr && !gameObject.second->IsInitialising())
         {
-            gameObject.second->update(renderList, elapsedTime, input);
+            gameObject.second->update(elapsedTime, input);
         }
     }
 }
@@ -98,6 +98,7 @@ void GameObjectManager::update(RenderInstanceTree& renderList, float elapsedTime
 ///-------------------------------------------------------------------------
 void GameObjectManager::handleMessage( const MessageSystem::Message& message )
 {
+    PROFILE_FUNCTION();
     UNUSEDPARAM(message);
     //std::for_each(m_gameObjects.begin(), m_gameObjects.end(), DispatchFunctor(message));
     if (MESSAGE_ID(CreatedRenderResourceMessage) == message.getMessageId())

@@ -41,7 +41,7 @@ class CreatedRenderResourceMessage : public Message
 public:
     struct CreatedRenderResource : public MessageData
     {
-        size_t m_gameObjectId;
+        size_t m_gameObjectId; //This is now entity ID
         size_t m_renderResourceHandle;
     };
 

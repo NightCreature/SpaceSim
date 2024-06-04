@@ -15,6 +15,10 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 
 #include "Loader/ResourceLoadRequests.h"
+#include <Graphics/Model/MeshHelperFunctions.h>
+#include "Loader/ResourceLoadJobs.h"
+
+#include "Core/Profiler/ProfilerMacros.h"
 
 
 namespace Face
@@ -22,12 +26,16 @@ namespace Face
 
 const size_t numberOfTexcoords = 1;
 
+
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-CreatedModel CreateFace(const CreationParams& params, Resource* resource)
+CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* currentJob, CommandList& commandList)
 { 
+    PROFILE_FUNCTION();
+    UNUSEDPARAM(currentJob);
+
     RenderResourceHelper renderResourceHelper(resource);
     const RenderResource& renderResource = renderResourceHelper.getResource();
     //const ShaderInstance& shaderInstance = *(params.shaderInstance);
@@ -44,13 +52,9 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     VertexBuffer& vb = group.GetVB();
     IndexBuffer& ib = group.GetIB();
 
-    std::vector<unsigned int> texCoordDimensions;
-    for (int texCoordCounter = 0; texCoordCounter < numberOfTexcoords; ++texCoordCounter)
-    {
-        texCoordDimensions.push_back(2);
-    }
 
-    size_t bufferSize = 0;
+
+
     size_t rows = params.nrVerticesInX;
     size_t columns = params.nrVerticesInY;
     //if ((params.height / corridorheight) > 1 && params.tesselate)
@@ -63,34 +67,18 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     //}
     size_t numberOfVerts = rows * columns;
     m_totalNumberOfVerts += numberOfVerts;
-    bufferSize += sizeof(float) * 3 * numberOfVerts;
-    bufferSize += sizeof(float) * 3 * numberOfVerts; //Normal
-    bufferSize += sizeof(float) * 3 * numberOfVerts; //Tangent
-    bufferSize += sizeof(float) * 2 * numberOfTexcoords * numberOfVerts;
-    byte* vertexData = new byte[bufferSize];
-    byte* startOfVertexArray = vertexData;
-    createVertexData(params, vertexData, face.boundingBox, corridorheight, corridorwidth, rows, columns);
 
-    //Move pointer to start of vertex array  
+    VertexDataStreams dataStreams = createVertexData(params, face.boundingBox, corridorheight, corridorwidth, rows, columns);
 
-    VertexDeclarationDescriptor vertexDesc;
-    vertexDesc.position = 3;
-    vertexDesc.normal = true;
-    vertexDesc.tangent = true;
-    vertexDesc.textureCoordinateDimensions = texCoordDimensions;
-
-    if (params.m_commandList != nullptr)
+    MeshResourceIndices& resourceIndices = group.GetResourceInices();
+    if (!dataStreams.m_streams.empty())
     {
-        vb.Create(renderResource.getDeviceManager(), *params.m_commandList, bufferSize, startOfVertexArray, vertexDesc.GetVertexStride());
+        resourceIndices = vb.CreateBuffer(renderResource.getDeviceManager(), commandList, renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap(), dataStreams);
     }
     else
     {
         //Print message
     }
-
-    delete[] startOfVertexArray; //cleanup
-    vertexData = nullptr;
-    startOfVertexArray = nullptr;
 
     size_t numberOfIndecis = (rows - 1) * (columns - 1) * 6;
     ib.setNumberOfIndecis(static_cast<unsigned int>(numberOfIndecis));
@@ -98,7 +86,7 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     unsigned int* startOfIndexData = indecis;
     createIndexData(indecis, params.changeWindingOrder, rows, columns);
 
-    ib.Create(renderResource.getDeviceManager(), *params.m_commandList, static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData);
+    ib.Create(renderResource.getDeviceManager(), commandList, static_cast<unsigned int>(numberOfIndecis) * sizeof(unsigned int), (void*)startOfIndexData);
     delete[] startOfIndexData; //cleanup
     indecis = nullptr;
     startOfIndexData = nullptr;
@@ -116,21 +104,69 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
     {
         if (!strICmp(params.m_materialParameters.m_textureNames[counter], ""))
         {
-            mat.addTextureReference(Material::TextureSlotMapping(hashString(getTextureNameFromFileName(params.m_materialParameters.m_textureNames[counter])), static_cast<Material::TextureSlotMapping::TextureSlot>(counter)));
-            LoadRequest loadRequest;
-            loadRequest.m_gameObjectId = 0;
-            loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-            loadRequest.m_loadData = static_cast<void*>(new char[256]);
-            memcpy(loadRequest.m_loadData, params.m_materialParameters.m_textureNames[counter], 256);
-            renderResourceHelper.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
+            mat.addTextureReference(Material::TextureSlotMapping(Hashing::hashString(getTextureNameFromFileName(params.m_materialParameters.m_textureNames[counter])), static_cast<Material::TextureSlotMapping::TextureSlot>(counter)));
+            //LoadRequest loadRequest;
+            //loadRequest.m_gameObjectId = 0;
+            //loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
+            //loadRequest.m_loadData = static_cast<void*>(new char[256]);
+            //memcpy(loadRequest.m_loadData, params.m_materialParameters.m_textureNames[counter], 256);
+            //renderResourceHelper.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
+            //LoadTextureJob* textureJob = new LoadTextureJob(resource, 0, 0, params.m_materialParameters.m_textureNames[counter]);
+
+            //This might need to be a function
+            std::string inputTextureName = params.m_materialParameters.m_textureNames[counter];
+            auto loadTextureLambda = [inputTextureName](ThreadContext* context)
+            {
+                PROFILE_TAG("Load Texture lambda");
+
+                if (inputTextureName.empty())
+                    return true;
+
+                RenderResource renderResource = RenderResourceHelper(context->m_renderResource).getWriteableResource();
+
+                CommandList commandList;
+                CommandQueue* commandQueue = nullptr;
+                bool retVal = renderResource.getResourceLoader().GetCommandListHandleForThreadIndex(context->m_threadIndex, commandList, commandQueue);
+                if (retVal)
+                {
+                    //Extract filename if file name contains a path as well, this is not always true need to deal with relative paths here too
+                    std::string textureName = getTextureNameFromFileName(inputTextureName);
+
+                    TextureManager& texManager = renderResource.getTextureManager();
+
+                    auto info = texManager.AddOrCreateTexture(textureName);
+                    if (info.m_heapIndex == DescriptorHeap::invalidDescriptorIndex && info.m_loadRequested == false && !info.m_texture.IsValid())
+                    {
+                        info.m_loadRequested = true;
+                        Texture12 texture;
+                        size_t descriptorIndex = DescriptorHeap::invalidDescriptorIndex;
+                        if (!texture.loadTextureFromFile(renderResource.getDeviceManager(), commandList, *commandQueue, inputTextureName, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap().GetCPUDescriptorHandle(descriptorIndex)))
+                        {
+                            MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s on thread: %d", inputTextureName.c_str(), context->m_threadIndex);
+                            return true;
+                        }
+
+                        texManager.addTexture(textureName, texture, descriptorIndex);
+                    } 
+
+                    renderResource.getResourceLoader().ReturnCommandListForThreadIndex(context->m_threadIndex);
+                }
+
+                return retVal;
+            };
+
+            renderResourceHelper.getWriteableResource().getJobQueue().AddFunctionJob(loadTextureLambda);
         }
     }
     mat.Prepare(renderResourceHelper.getResource().getEffectCache());
     
-    for (auto& shaderParam : mat.GetShaderParameters())
-    {
-        group.CreateConstantBuffer(GetVariantSize(shaderParam.m_data.index()), shaderParam.m_rootParamIndex, renderResourceHelper.getWriteableResource().getDeviceManager(), renderResourceHelper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap());
-    }
+    //we dont need this anymore this should be replaced with setting up the indices for the constatns
+    //Dit werkt niet want textures zijn nog niet geladen
+    ModelHelperFunctions::AssignTextureIndices(renderResource, mat.getTextureHashes(), resourceIndices);
+    ModelHelperFunctions::CreateConstantBuffers(resourceIndices, &group, renderResourceHelper.getWriteableResource());
+
+    ModelHelperFunctions::AssignPerSceneIndices(renderResource, resourceIndices);
+
     group.SetName(params.m_name);
     face.model->CalculateSortKey(renderResource.getEffectCache());
     return face;
@@ -140,10 +176,25 @@ CreatedModel CreateFace(const CreationParams& params, Resource* resource)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns)
+VertexDataStreams createVertexData(const CreationParams& params, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns)
 {
+    PROFILE_FUNCTION();
+
+    VertexDeclarationDescriptor vertexDesc;
+    vertexDesc.position = 3;
+    vertexDesc.normal = true;
+    vertexDesc.tangent = true;
+    std::vector<unsigned int> texCoordDimensions;
+    for (size_t texCoordCounter = 0; texCoordCounter < numberOfTexcoords; ++texCoordCounter)
+    {
+        texCoordDimensions.push_back(2);
+    }
+    vertexDesc.textureCoordinateDimensions = texCoordDimensions;
+
+    VertexDataStreams dataStreams = CreateDataStreams(vertexDesc);
+
     if (0 == rows || 0 == columns)
-        return;
+        return dataStreams;
     float heightpart = params.height / ((float)rows - 1);
     if ((params.height / corridorHeight) > 1 && params.tesselate)
     {
@@ -188,11 +239,14 @@ void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbo
         tangent = -tangent;
     }
 
-
+    std::vector<Vector3>& positions = std::get<2>(dataStreams.m_streams[VertexStreamType::Position]);
+    std::vector<Vector3>& normals = std::get<2>(dataStreams.m_streams[VertexStreamType::Normal]);
+    std::vector<Vector3>& tangents = std::get<2>(dataStreams.m_streams[VertexStreamType::Tangent]);
+    size_t uvStart = static_cast<std::underlying_type_t<VertexStreamType>>(VertexStreamType::UVStart);
     Vector2 texcoord;
-    for (int i = 0; i < rows; i++)
+    for (size_t i = 0; i < rows; i++)
     {
-        for (int j = 0; j < columns; j++)
+        for (size_t j = 0; j < columns; j++)
         {
             if (params.fillx)
                 v = Vector3(params.fillvalue, i * heightpart, j * widthpart);
@@ -200,19 +254,11 @@ void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbo
                 v = Vector3(i * heightpart, params.fillvalue, j * widthpart);
             if (params.fillz)
                 v = Vector3(i * heightpart, j * widthpart, params.fillvalue);
-            *(float*)vertexData = v.x(); vertexData += sizeof(float);
-            *(float*)vertexData = v.y(); vertexData += sizeof(float);
-            *(float*)vertexData = v.z(); vertexData += sizeof(float);
-
+            positions.push_back(v);
             boundingBox.enclose(v);
 
-            *(float*)vertexData = normal.x(); vertexData += sizeof(float);
-            *(float*)vertexData = normal.y(); vertexData += sizeof(float);
-            *(float*)vertexData = normal.z(); vertexData += sizeof(float);
-
-            *(float*)vertexData = tangent.x(); vertexData += sizeof(float);
-            *(float*)vertexData = tangent.y(); vertexData += sizeof(float);
-            *(float*)vertexData = tangent.z(); vertexData += sizeof(float);
+            normals.push_back(normal);
+            tangents.push_back(tangent);
 
             float uPart = 1 / (float)(columns - 1); //Minus one as index start at zero still want one at maxEle - 1
             float vPart = 1 / (float)(rows - 1);
@@ -221,21 +267,23 @@ void Face::createVertexData(const CreationParams& params, byte*& vertexData, Bbo
             if ((params.height / corridorHeight) > 1 && params.tesselate)
                 vPart = vPart * (params.height / corridorHeight);
             texcoord = Vector2(j * uPart, i * vPart);
-            for (int k = 0; k < numberOfTexcoords; k++)
+            for (size_t k = 0; k < numberOfTexcoords; k++)
             {
-                *(float*)vertexData = 1.0f - texcoord.x(); vertexData += sizeof(float);
-                *(float*)vertexData = 1.0f - texcoord.y(); vertexData += sizeof(float);
+                std::vector<Vector2>& uvStream = std::get<1>(dataStreams.m_streams[static_cast<VertexStreamType>(uvStart + k)]);
+                uvStream.push_back(Vector2(1.0f - texcoord.x(), 1.0f - texcoord.y()));
             }
         }
     }
+    return dataStreams;
 }
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void Face::createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns)
+void createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns)
 {
+    PROFILE_FUNCTION();
     unsigned int nrcolumns = static_cast<unsigned int>(columns);
     for (unsigned int i = 0; i < static_cast<unsigned int>(rows - 1); i++)
     {

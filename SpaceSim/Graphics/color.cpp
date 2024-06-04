@@ -1,8 +1,6 @@
 #include "Graphics/color.h"
 #include "Core/tinyxml2.h"
 
-
-
 Color::Color()
 {
     m_rgba[0] = 0.0f;
@@ -28,6 +26,14 @@ Color::Color(float r, float g, float b, float a)
 }
 
 Color::Color(const float rgba[4])
+{
+    m_rgba[0] = rgba[0];
+    m_rgba[1] = rgba[1];
+    m_rgba[2] = rgba[2];
+    m_rgba[3] = rgba[3];
+}
+
+Color::Color(const std::array<float, 4>& rgba)
 {
     m_rgba[0] = rgba[0];
     m_rgba[1] = rgba[1];

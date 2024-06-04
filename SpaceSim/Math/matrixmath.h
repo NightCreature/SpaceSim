@@ -23,11 +23,12 @@ namespace math
     inline Matrix44 createLeftHandedFOVPerspectiveMatrix(float fieldOfViewY, float aspectRatio, float znearPlane, float zfarPlane)
     {
         float height = 1.0f / tan(fieldOfViewY/2);
-        float width =  height / aspectRatio;
-        return Matrix44(width, 0.0f, 0.0f, 0.0f,
-                        0.0f,  height, 0.0f, 0.0f,
-                        0.0f, 0.0f, zfarPlane/(zfarPlane-znearPlane), 1.0f,
-                        0.0f, 0.0f, -znearPlane*zfarPlane/(zfarPlane-znearPlane), 0.0f);
+		float width = height / aspectRatio;
+		float range = zfarPlane / (zfarPlane - znearPlane);
+		return Matrix44(width, 0.0f, 0.0f, 0.0f,
+						0.0f, height, 0.0f, 0.0f,
+						0.0f, 0.0f, range, 1.0f,
+						0.0f, 0.0f, -znearPlane * range, 0.0f);
     }
 
 	inline Matrix44 createOrthoGraphicProjection(float width, float height, float zNear, float zFar)

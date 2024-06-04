@@ -1,0 +1,15 @@
+<states>
+	<Screen name="title_screen">
+		<navigation>
+			item_0 item_1
+			item_0 item_2
+		</navigation>
+		<Item name="item_0">
+			<AnimateBehaviour />
+			<SelectObject object="button" />
+			<StaticText text="localisation_id" />
+		</Item>
+	</Screen>
+
+	<Screen name="press_start" />
+</states>

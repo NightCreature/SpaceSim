@@ -1,4 +1,5 @@
 <xml>
+    <VertexDeclaration positions="3" normal="true" nrTextureCoords="2" />
   <!--Left side of switch ccw so position normal texcoord is the format here-->
   <MeshFace primitives="4">
     <MeshVertex>

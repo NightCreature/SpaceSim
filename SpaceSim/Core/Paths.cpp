@@ -13,4 +13,6 @@ Paths::Paths()
     m_effectshaderpath = m_path / "Shaders";
     m_scenesPath = m_path / "Scenes";
     m_settingsPath = m_path / "Settings";
+    m_FEPath = m_path / "FE";
+    m_tempPath = m_path / "Temp";
 }
