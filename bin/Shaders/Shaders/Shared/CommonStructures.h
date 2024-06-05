@@ -38,7 +38,7 @@ struct MaterialConstants
         , diffuse({ 1.0f, 1.0f, 1.0f, 1.0f })
         , specular({ 1.0f, 1.0f, 1.0f, 1.0f })
         , emissive({ 0.0f, 0.0f, 0.0f, 1.0f })
-        , shininess(1.0f)
+        , shininess(100.0f)
     {
     }
 #endif
