@@ -45,6 +45,7 @@ class RenderInstance;
 
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Logger Application::m_logger;
+
 constexpr size_t numOfJobsToSpawn = 16;
 
 class TestSerialise

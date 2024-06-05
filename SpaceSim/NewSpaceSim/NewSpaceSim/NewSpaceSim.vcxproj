@@ -457,6 +457,8 @@
     <ClInclude Include="..\..\Application\displaywindow.h" />
     <ClInclude Include="..\..\Application\GameWindow.h" />
     <ClInclude Include="..\..\Application\UpdateThread.h" />
+    <ClInclude Include="..\..\Core\CommandLine\CommandLine.h" />
+    <ClInclude Include="..\..\Core\CommandLine\CommandToken.h" />
     <ClInclude Include="..\..\Core\ConstructionFactory.h" />
     <ClInclude Include="..\..\Core\FileSystem\File.h" />
     <ClInclude Include="..\..\Core\FileSystem\FileSystem.h" />
@@ -718,6 +720,7 @@
     <ClCompile Include="..\..\Application\displaywindow.cpp" />
     <ClCompile Include="..\..\Application\GameWindow.cpp" />
     <ClCompile Include="..\..\Application\UpdateThread.cpp" />
+    <ClCompile Include="..\..\Core\CommandLine\CommandLine.cpp" />
     <ClCompile Include="..\..\Core\ConstructionFactory.cpp" />
     <ClCompile Include="..\..\Core\FileSystem\FileSystem.cpp" />
     <ClCompile Include="..\..\Core\FileSystem\Platform\Win\FileWin.cpp" />

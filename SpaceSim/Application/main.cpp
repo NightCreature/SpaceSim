@@ -62,6 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     //turn on profiling
 
     Application application = Application();
+    application.SetCommandLine(szCmdLine);
     auto applicationPath = application.GetPaths().getPath();
     MicroProfileSetEnableAllGroups(true);
     MicroProfileSetForceMetaCounters(true);
@@ -72,6 +73,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 
         printf("open localhost:1338 in chrome to capture profile data\n");
         printf("press ctrl-c to quit\n");
+
+        MSG_TRACE_CHANNEL_FMT("Main", "commandline is: {}", szCmdLine);
 
         application.mainGameLoop();
 

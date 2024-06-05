@@ -29,6 +29,7 @@
 
 #include "Logging/Logger.h"
 #include "Core/FileSystem/FileSystem.h"
+#include "Core/CommandLine/CommandLine.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -61,6 +62,7 @@ public:
     JobSystem* GetJobSystem() { return &m_jobSystem; }
 
     const Paths& GetPaths() const { return m_paths; }
+    void SetCommandLine(const std::string& commandLine) { m_commandLine = commandLine; }
 private:
     JobSystem m_jobSystem;
     EntityManager      m_entityManager;
@@ -87,6 +89,7 @@ private:
 
     UpdateThread m_UpdateThread;
     MessageSystem::MessageQueues m_messageQueues;
+    CommandLine m_commandLine;
     //ModelComponentManger m_modelManager;
 public:
     static Logger m_logger;
