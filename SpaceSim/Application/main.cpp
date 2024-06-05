@@ -32,31 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 //	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 //#endif
 
-    //SpatialHashMap<int> map;
-    //map.Initialise(100, Vector2i64(-100), Vector2i64(100));
-
-
-    //const uint64 hashValue1 = SipHash::hashString("Hello World!!!", 14);
-    //const uint64 hashValue2 = SipHash::hashString("Hello World!!!!", 15); //same as above probably shouldn't be
-
-    //const uint64 hashValue3 = SipHash::hashString("1234567890asdfe", 15);
-
-    //ECS::RegisterComponents();
-
-    UNUSEDPARAM(hInstance);
-    UNUSEDPARAM(hPrevInstance);
-    UNUSEDPARAM(szCmdLine);
-    UNUSEDPARAM(iCmdShow);
-
-
-
     MicroProfileOnThreadCreate("Main");
-
-    //HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-    //if (FAILED(hr))
-    //{
-    //    MSG_TRACE_CHANNEL("COM ERROR", "Failed to make COM act in a multithreaded fashion");
-    //}
 
     OPTICK_START_CAPTURE();
     //turn on profiling
@@ -68,14 +44,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     MicroProfileSetForceMetaCounters(true);
     if( application.initialise() ) //Need to take the path manager from shader engine
     {
-        size_t hash = "default"_hash;
-        MSG_TRACE("default hased is: %x", hash);
-
-        printf("open localhost:1338 in chrome to capture profile data\n");
-        printf("press ctrl-c to quit\n");
-
-        MSG_TRACE_CHANNEL_FMT("Main", "commandline is: {}", szCmdLine);
-
         application.mainGameLoop();
 
         application.cleanup();

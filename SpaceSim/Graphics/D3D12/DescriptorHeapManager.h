@@ -46,6 +46,7 @@ public:
     void CreateHeaps();
     DescriptorHeap& GetSRVCBVUAVHeap() { return m_descriptorHeaps[0]; }
     DescriptorHeap& GetSamplerHeap() { return m_descriptorHeaps[1]; }
+    DescriptorHeap& GetImguiHeap() { return m_descriptorHeaps[2]; }
 
     DescriptorHeap& GetShaderVisibleHeap() { return m_shaderVisibleHeap; }
 

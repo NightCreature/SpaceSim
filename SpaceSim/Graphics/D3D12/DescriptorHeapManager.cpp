@@ -53,6 +53,7 @@ void DescriptorHeapManager::CreateHeaps()
     PROFILE_FUNCTION();
     CreateDescriptorHeap(65536, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true, true);
     CreateDescriptorHeap(256, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, true, false);
+    CreateDescriptorHeap(65536, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true, true);
 }
 
 ///-----------------------------------------------------------------------------

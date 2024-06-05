@@ -85,7 +85,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ExternalIncludePath>$(SolutionDir)..\..\SDK\GoogleTest\googletest\include;$(SolutionDir)..\..\SDK\GoogleTest\googletest\;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\optick\src;$(SolutionDir)..\;$(SolutionDir)..\..\SDK\fmt\include\;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)..\..\SDK\GoogleTest\googletest\include;$(SolutionDir)..\..\SDK\GoogleTest\googletest\;$(SolutionDir)..\..\SDK\microprofile;$(SolutionDir)..\..\SDK\optick\src;$(SolutionDir)..\;$(SolutionDir)..\..\SDK\fmt\include\;$(SolutionDir)..\..\SDK\imgui\;$(SolutionDir)..\..\SDK\imgui\backends\;$(ExternalIncludePath)</ExternalIncludePath>
     <OutDir>$(SolutionDir)..\..\bin\</OutDir>
     <TargetName>SpaceSimTestsD</TargetName>
     <LibraryPath>$(SolutionDir)..\..\bin;$(SolutionDir)..\..\SDK\DirectXCompiler\lib\x64;$(SolutionDir)..\..\SDK\Optick\lib\x64\debug;$(SolutionDir)..\..\SDK\Assimp\build\x64\lib\Debug;$(SolutionDir)..\..\SDK\JSON\nlohmann\;$(SolutionDir)..\..\SDK\DirectXTK12\Bin\Windows10_2019\x64\Debug;$(SolutionDir)..\..\SDK\VLD\lib\Win64;$(SolutionDir)..\..\SDK\PhysX5\physx\bin\win.x86_64.vc142.mt\debug;$(SolutionDir)..\..\SDK\WinPixEventRuntime\bin\x64;E:\SDK\optick-master\bin\vs2019\x64\Release;$(SolutionDir)..\..\SDK\fmt\Debug;$(LibraryPath)</LibraryPath>
