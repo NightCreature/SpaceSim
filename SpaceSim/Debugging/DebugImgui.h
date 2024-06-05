@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Graphics/D3D12/DescriptorHeapManager.h"
+
 #include <vector>
 #include <functional>
 
@@ -35,5 +37,6 @@ private:
 
     std::vector<ImguiData> m_imguiCallbacks;
     Resource* m_resource = nullptr;
+    DescriptorHeap m_heap;
 
 };

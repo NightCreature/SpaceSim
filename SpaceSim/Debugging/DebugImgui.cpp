@@ -33,11 +33,11 @@ void DebugImgui::Init(Resource* resource)
     ImGui_ImplWin32_Init(renderResource.getGameWindow().getWindowHandle());
 
     DescriptorHeapManager& heapManager = renderResource.getDescriptorHeapManager();
-    DescriptorHeap& imguiHeap = heapManager.GetImguiHeap();
+    m_heap = heapManager.CreateDescriptorHeap(65536, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true, true);
     ImGui_ImplDX12_Init(renderResource.getDeviceManager().GetDevice(), 3,
-        DXGI_FORMAT_R8G8B8A8_UNORM, imguiHeap.m_heap,
-        imguiHeap.m_heap->GetCPUDescriptorHandleForHeapStart(),
-        imguiHeap.m_heap->GetGPUDescriptorHandleForHeapStart());
+        DXGI_FORMAT_R8G8B8A8_UNORM, m_heap.m_heap,
+        m_heap.m_heap->GetCPUDescriptorHandleForHeapStart(),
+        m_heap.m_heap->GetGPUDescriptorHandleForHeapStart());
 }
 
 void DebugImgui::Update(const Input& input)
@@ -61,11 +61,7 @@ void DebugImgui::Render(CommandList& list)
 {
     ImGui::Render();
 
-    RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
-    DescriptorHeapManager& heapManager = renderResource.getDescriptorHeapManager();
-    DescriptorHeap& imguiHeap = heapManager.GetImguiHeap();
-
-    list.m_list->SetDescriptorHeaps(1, &imguiHeap.m_heap);
+    list.m_list->SetDescriptorHeaps(1, &m_heap.m_heap);
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), list.m_list);
 }
 
