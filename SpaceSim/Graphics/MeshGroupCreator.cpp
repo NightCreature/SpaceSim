@@ -1,10 +1,13 @@
 #include "Graphics/MeshGroupCreator.h"
+
 #include "Graphics/EffectCache.h"
+#include "Graphics/Model/MeshHelperFunctions.h"
 #include "Graphics/ShaderCache.h"
 #include "Graphics/Texture.h"
 #include "Graphics/texturemanager.h"
 
 #include "assert.h"
+#include <span>
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
@@ -19,58 +22,8 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     VertexBuffer& vb = meshGroup.meshGroup->GetVB();
     IndexBuffer& ib = meshGroup.meshGroup->GetIB();
 
-    unsigned int m_nummultitexcoords = 1; //HACK FIX THIS
-    unsigned int bufferSize = 0;
-    bufferSize += sizeof(float) * 3 * (unsigned int)params.m_vertices.size();
-    bufferSize += sizeof(float) * 3 * (unsigned int)params.m_normals.size();
-    bufferSize += sizeof(float) * 2 * m_nummultitexcoords * (unsigned int)params.m_vertices.size();//(unsigned int)params.m_texcoords[0].size();
-    char* vertexData = new char[bufferSize];
-    for (unsigned int counter = 0; counter < params.m_vertices.size(); ++counter)
-    {
-        *(float*)vertexData = params.m_vertices[counter].x(); vertexData += sizeof(float);
-        *(float*)vertexData = params.m_vertices[counter].y(); vertexData += sizeof(float);
-        *(float*)vertexData = params.m_vertices[counter].z(); vertexData += sizeof(float);
-        *(float*)vertexData = params.m_normals[counter].x(); vertexData += sizeof(float);
-        *(float*)vertexData = params.m_normals[counter].y(); vertexData += sizeof(float);
-        *(float*)vertexData = params.m_normals[counter].z(); vertexData += sizeof(float);
-        for (unsigned int texCoordCounter = 0; texCoordCounter < m_nummultitexcoords; ++texCoordCounter)
-        {
-            if (params.m_texcoords.size() > 0)
-            {
-                const TexCoords& texCoords = params.m_texcoords[texCoordCounter];
-                if (texCoords.size() > 0)
-                {
-                    *(float*)vertexData = texCoords[counter].x(); vertexData += sizeof(float);
-                    *(float*)vertexData = texCoords[counter].y(); vertexData += sizeof(float);
-                }
-                else
-                {
-
-                    *(float*)vertexData = 0.0f; vertexData += sizeof(float);
-                    *(float*)vertexData = 0.0f; vertexData += sizeof(float);
-                }
-            }
-            else
-            {
-
-                *(float*)vertexData = 0.0f; vertexData += sizeof(float);
-                *(float*)vertexData = 0.0f; vertexData += sizeof(float);
-            }
-        }
-
-        meshGroup.boundingBox.enclose(params.m_vertices[counter]);
-    }
-    std::vector<unsigned int> texCoordDimensions;
-    for (unsigned int texCoordCounter = 0; texCoordCounter < m_nummultitexcoords; ++texCoordCounter)
-    {
-        texCoordDimensions.push_back(2);
-    }
-    vertexData = vertexData - bufferSize;
-
-    
-    vb.Create(renderResource.getDeviceManager(), *params.m_commandList, bufferSize, vertexData, params.m_vertexDeclaration.GetVertexStride());
-    //vb->createBufferAndLayoutElements(, bufferSize, vertexData, false, params.m_vertexDeclaration, shader->getShaderBlob());
-    delete[] vertexData;
+    MeshResourceIndices& resourceIndices = meshGroup.meshGroup->GetResourceInices();
+    resourceIndices = vb.CreateBuffer(renderResource.getDeviceManager(), *params.m_commandList, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap(), params.m_dataStream);
 
     ib.setNumberOfIndecis((unsigned int)params.m_indices.size());
     ib.Create(renderResource.getDeviceManager(), *params.m_commandList, (unsigned int)params.m_indices.size() * sizeof(unsigned int), (void*)&params.m_indices[0]);
@@ -79,17 +32,16 @@ CreatedMeshGroup MeshGroupCreator::CreateMeshGroup(const CreationParams& params)
     //Add a binding to the shadow map
     //shaderInstance.AddPsSRV(m_shadowMapRenderer->getShadowMap());
 
-    for (auto& shaderParam : params.mat.GetShaderParameters())
-    {
-        meshGroup.meshGroup->CreateConstantBuffer(GetVariantSize(shaderParam.m_data.index()), shaderParam.m_rootParamIndex, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap());
-    }
+    //Setup material and constant indices
+    ModelHelperFunctions::AssignTextureIndices(renderResource, params.mat.getTextureHashes(), resourceIndices);
+    ModelHelperFunctions::CreateConstantBuffers(resourceIndices, meshGroup.meshGroup, renderResource);
 
     return meshGroup;
 }
 
 void MeshGroupCreator::normalizeNormals(std::vector<Vector3>& normals)
 {
-    for (int i = 0; i < normals.size(); i++)
+    for (size_t i = 0; i < normals.size(); i++)
     {
         normals[i].normalize();
     }

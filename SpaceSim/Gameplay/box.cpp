@@ -34,216 +34,77 @@ CreatedModel CreateBox(const CreationParams& params)
             texCoordDim.push_back(2);
         }
 
-        unsigned int numberOfBytes = 6 * 4 * (3 + (params.m_gentexcoords ? 2 : 0)) * sizeof(float);
-        char* data = new char[numberOfBytes]; //4 points with position and two 2D textureCoordinates * 6 faces for a box
-        char* startOfData = data;
-        //Front face
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        constexpr static size_t nrSides = 6;
+        constexpr static size_t nrVertsPerSide = 4;
+
+        VertexDeclarationDescriptor descriptor;
         if (params.m_gentexcoords)
         {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
+            descriptor.textureCoordinateDimensions.push_back(2);
         }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
+        VertexDataStreams dataStreams = CreateDataStreams(descriptor);
+
+        auto& positionStream = std::get<2>(dataStreams.m_streams[VertexStreamType::Position]); //Position stream
+        positionStream.reserve(nrSides * nrVertsPerSide);
+
+        const Vector3& upperRight = params.m_upperright;
+        const Vector3& lowerLeft = params.m_lowerleft;
+
+        //Front Face
+        positionStream.push_back(lowerLeft);
+        positionStream.push_back(Vector3(upperRight.x(), lowerLeft.y(), lowerLeft.z()));
+        positionStream.push_back(Vector3(upperRight.x(), upperRight.y(), lowerLeft.z()));
+        positionStream.push_back(Vector3(lowerLeft.x(), upperRight.y(), lowerLeft.z()));
+
         //Back face
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
+        positionStream.push_back(Vector3(lowerLeft.x(), lowerLeft.y(), upperRight.z()));
+        positionStream.push_back(Vector3(upperRight.x(), lowerLeft.y(), upperRight.z()));
+        positionStream.push_back(upperRight);
+        positionStream.push_back(Vector3(lowerLeft.x(), upperRight.y(), upperRight.z()));
+
         //Left face
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
+        positionStream.push_back(lowerLeft);
+        positionStream.push_back(Vector3(lowerLeft.x(), lowerLeft.y(), upperRight.z()));
+        positionStream.push_back(Vector3(lowerLeft.x(), upperRight.y(), upperRight.z()));
+        positionStream.push_back(Vector3(lowerLeft.x(), upperRight.y(), lowerLeft.z()));
+
         //Right face
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
-        //	//Top face
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_upperright.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
+        positionStream.push_back(Vector3(upperRight.x(), lowerLeft.y(), lowerLeft.z()));
+        positionStream.push_back(Vector3(upperRight.x(), lowerLeft.y(), upperRight.z()));
+        positionStream.push_back(upperRight);
+        positionStream.push_back(Vector3(upperRight.x(), upperRight.y(), lowerLeft.z()));
+
+        //Top face
+        positionStream.push_back(Vector3(lowerLeft.x(), upperRight.y(), lowerLeft.z()));
+        positionStream.push_back(Vector3(upperRight.x(), upperRight.y(), lowerLeft.z()));
+        positionStream.push_back(upperRight);
+        positionStream.push_back(Vector3(lowerLeft.x(), upperRight.y(), upperRight.z()));
+
         //Bottom face
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
+        positionStream.push_back(lowerLeft);
+        positionStream.push_back(Vector3(upperRight.x(), lowerLeft.y(), lowerLeft.z()));
+        positionStream.push_back(Vector3(upperRight.x(), lowerLeft.y(), upperRight.z()));
+        positionStream.push_back(Vector3(lowerLeft.x(), lowerLeft.y(), upperRight.z()));
+
         if (params.m_gentexcoords)
         {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 0.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_upperright.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 1.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
-        }
-        *(float*)data = params.m_lowerleft.x(); data += sizeof(float);
-        *(float*)data = params.m_lowerleft.y(); data += sizeof(float);
-        *(float*)data = params.m_upperright.z(); data += sizeof(float);
-        if (params.m_gentexcoords)
-        {
-            *(float*)data = 0.0f; data += sizeof(float);
-            *(float*)data = 1.0f; data += sizeof(float);
+            auto& uvStream = std::get<1>(dataStreams.m_streams[VertexStreamType::UVStart]);
+            uvStream.reserve(nrSides * nrVertsPerSide);
+            for (size_t counter = 0; counter < nrSides; ++counter)
+            {
+                uvStream.push_back(Vector2(0.0f, 0.0f));
+                uvStream.push_back(Vector2(1.0f, 0.0f));
+                uvStream.push_back(Vector2(1.0f, 1.0f));
+                uvStream.push_back(Vector2(0.0f, 1.0f));
+            }
         }
 
         VertexDeclarationDescriptor vertexDesc;
         vertexDesc.textureCoordinateDimensions = texCoordDim;
 
-        vb->Create(renderResource.getDeviceManager(), *params.m_commandList, numberOfBytes, (void*)startOfData, vertexDesc.GetVertexStride());
-        delete[] startOfData;
-        data = nullptr;
-        startOfData = nullptr;
-        unsigned int indexData[] =
+        vb->CreateBuffer(renderResource.getDeviceManager(), *params.m_commandList, renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap(), dataStreams);
+
+        constexpr unsigned int indexData[] =
         {
             0, 1, 2, 2, 3, 0, //FF
             4, 5, 6, 6, 7, 4, //BF

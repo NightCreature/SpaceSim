@@ -10,12 +10,12 @@ void NodeGraph::PinDefinition::Deserialise(const tinyxml2::XMLElement& pinDefini
 {
     for (auto attribute = pinDefinition.FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
     {
-        switch (hashString(attribute->Name()))
+        switch (Hashing::hashString(attribute->Name()))
         {
         case "type"_hash:
         {
             auto typeValue = attribute->IntValue();
-            if (0 < typeValue && typeValue < static_cast<unsigned int>(Type::Count))
+            if (0 < typeValue && typeValue < static_cast<int>(Type::Count))
             {
                 m_type = static_cast<Type>(typeValue);
             }

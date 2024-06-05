@@ -1,0 +1,9 @@
+<flow>
+    <node id="1" state="title_screen">
+        <transition id="next" target="press_start"/>
+    </node>
+
+    <node id="press_start" state="press_start" >
+        <transition id="back" target="1"/>
+    </node>
+</flow>

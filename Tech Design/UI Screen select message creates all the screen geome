@@ -1,0 +1,10 @@
+Screen select message creates all the screen geometry and sends a render id, game id thign back
+The items in teh screen can grab this id and send messags to that screen element it can then dispatch where these have to go, with a translation table in that object so you can bind custom art work
+
+Problem is still how do we know which structure we could sen mesages too because we have to constuct grids for which the items have been define on the logical side. Maybe the screen construct sends back a small structure of how things are layed out, this will be needed for the navigation of items which has to determine how many items to create in the stackers. 
+-So screen item will hold list of navigation stackers to send sizing messages to.
+	-validation happens on logical side so we send the correct things, if we have agird on logical side we expect a grid on the other side
+
+We have to wait for this render side object to exist, mightneed to use fixed names like row columns, this gets a bit shittier for free flow navigation if we ever do this.
+
+Screen selects a type of screen to create, the render side then consturcts the render objects and we can interact with that. This makes it so you can bind different art works too it.

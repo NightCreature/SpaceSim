@@ -45,15 +45,13 @@ public:
     virtual ~GameObject(void) 
     {
     }
-    virtual const ShaderInstance deserialise( const tinyxml2::XMLElement* node ) = 0;
-    virtual void initialise(const ShaderInstance& shaderInstance) 
+    virtual void deserialise( const tinyxml2::XMLElement* node ) = 0;
+    virtual void initialise() 
     {
-        UNUSEDPARAM(shaderInstance); 
     }
     //virtual void deserialise(const tinyxml2::XMLElement* xmlNode) = 0;
-    virtual void update(RenderInstanceTree& renderInstances,  float elapsedTime, const Input& input) 
+    virtual void update(float elapsedTime, const Input& input) 
     {
-        UNUSEDPARAM(renderInstances);
         UNUSEDPARAM(elapsedTime);
         UNUSEDPARAM(input);
 
@@ -68,7 +66,7 @@ public:
     bool getActive() const {return m_active;}
     void setActive(bool active) {m_active = active;}
 
-    const std::string& getName() const { if (m_nameHash == 0) { hashString(m_name); } return m_name; }
+    const std::string& getName() const { if (m_nameHash == 0) { Hashing::hashString(m_name); } return m_name; }
     const Resource& getResource() const { return *m_resource; }
 
     bool collision(const Bbox& bbox, const Vector3& dir)
@@ -90,7 +88,7 @@ public:
 
     //void setMaterial(const Material& mat) { m_drawableObject ? m_drawableObject->getRenderInstance()->getShaderInstance().setMaterial(getResource().getDeviceManager(), mat) : MSG_TRACE_CHANNEL("MODEL", "Trying to set the material on shape without a drawable object" ) assert(m_drawableObject); }
     //const Material* getMaterial() const { return m_drawableObject ? &m_drawableObject->getRenderInstance()->getShaderInstance().getMaterial() : 0; }
-    const Bbox& getBbox() const {return Bbox();}
+    const Bbox getBbox() const {return Bbox();}
     Matrix44 getWorld() {return m_world;}
     void setWorld(const Matrix44& m) {m_worldhaschanged = true; m_world = m;}
 
@@ -109,4 +107,5 @@ protected:
     bool m_active;
     bool m_worldhaschanged;
     bool m_initialisationDone;
+    bool m_changed = false;
 };

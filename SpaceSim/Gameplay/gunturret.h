@@ -22,17 +22,17 @@ public:
 	GunTurret(Resource* resource) : GameObject(resource) { m_lasergentime = 0; m_world.identity(); m_active = true; }
 	GunTurret(Resource* resource, const Vector3& position, const Vector3& direction);
 	~GunTurret();
-    void initialise(const ShaderInstance& shaderInstance);
+    void initialise();
 	void cleanup();
 
-    virtual void update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input );
+    virtual void update( float elapsedTime, const Input& input );
 	
 
 	void onHit();
 	void fireLaser();
 	void updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/);
 	void createScorchMark(const Vector3& pos, const Vector3 &normal);
-    const ShaderInstance deserialise( const tinyxml2::XMLElement* element );
+    void deserialise( const tinyxml2::XMLElement* element );
     HASH_ELEMENT_DEFINITION(GunTurret)
 protected:
 private:

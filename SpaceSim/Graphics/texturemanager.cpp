@@ -1,13 +1,17 @@
 #include "Graphics/texturemanager.h"
 
 #include "Core/Resource/RenderResource.h"
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/D3DDebugHelperFunctions.h"
 #include "Graphics/DeviceManager.h"
 #include "Graphics/texture.h"
+#include "Logging/LoggingMacros.h"
 
 #include "assert.h"
 #include "Loader/ResourceLoader.h"
+#include "Loader/ResourceLoadJobs.h"
+#include <memory>
 
 TextureManager::~TextureManager()
 {
@@ -21,7 +25,7 @@ void TextureManager::setMipMapSettings(bool canautomipmap, bool generatemipmaps)
 
 bool TextureManager::find(const std::string& filename) const //Should be texture name without path here
 {
-    auto textureFileNameHash = hashString(filename);
+    auto textureFileNameHash = Hashing::hashString(filename);
 	if (m_textures.find(textureFileNameHash) != m_textures.end())
 		return true;
 	return false;
@@ -29,7 +33,7 @@ bool TextureManager::find(const std::string& filename) const //Should be texture
 
 const TextureInfo* TextureManager::getTexture(const std::string& filename) const
 {
-    auto textureFileNameHash = hashString(filename);
+    auto textureFileNameHash = Hashing::hashString(filename);
     return getTexture(textureFileNameHash);
 }
 
@@ -45,6 +49,7 @@ const TextureInfo* TextureManager::getTexture(const size_t textureNameHash) cons
 //This might need to connect to the resource loader and just do a request here passing in all the data to the request
 void TextureManager::addLoad(DeviceManager& deviceManager, const std::string& filename)
 {
+    PROFILE_FUNCTION();
 	assert (!filename.empty());
     assert(false);//shouldnt be calling this
 
@@ -65,7 +70,7 @@ void TextureManager::addLoad(DeviceManager& deviceManager, const std::string& fi
         MSG_TRACE_CHANNEL("ERROR", "Texture cannot be loaded: %s", filename.c_str());
     }
 
-    auto textureFileNameHash = hashString(texureName);
+    auto textureFileNameHash = Hashing::hashString(texureName);
     TextureInfo texInfo;
     texInfo.m_texture = tex;
     //texInfo.m_heapIndex = index; //Need to fix this this is how we can get the GPU and CPU handles again
@@ -98,8 +103,8 @@ long TextureManager::getTexMemUsed() const
 ///-----------------------------------------------------------------------------
 void TextureManager::cleanup()
 {
-    static int numberOfTimesCalled = 0;
-    ++numberOfTimesCalled;
+    //static int numberOfTimesCalled = 0;
+    //++numberOfTimesCalled;
     TextureMap::iterator tmit = m_textures.begin();
     while (tmit != m_textures.end())
     { 
@@ -121,6 +126,7 @@ void TextureManager::cleanup()
 ///-----------------------------------------------------------------------------
 void TextureManager::Initialise(Resource* resource)
 {
+    PROFILE_FUNCTION();
     m_resource = resource;
     auto writableResource = RenderResourceHelper(resource).getWriteableResource();
     auto& descriptorHeapManager = writableResource.getDescriptorHeapManager();
@@ -183,17 +189,14 @@ bool TextureManager::createSamplerStates(const DeviceManager& deviceManager)
 ///-------------------------------------------------------------------------
 Material::TextureSlotMapping TextureManager::deserialise( DeviceManager& deviceManager, const tinyxml2::XMLElement* node )
 {
-    (void*)node;
-    (void*)&deviceManager;
-    const char* fileName = node->Attribute("file_name");
-    if (fileName)
+    UNUSEDPARAM(deviceManager);
+    std::string fileName = node->Attribute("file_name");
+    if (!fileName.empty())
     {
-        LoadRequest loadRequest;
+        LoadRequest loadRequest( fileName );
         loadRequest.m_gameObjectId = 0;
-        loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-        loadRequest.m_loadData = static_cast<void*>(new char[256]);
-        memcpy(loadRequest.m_loadData, fileName, 256);
-        RenderResourceHelper(m_resource).getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
+        loadRequest.m_resourceType = Hashing::hashString("LOAD_TEXTURE");
+        RenderResourceHelper(m_resource).getWriteableResource().getResourceLoader().AddLoadRequest(std::move(loadRequest));
 
         Material::TextureSlotMapping::TextureSlot textureSlot = Material::TextureSlotMapping::Diffuse0;
         const tinyxml2::XMLAttribute* attribute = node->FindAttribute("texture_slot");
@@ -201,10 +204,10 @@ Material::TextureSlotMapping TextureManager::deserialise( DeviceManager& deviceM
         {
             textureSlot = static_cast<Material::TextureSlotMapping::TextureSlot>(attribute->UnsignedValue());
         }
-        return Material::TextureSlotMapping(hashString(getTextureNameFromFileName(fileName)), textureSlot);
+        return Material::TextureSlotMapping(Hashing::hashString(getTextureNameFromFileName(fileName)), textureSlot);
     }
 
-    return Material::TextureSlotMapping(hashString(""), Material::TextureSlotMapping::Invalid);
+    return Material::TextureSlotMapping(""_hash, Material::TextureSlotMapping::Invalid);
 }
 
 ///-------------------------------------------------------------------------
@@ -212,13 +215,55 @@ Material::TextureSlotMapping TextureManager::deserialise( DeviceManager& deviceM
 ///-------------------------------------------------------------------------
 void TextureManager::addTexture( const std::string& textureName, const Texture12& texture, size_t heapIndex )
 {
+    PROFILE_FUNCTION();
+
+    //MSG_TRACE_CHANNEL("TextureManager","Adding texture: %s", textureName.c_str());
+
     std::scoped_lock<std::mutex> lock(m_mutex);
-    auto textureNameHash = hashString(textureName);
+    TextureInfo* info = getTexture(Hashing::hashString(textureName));
+    ASSERT(info != nullptr, "Trying to add a non existing texture");
+    
+    info->m_texture = texture;
+    info->m_heapIndex = heapIndex;
+    info->m_loadRequested = false;
+}
+
+TextureInfo TextureManager::AddOrCreateTexture(std::string textureName)
+{
+    PROFILE_FUNCTION();
+
+    std::scoped_lock<std::mutex> lock(m_mutex);
+    auto textureNameHash = Hashing::hashString(textureName);
+    TextureInfo info;
     if (!find(textureName))
     {
-        TextureInfo info;
-        info.m_texture = texture;
-        info.m_heapIndex = heapIndex;
+        info.m_heapIndex = DescriptorHeap::invalidDescriptorIndex;
         m_textures.insert(std::make_pair(textureNameHash, info));
     }
+    else
+    {
+        //Since our find at the beginning should tell us it exists already we can safely dereference this object
+        info = *getTexture(textureNameHash);
+        if (!info.m_texture.IsValid())
+        {
+            info.m_loadRequested = true;
+        }
+    }
+
+    return info;
+}
+
+TextureInfo* TextureManager::getTexture(const std::string& filename)
+{
+    auto textureFileNameHash = Hashing::hashString(filename);
+    return getTexture(textureFileNameHash);
+}
+
+TextureInfo* TextureManager::getTexture(const size_t textureNameHash)
+{
+    TextureMap::iterator tmit = m_textures.find(textureNameHash);
+    if (tmit != m_textures.end())
+        return &(tmit->second);
+    return nullptr;
+
 }

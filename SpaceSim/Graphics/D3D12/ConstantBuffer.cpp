@@ -1,14 +1,18 @@
 #include "Graphics/D3D12/ConstantBuffer.h"
 
+#include "Logging/LoggingMacros.h"
+
+#ifdef _DEBUG
 static size_t numberOfConstantBuffers = 0;
+#endif
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& heap, size_t size)
+void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& heap, size_t size, const std::string_view name)
 {
-    m_cpuSideData = ConstantBufferData(size);
+    m_cpuSideData = ConstantData(size);
     m_cpuSideData.Create();
 
     D3D12_HEAP_PROPERTIES uploadHeap;
@@ -56,9 +60,7 @@ void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& 
     deviceManager.GetDevice()->CreateConstantBufferView(&cbvDesc, heap.GetCPUDescriptorHandle(m_heapIndex));
 
 #ifdef _DEBUG
-    std::wstringstream str;
-    str << L"ConstantBuffer" << numberOfConstantBuffers++ << L"sized:" << m_cpuSideData.m_size;
-    m_constantBuffer->SetName(str.str().c_str());
+    m_constantBuffer->SetName(convertToWideString(fmt::format("ConstantBufferNo{}Size{}Name{}", numberOfConstantBuffers++, m_cpuSideData.m_size, name)).c_str());
 #endif
 }
 
@@ -68,7 +70,11 @@ void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& 
 ///-----------------------------------------------------------------------------
 void ConstantBuffer::Destroy()
 {
-    m_constantBuffer->Release();
-    m_heapIndex = DescriptorHeap::invalidDescriptorIndex;
-    m_cpuSideData.Destroy();
+    if (m_constantBuffer != nullptr)
+    {
+        m_constantBuffer->Release();
+        m_constantBuffer = nullptr;
+        m_heapIndex = DescriptorHeap::invalidDescriptorIndex;
+        m_cpuSideData.Destroy();
+    }
 }

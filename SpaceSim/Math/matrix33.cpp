@@ -1,5 +1,8 @@
 #include "matrix33.h"
 #include "matrixmath.h"
+
+#include "Logging/LoggingMacros.h"
+
 #include <iostream>
 #include <iomanip>
 

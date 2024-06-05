@@ -1,28 +1,12 @@
-#define LIGHTING
-#include "CommonConstantBuffers.ips"
+#include "BindlessBuffers.ifx"
+#include "Shared/CommonStructures.h"
+#include "rootsignatures.ifx"
+#include "Samplers.ifx"
 
-///--------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 // Constant Buffer Variables
-///--------------------------------------------------------------------------------------
-
-Texture2D<float4> shaderTextures : register(t8);
-SamplerState SampleType
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
-
-
-Texture2D<float4> normalMap : register(t32);
-Texture2D<float4> shadowMap : register(t33);
-SamplerState ShadowSampleType
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
-
+//--------------------------------------------------------------------------------------
+ConstantBuffer<MeshResourceIndices> resourceIndices : register(b0);
 
 ///--------------------------------------------------------------------------------------
 struct PS_INPUT
@@ -36,7 +20,7 @@ struct PS_INPUT
     float4 LightToPixel : TEXCOORD2;
 };
 
-float4 doLightCalculation(LightConstants light, float3 lightDir, float3 nnormal, float3 nviewdirection, float distance, float shininess, float4 color, float texColor)
+float4 doLightCalculation(LightConstants light, float3 lightDir, float3 nnormal, float3 nviewdirection, float distance, float shininess, float4 diffuse, float4 color, float4 texColor)
 {
     float attenuation = clamp(0.0, 1.0, 1.0 / (light.m_attenuationFallOff.x + light.m_attenuationFallOff.y * distance + light.m_attenuationFallOff.z * distance * distance));
 
@@ -50,6 +34,7 @@ float4 doLightCalculation(LightConstants light, float3 lightDir, float3 nnormal,
     }
 
     return color;
+    //return DoPhongShading(light, lightDir, nnormal, nviewdirection, distance, shininess, float4(1, 1, 1, 1));
 }
 
 ///--------------------------------------------------------------------------------------
@@ -61,20 +46,29 @@ float4 ps_main( PS_INPUT input) : SV_Target
     float3 vertexPos = input.WorldPos;
     float4 color;
 
-    float4 texColor =  shaderTextures.Sample(SampleType, input.Tex);
+    Texture2D<float4> shaderTextures = GetColorTexture(resourceIndices.albedoMapIndex);
+    Texture2D<float4> normalMap = GetNormalTexture(resourceIndices.normalMapIndex);
+    Texture2D<float4> shadowMap = GetColorTexture(resourceIndices.shadowMapIndex);
+
+    float4 texColor =  shaderTextures.Sample(linearWrapSampler, input.Tex);
     //texColor = float4(1,1,1,1);
-    float3 sampledNormalMap = ((2.0 * normalMap.Sample(SampleType, input.Tex).xyz) - 1.0);
+    float3 sampledNormalMap = ((2.0 * normalMap.Sample(linearWrapSampler, input.Tex).xyz) - 1.0);
     float3 nnormal = normalize(input.Tan * sampledNormalMap.x + input.BiN * sampledNormalMap.y + input.Nor * sampledNormalMap.z);
     //nnormal = normalize(input.Nor);
 
-    float3 nviewdirection = normalize(camera_position - vertexPos);
-    color = float4(ambient.rgb, 1.0) * texColor + float4(emissive.rgb, 0.0);
+    ConstantBuffer<MaterialConstants> material = GetConstantBuffer<MaterialConstants>(resourceIndices.materialIndex);
+    ConstantBuffer<LightParameters> lights = GetConstantBuffer<LightParameters>(resourceIndices.LightBufferIndex);
+    ConstantBuffer<CameraConstantArray> cameraSettings = GetConstantBuffer<CameraConstantArray>(resourceIndices.CameraBufferIndex);
+    uint NumberOfLights = lights.NumberOfLights;
 
-    for (int counter = 0; counter < 3; ++counter)
+    float3 nviewdirection = normalize(cameraSettings.m_constants[0].m_position - vertexPos);
+    color = float4(material.ambient.rgb, 1.0) * texColor + float4(material.emissive.rgb, 0.0);
+
+    for (int counter = 0; counter < NumberOfLights; ++counter)
     {
-        float3 lightDir = m_lights[counter].m_position.xyz - vertexPos;
+        float3 lightDir = lights.m_lights[counter].m_position.xyz - vertexPos;
         float distance = length(lightDir);
-        if (distance <= m_lights[counter].m_range.x )
+        if (distance <= lights.m_lights[counter].m_range.x )
         {
                 if (counter == 1)
                 {
@@ -83,15 +77,15 @@ float4 ps_main( PS_INPUT input) : SV_Target
                     shadowMapTex.y = -input.LightToPixel.y / input.LightToPixel.w / 2.0f + 0.5f;
                     float pixelDepth = input.LightToPixel.z - 0.0025;// / input.LightToPixel.w ;///- 0.005;
 
-                    float4 shadow = shadowMap.Sample(ShadowSampleType, shadowMapTex);
+                    float4 shadow = shadowMap.Sample(linearWrapSampler, shadowMapTex);
                     if (pixelDepth < shadow.r)
                     {
-                        color = doLightCalculation(m_lights[counter], lightDir, nnormal, nviewdirection, distance, shininess, color, texColor);
+                        color = doLightCalculation(lights.m_lights[counter], lightDir, nnormal, nviewdirection, distance, material.shininess, material.diffuse, color, texColor);
                     }
                 }
                 else
                 {
-                    color = doLightCalculation(m_lights[counter], lightDir, nnormal, nviewdirection, distance, shininess, color, texColor);
+                    color = doLightCalculation(lights.m_lights[counter], lightDir, nnormal, nviewdirection, distance, material.shininess, material.diffuse, color, texColor);
                 }
         }
     }

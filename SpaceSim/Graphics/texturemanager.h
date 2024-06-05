@@ -16,6 +16,8 @@ struct TextureInfo
 {
 	Texture12 m_texture;
 	size_t m_heapIndex;
+	size_t m_hash; //think about this
+	bool m_loadRequested = false;
 };
 
 class TextureManager
@@ -29,6 +31,7 @@ public:
     Material::TextureSlotMapping deserialise( DeviceManager& deviceManager, const tinyxml2::XMLElement* node );
 	void setMipMapSettings(const bool canautomipmap, const bool generatemipmaps);
 
+	TextureInfo AddOrCreateTexture(std::string textureName);
 	bool find(const std::string& filename) const;
 	void addLoad(DeviceManager& deviceManager, const std::string& filename);
 	const TextureInfo* getTexture(const std::string& filename) const;
@@ -46,6 +49,9 @@ public:
         
 protected:
 private:
+    TextureInfo* getTexture(const std::string& filename);
+    TextureInfo* getTexture(const size_t textureNameHash);
+
     typedef std::pair<size_t, TextureInfo> TexturePair;
 	typedef std::map<size_t, TextureInfo> TextureMap;
 	using Texture12Map = std::map<size_t, Texture12>;

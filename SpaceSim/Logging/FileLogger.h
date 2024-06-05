@@ -8,7 +8,7 @@ class Resource;
 class FileLogger : public ILog
 {
 public:
-    FileLogger(const std::string& logPath);
+    FileLogger(const std::filesystem::path& logPath);
     virtual ~FileLogger();
 
     virtual void LogMessage(const std::string& message) override;

@@ -12,6 +12,7 @@
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/GameMessages.h"
 #include "Core/MessageSystem/RenderMessages.h"
+#include "Core/Resource/GameResource.h"
 
 int Plane::m_planeCount = 0;
 
@@ -24,7 +25,7 @@ m_changeWindingOrder(changeWindingOrder)
     str << "plane_" << m_planeCount;
     ++m_planeCount;
     m_name = str.str();
-    m_nameHash = hashString(m_name);
+    m_nameHash = Hashing::hashString(m_name);
 	m_fillx = false;
 	m_filly = false;
 	m_fillz = false;
@@ -72,7 +73,7 @@ m_changeWindingOrder(changeWindingOrder)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void Plane::initialise(const ShaderInstance& shaderInstance)
+void Plane::initialise()
 {
     Face::CreationParams params;
 //    params.resource = m_resource;
@@ -105,7 +106,7 @@ void Plane::initialise(const ShaderInstance& shaderInstance)
 
     resource.m_messageQueues->getUpdateMessageQueue()->addMessage(createPlaneModel); 
 
-    Super::initialise(shaderInstance);
+    Super::initialise();
 }
 
 void Plane::transform()
@@ -134,26 +135,24 @@ void Plane::transform()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance Plane::deserialise( const tinyxml2::XMLElement* node )
+void Plane::deserialise( const tinyxml2::XMLElement* node )
 {
-    ShaderInstance shaderInstance;
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != 0; childElement = childElement->NextSiblingElement())
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if (Material::m_hash == childElementHash)
         {
             m_materialParameters = Material::GetMaterialParameters(childElement);
         }
     }
-    return shaderInstance;
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void Plane::update( float elapsedTime, const Input& input )
 {
-    Super::update(renderInstances, elapsedTime, input);
+    Super::update(elapsedTime, input);
     Vector3 lowerleft, upperright;
     //m_plane.fillMiniMapVectors(lowerleft, upperright);
     //glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
@@ -184,14 +183,20 @@ void Plane::update( RenderInstanceTree& renderInstances, float elapsedTime, cons
     //	(lowerleft.x() , upperright.y(), lowerleft.z());
     //	glEnd();
     //}
-    MessageSystem::RenderInformation renderInfo;
-    MessageSystem::RenderInformation::RenderInfo data;
-    data.m_renderObjectid = m_renderHandle;
-    data.m_gameobjectid = m_nameHash;
-    data.m_world = m_world;
-    data.m_name = m_name.c_str();
-    renderInfo.SetData(data);
-    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+    if (m_initialisationDone && m_changed)
+    {
+        MessageSystem::RenderInformation renderInfo;
+        MessageSystem::RenderInformation::RenderInfo data;
+        data.m_renderObjectid = m_renderHandle;
+        data.m_gameobjectid = m_nameHash;
+        data.m_world = m_world;
+        data.m_name = m_name.c_str();
+        data.m_shouldRender = true;
+        renderInfo.SetData(data);
+        m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+
+        m_changed = false;
+    }
 }
 
 ///-------------------------------------------------------------------------
@@ -210,6 +215,7 @@ void Plane::handleMessage( const MessageSystem::Message& msg )
         //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
 
         m_initialisationDone = true;
+        m_changed = true;
     }
 }
 

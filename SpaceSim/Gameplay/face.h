@@ -8,6 +8,7 @@
 
 class Resource;
 class Matrix44;
+class Job;
 //Doesnt need to be  class only generation fucntion is enough
 namespace Face
 {
@@ -49,12 +50,12 @@ namespace Face
         bool invertNormal;
     };
 
-    CreatedModel CreateFace(const CreationParams& params, Resource* resource);
+    CreatedModel CreateFace(const CreationParams& params, Resource* resource, Job* currentJob, CommandList& commandList);
 
     static unsigned long long m_totalNumberOfVerts;
     static unsigned long long m_totalNumberOfPolygons;
 
-    void createVertexData(const CreationParams& params, byte*& vertexData, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns);
+    VertexDataStreams createVertexData(const CreationParams& params, Bbox& boundingBox, float corridorHeight, float corridorWidth, size_t rows, size_t columns);
     void createIndexData(unsigned int*& indecis, bool changeWindingOrder, size_t rows, size_t columns);
 };
 #endif

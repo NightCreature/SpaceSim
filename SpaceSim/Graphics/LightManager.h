@@ -5,12 +5,18 @@
 #include "Core/MessageSystem/Messages.h"
 
 #include "light.h"
+#include "D3D12/ConstantBuffer.h"
 
 class LightManager
 {
 public:
     LightManager() {}
-    ~LightManager() {}
+    ~LightManager() 
+    {
+        m_lightBuffer.Destroy();
+    }
+
+    void Initialise(Resource* resource);
 
     void addLight(const std::string& name, const Light& light);
     const Light* getLight(const std::string& name) const;
@@ -27,10 +33,16 @@ public:
     }
 
     void dispatchMessage(const MessageSystem::Message& message);
+
+    void update();
+    size_t getLightBufferIndex() const { return m_lightBuffer.GetHeapIndex(); }
 private:
     typedef std::map< size_t, Light> LightMap;
     typedef std::pair< size_t, Light> LightPair;
 
     LightMap m_lights;
+
+    ConstantBuffer m_lightBuffer;
+    size_t m_activeLights = 0;
 };
 

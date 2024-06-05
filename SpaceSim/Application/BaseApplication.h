@@ -28,6 +28,8 @@
 #include "Memory.h"
 
 #include "Logging/Logger.h"
+#include "Core/FileSystem/FileSystem.h"
+#include "Core/CommandLine/CommandLine.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -58,6 +60,9 @@ public:
     const GameResource* getResource() const { return m_gameResource; }
 
     JobSystem* GetJobSystem() { return &m_jobSystem; }
+
+    const Paths& GetPaths() const { return m_paths; }
+    void SetCommandLine(const std::string& commandLine) { m_commandLine = commandLine; }
 private:
     JobSystem m_jobSystem;
     EntityManager      m_entityManager;
@@ -68,7 +73,7 @@ private:
     LaserManager    m_laserManager;
 
     UIManger m_uiManager;
-    PhysicsManager m_physicsManger;
+    Physics::PhysicsManager m_physicsManger;
     GameResource*      m_gameResource;
     bool               m_controllerConnected;
     bool               m_useController;
@@ -78,11 +83,13 @@ private:
     InputSystem        m_inputSystem;
     MapLoader                m_map;
     Paths              m_paths;
+    VFS::FileSystem m_fileSystem;
 
     size_t m_previousRenderInstanceListSize;
 
     UpdateThread m_UpdateThread;
     MessageSystem::MessageQueues m_messageQueues;
+    CommandLine m_commandLine;
     //ModelComponentManger m_modelManager;
 public:
     static Logger m_logger;

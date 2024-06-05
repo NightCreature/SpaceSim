@@ -34,7 +34,7 @@ void NodeDefinition::Deserialise(const tinyxml2::XMLElement& nodeDefinition)
 {
     for (auto attribute = nodeDefinition.FirstAttribute(); attribute; attribute = attribute->Next())
     {
-        switch (hashString(attribute->Name()))
+        switch (Hashing::hashString(attribute->Name()))
         {
         case "nodeType"_hash:
         {
@@ -53,7 +53,7 @@ void NodeDefinition::Deserialise(const tinyxml2::XMLElement& nodeDefinition)
 
     for (auto pins = nodeDefinition.FirstChildElement(); pins != nullptr; pins = pins->NextSiblingElement())
     {
-        size_t hash = hashString(pins->Name());
+        size_t hash = Hashing::hashString(pins->Name());
         if ("InputPins"_hash == hash)
         {                
             ReadPindefinitions(pins, m_inputPins);

@@ -1,3 +1,25 @@
+// The MIT License(MIT)
+//
+// Copyright(c) 2019 Vadim Slyusarev
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files(the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions :
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 #pragma once
 #include "optick.config.h"
 
@@ -62,6 +84,7 @@ struct ScopeHeader
 	uint32 boardNumber;
 	int32 threadNumber;
 	int32 fiberNumber;
+	FrameType::Type type;
 
 	ScopeHeader();
 };
@@ -74,6 +97,11 @@ struct ScopeData
 	vector<EventData> categories;
 	vector<EventData> events;
 
+	ScopeData()
+	{
+		ResetHeader();
+	}
+
 	void AddEvent(const EventData& data)
 	{
 		events.push_back(data);
@@ -85,10 +113,17 @@ struct ScopeData
 
 	void InitRootEvent(const EventData& data)
 	{
-		header.event = data;
+		header.event.start = std::min(data.start, header.event.start);
+		header.event.finish = std::max(data.finish, header.event.finish);
 		AddEvent(data);
+
+		header.type = FrameType::NONE;
+		for (int i = 0; i < FrameType::COUNT; ++i)
+			if (GetFrameDescription((FrameType::Type)i) == data.description)
+				header.type = (FrameType::Type)i;
 	}
 
+	void ResetHeader();
 	void Send();
 	void Clear();
 };
@@ -104,6 +139,7 @@ struct OptickString
 	OptickString() {}
 	OptickString<N>& operator=(const char* text) { strncpy(data, text ? text : "null", N - 1); data[N - 1] = 0; return *this; }
 	OptickString(const char* text) { *this = text; }
+	OptickString(const char* text, uint16_t length) { uint16_t maxLength = std::min((uint16_t)(N - 1), length); strncpy(data, text ? text : "null", maxLength); data[maxLength] = 0; }
 };
 #if defined(OPTICK_MSVC)
 #pragma warning( pop )
@@ -173,9 +209,11 @@ class EventDescriptionBoard
 	MemoryBuffer<64 * 1024> sharedNames;
 	std::mutex sharedLock;
 
+	const char* CacheString(const char* text);
 public:
-	EventDescription* CreateDescription(const char* name, const char* file = nullptr, uint32_t line = 0, uint32_t color = Color::Null, uint32_t filter = 0);
+	EventDescription* CreateDescription(const char* name, const char* file = nullptr, uint32_t line = 0, uint32_t color = Color::Null, uint32_t filter = 0, uint8_t flags = 0);
 	EventDescription* CreateSharedDescription(const char* name, const char* file = nullptr, uint32_t line = 0, uint32_t color = Color::Null, uint32_t filter = 0);
+
 
 	static EventDescriptionBoard& Get();
 
@@ -235,7 +273,8 @@ struct EventStorage
 
 		while (pushPopEventStackIndex)
 		{
-			pushPopEventStack[--pushPopEventStackIndex] = nullptr;
+			if (--pushPopEventStackIndex < pushPopEventStack.size())
+				pushPopEventStack[pushPopEventStackIndex] = nullptr;
 		}
 	}
 
@@ -272,6 +311,7 @@ struct ThreadDescription
 	int32 priority;
 	uint32 mask;
 
+	bool operator==(const ThreadDescription& other) const { return name == other.name && threadID == other.threadID && processID == other.processID; }
 	ThreadDescription(const char* threadName, ThreadID tid, ProcessID pid, int32 maxDepth = 1, int32 priority = 0, uint32 mask = 0);
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,7 +437,30 @@ struct CaptureStatus
     };
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+struct FrameData : public EventData 
+{
+	uint64_t threadID;
+	FrameData() : threadID(INVALID_THREAD_ID) {}
+};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+typedef MemoryPool<FrameData, 128> FrameBuffer;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+struct FrameStorage
+{
+	const EventDescription* m_Description;
+	FrameBuffer m_Frames;
+	std::atomic<uint32_t> m_FrameNumber;
 
+	void Clear(bool preserveMemory = true)
+	{
+		m_Frames.Clear(preserveMemory);
+	}
+
+	FrameStorage() : m_Description(nullptr) {}
+};
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Core
 {
 	std::recursive_mutex coreLock;
@@ -408,15 +471,13 @@ class Core
 
 	int64 progressReportedLastTimestampMS;
 
-	vector<EventTime> frames;
+	array<FrameStorage, FrameType::COUNT> frames;
 	uint32 boardNumber;
 
 	CallstackCollector callstackCollector;
 	SwitchContextCollector switchContextCollector;
 
 	vector<std::pair<string, string>> summary;
-
-	std::atomic<uint32_t> frameNumber;
 
 	struct Attachment
 	{
@@ -432,16 +493,18 @@ class Core
 	vector<ProcessDescription> processDescs;
 	vector<ThreadDescription> threadDescs;
 
-	array<const EventDescription*, FrameType::COUNT> frameDescriptions;
-
 	State::Type currentState;
 	State::Type pendingState;
 
 	CaptureSettings settings;
 
+	uint32 forcedMainThreadIndex;
+
 	void UpdateEvents();
-	uint32_t Update();
 	bool UpdateState();
+
+	uint32_t BeginUpdateFrame(FrameType::Type frame, int64_t timestamp, uint64_t threadID);
+	uint32_t EndUpdateFrame(FrameType::Type frame, int64_t timestamp, uint64_t threadID);
 
 	Core();
 	~Core();
@@ -457,12 +520,13 @@ class Core
 
 	void CleanupThreadsAndFibers();
 
-	void DumpBoard(uint32 mode, EventTime timeSlice, uint32 mainThreadIndex);
+	void DumpBoard(uint32 mode, EventTime timeSlice);
 
 	void GenerateCommonSummary();
 public:
 	void Activate(Mode::Type mode);
 	volatile Mode::Type currentMode;
+	volatile Mode::Type previousMode;
 
 	// Active Frame (is used as buffer)
 	static OPTICK_THREAD_LOCAL EventStorage* storage;
@@ -553,19 +617,26 @@ public:
 	bool SetSettings(const CaptureSettings& settings);
 
 	// Current Frame Number (since the game started)
-	uint32_t GetCurrentFrame() const { return frameNumber; }
+	uint32_t GetCurrentFrame(FrameType::Type frameType) const { return frames[frameType].m_FrameNumber; }
 
 	// Returns Frame Description
 	const EventDescription* GetFrameDescription(FrameType::Type frame) const;
 
+	// Main Update Function
+	void Update();
+
 	// Full Destruction
 	void Shutdown();
 
+	// Frame Flip functions
+	static uint32_t BeginFrame(FrameType::Type frame, int64_t timestamp, uint64_t threadID) { return Get().BeginUpdateFrame(frame, timestamp, threadID); }
+	static uint32_t EndFrame(FrameType::Type frame, int64_t timestamp, uint64_t threadID) { return Get().EndUpdateFrame(frame, timestamp, threadID); }
+
+	// Initialize Main ThreadID
+	void SetMainThreadID(uint64_t threadID);
+
 	// NOT Thread Safe singleton (performance)
 	static Core& Get();
-
-	// Main Update Function
-	static uint32_t NextFrame() { return Get().Update(); }
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

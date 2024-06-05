@@ -13,6 +13,34 @@
 namespace DebugGraphics
 {
 
+//const std::vector<Color> debugBoxColorStream =
+//{
+//    Color::cyan(),
+//    Color::cyan(),
+//    Color::cyan(),
+//    Color::cyan(),
+//    Color::cyan(),
+//    Color::cyan(),
+//    Color::cyan(),
+//    Color::cyan()
+//};
+
+//const unsigned int debugBoxIndexStream[] =
+//{
+//    0, 2,
+//    2, 3,
+//    3, 4,
+//    4, 0,
+//    1, 5,
+//    5, 6,
+//    6, 7,
+//    7, 1,
+//    0, 6,
+//    2, 7,
+//    4, 5,
+//    3, 1
+//};
+
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
@@ -28,81 +56,87 @@ m_resource(resource)
 ///-------------------------------------------------------------------------
 DebugBox::~DebugBox()
 {
+    delete box;
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void DebugBox::initialise( const ShaderInstance& shaderInstance, const Matrix44& view, const Matrix44& projection)
+void DebugBox::initialise()
 {
-    UNUSEDPARAM(shaderInstance);
-    box = new Model();
-    RenderResourceHelper helper(m_resource);
-    if (box->getMeshData().empty())
-    {
-        VertexBuffer* vb = new VertexBuffer();
-        IndexBuffer* ib = new IndexBuffer();
+    //box = new Model();
+    //RenderResourceHelper helper(m_resource);
+    //if (box->getMeshData().empty())
+    //{
+    //    auto& group = box->CreateMeshGroup();
 
-        WVPBufferContent wvp;
-        Matrix44 temp;
-        temp.identity();
-        wvp.m_world = temp;
-        wvp.m_view = view;
-        wvp.m_projection = projection;
-        Material mat;
-        mat.setEffectHash(hashString("debug_effect.xml"));
-        auto& group = box->CreateMeshGroup();
-        //if (m_modelData[0]->getShaderInstance().getMaterial().getEffect() == nullptr)
-        //{
-        //box->getMeshData()[0]->getShaderInstance().getMaterial().setEffect(helper.getResource().getEffectCache().getEffect("debug_effect.xml"));
-        //}
+    //    std::vector<Vector3> positionStream = 
+    //    {
+    //        { m_lowerLeft.x(), m_lowerLeft.y(), m_lowerLeft.z() },
+    //        { m_upperRight.x(), m_upperRight.y(), m_upperRight.z() },
+    //        { m_upperRight.x(), m_lowerLeft.y(), m_lowerLeft.z() },
+    //        { m_upperRight.x(), m_upperRight.y(), m_lowerLeft.z() },
+    //        { m_lowerLeft.x(), m_upperRight.y(), m_lowerLeft.z() },
+    //        { m_lowerLeft.x(), m_upperRight.y(), m_upperRight.z() },
+    //        { m_lowerLeft.x(), m_lowerLeft.y(), m_upperRight.z() },
+    //        { m_upperRight.x(), m_lowerLeft.y(), m_upperRight.z() }
+    //    };
 
-        ColorVertex boxVerts[] = 
-        {
-            { m_lowerLeft.x(), m_lowerLeft.y(), m_lowerLeft.z(), 0.0f, 1.0f, 1.0f, 1.0f},
-            { m_upperRight.x(), m_upperRight.y(), m_upperRight.z(), 0.0f, 1.0f, 1.0f, 1.0f},
-            { m_upperRight.x(), m_lowerLeft.y(), m_lowerLeft.z(), 0.0f, 1.0f, 1.0f, 1.0f},
-            { m_upperRight.x(), m_upperRight.y(), m_lowerLeft.z(), 0.0f, 1.0f, 1.0f, 1.0f},
-            { m_lowerLeft.x(), m_upperRight.y(), m_lowerLeft.z(), 0.0f, 1.0f, 1.0f, 1.0f},
-            { m_lowerLeft.x(), m_upperRight.y(), m_upperRight.z(), 0.0f, 1.0f, 1.0f, 1.0f},
-            { m_lowerLeft.x(), m_lowerLeft.y(), m_upperRight.z(), 0.0f, 1.0f, 1.0f, 1.0f},
-            { m_upperRight.x(), m_lowerLeft.y(), m_upperRight.z(), 0.0f, 1.0f, 1.0f, 1.0f}
-        };
+    //    //auto& commandQueue = helper.getWriteableResource().getCommandQueueManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
+    //    //auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
+    //    //auto& srvCBVUAVHeap = helper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap();
 
-        unsigned int numberOfBytes = sizeof(boxVerts);
+    //    VertexDataStreams vertexStreams;
+    //    vertexStreams.m_streams[VertexStreamType::Position] = positionStream;
+    //    vertexStreams.m_streams[VertexStreamType::Color] = debugBoxColorStream;
 
-        VertexDeclarationDescriptor vertexDesc;
-        vertexDesc.vertexColor = true;
-        
+    //    group.GetVB().CreateBuffer(helper.getResource().getDeviceManager(), commandList, srvCBVUAVHeap, vertexStreams);
 
-        auto& commandQueue = helper.getWriteableResource().getCommandQueueManager().GetCommandQueue(helper.getResource().getResourceLoader().m_uploadQueueHandle);
-        auto& commandList = commandQueue.GetCommandList(helper.getResource().getResourceLoader().m_currentUploadCommandListHandle);
+    //    group.GetIB().Create(helper.getResource().getDeviceManager(), commandList, sizeof(debugBoxIndexStream), (void*)&debugBoxIndexStream[0]);
+    //    group.GetIB().setNumberOfIndecis( sizeof(debugBoxIndexStream) / sizeof(unsigned int));
 
-        vb->Create(helper.getResource().getDeviceManager(), commandList, numberOfBytes, (void*)boxVerts, vertexDesc.GetVertexStride());
-        unsigned int indexData[] =
-        {
-            0, 2,
-            2, 3,
-            3, 4,
-            4, 0,
-            1, 5,
-            5, 6,
-            6, 7,
-            7, 1,
-            0, 6,
-            2, 7,
-            4, 5,
-            3, 1
-        };
+    //    group.SetPrimitiveLayout(static_cast<uint32>(D3D_PRIMITIVE_TOPOLOGY_LINELIST));
 
-        ib->Create(helper.getResource().getDeviceManager(), commandList, sizeof(indexData), (void*)&indexData[0]);
-        ib->setNumberOfIndecis( sizeof(indexData) / sizeof(unsigned int));
+    //    Material& mat = group.GetMaterial();
+    //    //This late bind to the Pipeline object fucks up the stride we really need to make sure this is getting the same stride size as set in the PSO and also the topology
+    //    mat.setEffectHash(hashString(getResourceNameFromFileName("Shaders\\Effects\\debug_effect.xml")));
+    //    mat.Prepare(helper.getResource().getEffectCache());
 
-        group.SetPrimitiveLayout(static_cast<uint32>(D3D_PRIMITIVE_TOPOLOGY_LINELIST));
-    }
-    else
-    {
-    }
+    //    for (auto& shaderParam : mat.GetShaderParameters())
+    //    {
+    //        group.CreateConstantBuffer(GetVariantSize(shaderParam.m_data.index()), shaderParam.m_rootParamIndex, helper.getWriteableResource().getDeviceManager(), helper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap());
+    //    }
+    //}
+    //else
+    //{
+    //}
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void DebugBox::UpdateCbs()
+{
+    box->UpdateCbs();
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void DebugBox::PopulateCommandlist(Resource* resource, CommandList& commandList)
+{
+    box->PopulateCommandlist(resource, commandList);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void DebugBox::Update(const MessageSystem::RenderInformation::RenderInfo& context)
+{
+    box->Update(context);
 }
 
 }

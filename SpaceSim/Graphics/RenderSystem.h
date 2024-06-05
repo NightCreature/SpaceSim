@@ -34,6 +34,9 @@
 #include "D3D12/DescriptorHeapManager.h"
 #include "D3D12/D3D12X.h"
 #include "D3D12/CommandQueue.h"
+#include "Graphics/RenderInterface.h"
+#include "Graphics/D3D12/ConstantBufferManager.h"
+#include "UI/Rendering/ElementManager.h"
 
 class RenderInstance;
 namespace MessageSystem
@@ -62,11 +65,10 @@ public:
 	RenderSystem();
     ~RenderSystem();
 
-    void initialise(Resource* resource);
+    void initialise(Resource* resource, JobQueue* jobQueue);
 
     void cleanup();
     void beginDraw();
-    void CheckVisibility(RenderInstanceTree& renderInstances);
     void update(float elapsedTime, double time);
 
     void endDraw();
@@ -81,9 +83,12 @@ public:
 
     CubeMapRenderer* getCubeMapRenderer() { return m_cubeMapRenderer; }
 
-    void CreateRenderList(const MessageSystem::Message& msg);
-
     void setInput(Input input) { m_input = input; }
+
+    size_t GetSceneTransformBufferIndex() const { return m_sceneTransformBuffer.GetHeapIndex(); }
+    size_t GetCameraBufferIndex() const { return m_cameraBuffer.GetHeapIndex(); }
+    
+    Resource* GetResource() { return m_renderResource; }
 
     //Fix this
     static Matrix44 m_view;
@@ -114,6 +119,8 @@ private:
     GameWindow m_window;
     ResourceLoader m_resourceLoader;
     JobQueue m_jobQueue;
+    PerFrameDataStorage m_perFrameDataStorage;
+    FE::Rendering::ElementManager m_feElementManager;
     std::string m_appName;
     std::string m_windowName;
 
@@ -134,6 +141,8 @@ private:
     ID3D11DepthStencilState* m_depthStencilState;
     ID3D11Buffer* m_lightConstantBuffer;
     ID3D11Buffer* m_shadowConstantBuffer;
+    ConstantBuffer m_sceneTransformBuffer;
+    ConstantBuffer m_cameraBuffer;
 
 #ifdef PROFILING
     ID3D11Query* m_beginDrawQuery;
@@ -164,14 +173,8 @@ private:
     ShadowMapRenderer* m_shadowMapRenderer;
     ID3D11SamplerState* m_samplerState; //Fix this
 
-    
-    RenderInstanceTree visibleInstances;
-
     MessageSystem::MessageObserver m_messageObservers;
 
-
-    //TEMP HACK
-    RenderInstanceTree m_renderInstances;
 
     //No more need for these to be static
     Input m_input;

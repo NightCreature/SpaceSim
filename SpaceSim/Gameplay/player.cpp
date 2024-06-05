@@ -17,17 +17,21 @@
 #include "Graphics/EffectCache.h"
 #include "Core/StringOperations/HashString.h"
 #include "Input/InputSystem.h"
+#include "Core/Profiler/ProfilerMacros.h"
+#include <Core/Resource/GameResource.h>
+#include <Loader/ModelLoaders/ModelLoader.h>
+#include <Core/MessageSystem/MessageQueue.h>
+#include <Core/MessageSystem/RenderMessages.h>
 
-const int playerlive = 5;
-const int playerffstrength = 10;
+//const int playerlive = 5;
+//const int playerffstrength = 10;
 const HashString fire("fire");
 
-void Player::initialize(const CameraManager& cameraManager)
+void Player::initialize()
 {
     m_gameover = false;
     m_count = 0;
     m_lasergentime = 0;
-    m_camera = cameraManager.getCamera("player_camera");
     m_hit = false;
     m_camstate = camstate::firstperson;
     m_ffangle = 0.0f;
@@ -53,6 +57,11 @@ void Player::initialize(const CameraManager& cameraManager)
         }
 
         deserialise(node);
+    }
+
+    //if (!m_entity.IsValid())
+    {
+        //LoadPlayerEne
     }
 }
 
@@ -323,11 +332,10 @@ void Player::createScorchMark(const Vector3 &pos, const Vector3 &normal)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void Player::update( float elapsedTime, const Input& input )
 {
-    PROFILE_EVENT("Player::update", Green);
+    PROFILE_FUNCTION();
     //Should do move update and render list creation here
-    UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(elapsedTime);
     UNUSEDPARAM(input);
 
@@ -347,12 +355,24 @@ void Player::update( RenderInstanceTree& renderInstances, float elapsedTime, con
 	}
 
     m_lasergentime += elapsedTime;
+
+    Super::update(elapsedTime, input);
+
+    MessageSystem::RenderInformation renderInfo;
+    MessageSystem::RenderInformation::RenderInfo data;
+    data.m_renderObjectid = m_renderHandle;
+    data.m_gameobjectid = m_nameHash;
+    data.m_world = m_world;
+    data.m_name = m_name.c_str();
+    data.m_shouldRender = m_active;
+    renderInfo.SetData(data);
+    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance Player::deserialise( const tinyxml2::XMLElement* node )
+void Player::deserialise( const tinyxml2::XMLElement* node )
 {
     const tinyxml2::XMLAttribute* attribute = node->FindAttribute("name");
     if (attribute)
@@ -377,7 +397,7 @@ const ShaderInstance Player::deserialise( const tinyxml2::XMLElement* node )
 
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != nullptr; childElement = childElement->NextSiblingElement())
     {
-        auto childElementHash = hashString(childElement->Value());
+        auto childElementHash = Hashing::hashString(childElement->Value());
         if ( Vector3::m_hash == childElementHash )
         {
             const tinyxml2::XMLAttribute* childAttribute = childElement->FindAttribute("name");
@@ -387,9 +407,21 @@ const ShaderInstance Player::deserialise( const tinyxml2::XMLElement* node )
                 m_startposition.deserialise(childElement);
             }
         }
+        else if ("Model"_hash == childElementHash)
+        {
+            attribute = childElement->FindAttribute("file_name");
+            if (attribute != nullptr)
+            {
+                auto resource = GameResourceHelper(m_resource).getWriteableResource();
+                DECLAREANDCREATERESOURCEMESSAGE(createModel, LoadModelResource);
+                LoadModelResource param;
+                stringCopy(param.m_fileName, attribute->Value());
+                createModel.SetData(param);
+                createModel.SetGameObjectId(static_cast<size_t>(m_nameHash)); //Not super but should work for now
+                m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(createModel);
+            }
+        }
     }
-
-    return ShaderInstance();
 }
 
 ///-------------------------------------------------------------------------
@@ -413,10 +445,23 @@ float Player::collision( const Vector3& position, const Vector3& dir, Vector3& n
     return -1.0f;
 }
 
+
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Player::handleMessage( const MessageSystem::Message& msg )
+void Player::handleMessage(const MessageSystem::Message& msg)
 {
-    UNUSEDPARAM(msg);
+    if (msg.getMessageId() == MESSAGE_ID(CreatedRenderResourceMessage))
+    {
+        const MessageSystem::CreatedRenderResourceMessage& renderResourceMsg = static_cast<const MessageSystem::CreatedRenderResourceMessage&>(msg);
+        renderResourceMsg.GetData();
+        m_renderHandle = renderResourceMsg.GetData()->m_renderResourceHandle;
+        //Store the render object reference we get back and the things it can do
+
+        //Register the bounding box with the physics
+        //GameResourceHelper(m_resource).getWriteableResource().getPhysicsManager().AddColidableBbox(&(m_drawableObject->getBoundingBox()));
+
+        m_initialisationDone = true;
+        m_active = true;
+    }
 }

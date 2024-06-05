@@ -21,6 +21,14 @@ public:
         return it != m_cameras.end() ? &it->second : 0;
     }
 
+    Camera* getCamera(const std::string& name)
+    {
+        std::map<std::string, Camera>::iterator it = m_cameras.find(name);
+        return it != m_cameras.end() ? &it->second : 0;
+    }
+
+    std::vector<const Camera*> GetActiveCameras() const;
+
     typedef std::pair<std::string, Camera> CameraPair;
 protected:
 private:

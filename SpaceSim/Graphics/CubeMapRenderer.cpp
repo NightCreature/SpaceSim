@@ -115,30 +115,10 @@ void CubeMapRenderer::initialise(Vector3 position)
     createViewArray(position);
 }
 
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void CubeMapRenderer::CheckVisibility(RenderInstanceTree& visibleRenderInstances, const RenderInstanceTree& renderInstances, const Matrix44& viewMatrix)
-{
-
-    PROFILE_EVENT("CubeMapRenderer::CheckVisibility", Yellow);
-    Frustum frustum(viewMatrix, m_cubeProjection);
-    for (auto instance : renderInstances)
-    {
-        if (frustum.IsInside(instance->getBoundingBox()))
-        {
-            visibleRenderInstances.push_back(instance);
-        }
-    }
-
-}
-
-void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, PerFrameConstants& perFrameConstants, const TextureManager& textureManager)
+void CubeMapRenderer::renderCubeMap(Resource* resource, Texture* renderTarget, const DeviceManager& deviceManager, PerFrameConstants& perFrameConstants, const TextureManager& textureManager)
 {
     UNUSEDPARAM(resource);
     UNUSEDPARAM(renderTarget);
-    UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(deviceManager);
     UNUSEDPARAM(perFrameConstants);
     UNUSEDPARAM(textureManager);

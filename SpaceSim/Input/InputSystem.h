@@ -27,7 +27,10 @@ public:
         unsigned int counter = 0;
         for (std::map<IInputDevice*, InputState>::const_iterator it = m_controllers.begin(); it != m_controllers.end(); ++it)
         {
-            input.setInput(counter, const_cast<InputState*>(&it->second));
+            if (it->first->isConnected())
+            {
+                input.setInput(counter, const_cast<InputState*>(&it->second));
+            }
             //++counter; //Uncomment this line to have multiple input sets in the input
         }
 

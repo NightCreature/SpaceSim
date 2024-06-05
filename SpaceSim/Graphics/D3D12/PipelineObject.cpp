@@ -2,7 +2,7 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/VertexBuffer.h"
 #include "D3D12X.h"
-
+#include <dxcapi.h>
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
@@ -17,7 +17,7 @@ PipelineObject::PipelineObject()
     SetRenderTargetInformation(1, rtFormats, DXGI_FORMAT_D32_FLOAT);
     
     D3D12_RASTERIZER_DESC& rasterizerStateDesc = m_pipeLineStateDescriptor.RasterizerState;
-    rasterizerStateDesc.CullMode = D3D12_CULL_MODE_BACK;
+    rasterizerStateDesc.CullMode = D3D12_CULL_MODE_NONE;
     rasterizerStateDesc.FillMode = D3D12_FILL_MODE_SOLID;
     rasterizerStateDesc.AntialiasedLineEnable = false;
     rasterizerStateDesc.DepthBias = 0;
@@ -59,7 +59,7 @@ PipelineObject::PipelineObject()
         blendStateDesc.RenderTarget[counter].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
     }
 
-    m_pipeLineStateDescriptor.SampleMask = 0xFFFFFFFFFF;
+    m_pipeLineStateDescriptor.SampleMask = 0xFFFFFFFF;
 
     //Must match backbuffer if only rendering to that
     SetMultiSampling(1, 0);
@@ -100,10 +100,21 @@ PipelineObject::~PipelineObject()
 ///-----------------------------------------------------------------------------
 void PipelineObject::CreatePipelineStateObject(ID3D12Device6* device)
 {
-    HRESULT hr  = device->CreateRootSignature(0, m_pipeLineStateDescriptor.VS.pShaderBytecode, m_pipeLineStateDescriptor.VS.BytecodeLength, IID_PPV_ARGS(&m_pipeLineStateDescriptor.pRootSignature));
+    if (m_pipeLineStateDescriptor.VS.pShaderBytecode == nullptr)
+    {
+        MSG_WARN_CHANNEL("Pipelineobject", "Vertex Shader is null, did the shader compile. Can't create pipeline object");
+        return;
+    }
+
+    HRESULT hr  = device->CreateRootSignature(0, m_rootSignatureBlob->GetBufferPointer(), m_rootSignatureBlob->GetBufferSize(), IID_PPV_ARGS(&m_pipeLineStateDescriptor.pRootSignature));
     if (hr != S_OK)
     {
         MSG_TRACE_CHANNEL("PipelineObject", "Failed to create Root signature from shader data with error: 0x%x, %s", hr, getLastErrorMessage(hr));
+        assert(false);
+    }
+    else
+    {
+        MSG_TRACE_CHANNEL("PipelineObject", "Created Root signature from shader data");
     }
 
     hr = device->CreateGraphicsPipelineState(&m_pipeLineStateDescriptor, IID_PPV_ARGS(&m_pipelineObject));
@@ -112,6 +123,12 @@ void PipelineObject::CreatePipelineStateObject(ID3D12Device6* device)
     {
         MSG_TRACE_CHANNEL("PipelineObject", "Failed to create Pipeline state with error: 0x%x, %s", hr, getLastErrorMessage(hr));
     }
+    else
+    {
+        MSG_TRACE_CHANNEL("PipelineObject", "Created PSO");
+    }
+
+    MSG_TRACE_CHANNEL_FMT("pipelinobject", "{} PS shader", m_pipeLineStateDescriptor.PS.pShaderBytecode != nullptr ? "Has a" : "Doesn't have a");
 
     //CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
     //rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -123,17 +140,19 @@ void PipelineObject::CreatePipelineStateObject(ID3D12Device6* device)
 ///-----------------------------------------------------------------------------
 void PipelineObject::SetVertexInformation(VertexDeclarationDescriptor& vertexDeclaration, D3D12_INDEX_BUFFER_STRIP_CUT_VALUE cutValue, D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveType)
 {
-    size_t stride = 0;
-    const auto& vertexElements = vertexDeclaration.createInputElementLayout(stride);
-    if (vertexElements.size() > 0)
-    {
-        m_pipeLineStateDescriptor.InputLayout = { &vertexElements[0], static_cast<unsigned int> (vertexElements.size()) };
-    }
-    else
-    {
+    UNUSEDPARAM(vertexDeclaration);
+
+    //size_t stride = 0;
+    //const auto& vertexElements;// = vertexDeclaration.createInputElementLayout(stride);
+    //if (vertexElements.size() > 0)
+    //{
+    //    m_pipeLineStateDescriptor.InputLayout = { &vertexElements[0], static_cast<unsigned int> (vertexElements.size()) };
+    //}
+    //else
+    //{
         m_pipeLineStateDescriptor.InputLayout.NumElements = 0;
         m_pipeLineStateDescriptor.InputLayout.pInputElementDescs = nullptr;
-    }
+   //}
     m_pipeLineStateDescriptor.IBStripCutValue = cutValue;
     m_pipeLineStateDescriptor.PrimitiveTopologyType = primitiveType; // type of primitive we are rendering, point, line, triangle, patch
 }
@@ -160,5 +179,17 @@ void PipelineObject::SetRenderTargetInformation(size_t numRTs, DXGI_FORMAT* rtFo
 void PipelineObject::BindToCommandList(CommandList& commandList)
 {
     commandList.m_list->SetPipelineState(m_pipelineObject);
+}
+
+void PipelineObject::Destroy()
+{
+    if (m_pipelineObject)
+    {
+        m_pipelineObject->Release();
+    }
+    if (m_rootSignatureBlob)
+    {
+        m_rootSignatureBlob->Release();
+    }
 }
 

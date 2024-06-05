@@ -4,10 +4,10 @@
       <VertexShader entry_point="vs_main" file_name="Shaders\Shaders\debug_vertex_shader.vs" />
       <PixelShader entry_point="ps_main" file_name="Shaders\Shaders\debug_pixel_shader.ps" />
       <BlendState  alphablend="1"/>
-      <RasterState Cullmode="3" FillMode="3" FrontCCW="1" />
+      <RasterState Cullmode="1" FillMode="3" FrontCCW="1" />
       <DepthStencilState depth_enabled="1" stencil_enabled="0" />
       <VertexDeclarationDescriptor position_dimension="3" normal="false" tangent="false" vertex_color="true" textureCoordsDimensions="" />
-      <PrimitiveType type="3" />
+      <PrimitiveType type="2" />
     </Technique>
   </Effect>
 </xml>

@@ -2,9 +2,11 @@
 
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include "Graphics/Effect.h"
+#include "Logging/LoggingMacros.h"
 
 #include <D3Dcompiler.h>
 #include <d3d12.h>
+#include <d3d12shader.h>
 
 //void OutputRange(std::stringstream& out, D3D12_DESCRIPTOR_RANGE1 range)
 //{
@@ -173,15 +175,9 @@
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-ShaderParamMatcher::ShaderParamMatcher(ID3DBlob* shaderBlob) : m_shaderBlob(shaderBlob)
+ShaderParamMatcher::ShaderParamMatcher(const CreatedShaderObjects& compiledShader) : m_shaderBlob(compiledShader.m_shaderObject), m_reflectionObject(compiledShader.m_reflectionObject)
 {
-    //m_factory.RegisterDataTypeForName<WVPBufferContent>("WVPConstants");
-    //m_factory.RegisterDataTypeForName<WVPBufferContent>("ShadowConstants");
-    //m_factory.RegisterDataTypeForName<PerFrameConstants>("LightParameters");
-    //m_factory.RegisterDataTypeForName<MaterialContent>("MaterialConstants");
-    
 
-    //auto object = constructTypeFromPack<2, WVPBufferContent, PerFrameConstants, MaterialContent>();
 }
 
 ///-----------------------------------------------------------------------------
@@ -192,40 +188,46 @@ bool ShaderParamMatcher::MatchSignatureWithRefeclection(const RootParamtersInfo&
 {
     bool foundRootParametersInfo = false;
 
-    ID3D12ShaderReflection* shaderReflection;
-    HRESULT hr = D3DReflect(m_shaderBlob->GetBufferPointer(), m_shaderBlob->GetBufferSize(), IID_PPV_ARGS(&shaderReflection));
-    if (FAILED(hr))
+
+    HRESULT hr = S_OK;
+    if (m_reflectionObject == nullptr)
     {
-        MSG_TRACE_CHANNEL("ShaderParamMatcher", "Failed to get the refelection data for the the shader with error code: %d (%s)", hr, getLastErrorMessage(hr));
-        return foundRootParametersInfo;
+        hr = D3DReflect(m_shaderBlob->GetBufferPointer(), m_shaderBlob->GetBufferSize(), IID_PPV_ARGS(&m_reflectionObject));
+        if (FAILED(hr))
+        {
+            MSG_TRACE_CHANNEL("ShaderParamMatcher", "Failed to get the refelection data for the the shader with error code: %d (%s)", hr, getLastErrorMessage(hr));
+            return foundRootParametersInfo;
+        }
     }
 
-    //Check and fill out rootparameter info if we have it
-    ID3D12VersionedRootSignatureDeserializer* rootSignatureDeserialiser = nullptr;
-    void* bufferCode = m_shaderBlob->GetBufferPointer();
-    hr = D3D12CreateVersionedRootSignatureDeserializer(bufferCode, m_shaderBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignatureDeserialiser));
-    if (SUCCEEDED(hr))
+    if (m_shaderBlob != nullptr)
     {
-        const D3D12_VERSIONED_ROOT_SIGNATURE_DESC* rootSignatureDescriptor = nullptr;
-        hr = rootSignatureDeserialiser ? rootSignatureDeserialiser->GetRootSignatureDescAtVersion(D3D_ROOT_SIGNATURE_VERSION_1_1, &rootSignatureDescriptor) : E_FAIL;
+        //Check and fill out rootparameter info if we have it
+        ID3D12VersionedRootSignatureDeserializer* rootSignatureDeserialiser = nullptr;
+        void* bufferCode = m_shaderBlob->GetBufferPointer();
+        hr = D3D12CreateVersionedRootSignatureDeserializer(bufferCode, m_shaderBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignatureDeserialiser));
         if (SUCCEEDED(hr))
         {
-            //we have root parameters so we should save them out.
-            const D3D12_ROOT_PARAMETER1* const parameters = rootSignatureDescriptor->Desc_1_1.pParameters;
-            for (size_t rootParamCounter = 0; rootParamCounter < rootSignatureDescriptor->Desc_1_1.NumParameters; ++rootParamCounter)
+            const D3D12_VERSIONED_ROOT_SIGNATURE_DESC* rootSignatureDescriptor = nullptr;
+            hr = rootSignatureDeserialiser ? rootSignatureDeserialiser->GetRootSignatureDescAtVersion(D3D_ROOT_SIGNATURE_VERSION_1_1, &rootSignatureDescriptor) : E_FAIL;
+            if (SUCCEEDED(hr))
             {
-                m_rootParametersInfo.push_back(parameters[rootParamCounter]);
-            }
+                //we have root parameters so we should save them out.
+                const D3D12_ROOT_PARAMETER1* const parameters = rootSignatureDescriptor->Desc_1_1.pParameters;
+                for (size_t rootParamCounter = 0; rootParamCounter < rootSignatureDescriptor->Desc_1_1.NumParameters; ++rootParamCounter)
+                {
+                    m_rootParametersInfo.push_back(parameters[rootParamCounter]);
+                }
 
-            foundRootParametersInfo = true;
+                foundRootParametersInfo = true;
+            }
         }
     }
 
 
 
-
     D3D12_SHADER_DESC shaderDescriptor;
-    hr = shaderReflection->GetDesc(&shaderDescriptor);
+    hr = m_reflectionObject->GetDesc(&shaderDescriptor);
     if (FAILED(hr))
     {
         MSG_TRACE_CHANNEL("ShaderParamMatcher", "Failed to get shader descriptor with error code: %d (%s)", hr, getLastErrorMessage(hr));
@@ -287,7 +289,7 @@ bool ShaderParamMatcher::MatchSignatureWithRefeclection(const RootParamtersInfo&
     //Lets read the constant buffers and match them with the root params
     for (size_t index = 0; index < shaderDescriptor.ConstantBuffers; ++index)
     {
-        ID3D12ShaderReflectionConstantBuffer* cbPtr = shaderReflection->GetConstantBufferByIndex(static_cast<UINT>(index));
+        ID3D12ShaderReflectionConstantBuffer* cbPtr = m_reflectionObject->GetConstantBufferByIndex(static_cast<UINT>(index));
         if (cbPtr != nullptr)
         {
             D3D12_SHADER_BUFFER_DESC shaderCBDesc;
@@ -296,7 +298,7 @@ bool ShaderParamMatcher::MatchSignatureWithRefeclection(const RootParamtersInfo&
             //MSG_TRACE("Adding CBV with name: %s", shaderCBDesc.Name);
 
             D3D12_SHADER_INPUT_BIND_DESC inputBindingDesc;
-            shaderReflection->GetResourceBindingDescByName(shaderCBDesc.Name, &inputBindingDesc);
+            m_reflectionObject->GetResourceBindingDescByName(shaderCBDesc.Name, &inputBindingDesc);
 
             for (size_t rootParamIndex = 0; rootParamIndex < m_rootParametersInfo.size(); ++rootParamIndex)
             {

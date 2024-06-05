@@ -8,49 +8,50 @@
 #include "Core/tinyxml2.h"
 #include "Loader/ResourceLoader.h"
 #include <filesystem>
+#include "Loader/ResourceLoadJobs.h"
 
 namespace Text
 {
 
-const size_t KerningInformation::firstIdHash = hashString("first");
-const size_t KerningInformation::secondIdHash = hashString("second");
-const size_t KerningInformation::ammountHash = hashString("amount");
+const size_t KerningInformation::firstIdHash = "first"_hash;
+const size_t KerningInformation::secondIdHash = "second"_hash;
+const size_t KerningInformation::ammountHash = "amount"_hash;
 
-const size_t Glyph::idHash = hashString("id");
-const size_t Glyph::xHash = hashString("x");
-const size_t Glyph::yHash = hashString("y");
-const size_t Glyph::widthHash = hashString("width");
-const size_t Glyph::heightHash = hashString("height");
-const size_t Glyph::xOffsetHash = hashString("xoffset");
-const size_t Glyph::yOffsetHash = hashString("yoffset");
-const size_t Glyph::xAdvanceHash = hashString("xadvance");
-const size_t Glyph::pageHash = hashString("page");
-const size_t Glyph::channelHash = hashString("channel");
+const size_t Glyph::idHash = "id"_hash;
+const size_t Glyph::xHash = "x"_hash;
+const size_t Glyph::yHash = "y"_hash;
+const size_t Glyph::widthHash = "width"_hash;
+const size_t Glyph::heightHash = "height"_hash;
+const size_t Glyph::xOffsetHash = "xoffset"_hash;
+const size_t Glyph::yOffsetHash = "yoffset"_hash;
+const size_t Glyph::xAdvanceHash = "xadvance"_hash;
+const size_t Glyph::pageHash = "page"_hash;
+const size_t Glyph::channelHash = "channel"_hash;
 
-const size_t FontInfo::fontNameHash = hashString("face");
-const size_t FontInfo::sizeHash = hashString("size");
-const size_t FontInfo::boldHash = hashString("bold");
-const size_t FontInfo::italicHash = hashString("italic");
-const size_t FontInfo::charsetHash = hashString("charset");
-const size_t FontInfo::unicodeHash = hashString("unicode");
-const size_t FontInfo::horizontalStretchHash = hashString("stretchH");
-const size_t FontInfo::smootHash = hashString("smooth");
-const size_t FontInfo::antiAliasedHash = hashString("aa");
-const size_t FontInfo::outlineHash = hashString("outline");
+const size_t FontInfo::fontNameHash = "face"_hash;
+const size_t FontInfo::sizeHash = "size"_hash;
+const size_t FontInfo::boldHash = "bold"_hash;
+const size_t FontInfo::italicHash = "italic"_hash;
+const size_t FontInfo::charsetHash = "charset"_hash;
+const size_t FontInfo::unicodeHash = "unicode"_hash;
+const size_t FontInfo::horizontalStretchHash = "stretchH"_hash;
+const size_t FontInfo::smootHash = "smooth"_hash;
+const size_t FontInfo::antiAliasedHash = "aa"_hash;
+const size_t FontInfo::outlineHash = "outline"_hash;
 
-const size_t CommonFontInfo::lineHeightHash = hashString("lineHeight");
-const size_t CommonFontInfo::baseHash = hashString("base");
-const size_t CommonFontInfo::widthScaleHash = hashString("scaleW");
-const size_t CommonFontInfo::heightScaleHash = hashString("scaleH");
-const size_t CommonFontInfo::pagesHash = hashString("pages");
-const size_t CommonFontInfo::packedHash = hashString("packed");
-const size_t CommonFontInfo::alphaChannelHash = hashString("alphaChnl");
-const size_t CommonFontInfo::redChannelHash = hashString("redChnl");
-const size_t CommonFontInfo::greenChannelHash = hashString("greenChnl");
-const size_t CommonFontInfo::blueChannelHash = hashString("blueChnl");
+const size_t CommonFontInfo::lineHeightHash = "lineHeight"_hash;
+const size_t CommonFontInfo::baseHash = "base"_hash;
+const size_t CommonFontInfo::widthScaleHash = "scaleW"_hash;
+const size_t CommonFontInfo::heightScaleHash = "scaleH"_hash;
+const size_t CommonFontInfo::pagesHash = "pages"_hash;
+const size_t CommonFontInfo::packedHash = "packed"_hash;
+const size_t CommonFontInfo::alphaChannelHash = "alphaChnl"_hash;
+const size_t CommonFontInfo::redChannelHash = "redChnl"_hash;
+const size_t CommonFontInfo::greenChannelHash = "greenChnl"_hash;
+const size_t CommonFontInfo::blueChannelHash = "blueChnl"_hash;
 
-const size_t Pages::PageInfo::idHash = hashString("id");
-const size_t Pages::PageInfo::fileHash = hashString("file");
+const size_t Pages::PageInfo::idHash = "id"_hash;
+const size_t Pages::PageInfo::fileHash = "file"_hash;
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
@@ -94,11 +95,11 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
     {
         for (const tinyxml2::XMLAttribute* attribute = infoElement->FirstAttribute(); attribute; attribute = attribute->Next())
         {
-            size_t hashAttribute = hashString(attribute->Name());
+            size_t hashAttribute = Hashing::hashString(attribute->Name());
             if (FontInfo::fontNameHash == hashAttribute)
             {
                 m_fontInformation.m_fontName = attribute->Value();
-                m_fontInformation.m_fontNameHash = hashString(attribute->Value());
+                m_fontInformation.m_fontNameHash = Hashing::hashString(attribute->Value());
             }
             else if (FontInfo::sizeHash == hashAttribute)
             {
@@ -143,7 +144,7 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
     {
         for (const tinyxml2::XMLAttribute* attribute = commonElement->FirstAttribute(); attribute; attribute = attribute->Next())
         {
-            size_t hashAttribute = hashString(attribute->Name());
+            size_t hashAttribute = Hashing::hashString(attribute->Name());
             if (CommonFontInfo::lineHeightHash == hashAttribute)
             {
                 m_commonFontInformation.m_lineHeight = static_cast<short>(attribute->IntValue());
@@ -194,7 +195,7 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
             Pages::PageInfo pageInfo;
             for (const tinyxml2::XMLAttribute* attribute = page->FirstAttribute(); attribute; attribute = attribute->Next())
             {
-                size_t hashAttribute = hashString(attribute->Name());
+                size_t hashAttribute = Hashing::hashString(attribute->Name());
                 if (Pages::PageInfo::idHash == hashAttribute)
                 {
                     pageInfo.m_id = static_cast<short>(attribute->IntValue());
@@ -203,13 +204,12 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
                 {
                     pageInfo.m_fileName = attribute->Value();
 
-                    LoadRequest loadRequest;
-                    loadRequest.m_gameObjectId = 0;
-                    loadRequest.m_resourceType = hashString("LOAD_TEXTURE");
-                    loadRequest.m_loadData = static_cast<void*>(new char[256]);
                     std::filesystem::path path = currentPath / pageInfo.m_fileName;
-                    memcpy(loadRequest.m_loadData, path.string().c_str(), 256);
-                    gameResource.getWriteableResource().getResourceLoader().AddLoadRequest(loadRequest);
+                    LoadRequest loadRequest(path.string());
+                    loadRequest.m_gameObjectId = 0;
+                    loadRequest.m_resourceType = "LOAD_TEXTURE"_hash;
+                    
+                    gameResource.getWriteableResource().getResourceLoader().AddLoadRequest(std::move(loadRequest));
                 }
             }
             m_pagesInformation.m_pages.push_back(pageInfo);
@@ -221,7 +221,7 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
         Glyph glyph;
         for (const tinyxml2::XMLAttribute* attribute = glyphElement->FirstAttribute(); attribute; attribute = attribute->Next())
         {
-            size_t hashAttribute = hashString(attribute->Name());
+            size_t hashAttribute = Hashing::hashString(attribute->Name());
             if (Glyph::idHash == hashAttribute)
             {
                 glyph.m_id = static_cast<short>(attribute->IntValue());
@@ -267,7 +267,7 @@ bool BitmapFont::openFont(const std::string& bmpFile, Resource* resource)
             Glyph* glyph = nullptr;
             for (const tinyxml2::XMLAttribute* attribute = kernInfoElement->FirstAttribute(); attribute; attribute = attribute->Next())
             {
-                size_t hashAttribute = hashString(attribute->Name());
+                size_t hashAttribute = Hashing::hashString(attribute->Name());
                 if (KerningInformation::firstIdHash == hashAttribute)
                 {
                     glyph = findGlyph(static_cast<short>(attribute->IntValue()));

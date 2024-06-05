@@ -37,11 +37,49 @@
 
 #include "Core/ConstructionFactory.h"
 
+#include<optick.h>
+#include "Core/Serialization/Archive.h"
+#include "Core/Serialization/ISerializable.h"
+
 class RenderInstance;
 
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Logger Application::m_logger;
+
 constexpr size_t numOfJobsToSpawn = 16;
+
+class TestSerialise
+{
+public:
+
+    int m_int = 100;
+    float m_float = 23.5f;
+    std::string m_string = "Hello World";
+    std::vector<int> m_vector = {1,2,3,4};
+
+    TestSerialise() = default;
+
+    void Serialise(Archive& ar, std::true_type)
+    {
+        ar.Read( m_int);
+        ar.Read( m_float);
+        ar.ReadContainer( m_string);
+        ar.ReadContainer( m_vector);
+    }
+
+    void Serialise(Archive& ar, std::false_type)
+    {
+        m_int = 12;
+        m_float = 234.5f;
+        m_string = "Hello World !!!!!";
+        m_vector = { 123,46,78,3 };
+
+        ar.Write(m_int);
+        ar.Write(m_float);
+        ar.WriteContainer(m_string);
+        ar.WriteContainer(m_vector);
+    }
+};
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
@@ -50,6 +88,7 @@ constexpr size_t numOfJobsToSpawn = 16;
 Application::Application():
 m_jobSystem(numOfJobsToSpawn), //Spawn the job queue with 8 threads
 m_gameResource(nullptr),
+m_fileSystem(m_paths),
 m_previousRenderInstanceListSize(1)
 {
     m_controllerConnected = false;
@@ -57,14 +96,14 @@ m_previousRenderInstanceListSize(1)
     //m_controller = 0;
 }
 
-Text::TextBlockCache* cache;
-
 ///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
 bool Application::initialise()
 {
+    PROFILE_FUNCTION();
+
     m_logger.addLogger(new OutputDebugLog());
     FileLogger* file_logger = new FileLogger(m_paths.getLogPathStr());
     if (file_logger->is_open())
@@ -75,63 +114,71 @@ bool Application::initialise()
     {
         delete file_logger;
     }
-    //m_logger.addLogger(new HttpDebugLog());
-    
-    //cache = new Text::TextBlockCache(1000, m_gameResource);
 
-    print();
+    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_fileSystem, &m_entityManager, &m_gameObjectManager,
+        &m_laserManager, &m_uiManager, nullptr, &m_logger, m_jobSystem.GetJobQueuePtr());
 
-    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_entityManager, &m_gameObjectManager,
-        &m_laserManager, &m_uiManager, nullptr, &m_logger, &m_physicsManger, m_jobSystem.GetJobQueuePtr());
-    
+    m_jobSystem.SetGameResource(m_gameResource);
+
     bool returnValue = true;
 
-    //VFS::FileSystem m_fileSystem(m_paths);
-    //m_fileSystem.AddMountPoint(VFS::MountPoint("//networkshare\\models\\path\\"));
-    ////Constructor by default adds all paths in the path class
-    ////m_fileSystem.AddMountPoint(new VFS::MountPointWin(m_paths.getModelPath()));
 
-    //auto file = m_fileSystem.CreateFile("Logs/Test/test.model", VFS::FileMode::OpenAndCreate);
-    //const char* message = "Hello World File!";
-    //file.Write((byte*)(message), 17);
-    //file.Close();
-
-
-
-    int windowWidth = 1280;
-    int windowHeight = 720;
-    const ISetting<int>* widthSetting = m_settingsManager.getSetting<int>("WindowWidth");
-    if (widthSetting)
-    {
-        windowWidth = widthSetting->getData();     
-    }
-    const ISetting<int>* heightSetting = m_settingsManager.getSetting<int>("WindowHeight");
-    if (heightSetting)
-    {
-        windowHeight = heightSetting->getData();     
-    }
+    //int windowWidth = 1280;
+    //int windowHeight = 720;
+    //const ISetting<int>* widthSetting = m_settingsManager.getSetting<int>("WindowWidth");
+    //if (widthSetting)
+    //{
+    //    windowWidth = widthSetting->getData();     
+    //}
+    //const ISetting<int>* heightSetting = m_settingsManager.getSetting<int>("WindowHeight");
+    //if (heightSetting)
+    //{
+    //    windowHeight = heightSetting->getData();     
+    //}
 
     SettingsParser settings(&m_settingsManager);
     auto settingsPath = m_paths.getSettingsPath() / "settings.cfg";
     if (!settings.loadFile(settingsPath.string()))
     {
-        MSG_TRACE_CHANNEL("BASEAPPLICATION", "Failed to load the settings file" )
-        //terminate application if we fail to find the settings file
-        returnValue &= false;
+        MSG_TRACE_CHANNEL("BASEAPPLICATION", "Failed to load the settings file")
+            //terminate application if we fail to find the settings file
+            returnValue &= false;
+    }
+
+    //Settings are loaded now stream them back out to an archive file to see if we can read that back in
+    m_settingsManager.SaveSettings(m_paths.getSettingsPath() / "settings.archive");
+    //    m_settingsManager.LoadSettings(m_paths.getSettingsPath() / "settings.archive");
+    {
+        PROFILE_EVENT("Application", "SerialiseSettings", 0XFF00FF00);
+        Archive ar;
+        ar.Open(m_paths.getTempPath() / "testsettings.archive");
+        TestSerialise test;
+        test.Serialise(ar, std::false_type());
+        ar.Close();
+
+        ar.Open(m_paths.getTempPath() / "testsettings.archive");
+        TestSerialise test2;
+        test2.Serialise(ar, std::true_type());
+        ar.Close();
     }
 
     //m_uiManager.initialise();
-    m_renderSystem.initialise(m_gameResource);
+
+    m_renderSystem.initialise(m_gameResource, m_jobSystem.GetJobQueuePtr());
+    m_jobSystem.SetRenderResource(m_renderSystem.GetResource());
     //m_inputSystem.createController(Gamepad);
     auto inputMapPath = m_paths.getSettingsPath() / "Input Maps\\input_mapping.xml";
     m_inputSystem.initialise(inputMapPath.string(), m_renderSystem.getWindowHandle());
     m_inputDispatch = &InputSystem::SetRawInput;
 
+    m_physicsManger.Initialise(m_gameResource);
+
     m_laserManager.initialise(m_gameResource);
     MSG_TRACE_CHANNEL("REFACTOR", "SEND create Camera message to render system");
 
+    //TODO This has to go
     Player* player = new Player(m_gameResource);
-    //player->initialize(m_cameraSystem);
+    player->initialize();
     m_gameObjectManager.addGameObject(player);
 
 
@@ -165,6 +212,7 @@ bool Application::initialise()
     m_UpdateThread.m_entityManager = &m_entityManager;
     m_UpdateThread.m_gameObjectManager = &m_gameObjectManager;
     m_UpdateThread.m_laserManager = &m_laserManager;
+    m_UpdateThread.m_physicsManager = &m_physicsManger;
 
     m_UpdateThread.Initialise(m_gameResource);
 
@@ -190,6 +238,7 @@ void Application::mainGameLoop()
         bool gotMessage = ( PeekMessage(&message, 0, 0, 0, PM_NOREMOVE) != 0 );
         if (gotMessage)
         {
+            PROFILE_TAG("TranslateMessage");
             PeekMessage(&message, 0, 0, 0, PM_REMOVE );
             TranslateMessage( &message );
             DispatchMessage( &message );
@@ -211,7 +260,7 @@ void Application::mainGameLoop()
             {
                 m_UpdateThread.LockCriticalSection();
 
-                PROFILE_EVENT("SingleThreadedUpdate", Green);
+                PROFILE_EVENT("UpdateThread", "SingleThreadedUpdate", 0XFF00FF00);
 
                 //const Camera* cam = m_cameraSystem.getCamera("global");
                 //m_view = cam->getCamera();
@@ -272,7 +321,10 @@ LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wP
 
         // extract keyboard raw input data
         RAWINPUT* raw = reinterpret_cast<RAWINPUT*>(buffer);
-        m_inputDispatch(raw);
+        if (raw != nullptr)
+        {
+            m_inputDispatch(raw);
+        }
     }
 
     //If the window doesn't exist yet pass on all the messages to the default win32 message handler
@@ -291,6 +343,8 @@ void Application::cleanup()
     Profiling::Profiler& profiler = Profiling::Profiler::GetInstance();
 
     profiler.Cleanup();
+
+    m_physicsManger.Cleanup();
 
     //Need to add a cleanup call to the cache
     //delete cache;

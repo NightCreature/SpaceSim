@@ -9,18 +9,19 @@
 #include <vector>
 
 #include <D3D12.h>
+#include "Graphics/RenderInterface.h"
+#include "Core/Profiler/ProfilerMacros.h"
 
 
 class Input;
 class Resource;
 
-class Model
+class Model : public RenderInterface
 {
 public:
     struct CreationParams
     {
         Resource* m_resource;
-        const ShaderInstance* m_shaderInstance;
     };
 
     Model() {}
@@ -33,33 +34,52 @@ public:
 
     }
 
-    void update( Resource* resource, RenderInstanceTree& renderInstance, float elapsedTime, const Matrix44& world, const Matrix44& view, const Matrix44& projection, const std::string& name)
-    {
-        if (!m_modelData.empty())
-        {
-            for (size_t counter = 0; counter < m_modelData.size(); ++counter)
-            {
-                m_modelData[counter].update(resource, renderInstance, elapsedTime, world, view, projection, name, m_boundingBox);
-            }
-        }
-    }
-
     ///-----------------------------------------------------------------------------
     ///! @brief   
     ///! @remark Since View and porjections are mostly per frame or per pass constants we dont need to set them
     ///-----------------------------------------------------------------------------
-    void Update(Resource* resource, CommandList& list, float elapsedTime, const Matrix44& world, const std::string& name)
+    void Update(float elapsedTime, const Matrix44& world, const std::string& name)
     {
+        UNUSEDPARAM(elapsedTime);
+
         if (!m_modelData.empty())
         {
             for (size_t counter = 0; counter < m_modelData.size(); ++counter)
             {
-                m_modelData[counter].Update(resource, list, elapsedTime, world, name, m_boundingBox);
+                m_modelData[counter].Update(world, name, m_boundingBox);
             }
         }
     }
 
+    void Update(const MessageSystem::RenderInformation::RenderInfo& context)
+    {
+        m_shouldRender = context.m_shouldRender;
+
+        if (!m_modelData.empty())
+        {
+            for (size_t counter = 0; counter < m_modelData.size(); ++counter)
+            {
+                m_modelData[counter].Update(context);
+            }
+        }
+    }
+
+    void PopulateCommandlist(Resource* resource, CommandList& commandList) override
+    {
+        PROFILE_FUNCTION();
+        if (!m_modelData.empty())
+        {
+            for (auto& group : m_modelData)
+            {
+                group.PopulateCommandlist(resource, commandList);
+            }
+        }
+    }
+
+    void UpdateCbs() override {}
+
     //Deprecated bad code
+    void addMeshGroup(const MeshGroup& meshGroup) { m_modelData.push_back(meshGroup); }
     void addMeshGroup(MeshGroup* meshGroup) { m_modelData.push_back(*meshGroup); }
     const Bbox& getBoundingBox() const { return m_boundingBox; }
     Bbox& getBoundingBox() { return m_boundingBox; }
@@ -76,18 +96,17 @@ public:
 
     void setDirty()
     {
-        for (auto meshGroup : m_modelData)
+        for (auto& meshGroup : m_modelData)
         {
             meshGroup.setDirty();
         }
     }
 
-    void setShaderInstance(const ShaderInstance& shaderInstance)
+    void CreateNrMeshGroups(size_t nrMeshGroups)
     {
-        UNUSEDPARAM(shaderInstance);
-        for (auto meshGroup : m_modelData)
+        for (size_t counter = 0; counter < nrMeshGroups; ++counter)
         {
-            //meshGroup.setShaderInstance(shaderInstance);
+            m_modelData.push_back(MeshGroup(Material()));
         }
     }
 
@@ -106,44 +125,43 @@ public:
         {
             auto& material = meshGroup.GetMaterial();
             const Effect* effect = effectCache.getEffect(material.getEffectHash());
-            m_sortKey |= effect->getTechnique(material.getTechnique())->getTechniqueId();
-            hasAlphaBlending |= material.getBlendState();
-        }
-
-        if (hasAlphaBlending)
-        {
-            //we want these to be last in the list so set the first bit to 1
-            m_sortKey |= (1ull << 63);
-        }
-    }
-
-
-    void PopulateCommandList(Resource* resource, CommandList& commandList)
-    {
-        if (!m_modelData.empty())
-        {
-            for (auto& group : m_modelData)
+            if (effect != nullptr)
             {
-                group.PopulateCommandlist(resource, commandList);
+                const Technique* technique = effect->getTechnique(material.getTechnique());
+                if (technique != nullptr)
+                {
+                    m_sortKey |= technique->getTechniqueId();
+                    hasAlphaBlending |= material.getBlendState();
+                    if (hasAlphaBlending)
+                    {
+                        //we want these to be last in the list so set the first bit to 1
+                        m_sortKey |= (1ull << 63);
+                    }
+                }
+                
             }
         }
     }
+
+    bool IsRendering() const { return m_shouldRender; }
+
 protected:
     std::vector<MeshGroup> m_modelData; //Why is meshgroup a pointer here and not just owned?
     Bbox m_originalBBox;
     Bbox m_boundingBox;
     uint64 m_sortKey = 0;
+    bool m_shouldRender = false;
 };
 
 struct CreatedModel
 {
-    Model* model;
+    Model* model = nullptr;
     Bbox boundingBox;
 };
 
 //This should be different
 struct CreatedMeshGroup
 {
-    MeshGroup* meshGroup;
+    MeshGroup* meshGroup = nullptr;
     Bbox boundingBox;
 };

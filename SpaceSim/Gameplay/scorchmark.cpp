@@ -6,6 +6,8 @@
 #include "Core/MessageSystem/GameMessages.h"
 #include "Core/MessageSystem/RenderMessages.h"
 
+#include "Core/Resource/GameResource.h"
+
 ScorchMark::ScorchMark(Resource* resource, const Vector3& position, const Vector3& normal, float lifetime):
 GameObject(resource)
 {
@@ -31,11 +33,10 @@ GameObject(resource)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ScorchMark::initialise(const ShaderInstance& shaderInstance)
+void ScorchMark::initialise()
 {
     Square::SquareCreationParams params;
     params.m_resource = m_resource;
-    params.m_shaderInstance = &shaderInstance;
     params.m_lowerleft = Vector2(-0.5f, -0.5f);
     params.m_lowerleft = Vector2(0.5f, 0.5f);
 
@@ -46,13 +47,13 @@ void ScorchMark::initialise(const ShaderInstance& shaderInstance)
 
 
 
-    Super::initialise(shaderInstance);
+    Super::initialise();
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance ScorchMark::deserialise( const tinyxml2::XMLElement* node )
+void ScorchMark::deserialise( const tinyxml2::XMLElement* node )
 {
     //TextureManager& tm = TextureManager::getInstance();
     //SettingsManager& sm = SettingsManager::getInstance();
@@ -72,15 +73,14 @@ const ShaderInstance ScorchMark::deserialise( const tinyxml2::XMLElement* node )
     //{
     //    tm.addLoad(textureString->getData());
     //}
-
-    (void*)node; //Should implement this function
-    return ShaderInstance();
+    UNUSEDPARAM(node);
+    //(void*)node; //Should implement this function
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void ScorchMark::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void ScorchMark::update( float elapsedTime, const Input& input )
 {
     m_lifetime -= elapsedTime;
 
@@ -127,7 +127,6 @@ void ScorchMark::update( RenderInstanceTree& renderInstances, float elapsedTime,
     //glDisable(GL_TEXTURE_2D);
     //glDisable(GL_BLEND);
     //glDepthMask(TRUE);
-    UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(input);
 }
 

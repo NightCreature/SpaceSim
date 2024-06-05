@@ -24,9 +24,8 @@ public:
     void cleanup();
 
     void initialise(Vector3 position);
-    void CheckVisibility(RenderInstanceTree& visibleRenderInstances, const RenderInstanceTree& renderInstances, const Matrix44& viewMatrix);
     void createViewArray(Vector3 position);
-    void renderCubeMap(Resource* resource, Texture* renderTarget, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, PerFrameConstants& perFrameConstants, const TextureManager& textureManager);
+    void renderCubeMap(Resource* resource, Texture* renderTarget, const DeviceManager& deviceManager, PerFrameConstants& perFrameConstants, const TextureManager& textureManager);
 private:
     Matrix44 createCamera();
 

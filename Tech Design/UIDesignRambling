@@ -1,0 +1,33 @@
+UI system
+
+Glyphs that represent the render side of the UI Behaviours
+Screen is a logic side container for widgets
+widgets are bags of UI Behaviours
+UI Behaviour is the base layer of the UI and defines what something can do, eg Select, Animate, Dispatch text. 
+Behaviours have input handling and serialisation handling, sends message to the render objects it asks for with glyph swicthes
+Behaviours inspect and dispatch to gameplay not the other way round.
+
+Classical Monolythic Widgets are not the right solution to the UI problem, the best system I worked with so far was one where the widgets where constructed from components. In general you dont care about gameplay data all that much and you are better off polling from the UI for the data than setting the data from the other side, you need to translate that data anyway. In a really generalised sense of how this system worked, you could see a screen as a collection of widgets, which where a collection of behaviours, this still allows you to have a top layer of screen where you feed in input and such things. You dont have to do a classical ECS system here. This system also defined the way the UI looked from states in the UI state machine, this system also ruled which screens connected to each other not the code of the widgets or the screens. You never asked for widgets or behaviours by ID in this system. There is almost never a need for a behaviour to know about another behaviour.  As an example of how you could define a widget from composition
+
+<widget >
+   <Behaviour <!--behaviour attributes-->/>
+   <BehaviourSelectRenderObject <!--behaviour attributes-->/>
+   <BehaviourAnimate <!--behaviour attributes-->/>
+   <BehaviourText <!--behaviour attributes-->/>
+   <BehaviourSelect <!--behaviour attributes-->/>
+</widget>
+
+One other thing I would strongly avoid in either case is that have widget draw themselves, this is asking for inheritance trees you dont want because you need something to do something slightly different. You want one system that mostly deals with activating, updating and navigating the UI logical side, have another system that deals with drawing the UI. This gets you out of the problem of having to inherit from one component just to override a minimal thing, you know have a specfic visual object that can deal with that specific thing you want it to be whilst still be driven by the same logic.
+
+The behaviours actually get the input state and react based on it if they need to react to input, they all have an update call in which you deal with the behaviour in some cases they do nothing.
+
+The user facing API should mostly be defining how the state machine works and capability of writing new composable behaviours.
+
+You are going to always need a layer between the UI system and the Gameplay system, there is usually a translation needed between the data anyway, this also allows gives you a place to add localisation to the data.Think about data driving the creation and layout of the UI and also how the UI flows from one screen to the next, making this data driven will allow you to offload that to another system and simplify how your runtime deals with updating a screen.The worst systems I worked with btw forced you to manually code out item selections on screens and activations of selected items, the problem of not automating that stuff is you have to do it for each screen and its messy and fragile logic that will have to change with each udpate you make to the screen.
+
+UIFlowManager -> manages the state transitions and how screens go from one to the other
+UIStateManager -> manages all the UI states, think screens but can be other things too
+ScreensStates -> manages the flow on  a screen and updating the widgets themselves
+
+OLD code
+G:\SDK\SpaceSimulator\SpaceSimulator\GameObjects\Components

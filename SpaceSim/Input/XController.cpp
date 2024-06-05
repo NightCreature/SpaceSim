@@ -10,6 +10,7 @@
 #include "Math/vector4.h"
 
 #include "../Core/Profiler/ProfilerMacros.h"
+#include "Logging/LoggingMacros.h"
 
 
 
@@ -71,7 +72,7 @@ const InputState& XInputDevice::update(const std::vector<RAWINPUT>& keyboardInpu
 {
     using namespace InputDefines;
 
-    PROFILE_EVENT("XInputDevice::update", LightGoldenRodYellow)
+    PROFILE_FUNCTION();
     if (!m_enabled)
     {
         return m_controllerState;
@@ -228,7 +229,7 @@ void XInputDevice::internalActionSetup(InputActions::ActionType inputAction, con
 {
     //Setup controller specific action map so it can map it's capabilities to the input the game expects
     InputDefines::XControllerDefines xInputDefinitions;
-    auto inputHash = hashString(input->Value());
+    auto inputHash = Hashing::hashString(input->Value());
     InputDefines::XControllerDefines::XControllerInput xControllerInput = xInputDefinitions.FindControllerInputIdForHashId(inputHash);
 
     m_PhysicalInputState[castToUnderlyingType(xControllerInput)] = inputAction; //no need for a map just a single array is enough

@@ -34,23 +34,74 @@ void convertToCString(const std::wstring& str, std::string& out)
 std::vector<std::string> tokeniseString(const std::string& input, const char delimeter)
 {
     std::vector<std::string> result;
-    size_t tokenBegin = 0;
-    bool foundToken = false;
-    for (size_t counter = 0; counter < input.size(); ++counter)
+    if (!input.empty())
     {
-        if (input[counter] == delimeter)
+        size_t tokenBegin = 0;
+        bool foundToken = false;
+        for (size_t counter = 0; counter < input.size(); ++counter)
         {
-            result.push_back(input.substr(tokenBegin, counter));
-            tokenBegin = counter + 1;
-            foundToken = true;
+            if (input[counter] == delimeter)
+            {
+                result.push_back(input.substr(tokenBegin, counter));
+                tokenBegin = counter + 1;
+                foundToken = true;
+            }
+        }
+
+        if (!foundToken)
+        {
+            result.push_back(input);
+        }
+        else
+        {
+            //Lets not miss the ending of the string as a token
+            if (tokenBegin != input.size()) //Not at end of the string
+            {
+                result.push_back(input.substr(tokenBegin, input.size()));
+            }
         }
     }
 
-    if (!foundToken && !input.empty())
+    return result;
+}
+
+///-----------------------------------------------------------------------------
+///! @brief Trims leading white spaces from beginning and end of string
+///! @remark
+///-----------------------------------------------------------------------------
+std::string trim(const std::string_view& input)
+{
+    constexpr char whiteSpaceDelimiters[] = { '\r', '\n', '\t',' ' };
+    size_t leadingIndex = 0;
+    size_t trailingIndex = input.length() - 1;
+
+    //Walk the string from both sides
+    size_t tempLead = trailingIndex;
+    size_t tempTrail = leadingIndex;
+    while (trailingIndex != leadingIndex && (leadingIndex != tempLead || trailingIndex != tempTrail))
     {
-        result.push_back(input);
+        tempTrail = trailingIndex;
+        tempLead = leadingIndex;
+
+        for (const auto& delimiter : whiteSpaceDelimiters)
+        {
+            if (input[tempLead] == delimiter)
+            {
+                ++leadingIndex;
+            }
+
+            if (input[tempTrail] == delimiter)
+            {
+                --trailingIndex;
+            }
+        }
     }
 
+    std::string result = "";
+    if (trailingIndex != leadingIndex)
+    {
+        result = input.substr(leadingIndex, trailingIndex - leadingIndex + 1);
+    }
     return result;
 }
 
@@ -78,6 +129,17 @@ void convertToWideString(const std::string& str, std::wstring& out)
 }
 
 ///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+std::wstring convertToWideString(const std::string str)
+{
+    std::wstring output;
+    convertToWideString(str, output);
+    return output;
+}
+
+///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
@@ -101,44 +163,6 @@ void convertToUTF16String(const std::string& str, std::wstring& out)
 }
 
 ///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void debugOutput(TraceSeverity severity, const std::string& prefix, const char* file, int line, const char * format, ...)
-{
-    static char buf[4096];
-    va_list args;
-    va_start(args, format);
-    vsprintf_s(buf, format, args);
-    va_end(args);
-    static char debugOutputStr[5120];
-    std::string outputFormatString = "";
-    std::string prefixInternal = prefix;
-    if (prefix.empty())
-    {
-        prefixInternal = "TRACE";
-    }
-    switch (severity)
-    {
-    default:
-    case TraceSeverity::EDEBUG:
-    case TraceSeverity::ELOG:
-        outputFormatString = "%s(%d): [%s]  %s\n";
-        break;
-    case TraceSeverity::EWARN:
-
-        outputFormatString = "%s(%d): [%s] WARNING : %s\n";
-        break;
-    case TraceSeverity::EASSERT:
-
-        outputFormatString = "%s(%d): [%s] : ASSERT : %s\n";
-        break;
-    }
-    sprintf_s(debugOutputStr, 3072, outputFormatString.c_str(), file, line, prefixInternal.c_str(), buf);
-    Application::m_logger.LogMessage(debugOutputStr);
-}
-
-///-----------------------------------------------------------------------------
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
@@ -149,7 +173,23 @@ std::string FormatString(const char* format, ...)
     va_start(args, format);
     vsprintf_s(buf, format, args);
     va_end(args);
-    
+
+    return buf;
+}
+
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+std::wstring FormatString(const wchar_t* format, ...)
+{
+    static wchar_t buf[2048];
+    va_list args;
+    va_start(args, format);
+    vswprintf_s(buf, format, args);
+    va_end(args);
+
     return buf;
 }
 

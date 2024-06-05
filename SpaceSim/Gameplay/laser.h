@@ -12,8 +12,6 @@ class DeviceManager;
 struct LaserInstanceData
 {
     LaserInstanceData() : world() {}
-    LaserInstanceData(const ShaderInstance& shaderInstance) : m_shaderInstance(shaderInstance), world() {}
-    ShaderInstance m_shaderInstance;
     Matrix44 world;
 
     Bbox m_boundingBox;
@@ -23,7 +21,7 @@ class Laser
 {
 public:
 	Laser() {}
-	Laser(const Vector3& pos, const Vector3& dir, const ShaderInstance& shaderInstance) : m_position(pos), m_direction(dir), m_instanceData(shaderInstance) {}
+	Laser(const Vector3& pos, const Vector3& dir) : m_position(pos), m_direction(dir) {}
 	~Laser() {}
 
     void update(float elapsedTime, const Matrix44& view, const Matrix44& projection);

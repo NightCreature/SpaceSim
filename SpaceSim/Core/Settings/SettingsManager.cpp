@@ -1,5 +1,8 @@
 #include "SettingsManager.h"
 
+#include "Core/Serialization/Archive.h"
+
+
 ///-----------------------------------------------------------------------------
 ///! @brief  Todo Add comment
 ///! @remark
@@ -17,4 +20,33 @@ void SettingsManager::cleanup()
 
         m_settings.clear();
     }
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void SettingsManager::SaveSettings(const std::filesystem::path& settingsFilePath)
+{
+    Archive settingsArchive;
+    settingsArchive.Open(settingsFilePath);
+
+    settingsArchive.WriteContainer(m_newSettings);
+
+    settingsArchive.Close();
+}
+
+///-----------------------------------------------------------------------------
+///! @brief   
+///! @remark
+///-----------------------------------------------------------------------------
+void SettingsManager::LoadSettings(const std::filesystem::path& settingsFilePath)
+{
+    Archive settingsArchive;
+    settingsArchive.Open(settingsFilePath);
+
+    Settings settings;
+    settingsArchive.Read(m_newSettings);
+
+    settingsArchive.Close();
 }

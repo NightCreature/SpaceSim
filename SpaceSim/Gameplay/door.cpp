@@ -7,6 +7,7 @@
 #include "Core/MessageSystem/MessageQueue.h"
 #include "Core/MessageSystem/GameMessages.h"
 #include "Core/MessageSystem/RenderMessages.h"
+#include "Core/Resource/GameResource.h"
 
 #include <iostream>
 #include <D3D11.h>
@@ -28,10 +29,8 @@ GameObject(resource)
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOrder)
+void Door::initialise(bool changeWindingOrder)
 {
-    UNUSEDPARAM(shaderInstance);
-
     Face::CreationParams params;
 //    params.shaderInstance = &shaderInstance;
 //    params.resource = m_resource;
@@ -55,25 +54,21 @@ void Door::initialise(const ShaderInstance& shaderInstance, bool changeWindingOr
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
+void Door::deserialise( const tinyxml2::XMLElement* element)
 {
-    ShaderInstance shaderInstance;
-
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
     {
         m_name = attribute->Value();
-        m_nameHash = hashString(m_name);
+        m_nameHash = Hashing::hashString(m_name);
     }
 
     for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
     {
-        auto typeHash = hashString(element->Value());
+        auto typeHash = Hashing::hashString(element->Value());
         if (Material::m_hash == typeHash)
         {
             MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
-            //shaderInstance.getMaterial().deserialise(m_resource, getResource().getDeviceManager(), getResource().getTextureManager(), getResource().getLightManager(), element);
-            //shaderInstance.getMaterial().setBlendState(true);
             m_materialParameters = Material::GetMaterialParameters(element);
         }
         else if (Vector3::m_hash == typeHash)
@@ -82,47 +77,50 @@ const ShaderInstance Door::deserialise( const tinyxml2::XMLElement* element)
             translate(m_world, m_position.x(), m_position.y(), m_position.z());
         }
     }
-
-    return shaderInstance;
 }
 
 ///-------------------------------------------------------------------------
 // @brief
 ///-------------------------------------------------------------------------
-void Door::update( RenderInstanceTree& renderInstances, float elapsedTime, const Input& input )
+void Door::update( float elapsedTime, const Input& input )
 {
-    //move
-    if (!m_active)
+    if (m_initialisationDone)
     {
-        if (m_move < 50.0f)
-            m_move += 10.0f*elapsedTime;
-
+        //move
         Matrix44 transform;
-        translate(transform, 0.0f, 0.0f, m_move);
+        if (!m_active)
+        {
+            if (m_move < 50.0f)
+                m_move += 10.0f * elapsedTime;
+
+            translate(transform, 0.0f, 0.0f, m_move);
+            
+        }
+        else
+        {
+            if (m_move > 0.0f)
+                m_move -= 10.0f * elapsedTime;
+            translate(transform, 0.0f, 0.0f, m_move);
+        }
+
         m_world = m_world * transform;
-    }
-    else
-    {
-        //if (m_move > 0.0f)
-        //    m_move -= 10.0f*elapsedTime;
-        //translate(m_world, 0.0f, 0.0f, m_move);
-    }
-    //Super::update(renderInstances, elapsedTime, input);
+        //Super::update(renderInstances, elapsedTime, input);
 #ifdef _DEBUG
     //renderInstances.back()->m_name = L"Door";
 #endif
 
-    UNUSEDPARAM(renderInstances);
-    UNUSEDPARAM(input);
+        UNUSEDPARAM(input);
 
-    MessageSystem::RenderInformation renderInfo;
-    MessageSystem::RenderInformation::RenderInfo data;
-    data.m_renderObjectid = m_renderHandle;
-    data.m_gameobjectid = m_nameHash;
-    data.m_world = m_world;
-    data.m_name = m_name.c_str();
-    renderInfo.SetData(data);
-    m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+        MessageSystem::RenderInformation renderInfo;
+        MessageSystem::RenderInformation::RenderInfo data;
+        data.m_renderObjectid = m_renderHandle;
+        data.m_gameobjectid = m_nameHash;
+        data.m_world = m_world;
+        data.m_name = m_name.c_str();
+        data.m_shouldRender = true;
+        renderInfo.SetData(data);
+        m_resource->m_messageQueues->getUpdateMessageQueue()->addMessage(renderInfo);
+    }
 }
 
 ///-------------------------------------------------------------------------

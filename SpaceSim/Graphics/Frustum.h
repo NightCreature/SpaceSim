@@ -12,7 +12,7 @@ public:
     Frustum( const Matrix44& viewMatrix, const Matrix44& projectionMatrix);
     ~Frustum();
 
-    bool IsInside(const Bbox& boundingBox);
+    bool IsInside(const Bbox& boundingBox) const;
     //bool CheckPoint(float, float, float);
     //bool CheckCube(float, float, float, float);
     //bool CheckSphere(float, float, float, float);
@@ -34,7 +34,7 @@ private:
            ON_PLANE = 0,
            POSITIVE = 1,
        };
-       float ClassifyPoint(const Vector3& pt);
+       float ClassifyPoint(const Vector3& pt) const;
 /*
        void normalize()
        {

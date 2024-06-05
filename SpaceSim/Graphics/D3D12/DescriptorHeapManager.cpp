@@ -1,7 +1,10 @@
 #include "DescriptorHeapManager.h"
 
+#include "Core/Profiler/ProfilerMacros.h"
 #include "Core/Resource/RenderResource.h"
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
+
+#include "Logging/LoggingMacros.h"
 #include <d3d12.h>
 
 
@@ -47,6 +50,7 @@ void DescriptorHeapManager::Cleanup()
 ///-----------------------------------------------------------------------------
 void DescriptorHeapManager::CreateHeaps()
 {
+    PROFILE_FUNCTION();
     CreateDescriptorHeap(65536, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true, true);
     CreateDescriptorHeap(256, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, true, false);
 }

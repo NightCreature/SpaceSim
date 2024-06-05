@@ -1,14 +1,47 @@
-#ifndef CONSTANTSTRUCTURES
-#define CONSTANTSTRUCTURES
+#pragma once
 
-struct LightConstants
-{
-    float4 m_position;
-    float4 m_direction;
-    float4 m_diffuse;
-    float4 m_specular;
-    float4 m_attenuationFallOff;
-    float4 m_range;
-};
+// struct LightConstants
+// {
+//     float4 m_position;
+//     float4 m_direction;
+//     float4 m_diffuse;
+//     float4 m_specular;
+//     float4 m_attenuationFallOff;
+//     float4 m_range;
+//     float4 m_irradiance;
+//     uint4 m_type;
+// };
 
-#endif
+// struct WVPData
+// {
+// 	float4x4 World;
+// 	float4x4 View;
+// 	float4x4 Projection;
+// };
+
+// struct MaterialConstants
+// {
+//     float4 ambient;
+//     float4 diffuse;
+//     float4 specular;
+//     float4 emissive;
+//     float shininess;
+// };
+
+// struct LightParameters
+// {
+//     LightConstants m_lights[32];
+//     uint NumberOfLights;
+// };
+
+// struct CameraConstants
+// {
+//     float4x4 m_matrix;
+//     float4x4 m_inverseMatrix;
+//     float3 m_position;
+// };
+
+// struct CameraConstantArray
+// {
+//     CameraConstants m_constants[32];
+// };

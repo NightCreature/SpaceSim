@@ -31,15 +31,15 @@
 #include "ScreenGrab.h"
 #endif
 
-static const size_t shadowMapTechniqueHash = "shadow_map"_hash;
+//static const size_t shadowMapTechniqueHash = "shadow_map"_hash;
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
 ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendState* alphaBlendState, ID3D11BlendState* blendState, unsigned int shadowMapWidhtHeight /*= 1024*/) :
-    m_blendState(blendState),
-    m_alphaBlendState(alphaBlendState)
+    m_alphaBlendState(alphaBlendState),
+    m_blendState(blendState)
  {
      m_shadowMapWidthHeight = shadowMapWidhtHeight;
      m_shadowMapWidthHeight = 2048;
@@ -141,7 +141,7 @@ ShadowMapRenderer::ShadowMapRenderer(DeviceManager& deviceManager, ID3D11BlendSt
      m_lightViewPort.TopLeftX = 0;
      m_lightViewPort.TopLeftY = 0;
 
-     m_shadowMVP.m_projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI * 0.5f, 1.0f, 500.0f, 0.1f);
+     m_shadowMVP.Projection = math::createLeftHandedFOVPerspectiveMatrix(math::gmPI * 0.5f, 1.0f, 500.0f, 0.1f);
 #ifdef _DEBUG
      hr = deviceManager.getDeviceContext()->QueryInterface(__uuidof(pPerf), reinterpret_cast<void**>(&pPerf));
 #endif
@@ -179,29 +179,10 @@ void ShadowMapRenderer::cleanup()
 ///! @brief   TODO enter a description
 ///! @remark
 ///-----------------------------------------------------------------------------
-void ShadowMapRenderer::CheckVisibility(RenderInstanceTree& visibileInstances, const RenderInstanceTree& renderInstances)
-{
-    PROFILE_EVENT("RenderSystem::CheckVisibility", Yellow);
-    visibileInstances.clear();
-    Frustum frustum(m_shadowMVP.m_view, m_shadowMVP.m_projection);
-    for (auto instance : renderInstances)
-    {
-        if (frustum.IsInside(instance->getBoundingBox()))
-        {
-            visibileInstances.push_back(instance);
-        }
-    }
-}
-
-///-----------------------------------------------------------------------------
-///! @brief   TODO enter a description
-///! @remark
-///-----------------------------------------------------------------------------
-void ShadowMapRenderer::renderShadowMap(Resource* resource, const RenderInstanceTree& renderInstances, const DeviceManager& deviceManager, const Light* light)
+void ShadowMapRenderer::renderShadowMap(Resource* resource, const DeviceManager& deviceManager, const Light* light)
 {
 
     UNUSEDPARAM(resource);
-    UNUSEDPARAM(renderInstances);
     UNUSEDPARAM(deviceManager);
     UNUSEDPARAM(light);
 
