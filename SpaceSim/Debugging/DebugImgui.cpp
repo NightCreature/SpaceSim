@@ -5,6 +5,8 @@
 #include "Graphics/D3D12/DescriptorHeapManager.h"
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
 #include "Graphics/D3D12/CommandQueue.h"
+#include "Graphics/texturemanager.h"
+#include "Graphics/EffectCache.h"
 
 
 #include "imgui.h"
@@ -38,21 +40,25 @@ void DebugImgui::Init(Resource* resource)
         DXGI_FORMAT_R8G8B8A8_UNORM, m_heap.m_heap,
         m_heap.m_heap->GetCPUDescriptorHandleForHeapStart(),
         m_heap.m_heap->GetGPUDescriptorHandleForHeapStart());
+
+    RegisterDebugImguiCallbacks(m_resource, this);
 }
 
-void DebugImgui::Update(const Input& input)
+void DebugImgui::Update()
 {
     //Start the frame
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    CreateImguiMenu();
+
     //Call all the debug imgui functions we need
     for (auto& callback : m_imguiCallbacks)
     {
         if (callback.m_active)
         {
-            callback.m_imguiCallback(input);
+            callback.m_imguiCallback();
         }
     }
 }
@@ -70,4 +76,35 @@ void DebugImgui::Shutdown()
     ImGui_ImplDX12_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
+}
+
+void DebugImgui::CreateImguiMenu()
+{
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (ImGui::BeginMenu("Widgets"))
+        {
+            for (auto& callback : m_imguiCallbacks)
+            {
+                ImGui::MenuItem(callback.m_name.c_str(), nullptr, &callback.m_active);
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+}
+
+void RegisterDebugImguiCallbacks(Resource* resource, DebugImgui* debugImgui)
+{
+    debugImgui->RegisterImguiCallback([resource]()
+        {
+            const RenderResource& renderResource = RenderResourceHelper(resource).getResource();
+            renderResource.getTextureManager().OnDebugImgui();
+        }, "Loaded Textures");
+
+    debugImgui->RegisterImguiCallback([resource]()
+        {
+            const RenderResource& renderResource = RenderResourceHelper(resource).getResource();
+            renderResource.getEffectCache().OnDebugImgui();
+        }, "Effects");
 }

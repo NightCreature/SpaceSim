@@ -121,7 +121,7 @@ void MeshGroup::PopulateCommandlist(Resource* resource, CommandList& list)
     list.m_list->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
     //Set PSO object
-    const Effect* effect = effectCache.getEffect(m_material.getEffectHash());
+    const Effect* effect = effectCache.getEffect(HashString(m_material.getEffectHash()));
     if (effect != nullptr)
     {
         const Technique* technique = effect->getTechnique(m_material.getTechnique());

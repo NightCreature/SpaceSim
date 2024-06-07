@@ -24,6 +24,7 @@
 #include "DebugHelperFunctions.h"
 #include "UI/Messages.h"
 #include <Debugging/DebugImgui.h>
+#include "imgui.h"
 
 Matrix44 RenderSystem::m_view;
 Matrix44 RenderSystem::m_inverseView;

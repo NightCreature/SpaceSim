@@ -229,7 +229,7 @@ void Application::mainGameLoop()
 
                 m_messageQueues.swapQueues();
 
-                m_gameResource->m_debugImgui->Update(input);
+                m_gameResource->m_debugImgui->Update();
 
                 m_UpdateThread.UnblockThread();
                 m_UpdateThread.UnLockCriticalSection();

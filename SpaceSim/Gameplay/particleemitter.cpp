@@ -219,8 +219,8 @@ void ParticleEmitterComponentBased::update(double elapsedTime, const Matrix44& v
 
         //PROFILE_EVENT("ParticleEmitter::SubmitInstance", Color::DarkBlue);
 
-        const Effect* effect = helper.getWriteableResource().getEffectCache().getEffect(Hashing::hashString("ParticleSystem.xml"));
-        Technique* technique = const_cast<Technique*>(effect->getTechnique(Hashing::hashString("default")));
+        const Effect* effect = helper.getWriteableResource().getEffectCache().getEffect(HashString("ParticleSystem.xml"));
+        Technique* technique = const_cast<Technique*>(effect->getTechnique(HashString("default")));
         UNUSEDPARAM(technique);
         deviceContext->UpdateSubresource(m_constantBuffers[0], 0, 0, (void*)&wvp, 0, 0);
         deviceContext->UpdateSubresource(m_constantBuffers[1], 0, 0, (void*)&inverseView, 0, 0);

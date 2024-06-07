@@ -46,12 +46,14 @@ public:
     void CreateEffect(Resource* resource, const std::string& resourceFileName);
 
     const Effect* getEffect(const std::string& name) const;
-    const Effect* getEffect(size_t effectHash) const;
+    const Effect* getEffect(const HashString& effectHash) const;
     void addEffect(const std::string& name, const Effect& effect);
     bool HasEffect(const std::string& name) const;
+
+    void OnDebugImgui() const;
 private:
 
-    std::map<size_t, Effect> m_effects;
+    std::map<HashString, Effect> m_effects;
 
     std::mutex m_mutex;
 };
