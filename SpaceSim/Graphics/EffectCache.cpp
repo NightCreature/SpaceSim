@@ -60,6 +60,8 @@ bool EffectCache::HasEffect(const std::string& name) const
 
 void EffectCache::OnDebugImgui() const
 {
+    ImGui::Begin("Effects");
+
     for (const auto& effect : m_effects)
     {
         std::string nodeName;
@@ -75,6 +77,8 @@ void EffectCache::OnDebugImgui() const
             ImGui::TreePop();
         }
     }
+
+    ImGui::End();
 }
 
 const Effect* EffectCache::getEffect(const std::string& name) const

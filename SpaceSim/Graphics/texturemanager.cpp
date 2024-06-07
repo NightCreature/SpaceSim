@@ -232,6 +232,8 @@ void TextureManager::addTexture( const std::string& textureName, const Texture12
 
 void TextureManager::OnDebugImgui() const
 {
+    ImGui::Begin("Textures");
+
     for (const auto& textureInfo : m_textures)
     {
         std::string nodeName;
@@ -249,6 +251,7 @@ void TextureManager::OnDebugImgui() const
             ImGui::TreePop();
         }
     }
+    ImGui::End();
 }
 
 TextureInfo TextureManager::AddOrCreateTexture(std::string textureName)
