@@ -44,6 +44,8 @@ public:
 
     HASH_ELEMENT_DEFINITION(Switch)
 protected:
+
+	void OnDebugImguiInternal() override;
 private:
 	bool m_activemat;
 	float m_prevtime;

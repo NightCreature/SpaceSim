@@ -10,6 +10,7 @@
 #include "Gameplay/GameObjectManager.h"
 #include "Core/Types/TypeHelpers.h"
 #include "Graphics/DebugBox.h"
+#include "imgui.h"
 
 
 
@@ -149,6 +150,17 @@ void Switch::update( float elapsedTime, const Input& input )
 void Switch::handleMessage( const MessageSystem::Message& msg )
 {
     UNUSEDPARAM(msg);
+}
+
+void Switch::OnDebugImguiInternal()
+{
+    MaterialConstants materialParameters = m_mat1.getMaterialCB();
+    ImGui::CollapsingHeader("Material");
+    ImGui::InputFloat4("Ambient", materialParameters.ambient.GetDataPtr());
+    ImGui::InputFloat4("Diffuse", materialParameters.diffuse.GetDataPtr());
+    ImGui::InputFloat4("Specular", materialParameters.specular.GetDataPtr());
+    ImGui::InputFloat4("Emissive", materialParameters.emissive.GetDataPtr());
+    ImGui::InputFloat("Shininess", &materialParameters.shininess);
 }
 
 ///-------------------------------------------------------------------------

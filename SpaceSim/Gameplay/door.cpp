@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <D3D11.h>
+#include "imgui.h"
 
 
 
@@ -141,4 +142,15 @@ void Door::handleMessage( const MessageSystem::Message& msg )
         m_initialisationDone = true;
         m_active = true;
     }
+}
+
+void Door::OnDebugImguiInternal()
+{
+    ImGui::CollapsingHeader("Material");
+    ImGui::InputFloat4("Ambient", m_materialParameters.m_materialContent.ambient.GetDataPtr());
+    ImGui::InputFloat4("Diffuse", m_materialParameters.m_materialContent.diffuse.GetDataPtr());
+    ImGui::InputFloat4("Specular", m_materialParameters.m_materialContent.specular.GetDataPtr());
+    ImGui::InputFloat4("Emissive", m_materialParameters.m_materialContent.emissive.GetDataPtr());
+    ImGui::InputFloat("Shininess", &m_materialParameters.m_materialContent.shininess);
+    ImGui::Checkbox("Alpha Enabled", &m_materialParameters.m_alphaBlend);
 }

@@ -97,7 +97,10 @@ public:
     void SetRenderHandle(size_t renderId) { m_renderHandle = renderId; }
 
     virtual void handleMessage(const MessageSystem::Message& msg) = 0;
+    void OnDebugImgui();
 protected:
+
+    virtual void OnDebugImguiInternal() = 0;
 
     Matrix44 m_world;
     std::string m_name;

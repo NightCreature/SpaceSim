@@ -130,6 +130,11 @@ void ScorchMark::update( float elapsedTime, const Input& input )
     UNUSEDPARAM(input);
 }
 
+void ScorchMark::OnDebugImguiInternal()
+{
+    
+}
+
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------

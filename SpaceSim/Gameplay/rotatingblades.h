@@ -50,6 +50,8 @@ public:
 
     HASH_ELEMENT_DEFINITION(RotatingBlades)
 protected:
+
+    void OnDebugImguiInternal() override;
 private:
 	Vector3 m_position;
 	Model* m_rotatingblades1;

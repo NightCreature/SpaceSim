@@ -82,6 +82,8 @@ public:
     Matrix44 getCameraMatrix() const  {return m_camera->getCamera();}
     Bbox getBoundingBox() { return Bbox(); } //Needs to return the drawable bbox of this object
 protected:
+
+    void OnDebugImguiInternal() override;
 private:
     bool isPlayerDead();
     void eraseLaser(std::list<Laser*>::iterator& it, Laser* l);

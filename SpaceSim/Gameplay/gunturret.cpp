@@ -314,6 +314,11 @@ void GunTurret::deserialise( const tinyxml2::XMLElement* element)
     m_world = scaleTransform;
 }
 
+void GunTurret::OnDebugImguiInternal()
+{
+
+}
+
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------

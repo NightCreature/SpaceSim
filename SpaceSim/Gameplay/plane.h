@@ -35,7 +35,9 @@ public:
 	void setRows(int rows) {m_rows = rows;}
 	void setColoms(int coloms) {m_coloms = coloms;}
     void invertNormal();
+
 protected:
+    void OnDebugImguiInternal() override;
 private:
 	void translateBbox(float xt, float yt, float zt);
 	void rotateBbox(float angle, float xr, float yr, float zr);

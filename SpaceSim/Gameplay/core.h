@@ -34,6 +34,8 @@ public:
 
     HASH_ELEMENT_DEFINITION(Core)
 protected:
+
+	void OnDebugImguiInternal() override;
 private:
 	Vector3		m_position;
 	//GLUquadric* m_core;

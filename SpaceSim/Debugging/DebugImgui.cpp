@@ -2,6 +2,8 @@
 
 #include "Application/GameWindow.h"
 #include "Core/Resource/RenderResource.h"
+#include "Core/Resource/GameResource.h"
+#include "Gameplay/GameObjectManager.h"
 #include "Graphics/D3D12/DescriptorHeapManager.h"
 #include "Graphics/D3D12/DeviceManagerD3D12.h"
 #include "Graphics/D3D12/CommandQueue.h"
@@ -12,13 +14,14 @@
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
+#include "Core/Resource/GameResource.h"
 
 
-void DebugImgui::Init(Resource* resource)
+void DebugImgui::Init(RenderResource* renderResource, GameResource* gameResource)
 {
-    m_resource = resource;
+    m_gameResource = gameResource;
+    m_renderResource = renderResource;
 
-    RenderResource& renderResource = RenderResourceHelper(m_resource).getWriteableResource();
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -32,16 +35,16 @@ void DebugImgui::Init(Resource* resource)
 
 
     // Setup Platform/Renderer backends
-    ImGui_ImplWin32_Init(renderResource.getGameWindow().getWindowHandle());
+    ImGui_ImplWin32_Init(m_renderResource->getGameWindow().getWindowHandle());
 
-    DescriptorHeapManager& heapManager = renderResource.getDescriptorHeapManager();
+    DescriptorHeapManager& heapManager = m_renderResource->getDescriptorHeapManager();
     m_heap = heapManager.CreateDescriptorHeap(65536, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true, true);
-    ImGui_ImplDX12_Init(renderResource.getDeviceManager().GetDevice(), 3,
+    ImGui_ImplDX12_Init(m_renderResource->getDeviceManager().GetDevice(), 3,
         DXGI_FORMAT_R8G8B8A8_UNORM, m_heap.m_heap,
         m_heap.m_heap->GetCPUDescriptorHandleForHeapStart(),
         m_heap.m_heap->GetGPUDescriptorHandleForHeapStart());
 
-    RegisterDebugImguiCallbacks(m_resource, this);
+    RegisterDebugImguiCallbacks(m_renderResource, m_gameResource, this);
 }
 
 void DebugImgui::Update()
@@ -82,7 +85,7 @@ void DebugImgui::CreateImguiMenu()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu("Widgets"))
+        if (ImGui::BeginMenu("Debug Info"))
         {
             for (auto& callback : m_imguiCallbacks)
             {
@@ -94,17 +97,20 @@ void DebugImgui::CreateImguiMenu()
     }
 }
 
-void RegisterDebugImguiCallbacks(Resource* resource, DebugImgui* debugImgui)
+void RegisterDebugImguiCallbacks(RenderResource* renderResource, GameResource* gameResource, DebugImgui* debugImgui)
 {
-    debugImgui->RegisterImguiCallback([resource]()
+    debugImgui->RegisterImguiCallback([renderResource]()
         {
-            const RenderResource& renderResource = RenderResourceHelper(resource).getResource();
-            renderResource.getTextureManager().OnDebugImgui();
+            renderResource->getTextureManager().OnDebugImgui();
         }, "Loaded Textures");
 
-    debugImgui->RegisterImguiCallback([resource]()
+    debugImgui->RegisterImguiCallback([renderResource]()
         {
-            const RenderResource& renderResource = RenderResourceHelper(resource).getResource();
-            renderResource.getEffectCache().OnDebugImgui();
+            renderResource->getEffectCache().OnDebugImgui();
         }, "Effects");
+
+    debugImgui->RegisterImguiCallback([gameResource]()
+        {
+            gameResource->getGameObjectManager().OnDebugImgui();
+        }, "GameObjects");
 }

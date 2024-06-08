@@ -195,7 +195,14 @@ Vector4 Matrix44::getTransform()
 const float* Matrix44::operator [](size_t i) const
 {
     if (i > 3)
-        return 0;
+        return nullptr;
+    return m_m[i];
+}
+
+float* Matrix44::operator [](size_t i)
+{
+    if (i > 3)
+        return nullptr;
     return m_m[i];
 }
 

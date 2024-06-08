@@ -20,6 +20,8 @@ public:
     virtual void update( float elapsedTime, const Input& input );
     float getLifetime() const {return m_lifetime;}
 protected:
+
+    void OnDebugImguiInternal() override;
 private:
 	void create();
 

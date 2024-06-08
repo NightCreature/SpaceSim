@@ -128,6 +128,8 @@ public:
     constexpr size_t Size() const { return size; }
 
     std::array<T, size> GetData() const { return m_data; }
+    //Imgui needs access to the data ptr
+    float* GetDataPtr() { return m_data.data(); }
 private:
     std::array<T, size> m_data;
 };

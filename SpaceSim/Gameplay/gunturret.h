@@ -35,6 +35,8 @@ public:
     void deserialise( const tinyxml2::XMLElement* element );
     HASH_ELEMENT_DEFINITION(GunTurret)
 protected:
+
+	void OnDebugImguiInternal() override;
 private:
 	bool checkLaserCollisionPlayer(const Laser& l, Player& p);
 	void transformBoundingBox();

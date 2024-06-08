@@ -134,6 +134,7 @@ RenderSystem::~RenderSystem()
 ///-----------------------------------------------------------------------------
 ///! @brief   Initialise the RenderSystem
 ///! @remark  Creates a window and reveals the window
+/// Consider using GameResource for the var we pass here
 ///-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource, JobQueue* jobQueue)
 {
@@ -230,7 +231,7 @@ void RenderSystem::initialise(Resource* resource, JobQueue* jobQueue)
     m_cameraBuffer.Create(m_deviceManager, m_heapManager.GetSRVCBVUAVHeap(), sizeof(CameraConstants) * maxCameraConstants, "CameraConstants");
 
     //This has to be done after we have a device setup
-    resource->m_debugImgui->Init(m_renderResource);
+    resource->m_debugImgui->Init(m_renderResource, static_cast<GameResource*>(resource));
 
 #ifdef _DEBUG
 

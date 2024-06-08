@@ -14,6 +14,8 @@ public:
     HASH_ELEMENT_DEFINITION(InfinitySphere)
 protected:
     virtual void handleMessage(const MessageSystem::Message& msg);
+
+    void OnDebugImguiInternal() override;
 private:
     Vector3 m_scale;
 };

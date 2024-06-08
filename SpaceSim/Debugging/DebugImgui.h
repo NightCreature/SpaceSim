@@ -7,12 +7,14 @@
 #include <vector>
 
 class Resource;
+class RenderResource;
+class GameResource;
 class Input;
 struct CommandList;
 
 class DebugImgui;
 
-void RegisterDebugImguiCallbacks(Resource* resource, DebugImgui* debugImgui);
+void RegisterDebugImguiCallbacks(RenderResource* renderResource, GameResource* gameResource, DebugImgui* debugImgui);
 
 class DebugImgui
 {
@@ -20,7 +22,7 @@ public:
     DebugImgui() {}
     ~DebugImgui() {}
 
-    void Init(Resource* resource);
+    void Init(RenderResource* renderResource, GameResource* gameResource);
     void Update();
     void Render(CommandList& list);
     void Shutdown();
@@ -43,7 +45,8 @@ private:
     };
 
     std::vector<ImguiData> m_imguiCallbacks;
-    Resource* m_resource = nullptr;
+    GameResource* m_gameResource = nullptr;
+    RenderResource* m_renderResource = nullptr;
     DescriptorHeap m_heap;
 
     void CreateImguiMenu();
