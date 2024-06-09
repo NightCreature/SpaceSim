@@ -56,7 +56,9 @@ public:
 	void setFallOff(float fallOff) { m_fallOff = fallOff;}
 	void setDirection(const Vector3& direction) {m_direction = direction;}
     LightConstants getLightConstants() const;
-    HASH_ELEMENT_DEFINITION(Light)
+	HASH_ELEMENT_DEFINITION(Light)
+
+	void OnDebugImgui();
 protected:
 private:
 	Vector3		m_position;

@@ -34,6 +34,8 @@ public:
     void read(std::istream& in);
     void write(std::ostream& out) const;
     
+    void OnDebugImgui(const std::string_view& name);
+
     static Color black();
     static Color white();
     static Color red();

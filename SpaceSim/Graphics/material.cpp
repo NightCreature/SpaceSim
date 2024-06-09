@@ -276,3 +276,8 @@ void Material::Prepare(const EffectCache& effectCache)
     //With bindless we have to do nothing here, or we could bind the textures here
     UNUSEDPARAM(effectCache);
 }
+
+void Material::OnDebugImgui(const std::string_view& name)
+{
+    m_materialCB.OnDebugImgui(name);
+}

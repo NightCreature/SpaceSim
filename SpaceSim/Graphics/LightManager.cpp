@@ -6,6 +6,8 @@
 #include "Core/Profiler/ProfilerMacros.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 
+#include "imgui.h"
+
 constexpr size_t maxLights = 32;
 
 struct LightConstantData
@@ -80,6 +82,18 @@ void LightManager::update()
     constantData.m_activeNumberOfLights = static_cast<uint>(m_activeLights);
     m_lightBuffer.UpdateCpuData(constantData);
     m_lightBuffer.UpdateGpuData();
+}
+
+void LightManager::OnDebugImgui()
+{
+    ImGui::Begin("Lights");
+
+    for (auto&& light : m_lights)
+    {
+        light.second.OnDebugImgui();
+    }
+
+    ImGui::End();
 }
 
 ///-----------------------------------------------------------------------------

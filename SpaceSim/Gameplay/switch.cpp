@@ -154,13 +154,8 @@ void Switch::handleMessage( const MessageSystem::Message& msg )
 
 void Switch::OnDebugImguiInternal()
 {
-    MaterialConstants materialParameters = m_mat1.getMaterialCB();
-    ImGui::CollapsingHeader("Material");
-    ImGui::InputFloat4("Ambient", materialParameters.ambient.GetDataPtr());
-    ImGui::InputFloat4("Diffuse", materialParameters.diffuse.GetDataPtr());
-    ImGui::InputFloat4("Specular", materialParameters.specular.GetDataPtr());
-    ImGui::InputFloat4("Emissive", materialParameters.emissive.GetDataPtr());
-    ImGui::InputFloat("Shininess", &materialParameters.shininess);
+    m_mat1.OnDebugImgui("Deactive Material");
+    m_mat2.OnDebugImgui("Active Material");;
 }
 
 ///-------------------------------------------------------------------------

@@ -1155,7 +1155,7 @@
     <Model file_name="Models\sphere.dae" />
   </Core>
   -->
-  <!--
+
   <Switch name="switch_1" >
     <Material>
       <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
@@ -1180,6 +1180,7 @@
     <Vector3 x="325" y="-75" z="199.9"/>
     <Link link="left_force_field"/>
   </Switch>
+  <!--
   <Switch name="switch_2" >
     <Material>
       <Color r="0.25" g="0.25" b="0.25" a="0.75"/>

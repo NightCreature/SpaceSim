@@ -1,5 +1,6 @@
 #include "Graphics/light.h"
 #include <Core/tinyxml2.h>
+#include "imgui.h"
 
 
 
@@ -145,4 +146,21 @@ LightConstants Light::getLightConstants() const
     constants.m_type[0] = static_cast<uint32>(m_lightType);
 
     return constants;
+}
+
+void Light::OnDebugImgui()
+{
+    ImGui::CollapsingHeader("Light");
+    m_position.OnDebugImgui("Position");
+    m_direction.OnDebugImgui("Direction");
+    m_diffuse.OnDebugImgui("Diffuse");
+    m_specular.OnDebugImgui("Specular");
+    ImGui::InputFloat("Range", &m_range);
+    ImGui::InputFloat("Constant Attenuation", &m_constantAttenuation);
+    ImGui::InputFloat("Linear Attenuation", &m_linearAttenuation);
+    ImGui::InputFloat("Quadratic Attenuation", &m_quadraticAttenuation);
+    ImGui::InputFloat("Inner Cone", &m_innerCone);
+    ImGui::InputFloat("Outer Cone", &m_outerCone);
+    ImGui::InputFloat("Fall Off", &m_fallOff);
+    ImGui::InputInt("Light Type", (int*)&m_lightType);
 }

@@ -134,6 +134,8 @@ public:
 
     size_t GetNumberOfNeededDescriptors() const { return m_numberOfDescriptorsNeeded; }
     void Prepare(const EffectCache& effectCache);
+
+    void OnDebugImgui(const std::string_view& name);
 protected:
 private:
     MaterialConstants m_materialCB;
