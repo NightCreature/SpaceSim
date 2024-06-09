@@ -145,3 +145,7 @@ void ForceField::OnDebugImguiInternal()
     ImGui::InputFloat("Shininess", &m_materialParameters.m_materialContent.shininess);
     ImGui::Checkbox("Alpha Enabled", &m_materialParameters.m_alphaBlend);
 }
+
+void ForceField::DeserialiseInternal(const tinyxml2::XMLElement* element)
+{
+}

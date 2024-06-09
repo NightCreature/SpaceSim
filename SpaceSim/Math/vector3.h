@@ -1,6 +1,7 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
+#include "Core/StringOperations/HashString.h"
 #include "Memory/AlignMacros.h"
 #include "Core/tinyxml2.h"
 #include "Math/vector2.h"

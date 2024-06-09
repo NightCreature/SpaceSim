@@ -27,7 +27,7 @@ public:
     constexpr size_t getHash() const { return m_hash; }
     constexpr operator size_t() const { return m_hash; }
 
-    constexpr const std::string& getString() const 
+    constexpr const std::string_view& getString() const 
     { 
 #ifdef _DEBUG
         return m_string;
@@ -44,10 +44,13 @@ public:
 
 private:
 #ifdef _DEBUG
-    std::string m_string;
+    std::string_view m_string;
 #endif
     size_t m_hash = static_cast<size_t>(-1);
 };
+
+#define HASH_ELEMENT_DEFINITION(CLASS) static constexpr HashString m_hash = HashString(#CLASS);
+#define HASH_ELEMENT_TEMPLATE_DEFINITION(CLASS, T) static constexpr HashString m_hash = HashString(#CLASS#T##);
 
 // Specialization so we can use this type as a hash key in unordered map
 template<>

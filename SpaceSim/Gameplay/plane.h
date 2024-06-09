@@ -27,7 +27,7 @@ public:
 	~Plane() {}
 
     void initialise();
-    virtual void deserialise( const tinyxml2::XMLElement* node );
+    
     virtual void update( float elapsedTime, const Input& input );
 
 	void transform();
@@ -37,6 +37,7 @@ public:
     void invertNormal();
 
 protected:
+    virtual void DeserialiseInternal(const tinyxml2::XMLElement* node);
     void OnDebugImguiInternal() override;
 private:
 	void translateBbox(float xt, float yt, float zt);

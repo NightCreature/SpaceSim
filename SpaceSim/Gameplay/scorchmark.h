@@ -15,7 +15,7 @@ public:
 	ScorchMark(Resource* resource, const Vector3& position, const Vector3& normal, float lifetime);
 	~ScorchMark() {}
     void initialise();
-    virtual void deserialise( const tinyxml2::XMLElement* node );
+    virtual void DeserialiseInternal( const tinyxml2::XMLElement* node );
 
     virtual void update( float elapsedTime, const Input& input );
     float getLifetime() const {return m_lifetime;}

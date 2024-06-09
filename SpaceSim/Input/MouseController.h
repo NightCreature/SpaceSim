@@ -1,5 +1,6 @@
 #pragma once
 #include "IController.h"
+#include "Core/StringOperations/HashString.h"
 #include <map>
 
 class MouseController : public IInputDevice

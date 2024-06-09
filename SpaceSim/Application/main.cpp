@@ -24,6 +24,8 @@
 
 #include "Core/Profiler/ProfilerMacros.h"
 
+#define MAKESTRING(OBJECT) #OBJECT
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
@@ -31,7 +33,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 //#ifdef _DEBUG
 //	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 //#endif
-
     MicroProfileOnThreadCreate("Main");
 
     OPTICK_START_CAPTURE();

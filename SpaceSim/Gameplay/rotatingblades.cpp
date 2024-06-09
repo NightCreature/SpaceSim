@@ -25,7 +25,7 @@ GameObject(resource)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void RotatingBlades::deserialise( const tinyxml2::XMLElement* element)
+void RotatingBlades::DeserialiseInternal( const tinyxml2::XMLElement* element)
 {
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)

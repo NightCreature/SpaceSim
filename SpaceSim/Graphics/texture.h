@@ -1,6 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/StringOperations/HashString.h"
 #include <d3d11.h>
 #include <string>
 #include <vector>

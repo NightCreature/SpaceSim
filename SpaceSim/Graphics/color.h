@@ -4,6 +4,7 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include <array>
 #include <ostream>
+#include "Core/StringOperations/HashString.h"
 
 namespace tinyxml2
 {

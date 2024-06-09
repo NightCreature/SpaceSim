@@ -55,29 +55,8 @@ void Door::initialise(bool changeWindingOrder)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Door::deserialise( const tinyxml2::XMLElement* element)
+void Door::DeserialiseInternal( const tinyxml2::XMLElement* element)
 {
-    const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
-    if (attribute != nullptr)
-    {
-        m_name = attribute->Value();
-        m_nameHash = Hashing::hashString(m_name);
-    }
-
-    for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
-    {
-        auto typeHash = Hashing::hashString(element->Value());
-        if (Material::m_hash == typeHash)
-        {
-            MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
-            m_materialParameters = Material::GetMaterialParameters(element);
-        }
-        else if (Vector3::m_hash == typeHash)
-        {
-            m_position.deserialise(element);
-            translate(m_world, m_position.x(), m_position.y(), m_position.z());
-        }
-    }
 }
 
 ///-------------------------------------------------------------------------

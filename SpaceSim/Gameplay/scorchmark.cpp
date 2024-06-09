@@ -53,7 +53,7 @@ void ScorchMark::initialise()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void ScorchMark::deserialise( const tinyxml2::XMLElement* node )
+void ScorchMark::DeserialiseInternal( const tinyxml2::XMLElement* node )
 {
     //TextureManager& tm = TextureManager::getInstance();
     //SettingsManager& sm = SettingsManager::getInstance();

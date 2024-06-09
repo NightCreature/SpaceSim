@@ -1157,6 +1157,7 @@
   -->
 
   <Switch name="switch_1" >
+    <Model file="Models\switch.mml" />
     <Material>
       <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
       <Color r="1" g="1" b="1" a="0.75"/>

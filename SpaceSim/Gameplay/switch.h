@@ -30,7 +30,7 @@ public:
 	const Material getMaterial1() {return m_mat1;}
 	const Material getMaterial2() {return m_mat2;}
 
-    void deserialise( const tinyxml2::XMLElement* element );
+    
 
     ///-------------------------------------------------------------------------
     // @brief 
@@ -44,7 +44,7 @@ public:
 
     HASH_ELEMENT_DEFINITION(Switch)
 protected:
-
+	void DeserialiseInternal(const tinyxml2::XMLElement* element);
 	void OnDebugImguiInternal() override;
 private:
 	bool m_activemat;

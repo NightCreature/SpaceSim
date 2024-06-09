@@ -15,7 +15,7 @@
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void InfinitySphere::deserialise(const tinyxml2::XMLElement* node)
+void InfinitySphere::DeserialiseInternal(const tinyxml2::XMLElement* node)
 {
     m_name = "skydome";
 

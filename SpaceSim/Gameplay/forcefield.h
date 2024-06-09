@@ -27,6 +27,8 @@ public:
 protected:
 
 	void OnDebugImguiInternal() override;
+
+	void DeserialiseInternal(const tinyxml2::XMLElement* element) override;
 private:
     Material::MaterialParameters m_materialParameters;
 	Vector3 m_position;

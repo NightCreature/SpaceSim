@@ -30,7 +30,7 @@ public:
     Player(Resource* resource) : GameObject(resource) { m_name = "player"; }
     ~Player();
 
-    void deserialise( const tinyxml2::XMLElement* node );
+    void DeserialiseInternal( const tinyxml2::XMLElement* node );
     void initialize();
     void reset();
     void cleanup();

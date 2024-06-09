@@ -1,10 +1,11 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H
 
-#include "Memory/AlignMacros.h"
+#include "Core/StringOperations/HashString.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
-#include "Logging/LoggingMacros.h"
 #include "Core/tinyxml2.h"
+#include "Logging/LoggingMacros.h"
+#include "Memory/AlignMacros.h"
 #include <iostream>
 
 class Vector2

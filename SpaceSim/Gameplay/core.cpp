@@ -83,7 +83,7 @@ void Core::onHit()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Core::deserialise( const tinyxml2::XMLElement* element)
+void Core::DeserialiseInternal( const tinyxml2::XMLElement* element)
 {
     
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");

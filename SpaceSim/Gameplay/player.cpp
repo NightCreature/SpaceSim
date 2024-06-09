@@ -382,7 +382,7 @@ void Player::update( float elapsedTime, const Input& input )
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Player::deserialise( const tinyxml2::XMLElement* node )
+void Player::DeserialiseInternal( const tinyxml2::XMLElement* node )
 {
     const tinyxml2::XMLAttribute* attribute = node->FindAttribute("name");
     if (attribute)

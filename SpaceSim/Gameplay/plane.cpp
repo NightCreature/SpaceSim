@@ -137,7 +137,7 @@ void Plane::transform()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Plane::deserialise( const tinyxml2::XMLElement* node )
+void Plane::DeserialiseInternal( const tinyxml2::XMLElement* node )
 {
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != 0; childElement = childElement->NextSiblingElement())
     {
