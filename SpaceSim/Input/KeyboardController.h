@@ -7,6 +7,7 @@
 #include "WinUser.h"
 #include "Windns.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/StringOperations/HashString.h"
 
 #include <map>
 

@@ -45,7 +45,7 @@ public:
     virtual ~GameObject(void) 
     {
     }
-    virtual void deserialise( const tinyxml2::XMLElement* node ) = 0;
+    void deserialise(const tinyxml2::XMLElement* node);
     virtual void initialise() 
     {
     }
@@ -97,8 +97,16 @@ public:
     void SetRenderHandle(size_t renderId) { m_renderHandle = renderId; }
 
     virtual void handleMessage(const MessageSystem::Message& msg) = 0;
+    void OnDebugImgui();
 protected:
+    virtual void DeserialiseInternal(const tinyxml2::XMLElement* element) = 0;
+    void DeserialiseModel(const tinyxml2::XMLElement* element);
+    void DeserialiseMaterial(const tinyxml2::XMLElement* element);
+    void DeserialiseOrientation(const tinyxml2::XMLElement* element);
 
+    virtual void OnDebugImguiInternal() = 0;
+
+    Material mat;
     Matrix44 m_world;
     std::string m_name;
     Resource* m_resource;

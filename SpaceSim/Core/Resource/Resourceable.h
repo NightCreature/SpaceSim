@@ -16,13 +16,15 @@ namespace VFS
     class FileSystem;
 }
 
-#define RESOURCE_PARAMETER_LIST Logger* logger, MessageSystem::MessageQueues* messageQueues, Paths* paths, PerformanceTimer* timer, SettingsManager* settings, VFS::FileSystem* fileSystem
+class DebugImgui;
+
+#define RESOURCE_PARAMETER_LIST Logger* logger, MessageSystem::MessageQueues* messageQueues, Paths* paths, PerformanceTimer* timer, SettingsManager* settings, VFS::FileSystem* fileSystem, DebugImgui* imgui
 
 //Should be rewritten as an aggregation object 
 class Resource
 {
 public:
-    Resource(RESOURCE_PARAMETER_LIST) : m_logger(logger), m_messageQueues(messageQueues), m_paths(paths), m_performanceTimer(timer), m_settingsManager(settings), m_fileSystem(fileSystem) {}
+    Resource(RESOURCE_PARAMETER_LIST) : m_logger(logger), m_messageQueues(messageQueues), m_paths(paths), m_performanceTimer(timer), m_settingsManager(settings), m_fileSystem(fileSystem), m_debugImgui(imgui) {}
     virtual ~Resource() {}
 
     Logger* m_logger;
@@ -31,46 +33,16 @@ public:
     PerformanceTimer* m_performanceTimer;
     SettingsManager* m_settingsManager;
     VFS::FileSystem* m_fileSystem;
+    DebugImgui* m_debugImgui;
 };
 
-class Resourceable
-{
-public:
-    Resourceable();
-    virtual ~Resourceable();
-
-    //void registerResource(unsigned int hash, void* resource)
-    //{
-    //    std::map<unsigned int, void*>::const_iterator cit = m_objects.find(hash);
-    //    if (cit != m_objects.end())
-    //    {
-    //        m_objects.insert(std::pair<unsigned int, void*>(hash, resource));
-    //    }
-    //}
-
-    //void deregisterResource(unsigned int hash)
-    //{
-    //    std::map<unsigned int, void*>::const_iterator cit = m_objects.find(hash);
-    //    if (cit != m_objects.end())
-    //    {
-    //        m_objects.erase(cit);
-    //    }
-    //}
-
-    //template< class T >
-    //T* getResource(unsigned int hash)
-    //{
-    //    std::map<unsigned int, void*>::iterator it = m_objects.find(hash);
-    //    if (it != m_objects.end())
-    //    {
-    //        return (T*)it->second;
-    //    }
-
-    //    return nullptr;
-    //}
-
-    //std::map<unsigned int, void*> m_objects; //Contains hash of Type and a pointer to the resource
-};
+//class Resourceable
+//{
+//public:
+//    Resourceable();
+//    virtual ~Resourceable();
+//
+//};
 
 #define RESOURCE_CLASS_BEGIN(name)\
 class name : public Resource\
@@ -78,7 +50,7 @@ class name : public Resource\
 public: \
     name(RESOURCE_PARAMETER_LIST,
 
-#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : Resource(logger, messageQueues, paths, timer, settings, fileSystem),
+#define RESOURCE_CLASS_TO_INIT_LIST(name) ) : Resource(logger, messageQueues, paths, timer, settings, fileSystem, imgui),
 #define RESOURCE_CLASS_CONSTRUCTOR_BODY(name) {}
 #define RESOURCE_CLASS_END(name) };
 

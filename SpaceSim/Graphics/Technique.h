@@ -7,6 +7,7 @@
 
 #include <array>
 #include <string>
+#include "Core/StringOperations/HashString.h"
 
 class Resource;
 
@@ -33,14 +34,25 @@ public:
 
     bool IsValid() { return m_pso.IsValid(); }
 
+    void OnDebugImgui() const;
+
     HASH_ELEMENT_DEFINITION(Technique);
+
+    std::string GetName() const 
+    {
+#ifdef _DEBUG
+        return m_name;
+#else
+        return m_techniqueId.getString();
+#endif
+    }
 private:
 
 #ifdef _DEBUG
     std::string m_name; //This should be compiled out in release
 #endif
     PipelineObject m_pso; //This might bind the actual shaders already
-    size_t m_techniqueId;
-    size_t m_nameHash;
+    HashString m_techniqueId;
+    HashString m_nameHash;
     Resource* m_resource;
 };

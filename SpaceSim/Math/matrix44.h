@@ -33,6 +33,7 @@ public:
     void operator*= (const Matrix44& matrix);
     void operator*= (float scalar);
     const float* operator[] (size_t i) const;
+    float* operator[](size_t i);
 
     const Vector3 getTranslate() const {return Vector3(m_m[0][3], m_m[1][3], m_m[2][3]);}
     void setTranslate(const Vector3& translate) { m_m[0][3] = translate.x(); m_m[1][3] = translate.y(); m_m[2][3] = translate.z(); }

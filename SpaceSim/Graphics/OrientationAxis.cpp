@@ -74,7 +74,7 @@ void OrientationAxis::initialise(Resource* resource, const DeviceManager& device
     RenderResourceHelper helper(resource);
     auto& srvCBVUAVHeap = helper.getWriteableResource().getDescriptorHeapManager().GetSRVCBVUAVHeap();
 
-    m_effect = const_cast<Effect*>(helper.getWriteableResource().getEffectCache().getEffect("debug_color_shader.xml"_hash)); //Not the right name
+    m_effect = const_cast<Effect*>(helper.getWriteableResource().getEffectCache().getEffect("debug_color_shader.xml"_hashstring)); //Not the right name
 
     ////Move pointer to start of vertex array
     VertexDeclarationDescriptor vertexDesc;
@@ -108,7 +108,7 @@ void OrientationAxis::draw( const DeviceManager& deviceManager, const Matrix44& 
 
         //Set PSO object
 
-        const Technique* technique = m_effect->getTechnique("default"_hash);
+        const Technique* technique = m_effect->getTechnique("default"_hashstring);
         auto& pso = technique->GetPipelineState();
         if (pso.IsValid())
         {

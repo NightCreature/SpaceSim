@@ -7,6 +7,7 @@
 #include <map>
 #include <Windows.h>
 #include <XInput.h>
+#include "Core/StringOperations/HashString.h"
 
 class Vector4;
 

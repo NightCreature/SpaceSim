@@ -39,16 +39,18 @@ public:
     bool IsValid();
 
     const Technique* getTechnique(const std::string& techniqueName) const;
-    const Technique* getTechnique(const size_t techniqueName) const;
+    const Technique* getTechnique(const HashString& techniqueName) const;
 
     Technique* getTechnique(const std::string& techniqueName);
-    Technique* getTechnique(const size_t techniqueName);
+    Technique* getTechnique(const HashString& techniqueName);
     HASH_ELEMENT_DEFINITION(Effect);
 
 #ifdef _DEBUG
 	std::string m_name;
 #endif
 private:
-    std::map<size_t, Technique> m_techniques;
+    std::map<HashString, Technique> m_techniques;
     Resource* m_resource = nullptr;
+public:
+    void OnDebugImgui() const;
 };

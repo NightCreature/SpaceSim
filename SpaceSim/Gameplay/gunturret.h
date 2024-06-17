@@ -32,9 +32,10 @@ public:
 	void fireLaser();
 	void updateLasers(float elapsedtime/*, MapLoader& m_map, Player& p*/);
 	void createScorchMark(const Vector3& pos, const Vector3 &normal);
-    void deserialise( const tinyxml2::XMLElement* element );
     HASH_ELEMENT_DEFINITION(GunTurret)
 protected:
+	void DeserialiseInternal(const tinyxml2::XMLElement* element);
+	void OnDebugImguiInternal() override;
 private:
 	bool checkLaserCollisionPlayer(const Laser& l, Player& p);
 	void transformBoundingBox();

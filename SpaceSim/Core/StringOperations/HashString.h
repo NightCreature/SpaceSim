@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Core/StringOperations/StringHelperFunctions.h"
+
 #include <string>
 #include <string_view>
+
 
 ///-----------------------------------------------------------------------------
 ///! @brief Helper object that in debug also shows the string its based on
@@ -25,12 +27,12 @@ public:
     constexpr size_t getHash() const { return m_hash; }
     constexpr operator size_t() const { return m_hash; }
 
-    constexpr const std::string& getString() const 
+    constexpr const std::string_view& getString() const 
     { 
 #ifdef _DEBUG
         return m_string;
 #else
-        return emptyString; //should print the 0xm_hash but its a string view sadly
+        return fmt::format("{::#x}", m_hash); //should print the 0xm_hash but its a string view sadly
 #endif
     }
 
@@ -39,14 +41,16 @@ public:
     constexpr bool equals(const HashString& nameHash) const { return m_hash == nameHash.getHash(); }
 
     constexpr size_t operator()() const { return m_hash; }
+
 private:
 #ifdef _DEBUG
-    std::string m_string;
+    std::string_view m_string;
 #endif
     size_t m_hash = static_cast<size_t>(-1);
-
-    static std::string emptyString;
 };
+
+#define HASH_ELEMENT_DEFINITION(CLASS) static constexpr HashString m_hash = HashString(#CLASS);
+#define HASH_ELEMENT_TEMPLATE_DEFINITION(CLASS, T) static constexpr HashString m_hash = HashString(#CLASS#T##);
 
 // Specialization so we can use this type as a hash key in unordered map
 template<>
@@ -71,4 +75,13 @@ inline bool operator==(size_t lhs, const HashString& rhs)
 inline bool operator==(const HashString& rhs, const HashString& lhs)
 {
     return lhs.equals(rhs);
+}
+
+///-----------------------------------------------------------------------------
+///! @brief User defined hash literal, hashes the string with constexpr
+///! @remark
+///-----------------------------------------------------------------------------
+inline constexpr HashString operator ""_hashstring(const char* str, size_t size)
+{
+    return HashString(std::string_view(str, size));
 }

@@ -52,8 +52,8 @@ inline void CreateConstantBuffers(MeshResourceIndices& resourceIndices, MeshGrou
     //By default we have 2 constant buffers the material and Per instance data
     if (meshGroup != nullptr)
     {
-        resourceIndices.transformIndex = static_cast<uint>(meshGroup->CreateConstantBuffer(sizeof(WVPData), "WVPBuffer"_hash, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap()));
-        resourceIndices.materialIndex = static_cast<uint>(meshGroup->CreateConstantBuffer(sizeof(MaterialConstants), "Material"_hash, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap()));
+        resourceIndices.transformIndex = static_cast<uint>(meshGroup->CreateConstantBuffer(sizeof(WVPData), "WVPBuffer"_hash, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap(), "MeshGroupWVPData"));
+        resourceIndices.materialIndex = static_cast<uint>(meshGroup->CreateConstantBuffer(sizeof(MaterialConstants), "Material"_hash, renderResource.getDeviceManager(), renderResource.getDescriptorHeapManager().GetSRVCBVUAVHeap(), "MeshGroupMaterialData"));
     }
     else
     {

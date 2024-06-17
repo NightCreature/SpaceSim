@@ -250,7 +250,7 @@ void GunTurret::createScorchMark(const Vector3 &pos, const Vector3 &normal)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void GunTurret::deserialise( const tinyxml2::XMLElement* element)
+void GunTurret::DeserialiseInternal( const tinyxml2::XMLElement* element)
 {
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
@@ -312,6 +312,11 @@ void GunTurret::deserialise( const tinyxml2::XMLElement* element)
     m_world = rotation * scaleTransform * translation;
     m_world.identity();
     m_world = scaleTransform;
+}
+
+void GunTurret::OnDebugImguiInternal()
+{
+
 }
 
 ///-------------------------------------------------------------------------

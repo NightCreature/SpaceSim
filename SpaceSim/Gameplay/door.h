@@ -21,7 +21,7 @@ public:
     ///-------------------------------------------------------------------------
     // @brief 
     ///-------------------------------------------------------------------------
-    void deserialise( const tinyxml2::XMLElement* element );
+    void DeserialiseInternal( const tinyxml2::XMLElement* element );
 
     ///-------------------------------------------------------------------------
     // @brief 
@@ -35,6 +35,8 @@ public:
 
     HASH_ELEMENT_DEFINITION(Door)
 protected:
+
+    void OnDebugImguiInternal() override;
 private:
     Material::MaterialParameters m_materialParameters;
 	Vector3 m_position;

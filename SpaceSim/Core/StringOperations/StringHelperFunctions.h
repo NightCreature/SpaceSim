@@ -93,9 +93,6 @@ inline constexpr size_t operator ""_hash(const char* str, size_t size)
     return Hashing::hashString(str, size);
 }
 
-#define HASH_ELEMENT_DEFINITION(CLASS) static constexpr size_t m_hash = #CLASS##_hash;
-#define HASH_ELEMENT_TEMPLATE_DEFINITION(CLASS, T) static constexpr size_t m_hash = #CLASS#T##_hash;
-
 #define HASH_STRING(x) Hashing::hashString(#x)
 #define HASH_BINARY(x) Hashing::hashBinaryData(reinterpret_cast<const char*>(x), sizeof(*x))
 

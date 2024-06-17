@@ -18,6 +18,7 @@
 #include "D3D12/ShaderParamMatcher.h"
 #include <Core/StringOperations/HashString.h>
 #include "Logging/LoggingMacros.h"
+#include "imgui.h"
 
 
 void TryCreatePSO(Resource* resource, PipelineObject& pso)
@@ -68,13 +69,13 @@ void Effect::deserialise(const tinyxml2::XMLElement* node, Resource* resource)
 ///-------------------------------------------------------------------------
 const Technique* Effect::getTechnique(const std::string& techniqueName) const
 {
-    return getTechnique(Hashing::hashString(techniqueName));
+    return getTechnique(HashString(techniqueName));
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-const Technique* Effect::getTechnique(const size_t techniqueName) const
+const Technique* Effect::getTechnique(const HashString& techniqueName) const
 {
     auto it = m_techniques.find(techniqueName);
     if (it != end(m_techniques))
@@ -91,13 +92,13 @@ const Technique* Effect::getTechnique(const size_t techniqueName) const
 ///-------------------------------------------------------------------------
 Technique* Effect::getTechnique(const std::string& techniqueName)
 {
-    return getTechnique(Hashing::hashString(techniqueName));
+    return getTechnique(HashString(techniqueName));
 }
 
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-Technique* Effect::getTechnique(const size_t techniqueName)
+Technique* Effect::getTechnique(const HashString& techniqueName)
 {
     auto it = m_techniques.find(techniqueName);
     if (it != end(m_techniques))
@@ -108,6 +109,21 @@ Technique* Effect::getTechnique(const size_t techniqueName)
     return nullptr;
 }
 
+
+void Effect::OnDebugImgui() const
+{
+    for (const auto& technique : m_techniques)
+    {
+        std::string nodeName = technique.second.GetName();
+
+        if (ImGui::TreeNode(nodeName.c_str()))
+        {
+            technique.second.OnDebugImgui();
+            ImGui::TreePop();
+        }
+    }
+
+}
 
 void Effect::createPSOs()
 {

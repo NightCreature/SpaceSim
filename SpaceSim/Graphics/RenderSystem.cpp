@@ -23,6 +23,8 @@
 #include "modelmanager.h"
 #include "DebugHelperFunctions.h"
 #include "UI/Messages.h"
+#include <Debugging/DebugImgui.h>
+#include "imgui.h"
 
 Matrix44 RenderSystem::m_view;
 Matrix44 RenderSystem::m_inverseView;
@@ -132,11 +134,14 @@ RenderSystem::~RenderSystem()
 ///-----------------------------------------------------------------------------
 ///! @brief   Initialise the RenderSystem
 ///! @remark  Creates a window and reveals the window
+/// Consider using GameResource for the var we pass here
 ///-----------------------------------------------------------------------------
 void RenderSystem::initialise(Resource* resource, JobQueue* jobQueue)
 {
     PROFILE_FUNCTION();
-    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, resource->m_fileSystem, &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, jobQueue, &m_heapManager, &m_commandQueueManager, &m_perFrameDataStorage, this);
+    m_renderResource = new RenderResource(resource->m_logger, resource->m_messageQueues, resource->m_paths, resource->m_performanceTimer, resource->m_settingsManager, resource->m_fileSystem, resource->m_debugImgui,
+                                         &m_cameraSystem, &m_deviceManager, &m_effectCache, &m_window, &m_lightManager, &m_modelManger, &m_resourceLoader, &m_shaderCache, &m_textureManager, jobQueue, &m_heapManager,
+                                         &m_commandQueueManager, &m_perFrameDataStorage, this);
 
     
     {
@@ -225,41 +230,8 @@ void RenderSystem::initialise(Resource* resource, JobQueue* jobQueue)
     m_sceneTransformBuffer.Create(m_deviceManager, m_heapManager.GetSRVCBVUAVHeap(), sizeof(WVPData), "ProjectionData");
     m_cameraBuffer.Create(m_deviceManager, m_heapManager.GetSRVCBVUAVHeap(), sizeof(CameraConstants) * maxCameraConstants, "CameraConstants");
 
-    //Thiss all needs to move
-    //D3D11_BUFFER_DESC lightContantsDescriptor;
-    //ZeroMemory(&lightContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
-    //lightContantsDescriptor.ByteWidth = sizeof(LightConstants) * 8 + 4 * sizeof(float) + 3 * 16 * sizeof(float);
-    //lightContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    //HRESULT hr = device->CreateBuffer(&lightContantsDescriptor, 0, &m_lightConstantBuffer);
-    //D3DDebugHelperFunctions::SetDebugChildName(m_lightConstantBuffer, "RenderSystem Light Constant buffer");
-
-    //D3D11_BUFFER_DESC shadowContantsDescriptor;
-    //ZeroMemory(&shadowContantsDescriptor, sizeof(D3D11_BUFFER_DESC));
-    //shadowContantsDescriptor.ByteWidth = 3 * 16 * sizeof(float);
-    //shadowContantsDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    //hr = device->CreateBuffer(&shadowContantsDescriptor, 0, &m_shadowConstantBuffer);
-    //D3DDebugHelperFunctions::SetDebugChildName(m_shadowConstantBuffer, "RenderSystem Shadow Constant buffer");
-
-    //D3D11_SAMPLER_DESC samplerStateDesc;
-    //samplerStateDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-    //samplerStateDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-    //samplerStateDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-    //samplerStateDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-    //samplerStateDesc.MipLODBias = 0.0f;
-    //samplerStateDesc.MaxAnisotropy = 16;
-    //samplerStateDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    //samplerStateDesc.BorderColor[0] = 0.0f;
-    //samplerStateDesc.BorderColor[1] = 0.0f;
-    //samplerStateDesc.BorderColor[2] = 0.0f;
-    //samplerStateDesc.BorderColor[3] = 0.0f;
-    //samplerStateDesc.MinLOD = -3.402823466e+38F;
-    //samplerStateDesc.MaxLOD = 3.402823466e+38F;
-    //hr = device->CreateSamplerState(&samplerStateDesc, &m_samplerState);
-    //if (FAILED(hr))
-    //{
-    //    MSG_TRACE_CHANNEL("RENDER SYSTEM", "Failed to create sampler state: 0x%x", hr)
-    //}
-    //D3DDebugHelperFunctions::SetDebugChildName(m_samplerState, "RenderSystem SamplerState");
+    //This has to be done after we have a device setup
+    resource->m_debugImgui->Init(m_renderResource, static_cast<GameResource*>(resource));
 
 #ifdef _DEBUG
 
@@ -382,6 +354,12 @@ void RenderSystem::update(float elapsedTime, double time)
             m_debugAxis = new OrientationAxis();
             m_debugAxis->initialise(m_renderResource, m_deviceManager, renderCommandList);
         }
+
+        {
+            PROFILE_TAG("imGUI");
+            //Imgui draw
+            m_renderResource->m_debugImgui->Render(renderCommandList);
+        }
     }
 #endif
     {
@@ -395,6 +373,8 @@ void RenderSystem::update(float elapsedTime, double time)
         barrier2.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
         renderCommandList.m_list->ResourceBarrier(1, &barrier2);
     }
+
+
     {
         PROFILE_EVENT("RenderSystem", "Close and Execute Command lists", 0xFF8B0000);
         hr = renderCommandList.m_list->Close();
@@ -410,7 +390,6 @@ void RenderSystem::update(float elapsedTime, double time)
         commandQueue.m_queue->ExecuteCommandLists(static_cast<UINT>(commandListsVector.size()), &commandListsVector[0]);
 
     }
-    m_totalNumberOfInstancesRendered += m_numberOfInstancesRenderingThisFrame;
 
     //PIXEndEvent();
 
@@ -673,7 +652,6 @@ void RenderSystem::endDraw()
 
     PROFILE_FUNCTION();
     //PIXBeginEvent(0, "End Draw");
-    
 
     //if (m_numberOfInstancePerFrame > 0)
     {

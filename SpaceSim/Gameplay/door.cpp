@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <D3D11.h>
+#include "imgui.h"
 
 
 
@@ -54,29 +55,8 @@ void Door::initialise(bool changeWindingOrder)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Door::deserialise( const tinyxml2::XMLElement* element)
+void Door::DeserialiseInternal( const tinyxml2::XMLElement* element)
 {
-    const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
-    if (attribute != nullptr)
-    {
-        m_name = attribute->Value();
-        m_nameHash = Hashing::hashString(m_name);
-    }
-
-    for (element = element->FirstChildElement(); element != 0; element = element->NextSiblingElement())
-    {
-        auto typeHash = Hashing::hashString(element->Value());
-        if (Material::m_hash == typeHash)
-        {
-            MSG_TRACE_CHANNEL("REFACTOR", "SEND create material message to render system");
-            m_materialParameters = Material::GetMaterialParameters(element);
-        }
-        else if (Vector3::m_hash == typeHash)
-        {
-            m_position.deserialise(element);
-            translate(m_world, m_position.x(), m_position.y(), m_position.z());
-        }
-    }
 }
 
 ///-------------------------------------------------------------------------
@@ -141,4 +121,15 @@ void Door::handleMessage( const MessageSystem::Message& msg )
         m_initialisationDone = true;
         m_active = true;
     }
+}
+
+void Door::OnDebugImguiInternal()
+{
+    ImGui::CollapsingHeader("Material");
+    ImGui::InputFloat4("Ambient", m_materialParameters.m_materialContent.ambient.GetDataPtr());
+    ImGui::InputFloat4("Diffuse", m_materialParameters.m_materialContent.diffuse.GetDataPtr());
+    ImGui::InputFloat4("Specular", m_materialParameters.m_materialContent.specular.GetDataPtr());
+    ImGui::InputFloat4("Emissive", m_materialParameters.m_materialContent.emissive.GetDataPtr());
+    ImGui::InputFloat("Shininess", &m_materialParameters.m_materialContent.shininess);
+    ImGui::Checkbox("Alpha Enabled", &m_materialParameters.m_alphaBlend);
 }

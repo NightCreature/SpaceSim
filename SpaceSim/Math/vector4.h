@@ -52,6 +52,8 @@ public:
 	void read(std::istream& in);
 	void write(std::ostream& out) const;
 
+	float* Data() { return &m_x; }
+
 	static Vector4 zero() {return Vector4(0.0f, 0.0f, 0.0f, 0.0f);}
 	static Vector4 xAxis() {return Vector4(1.0f, 0.0f, 0.0f, 1.0f);}
 	static Vector4 yAxis() {return Vector4(0.0f, 1.0f, 0.0f, 1.0f);}

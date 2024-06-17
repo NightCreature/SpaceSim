@@ -24,6 +24,8 @@ public:
 
     void handleMessage( const MessageSystem::Message& message );
     void addMessage(const Message& message);
+
+    void OnDebugImgui();
 private:
     typedef std::pair<size_t, GameObject*> ModelPair;
     typedef std::map<size_t, GameObject*> GameObjectMap;

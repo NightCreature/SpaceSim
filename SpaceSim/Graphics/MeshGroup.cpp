@@ -121,7 +121,7 @@ void MeshGroup::PopulateCommandlist(Resource* resource, CommandList& list)
     list.m_list->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
     //Set PSO object
-    const Effect* effect = effectCache.getEffect(m_material.getEffectHash());
+    const Effect* effect = effectCache.getEffect(HashString(m_material.getEffectHash()));
     if (effect != nullptr)
     {
         const Technique* technique = effect->getTechnique(m_material.getTechnique());
@@ -160,19 +160,19 @@ void MeshGroup::PopulateCommandlist(Resource* resource, CommandList& list)
 ///! @brief   
 ///! @remark
 ///-----------------------------------------------------------------------------
-size_t MeshGroup::CreateConstantBuffer(size_t size, size_t bufferNameHash, const DeviceManager& deviceManager, DescriptorHeap& heap)
+size_t MeshGroup::CreateConstantBuffer(size_t size, size_t bufferNameHash, const DeviceManager& deviceManager, DescriptorHeap& heap, const std::string_view& name)
 {
     size_t heapIndex = InvalidDescriptorHeapIndex;
     if (size > 0 && !m_constantBuffers.contains(bufferNameHash))
     {
         ConstantBuffer cb;
-        cb.Create(deviceManager, heap, size, "ConstantBuffer");
+        cb.Create(deviceManager, heap, size, name);
         m_constantBuffers[bufferNameHash] = cb;
         heapIndex = cb.GetHeapIndex();
     }
     else
     {
-        MSG_ERROR_CHANNEL("MeshGroup", "Constant buffers already contains a definition for this constant buffer or the size is 0: %d size", size);
+        MSG_ERROR_CHANNEL("MeshGroup", "Constant buffers already contains a definition for this constant buffer or the size is 0: %d size, %s", size, name.data());
     }
 
     return heapIndex;

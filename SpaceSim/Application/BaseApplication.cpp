@@ -41,44 +41,15 @@
 #include "Core/Serialization/Archive.h"
 #include "Core/Serialization/ISerializable.h"
 
+#include "imgui_impl_win32.h"
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 class RenderInstance;
 
 std::function<void(RAWINPUT*)> Application::m_inputDispatch;
 Logger Application::m_logger;
+
 constexpr size_t numOfJobsToSpawn = 16;
-
-class TestSerialise
-{
-public:
-
-    int m_int = 100;
-    float m_float = 23.5f;
-    std::string m_string = "Hello World";
-    std::vector<int> m_vector = {1,2,3,4};
-
-    TestSerialise() = default;
-
-    void Serialise(Archive& ar, std::true_type)
-    {
-        ar.Read( m_int);
-        ar.Read( m_float);
-        ar.ReadContainer( m_string);
-        ar.ReadContainer( m_vector);
-    }
-
-    void Serialise(Archive& ar, std::false_type)
-    {
-        m_int = 12;
-        m_float = 234.5f;
-        m_string = "Hello World !!!!!";
-        m_vector = { 123,46,78,3 };
-
-        ar.Write(m_int);
-        ar.Write(m_float);
-        ar.WriteContainer(m_string);
-        ar.WriteContainer(m_vector);
-    }
-};
 
 ///-----------------------------------------------------------------------------
 ///! @brief   TODO enter a description
@@ -114,7 +85,7 @@ bool Application::initialise()
         delete file_logger;
     }
 
-    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_fileSystem, &m_entityManager, &m_gameObjectManager,
+    m_gameResource = new GameResource(&m_logger, &m_messageQueues, &m_paths, &m_performanceTimer, &m_settingsManager, &m_fileSystem, &m_debugImgui, &m_entityManager, &m_gameObjectManager,
         &m_laserManager, &m_uiManager, nullptr, &m_logger, m_jobSystem.GetJobQueuePtr());
 
     m_jobSystem.SetGameResource(m_gameResource);
@@ -147,20 +118,6 @@ bool Application::initialise()
     //Settings are loaded now stream them back out to an archive file to see if we can read that back in
     m_settingsManager.SaveSettings(m_paths.getSettingsPath() / "settings.archive");
     //    m_settingsManager.LoadSettings(m_paths.getSettingsPath() / "settings.archive");
-    {
-        PROFILE_EVENT("Application", "SerialiseSettings", 0XFF00FF00);
-        Archive ar;
-        ar.Open(m_paths.getTempPath() / "testsettings.archive");
-        TestSerialise test;
-        test.Serialise(ar, std::false_type());
-        ar.Close();
-
-        ar.Open(m_paths.getTempPath() / "testsettings.archive");
-        TestSerialise test2;
-        test2.Serialise(ar, std::true_type());
-        ar.Close();
-    }
-
     //m_uiManager.initialise();
 
     m_renderSystem.initialise(m_gameResource, m_jobSystem.GetJobQueuePtr());
@@ -272,6 +229,8 @@ void Application::mainGameLoop()
 
                 m_messageQueues.swapQueues();
 
+                m_gameResource->m_debugImgui->Update();
+
                 m_UpdateThread.UnblockThread();
                 m_UpdateThread.UnLockCriticalSection();
             }
@@ -308,6 +267,9 @@ void Application::mainGameLoop()
 ///-----------------------------------------------------------------------------
 LRESULT CALLBACK Application::messageHandler( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
+    if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam))
+        return true;
+
     if (message == WM_DESTROY)
     {
         PostQuitMessage(0);

@@ -4,6 +4,7 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include <array>
 #include <ostream>
+#include "Core/StringOperations/HashString.h"
 
 namespace tinyxml2
 {
@@ -34,6 +35,8 @@ public:
     void read(std::istream& in);
     void write(std::ostream& out) const;
     
+    void OnDebugImgui(const std::string_view& name);
+
     static Color black();
     static Color white();
     static Color red();

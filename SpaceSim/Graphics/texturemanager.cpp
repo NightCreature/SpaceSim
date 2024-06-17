@@ -13,6 +13,8 @@
 #include "Loader/ResourceLoadJobs.h"
 #include <memory>
 
+#include "imgui.h"
+
 TextureManager::~TextureManager()
 {
 }
@@ -204,7 +206,7 @@ Material::TextureSlotMapping TextureManager::deserialise( DeviceManager& deviceM
         {
             textureSlot = static_cast<Material::TextureSlotMapping::TextureSlot>(attribute->UnsignedValue());
         }
-        return Material::TextureSlotMapping(Hashing::hashString(getTextureNameFromFileName(fileName)), textureSlot);
+        return Material::TextureSlotMapping(HashString(getTextureNameFromFileName(fileName)), textureSlot);
     }
 
     return Material::TextureSlotMapping(""_hash, Material::TextureSlotMapping::Invalid);
@@ -220,7 +222,7 @@ void TextureManager::addTexture( const std::string& textureName, const Texture12
     //MSG_TRACE_CHANNEL("TextureManager","Adding texture: %s", textureName.c_str());
 
     std::scoped_lock<std::mutex> lock(m_mutex);
-    TextureInfo* info = getTexture(Hashing::hashString(textureName));
+    TextureInfo* info = getTexture(HashString(textureName));
     ASSERT(info != nullptr, "Trying to add a non existing texture");
     
     info->m_texture = texture;
@@ -228,13 +230,38 @@ void TextureManager::addTexture( const std::string& textureName, const Texture12
     info->m_loadRequested = false;
 }
 
+void TextureManager::OnDebugImgui() const
+{
+    ImGui::Begin("Textures");
+
+    for (const auto& textureInfo : m_textures)
+    {
+        std::string nodeName;
+#ifdef DEBUG
+        nodeName = textureInfo.second.m_hash.getString();
+#else
+        nodeName = fmt::format("Texture: {}", textureInfo.second.m_hash.getHash());
+#endif // DEBUG
+
+        if (ImGui::TreeNode(nodeName.c_str()))
+        {
+            ImGui::Text("Heap Index: %d", textureInfo.second.m_heapIndex);
+            ImGui::Text("Load Requested: %s", textureInfo.second.m_loadRequested ? "true" : "false");
+            ImGui::Text("Texture Valid: %s", textureInfo.second.m_texture.IsValid() ? "true" : "false");
+            ImGui::TreePop();
+        }
+    }
+    ImGui::End();
+}
+
 TextureInfo TextureManager::AddOrCreateTexture(std::string textureName)
 {
     PROFILE_FUNCTION();
 
     std::scoped_lock<std::mutex> lock(m_mutex);
-    auto textureNameHash = Hashing::hashString(textureName);
+    auto textureNameHash = HashString(textureName);
     TextureInfo info;
+    info.m_hash = textureNameHash;
     if (!find(textureName))
     {
         info.m_heapIndex = DescriptorHeap::invalidDescriptorIndex;

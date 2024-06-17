@@ -50,7 +50,7 @@ public:
     VertexBuffer& GetVB() { return m_vertexBuffer; }
     IndexBuffer& GetIB() { return m_indexBuffer; }
     Material& GetMaterial() { return m_material; }
-    size_t CreateConstantBuffer(size_t size, size_t bufferNameHash, const DeviceManager& deviceManager, DescriptorHeap& heap);
+    size_t CreateConstantBuffer(size_t size, size_t bufferNameHash, const DeviceManager& deviceManager, DescriptorHeap& heap, const std::string_view& name);
     //std::vector<ConstantBuffer>& GetConstantBuffers() { return m_constantBuffers; }
     //const std::vector<ConstantBuffer>& GetConstantBuffers() const { return m_constantBuffers; }
     void SetPrimitiveLayout(size_t layout) { m_primitiveLayout = layout; }

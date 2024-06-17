@@ -60,9 +60,7 @@ void ConstantBuffer::Create(const DeviceManager& deviceManager, DescriptorHeap& 
     deviceManager.GetDevice()->CreateConstantBufferView(&cbvDesc, heap.GetCPUDescriptorHandle(m_heapIndex));
 
 #ifdef _DEBUG
-    std::wstringstream str;
-    str << L"ConstantBuffer" << numberOfConstantBuffers++ << L"sized:" << m_cpuSideData.m_size << " name: " << name.data();
-    m_constantBuffer->SetName(str.str().c_str());
+    m_constantBuffer->SetName(convertToWideString(fmt::format("ConstantBufferNo{}Size{}Name{}", numberOfConstantBuffers++, m_cpuSideData.m_size, name)).c_str());
 #endif
 }
 
