@@ -7,6 +7,7 @@
 #include "UI/UIManger.h"
 
 #include <vector>
+#include "Gameplay/Level.h"
 
 
 class EntityManager;
@@ -52,11 +53,14 @@ public:
 
     void setInput(Input input) { m_input = input; }
 
+    Level m_level;
+
     EntityManager* m_entityManager = nullptr;
     ECS::SystemsManager* m_entitySystemsManager = nullptr;
     Physics::PhysicsManager* m_physicsManager = nullptr;
     GameObjectManager* m_gameObjectManager = nullptr;
     LaserManager* m_laserManager = nullptr;
+    
 
     MessageSystem::MessageObserver m_messageObservers;
 
@@ -64,6 +68,7 @@ public:
     UIManger m_uiManager;
 
     Resource* m_resource = nullptr;
+
 
     double m_time;
     float m_elapsedTime;

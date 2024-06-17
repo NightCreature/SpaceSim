@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="LevelEditor.Light"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LevelEditor"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Name="LightGrid">
+        <!--<Light name="light_1" type="2" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="1100">
+                <Vector3 x="525" y="-75" z="-200" />
+                <Vector3 x="0" y="0" z="1" />
+                <Color r="1" g="1" b="1" a="1"/>
+                <Color r="0" g="1" b="0" a="1"/>
+            </Light>-->
+        <TextBox x:Name="lightName" Text="light_1" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        
+    </Grid>
+</UserControl>

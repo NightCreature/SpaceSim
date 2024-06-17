@@ -514,6 +514,7 @@
     <ClInclude Include="..\..\Core\Types\TypeHelpers.h" />
     <ClInclude Include="..\..\Core\Types\Types.h" />
     <ClInclude Include="..\..\Debugging\DebugImgui.h" />
+    <ClInclude Include="..\..\Debugging\DebugImguiTypeHelpers.h" />
     <ClInclude Include="..\..\Gameplay\bbox.h" />
     <ClInclude Include="..\..\Gameplay\box.h" />
     <ClInclude Include="..\..\Gameplay\core.h" />
@@ -522,7 +523,12 @@
     <ClInclude Include="..\..\Gameplay\ECS\Components\Components.h" />
     <ClInclude Include="..\..\Gameplay\ECS\Components\ComponentType.h" />
     <ClInclude Include="..\..\Gameplay\ECS\Components\ComponentTypeRegistry.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\FireLasersComponent.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\LinkedEntityComponent.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\LockedToPlayerPositionComponent.h" />
     <ClInclude Include="..\..\Gameplay\ECS\Components\MaterialComponent.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\MaterialRef.h" />
+    <ClInclude Include="..\..\Gameplay\ECS\Components\ModelComponent.h" />
     <ClInclude Include="..\..\Gameplay\ECS\Components\PhysicsComponent.h" />
     <ClInclude Include="..\..\Gameplay\ECS\Components\TransformComponent.h" />
     <ClInclude Include="..\..\Gameplay\ECS\DataStore.h" />
@@ -543,6 +549,7 @@
     <ClInclude Include="..\..\Gameplay\InfinitySphere.h" />
     <ClInclude Include="..\..\Gameplay\laser.h" />
     <ClInclude Include="..\..\Gameplay\LaserManager.h" />
+    <ClInclude Include="..\..\Gameplay\Level.h" />
     <ClInclude Include="..\..\Gameplay\particle.h" />
     <ClInclude Include="..\..\Gameplay\particleemitter.h" />
     <ClInclude Include="..\..\Gameplay\particlesystemmanager.h" />
@@ -631,6 +638,7 @@
     <ClInclude Include="..\..\Input\playbackcontroller.h" />
     <ClInclude Include="..\..\Input\XController.h" />
     <ClInclude Include="..\..\Input\XControllerDefines.h" />
+    <ClInclude Include="..\..\Loader\LevelLoader.h" />
     <ClInclude Include="..\..\Loader\MapLoader.h" />
     <ClInclude Include="..\..\Loader\ModelLoaders\AssimpModelLoader.h" />
     <ClInclude Include="..\..\Loader\ModelLoaders\MmlLoader.h" />
@@ -773,6 +781,7 @@
     <ClCompile Include="..\..\Gameplay\InfinitySphere.cpp" />
     <ClCompile Include="..\..\Gameplay\laser.cpp" />
     <ClCompile Include="..\..\Gameplay\LaserManager.cpp" />
+    <ClCompile Include="..\..\Gameplay\Level.cpp" />
     <ClCompile Include="..\..\Gameplay\particle.cpp" />
     <ClCompile Include="..\..\Gameplay\particleemitter.cpp" />
     <ClCompile Include="..\..\Gameplay\particlesystemmanager.cpp" />
@@ -850,6 +859,7 @@
     <ClCompile Include="..\..\Input\playbackcontroller.cpp" />
     <ClCompile Include="..\..\Input\XController.cpp" />
     <ClCompile Include="..\..\Input\XControllerDefines.cpp" />
+    <ClCompile Include="..\..\Loader\LevelLoader.cpp" />
     <ClCompile Include="..\..\Loader\MapLoader.cpp" />
     <ClCompile Include="..\..\Loader\ModelLoaders\AssimpModelLoader.cpp" />
     <ClCompile Include="..\..\Loader\ModelLoaders\MmlLoader.cpp" />

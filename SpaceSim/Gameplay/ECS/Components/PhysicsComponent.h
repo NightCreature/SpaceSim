@@ -22,6 +22,8 @@ public:
 
     //Temporary interface probably need this in physics manager and not here
     void CreateRigidbody(bool dynamic);
+
+    void Deserialise(const tinyxml2::XMLElement* element) override;
 private:
 #ifndef IS_CLANG
     physx::PxActor* m_actor = nullptr;

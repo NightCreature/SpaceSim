@@ -1,12 +1,15 @@
 #pragma once
 
-#include <assert.h>
-#include <deque>
-#include <functional>
-#include <vector>
+#include "Core/Types/TypeHelpers.h"
 #include "ECS/Components/ComponentType.h"
 #include "ECS/Entity.h"
 #include "ECS/SystemsManager.h"
+
+#include <assert.h>
+#include <deque>
+#include <functional>
+#include <optional>
+#include <vector>
 
 class EntityManager
 {
@@ -17,13 +20,31 @@ public:
     {
     }
 
-    ECS::Entity Create() 
+    ECS::Entity& Create() 
     {
         m_entities.emplace_back(ECS::Entity(m_entityIndex++));
         return *(m_entities.rbegin());
     }
 
+    //This is the interface the Systems use to get at the entities
     std::vector<ECS::Entity*> GetEntitiesForTag(const ECS::ComponentTag& tag);
+
+    //This is the level interface to get at the entities
+    bool GetEntity(size_t entityId, ECS::Entity & entityOut) const
+    {
+        UNUSEDPARAM(entityId);
+        UNUSEDPARAM(entityOut);
+        //for (ECS::Entity& entity : m_entities)
+        //{
+        //    if (entity.GetId() == entityId)
+        //    {
+        //        entityOut = entity;
+        //        return true;
+        //    }
+        //}
+
+        return false;
+    }
 
     const ECS::SystemsManager& GetSystemsManager() const { return m_systemsManager; }
     ECS::SystemsManager& GetSystemsManager() { return m_systemsManager; }

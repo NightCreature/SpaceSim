@@ -41,7 +41,11 @@
 #include "Core/Serialization/Archive.h"
 #include "Core/Serialization/ISerializable.h"
 
+#include "Loader/LevelLoader.h"
+#include "Gameplay/Level.h"
+
 #include "imgui_impl_win32.h"
+#include "Gameplay/ECS/Components/Components.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 class RenderInstance;
@@ -154,12 +158,16 @@ bool Application::initialise()
     //cache->addText("Hello World From Bitmap Font!", Vector4(0.f,0.f, 100.f, 500.f), Text::Align::left, bitmapFont.getFontInfo().m_fontNameHash, 48.0f, true);
 
     ///!!This needs to move
+    MSG_TRACE_CHANNEL_FMT("Application", "Level Loading should not happen at app initialisation")
     const ISetting<std::string>* mapFileName = m_settingsManager.getSetting<std::string>("SpaceStationMap");
     if (mapFileName)
     {
         returnValue &= m_map.loadMap(m_gameResource, mapFileName->getData());
     }
     ///!!
+
+    ECS::RegisterComponents();
+
 
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of verts:  %d", Face::m_totalNumberOfVerts);
     MSG_TRACE_CHANNEL("BASEAPPLICATION", "Number of polies: %d", Face::m_totalNumberOfPolygons);

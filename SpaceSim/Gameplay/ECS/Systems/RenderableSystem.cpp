@@ -33,7 +33,7 @@ void RenderableSystem::Update()
 {
     PROFILE_FUNCTION();
 
-    auto entities = m_entityManager->GetEntitiesForTag(RenderObjectComponent::GetTag() | TransformComponent::GetTag());
+    auto entities = m_entityManager->GetEntitiesForTag(RenderObjectComponent::GetTag() | TransformationComponent::GetTag());
     for (Entity* entity : entities)
     {
         auto* renderComponentData = entity->GetComponentData<RenderObjectComponent>();
@@ -46,7 +46,7 @@ void RenderableSystem::Update()
 
         if (renderComponentData->m_renderObjectHandle != 0)
         {
-            TransformComponent* transform = entity->GetComponentData<TransformComponent>();
+            TransformationComponent* transform = entity->GetComponentData<TransformationComponent>();
             //Have a render component here
             MessageSystem::RenderInformation renderInfo;
             MessageSystem::RenderInformation::RenderInfo data;

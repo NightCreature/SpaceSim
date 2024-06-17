@@ -1,0 +1,163 @@
+<xml>
+    <!--This is a conversion of entrance.dat to an entity based system hopefully more generic-->
+    <Lights>
+      <Light name="light_0" type="0" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="1500">
+            <Vector3 x="525" y="-75" z="150" />
+            <Vector3 x="0" y="0" z="-1" />
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="0" g="1" b="0" a="1"/>
+        </Light>
+        <Light name="light_1" type="2" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="1100">
+            <Vector3 x="525" y="-75" z="-200" />
+            <Vector3 x="0" y="0" z="1" />
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="0" g="1" b="0" a="1"/>
+        </Light>
+        <Light name="light_2" type="1" att="0.0f" lin_att="0.025f" quad_att="0.0f" inner_cone="0.21" outer_cone="0.52" exponent="0" range="500">
+            <Vector3 x="525" y="-75" z="200" />
+            <Vector3 x="0" y="0" z="-1" />
+            <Color r="0" g="0" b="1" a="1"/>
+            <Color r="1" g="0" b="0" a="1"/>
+        </Light>
+    </Lights>
+    <Materials>
+        <Material name="Ceiling">
+            <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+            <Texture file_name="Textures\ceiling.jpg" texture_slot="8"/>
+            <Texture file_name="Textures\ceiling_normal.dds" texture_slot="32"/>
+        </Material>
+        <Material name="SpaceStationOutside">
+            <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+            <Texture file_name="Textures\station.jpg" texture_slot="8"/>
+            <Texture file_name="Textures\station_normal.dds" texture_slot="32"/>
+        </Material>
+        <Material name="Floor">
+            <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+            <Texture file_name="Textures\floor.jpg" texture_slot="8"/>
+            <Texture file_name="Textures\floor_normal.dds" texture_slot="32"/>
+        </Material>
+        <Material name="Wall">
+            <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+            <Texture file_name="Textures\scifiwall.dds" texture_slot="8"/>
+            <Texture file_name="Textures\scifiwall_normal.dds" texture_slot="32"/>
+        </Material>
+        <Material name="ForceField">
+            <Color r="0.0" g="0.0" b="0.0" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="0" g="0.5" b="0.0" a="1"/>
+            <Shininess value="0"/>
+            <AlphaBlend enabled="true" />
+            <Texture type="12" file_name="Textures\forcefield.dds"/>
+            <Effect file_name="Shaders\Effects\force_field_effect.xml" />
+        </Material>
+        <Material name="door">
+            <Color r="0.25" g="0.25" b="0.25" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="0" g="0" b="0.0" a="1"/>
+            <Shininess value="0"/>
+            <AlphaBlend enabled="true" />
+            <Texture type="13" file_name="Textures\door_test.dds"/>
+            <Effect file_name="Shaders\Effects\door_effect.xml" />
+            <AlphaBlend enabled="true" />
+        </Material>
+        <Material name="RotatingDoor">
+            <Color r="0.25" g="0.25" b="0.25" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="0" g="0" b="0.0" a="1"/>
+            <Shininess value="0"/>
+            <AlphaBlend enabled="true" />
+            <Texture type="14" file_name="Textures\blades.bmp"/>
+            <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+        </Material>
+        <Material name="CoreMaterialNormalGlow">
+            <Color r="0.25" g="0.25" b="0.25" a="1"/>
+            <Color r="0.25" g="1" b="0.25" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="0.25" g="1" b="0.25" a="1"/>
+            <Shininess value="0"/>
+            <AlphaBlend enabled="true" />
+            <Texture type="17" file_name="Textures\core_small.jpg"/>
+            <Effect file_name="Shaders\Effects\core_Effect.xml" />
+        </Material>
+        <Material name="CoreMaterialNormal">
+            <Color r="0.0" g="0.0" b="0.0" a="1"/>
+            <Color r="1" g="1.0" b="1.0" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="0" g="0.0" b="0.0" a="1"/>
+            <Shininess value="0"/>
+            <AlphaBlend enabled="true" />
+            <Texture type="17" file_name="Textures\core_small.jpg"/>
+            <Effect file_name="Shaders\Effects\core_Effect.xml" />
+        </Material>
+        <Material name="Switch">
+            <Color r="0.25" g="0.25" b="0.25" a="0.75"/>
+            <Color r="1" g="1" b="1" a="0.75"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="5" g="0" b="0" a="0.75"/>
+            <Shininess value="0"/>
+            <AlphaBlend enabled="true" />
+            <Texture type="15" file_name="Textures\switch.dds"/>
+            <Effect file_name="Shaders\Effects\Simple_Effect.xml" />
+        </Material>
+        <Material name="Skydome">
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Color r="1" g="1" b="1" a="1"/>
+            <Shininess value="0"/>
+            <Texture type="17" file_name="Textures\skybox_small.dds"/>
+            <Effect file_name="Shaders\Effects\skydome.xml" />
+        </Material>
+    </Materials>
+    <Entities>
+        <Entity name="Skydome">
+            <MaterialRef name="Skydome" />
+            <TransformationComponent>
+                <Translation x="0" y="0" z="0" />
+                <Rotation x="0" y="0" z="0" angle="0" /> <!--If angle is zero assume we passed a direction-->
+                <Scale x="3000" y="3000" z="3000" />
+            </TransformationComponent>
+            <ModelComponent file_name="Models\inverted_sphere.mml" />
+            <LockedToEntityPositionComponent entity="player" />
+        </Entity>
+        <Entity name="GunEmplacement1" >
+            <MaterialRef name="GunTurret" />
+            <TransformationComponent>
+                <Translation x="175" y="300" z="525" />
+                <Rotation x="-1" y="0.00000001" z="0" angle="0" />
+                <Scale x="0" y="0" z="0" />
+            </TransformationComponent>
+            <ModelComponent file_name="Models\gun_placement.mml" />
+            <FireLasersComponent fire_rate="10" damager="5"/>
+        </Entity>
+        <Entity name="LeftDoor">
+            <MaterialRef name="Door" />
+            <TransformationComponent>
+                <Translation x="200" y="-300" z="650" />
+                <Rotation x="0" y="0" z="0" angle="0" />
+                <Scale x="0" y="0" z="0" />
+            </TransformationComponent>
+        </Entity>
+        <Entity name="SwitchLeftDoor">
+            <MaterialRef name="Switch"/>
+            <TransformationComponent>
+                <Translation x="175" y="-275" z="699.9" />
+                <Rotation x="0" y="0" z="0" angle="0" />
+                <Scale x="0" y="0" z="0" />
+            </TransformationComponent>
+            <LinkedEntityComponent name="LeftDoor" action="activate" />
+        </Entity>
+        <Entity name="SpaceStation" >
+            <MaterialRef name="SpaceStationOutside" />
+            <TransformationComponent>
+                <Translation x="0" y="0" z="0" />
+                <Rotation x="0" y="0" z="0" angle="0" />
+                <Scale x="1" y="1" z="1" />
+            </TransformationComponent>
+            <ModelComponent file_name="Models\space_station.mml" />
+        </Entity>
+    </Entities>
+</xml>

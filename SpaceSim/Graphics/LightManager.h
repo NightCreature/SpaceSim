@@ -39,8 +39,8 @@ public:
 
     void OnDebugImgui();
 private:
-    typedef std::map< size_t, Light> LightMap;
-    typedef std::pair< size_t, Light> LightPair;
+    typedef std::map< HashString, Light> LightMap;
+    typedef std::pair< HashString, Light> LightPair;
 
     LightMap m_lights;
 

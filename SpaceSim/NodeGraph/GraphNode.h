@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "GraphConnection.h"
+#include "Core/StringOperations/HashString.h"
 
 namespace NodeGraph
 {

@@ -17,6 +17,9 @@
 #define MSG_TRACE_CHANNEL_FMT(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER_FMT(TraceSeverity::EDEBUG, channel, msg, __VA_ARGS__);
 
 #define MSG_WARN_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EWARN, channel, msg, __VA_ARGS__);
+#define MSG_WARN_CHANNEL_FMT(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER_FMT(TraceSeverity::EWARN, channel, msg, __VA_ARGS__);
 #define MSG_ERROR_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EERROR, channel, msg, __VA_ARGS__);
+#define MSG_ERROR_CHANNEL_FMT(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER_FMT(TraceSeverity::EERROR, channel, msg, __VA_ARGS__);
 #define MSG_ASSERT_CHANNEL(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER(TraceSeverity::EASSERT, channel, msg, __VA_ARGS__);
+#define MSG_ASSERT_CHANNEL_FMT(channel, msg, ...) MSG_TRACE_WITH_FILE_LINENUMBER_FMT(TraceSeverity::EASSERT, channel, msg, __VA_ARGS__);
 //#endif

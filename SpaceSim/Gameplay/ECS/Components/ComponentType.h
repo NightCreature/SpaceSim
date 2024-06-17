@@ -3,6 +3,7 @@
 #include "Core/StringOperations/StringHelperFunctions.h"
 
 #include <bitset>
+#include <string_view>
 
 namespace ECS
 {
@@ -26,7 +27,7 @@ public:
     ComponentType() {}
     virtual ~ComponentType() {}
 
-    virtual const char* GetId() const = 0;
+    virtual const std::string_view& GetId() const = 0;
     virtual const ComponentTag& GetComponentType() const = 0;
     virtual size_t GetSize() const = 0;
 
@@ -38,19 +39,19 @@ template<class Component>
 class DefaultComponentType : public ComponentType
 {
 public:
-    DefaultComponentType(const char* id, const ComponentTag& tag) : m_id(id), m_tag(tag) 
+    DefaultComponentType(const std::string_view& id, const ComponentTag& tag) : m_id(id), m_tag(tag)
     {
         m_instance = this;
     }
 
-    const char* GetId() const override { return m_id; }
+    const std::string_view& GetId() const override { return m_id; }
     const ComponentTag& GetComponentType() const override { return m_tag; }
     size_t GetSize() const override { return sizeof(Component); }
     CreateComponentFP GetCreateFP() const override { return &Component::Create; }
 
     static DefaultComponentType* m_instance;
 private:
-    const char* m_id;
+    std::string_view m_id;
     ComponentTag m_tag;
 };
 

@@ -20,11 +20,11 @@ public:
     Entity() {}
     Entity(size_t id) : m_entityId(id) {}
     //Has some tags here to indicate which data objects it supports
-    void AddComponent(ComponentType* componentType)
+    Component& AddComponent(const ComponentType* componentType)
     {
         m_attachedComponents |= componentType->GetComponentType();
         m_components[componentType->GetComponentType()] = componentType->GetCreateFP()();
-
+        return *m_components[componentType->GetComponentType()];
         //Should check if we need to create the data here
     }
 

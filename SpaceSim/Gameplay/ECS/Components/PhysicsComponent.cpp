@@ -14,3 +14,8 @@ void ECS::PhysicsComponent::CreateRigidbody(bool dynamic)
     m_physicsObjectId = 1;
     
 }
+
+void ECS::PhysicsComponent::Deserialise(const tinyxml2::XMLElement* element)
+{
+    throw std::logic_error("The method or operation is not implemented.");
+}

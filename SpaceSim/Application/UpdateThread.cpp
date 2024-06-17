@@ -16,6 +16,10 @@
 
 #include "Physics/PhysicsManager.h"
 #include "Gameplay/ECS/SystemsManager.h"
+#include "Loader/LevelLoader.h"
+#include "Core/Resource/Resourceable.h"
+
+#include "Debugging/DebugImgui.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -39,7 +43,14 @@ void UpdateThread::Initialise(Resource* resource)
 
     m_uiManager.Initialise(m_resource);
     
+
+    LevelLoader levelLoader(resource);
+    m_level = levelLoader.LoadLevel("Maps/SpaceStation.xml");
+    
+    m_resource->m_debugImgui->RegisterImguiCallback([&level = m_level]() { level.OnDebugImGui(); }, "Level");
+    
     m_done = true;
+
 }
 
 ///-----------------------------------------------------------------------------

@@ -30,7 +30,7 @@ void LightManager::Initialise(Resource* resource)
 ///-------------------------------------------------------------------------
 void LightManager::addLight( const std::string& name, const Light& light )
 {
-    auto hashedName = Hashing::hashString(name);
+    auto hashedName = HashString(name);
     LightMap::const_iterator it = m_lights.find(hashedName);
     if (it == m_lights.end())
     {
@@ -43,7 +43,7 @@ void LightManager::addLight( const std::string& name, const Light& light )
 ///-------------------------------------------------------------------------
 const Light* LightManager::getLight( const std::string& name ) const
 {
-    auto hashedName = Hashing::hashString(name);
+    auto hashedName = HashString(name);
     LightMap::const_iterator it = m_lights.find(hashedName);
     if (it != m_lights.end())
     {
@@ -58,7 +58,7 @@ const Light* LightManager::getLight( const std::string& name ) const
 ///-------------------------------------------------------------------------
 Light* LightManager::getLight( const std::string& name )
 {
-    auto hashedName = Hashing::hashString(name);
+    auto hashedName = HashString(name);
     LightMap::iterator it = m_lights.find(hashedName);
     if (it != m_lights.end())
     {

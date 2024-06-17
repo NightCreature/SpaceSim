@@ -349,7 +349,7 @@ void Player::update( float elapsedTime, const Input& input )
     UNUSEDPARAM(elapsedTime);
     UNUSEDPARAM(input);
 
-    MSG_TRACE_CHANNEL("REFACTOR", "NEED A CAMERA ON THE UPDATE THREAD SOMEHOW FOR THIS");
+    //MSG_TRACE_CHANNEL("REFACTOR", "NEED A CAMERA ON THE UPDATE THREAD SOMEHOW FOR THIS");
     //m_position = m_camera->getEye();
     //m_direction = m_camera->getLookAt();
 

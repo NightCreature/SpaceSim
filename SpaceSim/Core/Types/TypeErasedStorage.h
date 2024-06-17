@@ -34,24 +34,24 @@ struct StorageSingle : public StorageInterface
 };
 
 template<class T, size_t size>
-void Serialise(const Archive& ar, T(&setting)[size], const std::bool_constant<true>& tag)
+void Serialise(const Archive& ar, T(&typeErasedArray)[size], const std::bool_constant<true>& tag)
 {
     UNUSEDPARAM(tag);
 
-    for (size_t settingCounter = 0; settingCounter < size; ++settingCounter)
+    for (size_t counter = 0; counter < size; ++counter)
     {
-        ar.Read(setting[settingCounter]);
+        ar.Read(typeErasedArray[counter]);
     }
 }
 
 template<class T, size_t size>
-void Serialise(Archive& ar, T(&setting)[size], const std::bool_constant<false>& tag)
+void Serialise(Archive& ar, T(&typeErasedArray)[size], const std::bool_constant<false>& tag)
 {
     UNUSEDPARAM(tag);
 
-    for (size_t settingCounter = 0; settingCounter < size; ++settingCounter)
+    for (size_t counter = 0; counter < size; ++counter)
     {
-        ar.Write(setting[settingCounter]);
+        ar.Write(typeErasedArray[counter]);
     }
 }
 
@@ -71,28 +71,28 @@ struct StorageArray : public StorageInterface
 };
 
 template<class T>
-void Serialise(const Archive& ar, T* setting, size_t& sizeOfArray, const std::bool_constant<true>& tag)
+void Serialise(const Archive& ar, T* typeErasedArray, size_t& sizeOfArray, const std::bool_constant<true>& tag)
 {
     UNUSEDPARAM(tag);
 
     ar.Read(sizeOfArray);
 
-    for (size_t settingCounter = 0; settingCounter < sizeOfArray; ++settingCounter)
+    for (size_t counter = 0; counter < sizeOfArray; ++counter)
     {
-        ar.Read(setting[settingCounter]);
+        ar.Read(typeErasedArray[counter]);
     }
 }
 
 template<class T>
-void Serialise(Archive& ar, T* setting, size_t sizeOfArray, const std::bool_constant<false>& tag)
+void Serialise(Archive& ar, T* typeErasedArray, size_t sizeOfArray, const std::bool_constant<false>& tag)
 {
     UNUSEDPARAM(tag);
 
     ar.Write(sizeOfArray);
 
-    for (size_t settingCounter = 0; settingCounter < sizeOfArray; ++settingCounter)
+    for (size_t counter = 0; counter < sizeOfArray; ++counter)
     {
-        ar.Write(setting[settingCounter]);
+        ar.Write(typeErasedArray[counter]);
     }
 }
 
@@ -160,6 +160,8 @@ public:
 
     size_t GetSize() const { return m_data ? m_data.get()->GetSize() : 0; }
 
+    //void Serialize(Archive& archive, std::false_type& tag) const { m_data->Serialize(archive,tag); }
+    //void Serialize(const Archive& archive, std::true_type& tag) { m_data->Serialize(archive, std::true_type()); } //Wonder if there is a construciton issue here
 
 private:
     std::unique_ptr<TypeErasureDetails::StorageInterface> m_data;
