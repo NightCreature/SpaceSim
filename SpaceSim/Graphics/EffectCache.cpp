@@ -4,6 +4,7 @@
 #include "Core/Thread/JobSystem.h"
 #include "Logging/LoggingMacros.h"
 #include "Graphics/modelmanager.h"
+#include "imgui.h"
 
 EffectCache::EffectCache()
 {
@@ -46,7 +47,7 @@ void EffectCache::CreateEffect(Resource* resource, const std::string& resourceFi
     MSG_TRACE_CHANNEL("EffectCache", "Creating effect %s, effect is %s present", resourceName.c_str(), hasEffect ? "" : "not");
     if (!hasEffect) //If the effect is not in the cache
     {
-        Effect& effectToBeCreated = m_effects[Hashing::hashString(resourceName)]; //Make the effect entry in the map
+        Effect& effectToBeCreated = m_effects[HashString(resourceName)]; //Make the effect entry in the map
         LoadEffectJob* job = new LoadEffectJob(resourceFileName, effectToBeCreated, effectCreatedCallback); //Create the job
         static_cast<RenderResource*>(resource)->getJobQueue().AddJob(job); //Add the job to the queue
     }
@@ -54,15 +55,38 @@ void EffectCache::CreateEffect(Resource* resource, const std::string& resourceFi
 
 bool EffectCache::HasEffect(const std::string& name) const
 {
-    return getEffect(Hashing::hashString(name)) != nullptr;
+    return getEffect(HashString(name)) != nullptr;
+}
+
+void EffectCache::OnDebugImgui() const
+{
+    ImGui::Begin("Effects");
+
+    for (const auto& effect : m_effects)
+    {
+        std::string nodeName;
+#ifdef DEBUG
+        nodeName = effect.first.getString();
+#else
+        nodeName = fmt::format("Effect: {}", effect.first.getHash());
+#endif // DEBUG
+
+        if (ImGui::TreeNode(nodeName.c_str()))
+        {
+            effect.second.OnDebugImgui();
+            ImGui::TreePop();
+        }
+    }
+
+    ImGui::End();
 }
 
 const Effect* EffectCache::getEffect(const std::string& name) const
 {
-    return getEffect(Hashing::hashString(name));
+    return getEffect(HashString(name));
 }
 
-const Effect* EffectCache::getEffect(size_t effectHash) const
+const Effect* EffectCache::getEffect(const HashString& effectHash) const
 {
     PROFILE_FUNCTION();
     if (m_effects.empty())
@@ -70,7 +94,7 @@ const Effect* EffectCache::getEffect(size_t effectHash) const
         return nullptr;
     }
 
-    std::map<size_t, Effect>::const_iterator it = m_effects.find(effectHash);
+    std::map<HashString, Effect>::const_iterator it = m_effects.find(effectHash);
     if (it == m_effects.end())
     {
         return nullptr;
@@ -81,10 +105,10 @@ const Effect* EffectCache::getEffect(size_t effectHash) const
 
 void EffectCache::addEffect(const std::string& name, const Effect& effect)
 {
-    std::map<size_t, Effect>::const_iterator it = m_effects.find(Hashing::hashString(name));
+    std::map<HashString, Effect>::const_iterator it = m_effects.find(HashString(name));
     if (it == m_effects.end())
     {
-        m_effects.emplace(std::pair<size_t, Effect>(Hashing::hashString(name), effect));
+        m_effects.emplace(std::pair<HashString, Effect>(HashString(name), effect));
     }
 }
 
@@ -105,7 +129,7 @@ bool LoadEffectJob::Execute(ThreadContext* context)
     const tinyxml2::XMLElement* element;
     element = doc.FirstChildElement(); //skip xml element
     element = element->FirstChildElement();
-    auto elementHash = Hashing::hashString(element->Value());
+    auto elementHash = HashString(element->Value());
     if (Effect::m_hash == elementHash)
     {
         m_effect.deserialise(element, context->m_renderResource);

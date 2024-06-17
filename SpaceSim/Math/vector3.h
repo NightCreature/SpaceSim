@@ -1,6 +1,7 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
+#include "Core/StringOperations/HashString.h"
 #include "Memory/AlignMacros.h"
 #include "Core/tinyxml2.h"
 #include "Math/vector2.h"
@@ -58,6 +59,7 @@ private:
     static const float EQUALPRECISION3;
 public:
     HASH_ELEMENT_DEFINITION(Vector3)
+        void OnDebugImgui(const std::string_view& name);
 };
 
 inline Vector3 Vector3::findOrthogonal() const

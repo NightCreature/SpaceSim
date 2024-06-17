@@ -1,13 +1,16 @@
 #ifndef TEXTUREMANAGER_H
 #define TEXTUREMANAGER_H
+
+#include "Core/StringOperations/HashString.h"
 #include "Core/tinyxml2.h"
-#include "Graphics/material.h"
+#include "D3D12/DescriptorHeapManager.h"
 #include "Graphics/Texture12.h"
+#include "Graphics/material.h"
+
 #include <d3d11.h>
 #include <map>
 #include <mutex>
 #include <string>
-#include "D3D12/DescriptorHeapManager.h"
 
 class DeviceManager;
 class Resource;
@@ -16,7 +19,7 @@ struct TextureInfo
 {
 	Texture12 m_texture;
 	size_t m_heapIndex;
-	size_t m_hash; //think about this
+	HashString m_hash; //think about this
 	bool m_loadRequested = false;
 };
 
@@ -47,6 +50,7 @@ public:
 
 	std::pair<size_t, size_t> GetNullDescriptor() const { return m_nullDescriptorSrvs; }
         
+	void OnDebugImgui() const;
 protected:
 private:
     TextureInfo* getTexture(const std::string& filename);

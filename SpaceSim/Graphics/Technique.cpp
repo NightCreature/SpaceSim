@@ -8,6 +8,7 @@
 #include "Graphics/VertexBuffer.h"
 
 #include <d3d12.h>
+#include "imgui.h"
 
 
 
@@ -27,7 +28,7 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
         techniqueName = attribute->Value();
     }
 
-    m_nameHash = Hashing::hashString(techniqueName);
+    m_nameHash = HashString(techniqueName);
 #ifdef _DEBUG
     m_name = techniqueName;
 #endif // _DEBUG
@@ -149,6 +150,13 @@ void Technique::deserialise(const tinyxml2::XMLElement* element)
     m_pso.SetVertexInformation(vertextDeclaration, D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED, primitiveTopology);
     //m_pso.CreatePipelineStateObject(deviceManager.GetDevice());
 
-    m_techniqueId = Hashing::hashBinaryData(reinterpret_cast<char*>(&m_pso), sizeof(PipelineObject)); //Not sure this works well
+    m_techniqueId = HashString(Hashing::hashBinaryData(reinterpret_cast<char*>(&m_pso), sizeof(PipelineObject))); //Not sure this works well
     //m_techniqueId = ((size_t)(m_vertexShader + m_pixelShader) /*<< 32*/) | (m_hullShader + m_domainShader + m_geometryShader + m_computeShader);
+}
+
+void Technique::OnDebugImgui() const
+{
+#ifdef _DEBUG
+    m_pso.OnDebugImgui();
+#endif
 }

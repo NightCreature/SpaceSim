@@ -30,7 +30,7 @@ public:
     Player(Resource* resource) : GameObject(resource) { m_name = "player"; }
     ~Player();
 
-    void deserialise( const tinyxml2::XMLElement* node );
+    void DeserialiseInternal( const tinyxml2::XMLElement* node );
     void initialize();
     void reset();
     void cleanup();
@@ -82,6 +82,8 @@ public:
     Matrix44 getCameraMatrix() const  {return m_camera->getCamera();}
     Bbox getBoundingBox() { return Bbox(); } //Needs to return the drawable bbox of this object
 protected:
+
+    void OnDebugImguiInternal() override;
 private:
     bool isPlayerDead();
     void eraseLaser(std::list<Laser*>::iterator& it, Laser* l);

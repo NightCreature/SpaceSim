@@ -110,9 +110,9 @@ public:
     void setBlendState(bool alphaBlendEnabled) { m_alphaBlend = alphaBlendEnabled; }
     bool getBlendState() const { return m_alphaBlend; }
     
-    size_t getEffectHash() const { return m_effectHash; }
-	size_t getTechnique() const { return m_techniqueHash; }
-	void setTechnique(size_t techniqueHash) { m_techniqueHash = techniqueHash; }
+    HashString getEffectHash() const { return m_effectHash; }
+	HashString getTechnique() const { return m_techniqueHash; }
+	void setTechnique(HashString techniqueHash) { m_techniqueHash = techniqueHash; }
 
     struct MaterialParameters
     {
@@ -124,22 +124,24 @@ public:
         char m_textureNames[Material::TextureSlotMapping::NumSlots][256];
         //std::vector< TextureData > m_texture;
         MaterialConstants m_materialContent;
-        size_t m_effectHash;
-        size_t m_techniqueHash;
+        HashString m_effectHash;
+        HashString m_techniqueHash;
         bool m_alphaBlend;
     };
 
     static MaterialParameters GetMaterialParameters(const tinyxml2::XMLElement* childElement);
-    void setEffectHash(size_t effectHash) { m_effectHash = effectHash; }
+    void setEffectHash(HashString effectHash) { m_effectHash = effectHash; }
 
     size_t GetNumberOfNeededDescriptors() const { return m_numberOfDescriptorsNeeded; }
     void Prepare(const EffectCache& effectCache);
+
+    void OnDebugImgui(const std::string_view& name);
 protected:
 private:
     MaterialConstants m_materialCB;
     std::vector<TextureSlotMapping> m_texture;//Order is sampler order as well
-    size_t m_techniqueHash;
-    size_t m_effectHash;
+    HashString m_techniqueHash;
+    HashString m_effectHash;
     size_t m_numberOfDescriptorsNeeded = 0;
     bool m_alphaBlend;
 };

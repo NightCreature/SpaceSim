@@ -33,10 +33,7 @@ public:
 	
 	
 	int getNumVertices() const { return 0;}
-    ///-------------------------------------------------------------------------
-    // @brief 
-    ///-------------------------------------------------------------------------
-    void deserialise( const tinyxml2::XMLElement* element );
+    
 
     ///-------------------------------------------------------------------------
     // @brief 
@@ -50,6 +47,11 @@ public:
 
     HASH_ELEMENT_DEFINITION(RotatingBlades)
 protected:
+    ///-------------------------------------------------------------------------
+    // @brief 
+    ///-------------------------------------------------------------------------
+    void DeserialiseInternal(const tinyxml2::XMLElement* element);
+    void OnDebugImguiInternal() override;
 private:
 	Vector3 m_position;
 	Model* m_rotatingblades1;

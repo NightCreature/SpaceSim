@@ -14,6 +14,8 @@
 #include "Core/MessageSystem/RenderMessages.h"
 #include "Core/Resource/GameResource.h"
 
+#include "Imgui.h"
+
 int Plane::m_planeCount = 0;
 
 //This needs to change so that it is a helper class that sets up a face correctly and then returns the face
@@ -135,7 +137,7 @@ void Plane::transform()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Plane::deserialise( const tinyxml2::XMLElement* node )
+void Plane::DeserialiseInternal( const tinyxml2::XMLElement* node )
 {
     for (const tinyxml2::XMLElement* childElement = node->FirstChildElement(); childElement != 0; childElement = childElement->NextSiblingElement())
     {
@@ -225,4 +227,29 @@ void Plane::handleMessage( const MessageSystem::Message& msg )
 void Plane::invertNormal()
 {
     m_invertNormal = true;
+}
+
+void Plane::OnDebugImguiInternal()
+{
+    ImGui::CollapsingHeader("Plane");
+    ImGui::Checkbox("Invert Normal", &m_invertNormal);
+    ImGui::Checkbox("Change Winding Order", &m_changeWindingOrder);
+    ImGui::InputInt("Rows", &m_rows);
+    ImGui::InputInt("Coloms", &m_coloms);
+    ImGui::InputFloat("Width Start Pos", &m_widthstartpos);
+    ImGui::InputFloat("Width End Pos", &m_widthendpos);
+    ImGui::InputFloat("Height Start Pos", &m_heightstartpos);
+    ImGui::InputFloat("Height End Pos", &m_heightendpos);
+    ImGui::InputFloat("Fill Value", &m_fillvalue);
+    ImGui::Checkbox("Fill X", &m_fillx);
+    ImGui::Checkbox("Fill Y", &m_filly);
+    ImGui::Checkbox("Fill Z", &m_fillz);
+
+    ImGui::CollapsingHeader("Material");
+    ImGui::InputFloat4("Ambient", m_materialParameters.m_materialContent.ambient.GetDataPtr());
+    ImGui::InputFloat4("Diffuse", m_materialParameters.m_materialContent.diffuse.GetDataPtr());
+    ImGui::InputFloat4("Specular", m_materialParameters.m_materialContent.specular.GetDataPtr());
+    ImGui::InputFloat4("Emissive", m_materialParameters.m_materialContent.emissive.GetDataPtr());
+    ImGui::InputFloat("Shininess", &m_materialParameters.m_materialContent.shininess);
+    ImGui::Checkbox("Alpha Enabled", &m_materialParameters.m_alphaBlend);
 }

@@ -5,6 +5,8 @@
 #include "Core/Profiler/ProfilerMacros.h"
 
 #include "Core/MessageSystem/RenderMessages.h"
+#include "ImGui.h"
+
 
 GameObjectManager::GameObjectManager(void)
 {
@@ -120,6 +122,20 @@ void GameObjectManager::handleMessage( const MessageSystem::Message& message )
 void GameObjectManager::addMessage(const Message& message)
 {
     UNUSEDPARAM(message);
+}
+
+void GameObjectManager::OnDebugImgui()
+{
+    ImGui::Begin("GameObjects");
+    for (auto gameObject : m_gameObjects)
+    {
+        if (gameObject.second != nullptr)
+        {
+            gameObject.second->OnDebugImgui();
+        }
+    }
+
+    ImGui::End();
 }
 
 ///-------------------------------------------------------------------------

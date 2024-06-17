@@ -67,6 +67,8 @@ public:
     ID3D12PipelineState* m_pipelineObject = nullptr;
     D3D12_GRAPHICS_PIPELINE_STATE_DESC m_pipeLineStateDescriptor = { 0 };
     void Destroy();
+
+    void OnDebugImgui() const;
 private:
     
     //ID3D12RootSignature* m_rootSignature = nullptr;

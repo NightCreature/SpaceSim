@@ -7,6 +7,7 @@
 #include "Core/Resource/renderResource.h"
 #include "../Graphics/material.h"
 #include "../Math/vector3.h"
+#include "imgui.h"
 
 
 
@@ -82,7 +83,7 @@ void Core::onHit()
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Core::deserialise( const tinyxml2::XMLElement* element)
+void Core::DeserialiseInternal( const tinyxml2::XMLElement* element)
 {
     
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
@@ -234,4 +235,15 @@ void Core::handleMessage( const MessageSystem::Message& msg )
     UNUSEDPARAM(msg);
     //const ActivationMessage& activateMsg = (const ActivationMessage&)msg;
     //setActive(activateMsg.shouldActivate());
+}
+
+void Core::OnDebugImguiInternal()
+{
+    MaterialConstants materialParameters = m_forcefieldmatnormal.getMaterialCB();
+    ImGui::CollapsingHeader("Material");
+    ImGui::InputFloat4("Ambient", materialParameters.ambient.GetDataPtr());
+    ImGui::InputFloat4("Diffuse", materialParameters.diffuse.GetDataPtr());
+    ImGui::InputFloat4("Specular", materialParameters.specular.GetDataPtr());
+    ImGui::InputFloat4("Emissive", materialParameters.emissive.GetDataPtr());
+    ImGui::InputFloat("Shininess", &materialParameters.shininess);
 }

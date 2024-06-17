@@ -3,6 +3,7 @@
 #include "Graphics/VertexBuffer.h"
 #include "D3D12X.h"
 #include <dxcapi.h>
+#include "imgui.h"
 
 ///-----------------------------------------------------------------------------
 ///! @brief   
@@ -191,5 +192,115 @@ void PipelineObject::Destroy()
     {
         m_rootSignatureBlob->Release();
     }
+}
+
+void PipelineObject::OnDebugImgui() const
+{
+    ImGui::Text("PipelineObject");
+    ImGui::Text("Root Signature: %p", m_pipeLineStateDescriptor.pRootSignature);
+    ImGui::Text("PipelineObject: %p", m_pipelineObject);
+    if (ImGui::TreeNode("Shader State"))
+    {
+        if (m_pipeLineStateDescriptor.VS.pShaderBytecode != nullptr)
+        {
+            ImGui::Text("Vertex Shader: %p", m_pipeLineStateDescriptor.VS.pShaderBytecode);
+        }
+        if (m_pipeLineStateDescriptor.PS.pShaderBytecode != nullptr)
+        {
+            ImGui::Text("Pixel Shader: %p", m_pipeLineStateDescriptor.PS.pShaderBytecode);
+        }
+        if (m_pipeLineStateDescriptor.DS.pShaderBytecode != nullptr)
+        {
+            ImGui::Text("Domain Shader: %p", m_pipeLineStateDescriptor.DS.pShaderBytecode);
+        }
+        if (m_pipeLineStateDescriptor.HS.pShaderBytecode != nullptr)
+        {
+            ImGui::Text("Hull Shader: %p", m_pipeLineStateDescriptor.HS.pShaderBytecode);
+        }
+        if (m_pipeLineStateDescriptor.GS.pShaderBytecode != nullptr)
+        {
+            ImGui::Text("Geometry Shader: %p", m_pipeLineStateDescriptor.GS.pShaderBytecode);
+        }
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNode("Input State"))
+    {
+        ImGui::Text("Input Layout: %d", m_pipeLineStateDescriptor.InputLayout.NumElements);
+        ImGui::Text("IB Strip Cut Value: %d", m_pipeLineStateDescriptor.IBStripCutValue);
+        ImGui::Text("Primitive Topology Type: %d", m_pipeLineStateDescriptor.PrimitiveTopologyType);
+
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNode("Depth Stencil State"))
+    {
+        ImGui::Text("Depth Enable: %s", m_pipeLineStateDescriptor.DepthStencilState.DepthEnable ? "true" : "false");
+        ImGui::Text("Depth Write Mask: %d", m_pipeLineStateDescriptor.DepthStencilState.DepthWriteMask);
+        ImGui::Text("Depth Func: %d", m_pipeLineStateDescriptor.DepthStencilState.DepthFunc);
+        ImGui::Text("Stencil Enable: %s", m_pipeLineStateDescriptor.DepthStencilState.StencilEnable ? "true" : "false");
+        ImGui::Text("Stencil Read Mask: %d", m_pipeLineStateDescriptor.DepthStencilState.StencilReadMask);
+        ImGui::Text("Stencil Write Mask: %d", m_pipeLineStateDescriptor.DepthStencilState.StencilWriteMask);
+        ImGui::Text("Front Face Stencil Func: %d", m_pipeLineStateDescriptor.DepthStencilState.FrontFace.StencilFunc);
+        ImGui::Text("Front Face Stencil Fail Op: %d", m_pipeLineStateDescriptor.DepthStencilState.FrontFace.StencilFailOp);
+        ImGui::Text("Front Face Stencil Depth Fail Op: %d", m_pipeLineStateDescriptor.DepthStencilState.FrontFace.StencilDepthFailOp);
+        ImGui::Text("Front Face Stencil Pass Op: %d", m_pipeLineStateDescriptor.DepthStencilState.FrontFace.StencilPassOp);
+        ImGui::Text("Back Face Stencil Func: %d", m_pipeLineStateDescriptor.DepthStencilState.BackFace.StencilFunc);
+        ImGui::Text("Back Face Stencil Fail Op: %d", m_pipeLineStateDescriptor.DepthStencilState.BackFace.StencilFailOp);
+        ImGui::Text("Back Face Stencil Depth Fail Op: %d", m_pipeLineStateDescriptor.DepthStencilState.BackFace.StencilDepthFailOp);
+        ImGui::Text("Back Face Stencil Pass Op: %d", m_pipeLineStateDescriptor.DepthStencilState.BackFace.StencilPassOp);
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNode("Render Target and Blend State"))
+    {
+        ImGui::Text("RTV Formats: %d", m_pipeLineStateDescriptor.NumRenderTargets);
+        ImGui::Text("DSV Format: %d", m_pipeLineStateDescriptor.DSVFormat);
+        
+        ImGui::Text("Blend State: %s", m_pipeLineStateDescriptor.BlendState.AlphaToCoverageEnable ? "true" : "false");
+        ImGui::Text("Blend State: %s", m_pipeLineStateDescriptor.BlendState.IndependentBlendEnable ? "true" : "false");
+        for (unsigned int counter = 0; counter < 8; ++counter)
+        {
+            if (ImGui::TreeNode(fmt::format("RenderTarget {}", counter).c_str()))
+            {
+                ImGui::Text("Blend Enable: %s", m_pipeLineStateDescriptor.BlendState.RenderTarget[counter].BlendEnable ? "true" : "false");
+                ImGui::Text("Src Blend: %d", m_pipeLineStateDescriptor.BlendState.RenderTarget[counter].SrcBlend);
+                ImGui::Text("Dest Blend: %d", m_pipeLineStateDescriptor.BlendState.RenderTarget[counter].DestBlend);
+                ImGui::Text("Blend Op: %d", m_pipeLineStateDescriptor.BlendState.RenderTarget[counter].BlendOp);
+                ImGui::Text("Src Blend Alpha: %d", m_pipeLineStateDescriptor.BlendState.RenderTarget[counter].SrcBlendAlpha);
+                ImGui::Text("Dest Blend Alpha: %d", m_pipeLineStateDescriptor.BlendState.RenderTarget[counter].DestBlendAlpha);
+                ImGui::Text("Blend Op Alpha: %d", m_pipeLineStateDescriptor.BlendState.RenderTarget[counter].BlendOpAlpha);
+                ImGui::Text("RenderTargetWriteMask: %d", m_pipeLineStateDescriptor.BlendState.RenderTarget[counter].RenderTargetWriteMask);
+
+                ImGui::TreePop();
+            }
+        }
+
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Sample State"))
+    {
+        ImGui::Text("Sample Mask: %d", m_pipeLineStateDescriptor.SampleMask);
+        ImGui::Text("Sample Desc: %d", m_pipeLineStateDescriptor.SampleDesc.Count);
+        ImGui::Text("Sample Desc: %d", m_pipeLineStateDescriptor.SampleDesc.Quality);
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Rasterizer State"))
+    {
+        ImGui::Text("Cull Mode: %d", m_pipeLineStateDescriptor.RasterizerState.CullMode);
+        ImGui::Text("Fill Mode: %d", m_pipeLineStateDescriptor.RasterizerState.FillMode);
+        ImGui::Text("Antialised Line Enable: %s", m_pipeLineStateDescriptor.RasterizerState.AntialiasedLineEnable ? "true" : "false");
+        ImGui::Text("Depth Bias: %d", m_pipeLineStateDescriptor.RasterizerState.DepthBias);
+        ImGui::Text("Depth Bias Clamp: %d", m_pipeLineStateDescriptor.RasterizerState.DepthBiasClamp);
+        ImGui::Text("Front Counter Clockwise: %s", m_pipeLineStateDescriptor.RasterizerState.FrontCounterClockwise ? "true" : "false");
+        ImGui::Text("Multisample Enable: %s", m_pipeLineStateDescriptor.RasterizerState.MultisampleEnable ? "true" : "false");
+        ImGui::Text("Slope Scaled Depth Bias: %d", m_pipeLineStateDescriptor.RasterizerState.SlopeScaledDepthBias);
+        ImGui::Text("Depth Clip Enable: %s", m_pipeLineStateDescriptor.RasterizerState.DepthClipEnable ? "true" : "false");
+
+        ImGui::TreePop();
+    }
+
+
+
 }
 

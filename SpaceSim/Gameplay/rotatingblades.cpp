@@ -8,6 +8,7 @@
 #include "Core/MessageSystem/RenderMessages.h"
 
 #include <iostream>
+#include "imgui.h"
 
 
 
@@ -24,7 +25,7 @@ GameObject(resource)
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void RotatingBlades::deserialise( const tinyxml2::XMLElement* element)
+void RotatingBlades::DeserialiseInternal( const tinyxml2::XMLElement* element)
 {
     const tinyxml2::XMLAttribute* attribute = element->FindAttribute("name");
     if (attribute != nullptr)
@@ -138,4 +139,15 @@ void RotatingBlades::handleMessage( const MessageSystem::Message& msg )
         //Store the render object reference we get back and the things it can do
         m_initialisationDone = true;
     }
+}
+
+void RotatingBlades::OnDebugImguiInternal()
+{
+    ImGui::CollapsingHeader("Material");
+    ImGui::InputFloat4("Ambient", m_materialParameters.m_materialContent.ambient.GetDataPtr());
+    ImGui::InputFloat4("Diffuse", m_materialParameters.m_materialContent.diffuse.GetDataPtr());
+    ImGui::InputFloat4("Specular", m_materialParameters.m_materialContent.specular.GetDataPtr());
+    ImGui::InputFloat4("Emissive", m_materialParameters.m_materialContent.emissive.GetDataPtr());
+    ImGui::InputFloat("Shininess", &m_materialParameters.m_materialContent.shininess);
+    ImGui::Checkbox("Alpha Enabled", &m_materialParameters.m_alphaBlend);
 }

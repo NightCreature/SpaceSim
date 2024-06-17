@@ -22,6 +22,7 @@
 #include <Loader/ModelLoaders/ModelLoader.h>
 #include <Core/MessageSystem/MessageQueue.h>
 #include <Core/MessageSystem/RenderMessages.h>
+#include "imgui.h"
 
 //const int playerlive = 5;
 //const int playerffstrength = 10;
@@ -132,6 +133,15 @@ void Player::getsKilled()
     m_position = m_startposition;
     if(isPlayerDead())
         m_gameover = true;
+}
+
+void Player::OnDebugImguiInternal()
+{
+    ImGui::Text("Player");
+    ImGui::InputInt("Lives", &m_lives);
+    ImGui::InputInt("Force Field Strength", &m_ffstrength);
+    ImGui::InputFloat("Force Field Angle", &m_ffangle);
+    ImGui::Checkbox("Hit", &m_hit);
 }
 
 bool Player::isPlayerDead()
@@ -372,7 +382,7 @@ void Player::update( float elapsedTime, const Input& input )
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void Player::deserialise( const tinyxml2::XMLElement* node )
+void Player::DeserialiseInternal( const tinyxml2::XMLElement* node )
 {
     const tinyxml2::XMLAttribute* attribute = node->FindAttribute("name");
     if (attribute)

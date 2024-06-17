@@ -564,12 +564,12 @@ void TextBlockInfo::CreateShaderSetup(Resource* resource)
 {
 	Material mat;
 	RenderResourceHelper gameResource(resource);
-    mat.setEffectHash("sdf_font_effect.xml"_hash);
+    mat.setEffectHash("sdf_font_effect.xml"_hashstring);
 	mat.setBlendState(true);
 	//Should fix this if we have more than one page somehow
 	mat.addTextureReference(Material::TextureSlotMapping((unsigned int)Hashing::hashString(m_font->getPages().m_pages[0].m_fileName.string()), Material::TextureSlotMapping::Diffuse0 ));//Requires we have a texture under the font name
 	mat.setDiffuse(Color::yellow());
-	mat.setTechnique("default"_hash);
+	mat.setTechnique("default"_hashstring);
 	//m_shaderInstance.setMaterial(mat);
 	//WVPBufferContent& wvpConstants = m_shaderInstance.getWVPConstants();
     //TODO FIX ME SHOULD ASK RENDER SYSTEM FOR VIEW AND PROJECTION

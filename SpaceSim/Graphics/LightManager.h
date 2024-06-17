@@ -36,6 +36,8 @@ public:
 
     void update();
     size_t getLightBufferIndex() const { return m_lightBuffer.GetHeapIndex(); }
+
+    void OnDebugImgui();
 private:
     typedef std::map< size_t, Light> LightMap;
     typedef std::pair< size_t, Light> LightPair;

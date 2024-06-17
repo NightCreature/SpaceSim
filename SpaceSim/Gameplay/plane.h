@@ -27,7 +27,7 @@ public:
 	~Plane() {}
 
     void initialise();
-    virtual void deserialise( const tinyxml2::XMLElement* node );
+    
     virtual void update( float elapsedTime, const Input& input );
 
 	void transform();
@@ -35,7 +35,10 @@ public:
 	void setRows(int rows) {m_rows = rows;}
 	void setColoms(int coloms) {m_coloms = coloms;}
     void invertNormal();
+
 protected:
+    virtual void DeserialiseInternal(const tinyxml2::XMLElement* node);
+    void OnDebugImguiInternal() override;
 private:
 	void translateBbox(float xt, float yt, float zt);
 	void rotateBbox(float angle, float xr, float yr, float zr);

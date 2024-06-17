@@ -7,6 +7,7 @@
 #include "Gameplay/player.h"
 #include "Loader/ModelLoaders/ModelLoader.h"
 #include <string>
+#include "imgui.h"
 
 
 
@@ -14,7 +15,7 @@
 ///-------------------------------------------------------------------------
 // @brief 
 ///-------------------------------------------------------------------------
-void InfinitySphere::deserialise(const tinyxml2::XMLElement* node)
+void InfinitySphere::DeserialiseInternal(const tinyxml2::XMLElement* node)
 {
     m_name = "skydome";
 
@@ -117,4 +118,9 @@ void InfinitySphere::handleMessage(const MessageSystem::Message& msg)
 
         m_initialisationDone = true;
     }
+}
+
+void InfinitySphere::OnDebugImguiInternal()
+{
+    m_scale.OnDebugImgui("Scale");
 }

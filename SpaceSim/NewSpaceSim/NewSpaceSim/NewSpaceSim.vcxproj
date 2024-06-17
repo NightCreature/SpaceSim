@@ -448,6 +448,7 @@
     <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegate.h" />
     <ClInclude Include="..\..\..\SDK\FastDelegate\FastDelegateBind.h" />
     <ClInclude Include="..\..\..\SDK\imgui\backends\imgui_impl_dx12.h" />
+    <ClInclude Include="..\..\..\SDK\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="..\..\..\SDK\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\..\..\SDK\imgui\imstb_textedit.h" />
     <ClInclude Include="..\..\..\SDK\imgui\imstb_truetype.h" />
@@ -512,6 +513,7 @@
     <ClInclude Include="..\..\Core\Types\TypeErasedStorage.h" />
     <ClInclude Include="..\..\Core\Types\TypeHelpers.h" />
     <ClInclude Include="..\..\Core\Types\Types.h" />
+    <ClInclude Include="..\..\Debugging\DebugImgui.h" />
     <ClInclude Include="..\..\Gameplay\bbox.h" />
     <ClInclude Include="..\..\Gameplay\box.h" />
     <ClInclude Include="..\..\Gameplay\core.h" />
@@ -710,6 +712,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\SDK\imgui\backends\imgui_impl_dx12.cpp" />
+    <ClCompile Include="..\..\..\SDK\imgui\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="..\..\..\SDK\imgui\imgui.cpp" />
     <ClCompile Include="..\..\..\SDK\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\..\SDK\imgui\imgui_tables.cpp" />
@@ -746,6 +749,7 @@
     <ClCompile Include="..\..\Core\Thread\Timer.cpp" />
     <ClCompile Include="..\..\Core\Thread\WorkerThread.cpp" />
     <ClCompile Include="..\..\Core\tinyxml2.cpp" />
+    <ClCompile Include="..\..\Debugging\DebugImgui.cpp" />
     <ClCompile Include="..\..\Gameplay\bbox.cpp" />
     <ClCompile Include="..\..\Gameplay\box.cpp" />
     <ClCompile Include="..\..\Gameplay\core.cpp" />

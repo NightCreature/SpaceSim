@@ -4,6 +4,8 @@
 #include "Core/Serialization/Archive.h" 
 #include <xtr1common>
 #include "Core/Types/TypeHelpers.h"
+#include "Core/tinyxml2.h"
+#include "vector4.h"
 
 namespace math
 {
@@ -32,5 +34,32 @@ namespace math
         archive.Write(vec.x());
         archive.Write(vec.y());
         archive.Write(vec.z());
+    }
+
+    inline Vector4 Deserialise(const tinyxml2::XMLElement* node)
+    {
+        float x, y, z, w;
+        const tinyxml2::XMLAttribute* attribute = node->FindAttribute("x");
+        if (attribute)
+        {
+            x = attribute->FloatValue();
+        }
+        attribute = node->FindAttribute("y");
+        if (attribute)
+        {
+            y = attribute->FloatValue();
+        }
+        attribute = node->FindAttribute("z");
+        if (attribute)
+        {
+            z = attribute->FloatValue();
+        }
+        attribute = node->FindAttribute("w");
+        if (attribute)
+        {
+            z = attribute->FloatValue();
+        }
+
+        return Vector4(x, y, z, w);
     }
 }

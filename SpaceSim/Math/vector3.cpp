@@ -1,10 +1,16 @@
 #include "Math/vector3.h"
 #include "Core/StringOperations/StringHelperFunctions.h"
 #include <cmath>
+#include "imgui.h"
 
 const float Vector3::EQUALPRECISION3 = 0.00001f;
 
 
+
+void Vector3::OnDebugImgui(const std::string_view& name)
+{
+    ImGui::InputFloat3(name.data(), &m_x);
+}
 
 Vector3::Vector3()
 {

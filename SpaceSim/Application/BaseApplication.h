@@ -30,6 +30,7 @@
 #include "Logging/Logger.h"
 #include "Core/FileSystem/FileSystem.h"
 #include "Core/CommandLine/CommandLine.h"
+#include "Debugging/DebugImgui.h"
 
 
 ///-----------------------------------------------------------------------------
@@ -90,6 +91,7 @@ private:
     UpdateThread m_UpdateThread;
     MessageSystem::MessageQueues m_messageQueues;
     CommandLine m_commandLine;
+    DebugImgui m_debugImgui;
     //ModelComponentManger m_modelManager;
 public:
     static Logger m_logger;

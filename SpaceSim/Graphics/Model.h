@@ -124,7 +124,7 @@ public:
         for (auto& meshGroup : m_modelData)
         {
             auto& material = meshGroup.GetMaterial();
-            const Effect* effect = effectCache.getEffect(material.getEffectHash());
+            const Effect* effect = effectCache.getEffect(HashString(material.getEffectHash()));
             if (effect != nullptr)
             {
                 const Technique* technique = effect->getTechnique(material.getTechnique());

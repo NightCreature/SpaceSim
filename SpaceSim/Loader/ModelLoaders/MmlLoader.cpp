@@ -31,6 +31,8 @@ CreatedModel MmlLoader::LoadModel(Resource* resource, const LoadData& loadData, 
         return model;
     }
 
+    MSG_TRACE_CHANNEL_FMT("MML LOADER", "Trying to load model {}", loadData.m_fileName.c_str());
+
     RenderResource& gameResource = RenderResourceHelper(resource).getWriteableResource();
     Material mat;
     std::string modelFileName;

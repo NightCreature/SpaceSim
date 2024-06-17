@@ -17,10 +17,6 @@ public:
 
 	int getFFStrength() const {return m_ffstrength;}
 	Vector3 getPosition() const {return m_position;}
-    ///-------------------------------------------------------------------------
-    // @brief 
-    ///-------------------------------------------------------------------------
-    void deserialise( const tinyxml2::XMLElement* element );
 
     ///-------------------------------------------------------------------------
     // @brief 
@@ -34,6 +30,12 @@ public:
 
     HASH_ELEMENT_DEFINITION(Core)
 protected:
+    ///-------------------------------------------------------------------------
+	// @brief 
+	///-------------------------------------------------------------------------
+    void DeserialiseInternal(const tinyxml2::XMLElement* element);
+
+	void OnDebugImguiInternal() override;
 private:
 	Vector3		m_position;
 	//GLUquadric* m_core;

@@ -118,12 +118,12 @@ void Material::deserialise( Resource* resource, DeviceManager& deviceManager, co
             const tinyxml2::XMLAttribute* attribute = node->FindAttribute("file_name");
             if (attribute)
             {
-                m_effectHash = Hashing::hashString( getResourceNameFromFileName(attribute->Value()) );
+                m_effectHash = HashString( getResourceNameFromFileName(attribute->Value()) );
             }
             attribute = node->FindAttribute("technique_name");
             if (attribute)
             {
-                m_techniqueHash = Hashing::hashString(attribute->Value());
+                m_techniqueHash = HashString(attribute->Value());
             }
             //m_effect.deserialise(deviceManager, node);
         }
@@ -244,13 +244,13 @@ Material::MaterialParameters Material::GetMaterialParameters(const tinyxml2::XML
             const tinyxml2::XMLAttribute* attribute = childElement->FindAttribute("file_name");
             if (attribute)
             {
-                returnVal.m_effectHash = Hashing::hashString(getResourceNameFromFileName(attribute->Value()) );
+                returnVal.m_effectHash = HashString(getResourceNameFromFileName(attribute->Value()) );
             }
-            returnVal.m_techniqueHash = "default"_hash; //In case we dont have an attached technique name
+            returnVal.m_techniqueHash = "default"_hashstring; //In case we dont have an attached technique name
             attribute = childElement->FindAttribute("technique_name");
             if (attribute)
             {
-                returnVal.m_techniqueHash = Hashing::hashString(attribute->Value());
+                returnVal.m_techniqueHash = HashString(attribute->Value());
             }
             //m_effect.deserialise(deviceManager, childElement);
         }
@@ -275,4 +275,9 @@ void Material::Prepare(const EffectCache& effectCache)
 {
     //With bindless we have to do nothing here, or we could bind the textures here
     UNUSEDPARAM(effectCache);
+}
+
+void Material::OnDebugImgui(const std::string_view& name)
+{
+    m_materialCB.OnDebugImgui(name);
 }

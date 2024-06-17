@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/StringOperations/StringHelperFunctions.h"
+#include "Core/StringOperations/HashString.h"
 #include <d3d12.h>
 #include <string>
 #include <vector>

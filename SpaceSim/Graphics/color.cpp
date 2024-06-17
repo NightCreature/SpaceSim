@@ -1,6 +1,8 @@
 #include "Graphics/color.h"
 #include "Core/tinyxml2.h"
 
+#include "imgui.h"
+
 Color::Color()
 {
     m_rgba[0] = 0.0f;
@@ -48,6 +50,12 @@ Color::~Color()
 void Color::write(std::ostream &out) const
 {
     out << "(" << m_rgba[0] << ", " << m_rgba[1] << ", " << m_rgba[2] << ", " << m_rgba[3] << ")" << std::endl;
+}
+
+void Color::OnDebugImgui(const std::string_view& name)
+{
+    ImGui::CollapsingHeader(name.data());
+    ImGui::InputFloat4("Color", m_rgba);
 }
 
 void Color::read(std::istream& in)
